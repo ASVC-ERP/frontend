@@ -7,11 +7,11 @@ import logo from "../assets/logo.png"
 
 export default function Sidebar() {
   return (
-    <div className="d-flex flex-column p-3 vh-100 ">
+    <div className="d-flex flex-column vh-100 ">
 
         <div className="d-flex align-items-center mb-3">
-            <img src={logo} alt="Logo" style={{ height: "75px", width: "75px" }} />
-            <p className="fw-bolder fs-6 ms-3 mb-0" style={{ color: "#0C1D61" }}>Company Name</p>
+            <img src={logo} alt="Logo" className="m-0 p-0" style={{ height: "75px", width: "75px" }} />
+            <p className="fw-bolder fs-5 m-0 p-0" style={{ color: "#0C1D61" }}>Company Name</p>
         </div>
         
         <ul className="nav flex-column">
