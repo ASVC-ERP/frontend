@@ -1,7 +1,9 @@
-.table-secondary-color {
-    background-color: #E8E7EC !important;
-}
+/* Increase font size for the DataTable */
+.custom-data-table .rdt_TableCell {
+    font-size:14px;
+  }
 
-.custom-tbody {
-    background-color: #E8E7EC !important;
+.custom-data-table .rdt_TableHeadRow{
+    font-size:17px;
+    font-weight: bold;
 }
