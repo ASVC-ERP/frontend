@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar"
 import OrderForm from "./OrderForm"
+import InfoForm from "./InfoForm"
 import { useNavigate } from "react-router-dom";  // Import useNavigate
 
 
@@ -20,12 +21,14 @@ function CreateOrder() {
             <div className="row mt-3 mx-3">
                 <div className="border rounded-3" style={{height:"150px", backgroundColor: "#E8E7EC"}}>
                     <p className="h4 fw-bold mt-2 ms-3" style={{ color: "#050505", fontFamily: "'Outfit', sans-serif" }}>Customer Info</p>
+                    <InfoForm />
                 </div>
             </div>
 
             <div className="row mt-3 mx-3">
                 <div className="border rounded-3" style={{height:"400px", backgroundColor: "#E8E7EC"}}>
                     <p className="h4 fw-bold mt-2 ms-3" style={{ color: "#050505", fontFamily: "'Outfit', sans-serif" }}>Product Details</p>
+                    <OrderForm />
                 </div>
             </div>
 

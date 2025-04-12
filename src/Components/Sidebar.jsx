@@ -69,7 +69,7 @@ export default function Sidebar() {
 
         {/* Profile Section at the Bottom */}
         <div className="d-flex align-items-center ms-4 mb-4 mt-auto">
-            <p className="h5 fw-bolder me-3" style={{ color: "#0C1D61" }}>Hi, Jerry 兄!</p>
+            <p className="h5 fw-bolder me-3" style={{ color: "#0C1D61" }}>Hi, Prince 兄!</p>
             <BsPersonCircle size={30} color="#0C1D61" />
         </div>
     </div>

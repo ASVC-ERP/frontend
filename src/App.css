@@ -7,3 +7,19 @@
     font-size:17px;
     font-weight: bold;
 }
+
+.transparent-table thead,
+.transparent-table tr,
+.transparent-table td,
+.transparent-table th {
+  background-color: transparent !important;
+}
+
+.custom-border-table td,
+.custom-border-table th {
+  border-color: #ACACAC; 
+}
+
+.custom-header-color th {
+  color: #ACACAC;
+}
