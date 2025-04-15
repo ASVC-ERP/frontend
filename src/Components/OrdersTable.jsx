@@ -16,57 +16,29 @@ const columns = [
 ];
 
 // Define table data
-const data = [
-  { orderId: "000001", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Completed" },
-  { orderId: "000002", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000003", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000004", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Completed" },
-  { orderId: "000005", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000006", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Completed" },
-  { orderId: "000007", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000008", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000009", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000010", date: "03-15-2025", customerName: "Jiko Aldrei Sy", customerAddress: "Amaia Doroteo Jose", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" },
-  { orderId: "000011", date: "03-15-2025", customerName: "Fildric Cadby Chu", customerAddress: "Tayuman St Tondo Manila", salesAgent: "Prince Pimentel", status: "Reserved" }
-];
-
-function OrdersTable() {
+function OrdersTable({orders}) {
+    const [showModal, setShowModal] = useState(false);
+    const [selectedRow, setSelectedRow] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
-    const [filteredData, setFilteredData] = useState(data);
+    const [filteredData, setFilteredData] = useState(Object.values(orders));
 
     // Handle search input change
     const handleSearch = (event) => {
         const value = event.target.value.toLowerCase();
         setSearchTerm(value);
 
-        const filtered = data.filter((row) =>
-        Object.values(row).some(
-            (field) =>
-            field.toString().toLowerCase().includes(value)
-        )
-        );
+        const filtered = Object.values(orders).filter((row) =>
+            Object.values(row).some((field) =>
+              field?.toString().toLowerCase().includes(value)
+            )
+          );
 
         setFilteredData(filtered);
+    };
+
+    const handleRowClick = (row) => {
+        setSelectedRow(row);
+        setShowModal(true);
     };
 
 
@@ -103,9 +75,43 @@ function OrdersTable() {
                 highlightOnHover
                 fixedHeader
                 fixedHeaderScrollHeight="500px"
-
+                onRowClicked={handleRowClick}
                 className="custom-data-table"
             />
+
+            {showModal && selectedRow && (
+            <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+            <div className="modal-dialog modal-lg" role="document">
+              <div className="modal-content">
+                <div className="modal-header">
+                  <h5 className="modal-title">Order Details - {selectedRow.orderId}</h5>
+                  <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                </div>
+                <div className="modal-body">
+                  <p><strong>Name:</strong> {selectedRow.customerName}</p>
+                  <p><strong>Number:</strong> {selectedRow.customerNumber}</p>
+                  <p><strong>Address:</strong> {selectedRow.customerAddress}</p>
+                  <p><strong>Delivery Option:</strong> {selectedRow.delivery}</p>
+                  <p><strong>Status:</strong> {selectedRow.status}</p>
+                  <p><strong>Total:</strong> ₱{selectedRow.totalPrice.toLocaleString()}</p>
+        
+                  <h6 className="mt-4">Items:</h6>
+                  <ul>
+                    {selectedRow.orderItems.map((item, index) => (
+                      <li key={index}>
+                        {item.quantity}x {item.name} @ ₱{item.price[item.selectedMarkup]} each
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
         </div>
     )
 }

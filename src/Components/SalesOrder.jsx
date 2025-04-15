@@ -1,6 +1,6 @@
 import OrdersTable from "./OrdersTable.jsx"
 
-function SalesOrder() {
+function SalesOrder({orders}) {
     return (
         <div className="container mt-3">
 
@@ -10,7 +10,7 @@ function SalesOrder() {
 
 
             <div className="row table-responsive mx-3">
-                <OrdersTable />
+                <OrdersTable orders={orders}/>
             </div>
         </div>
     )
