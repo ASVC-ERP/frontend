@@ -164,8 +164,8 @@ function OrdersTable({orders}) {
               <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
                 <div>
                   <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>{selectedRow.customerName}</p>
-                  <p className="mb-0">{selectedRow.customerAddress}</p>
-                  <p className="mb-0">{selectedRow.customerNumber}</p>
+                  <p className="mb-0 small">{selectedRow.customerAddress}</p>
+                  <p className="mb-0 small">{selectedRow.customerNumber}</p>
                 </div>
                 <p className="text-muted small mb-0">{new Date(selectedRow.date).toLocaleDateString('en-GB', {
                   day: '2-digit', month: 'long', year: 'numeric'
@@ -212,8 +212,8 @@ function OrdersTable({orders}) {
               <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
                 <div>
                   <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>{selectedRow.customerName}</p>
-                  <p className="mb-0">{selectedRow.customerAddress}</p>
-                  <p className="mb-0">{selectedRow.customerNumber}</p>
+                  <p className="mb-0 small">{selectedRow.customerAddress}</p>
+                  <p className="mb-0 small">{selectedRow.customerNumber}</p>
                 </div>
                 <p className="text-muted small mb-0">{new Date(selectedRow.date).toLocaleDateString('en-GB', {
                   day: '2-digit', month: 'long', year: 'numeric'

@@ -4,6 +4,7 @@ import { FaFileInvoiceDollar } from "react-icons/fa";
 import { HiDocumentReport } from "react-icons/hi";
 import { FaCashRegister } from "react-icons/fa6";
 import { IoReceipt } from "react-icons/io5";
+import { Link } from "react-router-dom";  // Import Link from react-router-dom
 
 
 
@@ -26,33 +27,32 @@ export default function Sidebar() {
             <ul className="nav flex-column">
                 <li className="nav-item mt-3">
                     {/* Sales Button */}
-                    <a
-                        href="#" className="nav-link d-flex align-items-center" style={{ color: "#0C1D61", fontSize: "1.2rem", cursor: "pointer" }}
-                        onClick={() => setIsOpen(!isOpen)}
-                    >
-                        <BsBasketFill className="me-3" size={30} /> Sales
-                    </a>
-
+                        <a
+                            href="#" className="nav-link d-flex align-items-center" style={{ color: "#0C1D61", fontSize: "1.2rem", cursor: "pointer" }}
+                            onClick={() => setIsOpen(!isOpen)}
+                        >
+                            <BsBasketFill className="me-3" size={30} /> Sales
+                        </a>
                     {/* Dropdown Items */}
                     {isOpen && (
                         <ul className="list-unstyled ms-4 mt-2">
                         <li>
-                            <a href="#" className="nav-link" style={{ color: "#0C1D61", fontSize: "1.2rem" }}>
-                            <FaCashRegister className="me-3" size={20} /> Orders
-                            </a>
+                            <Link to="/" className="nav-link" style={{ color: "#0C1D61", fontSize: "1.2rem", textDecoration: 'none' }}>
+                                <FaCashRegister className="me-3" size={20} /> Orders
+                            </Link> 
                         </li>
                         <li>
                             <a href="#" className="nav-link" style={{ color: "#0C1D61", fontSize: "1.2rem" }}>
-                            <IoReceipt className="me-3" size={20} /> Invoice
+                                <IoReceipt className="me-3" size={20} /> Invoice
                             </a>
                         </li>
                         </ul>
                     )}
                 </li>
                 <li className="nav-item mt-3">
-                    <a href="#" className="nav-link d-flex align-items-center" style={{ color: "#0C1D61", fontSize: "1.2rem" }}>
+                    <Link to="/inventory" className="nav-link d-flex align-items-center" style={{ color: "#0C1D61", fontSize: "1.2rem", textDecoration: 'none' }}>
                         <BsBoxSeamFill className="me-3" size={30} /> Inventory
-                    </a>
+                    </Link>
                 </li>
                 <li className="nav-item mt-3">
                     <a href="#" className="nav-link d-flex align-items-center" style={{ color: "#0C1D61", fontSize: "1.2rem" }}>

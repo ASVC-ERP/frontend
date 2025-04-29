@@ -50,7 +50,7 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                                     borderBottom: '1px solid #eee',
                                 }}
                                 >
-                                <strong>{product.name}</strong> <br />
+                                <strong>{product.itemName}</strong> <br />
                                 Stock: {product.stock}
                                 </li>
                             ))}
@@ -80,7 +80,7 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                                     <div className="d-flex align-items-center gap-3">
                                         <img src={defaultPic} alt="Product" style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "6px" }} />
                                         <div className="d-flex flex-column">
-                                        <span className="fw-semibold">{item.name}</span>
+                                        <span className="fw-semibold">{item.itemName}</span>
                                         <span style={{ fontSize: "0.85rem", fontWeight: "bold", color: item.stock < 5 ? "#B64345" : item.stock >= 5 && item.stock < 10 ? "#F8B13D" : "#ACACAC" }}>
                                             In stock: {item.stock} pcs
                                         </span>
