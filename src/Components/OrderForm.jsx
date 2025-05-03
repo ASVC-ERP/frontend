@@ -2,7 +2,6 @@ import React from 'react';
 import { IoIosSearch } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
 import defaultPic from "../assets/defaultPic.jpg"
-import Swal from 'sweetalert2'
 
 function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProduct, onPriceChange, onUpdateOrderItem, onCalculateTotal, onCalculateTotalPrice, onRemoveProduct}) {
    
@@ -40,18 +39,18 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                                 width: '98%', // Ensure it matches the input width
                             }}
                             >
-                            {suggestions.map((product, index) => (
+                            {suggestions.map((items, index) => (
                                 <li
                                 key={index}
-                                onClick={() => onSelectProduct(product)}
+                                onClick={() => onSelectProduct(items)}
                                 style={{
                                     padding: '10px',
                                     cursor: 'pointer',
                                     borderBottom: '1px solid #eee',
                                 }}
                                 >
-                                <strong>{product.itemName}</strong> <br />
-                                Stock: {product.stock}
+                                <strong>{items.itemName}</strong> <br />
+                                Stock: {items.stock}
                                 </li>
                             ))}
                             </ul>
