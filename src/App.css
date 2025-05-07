@@ -23,3 +23,9 @@
 .custom-header-color th {
   color: #ACACAC;
 }
+
+
+
+.sidebar {
+  transition: width 0.3s ease;
+}

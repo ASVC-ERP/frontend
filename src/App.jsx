@@ -13,10 +13,13 @@ function App() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
+  const [isCollapsed, setIsCollapsed] = useState(false);
 
-  {
-    /* SALES MODULE */
-  }
+  const handleSidebarCollapse = (collapse) => {
+    setIsCollapsed(collapse);
+  };
+
+  // SALES MODULE
   const [orders, setOrders] = useState({
     ORD001: {
       orderId: "ORD001",
@@ -215,6 +218,7 @@ function App() {
     if (alreadyInOrder) {
       Swal.fire({
         icon: "warning",
+        iconColor: "#0C1D61",
         title: "Duplicate Product",
         text: `${items.itemName} is already in the order list.`,
         confirmButtonColor: "#0C1D61",
@@ -274,9 +278,7 @@ function App() {
     setOrderItems(updatedItems);
   };
 
-  {
-    /* INVENTORY MODULE*/
-  }
+  //INVENTORY MODULE
 
   const [items, setItems] = useState([
     {
@@ -509,24 +511,29 @@ function App() {
   const handleAddItem = (newItem) => {
     setItems((prevItems) => [...prevItems, newItem]);
   };
-  
-  
+
   return (
     <Router>
-      {" "}
       {/* Wrap the entire app with Router */}
       <div className="container-fluid vh-100">
         <div className="row h-100">
           <div
-            className="col-2 overflow-hidden d-flex flex-column"
+            className={`col-${
+              isCollapsed ? "1" : "2"
+            } overflow-hidden d-flex flex-column`}
             style={{
               backgroundColor: "#E8E7EC",
               fontFamily: "'Outfit', sans-serif",
+              transition: "width 0.3s ease",
             }}
           >
-            <Sidebar />
+            <Sidebar collapsed={isCollapsed}/>
           </div>
-          <div className="col-10 d-flex flex-column p-0">
+          <div
+            className={`col-${
+              isCollapsed ? "11" : "10"
+            } d-flex flex-column p-0`}
+          >
             {/* Define routes here */}
             <Routes>
               <Route
@@ -558,7 +565,7 @@ function App() {
                 path="/inventory"
                 element={<Inventory products={Object.values(items)} />}
               />
-              <Route path="/inventory/item" element={<Item />}></Route>
+              <Route path="/inventory/item" element={<Item handleSidebarCollapse={handleSidebarCollapse} />}></Route>
               <Route
                 path="/add-item"
                 element={

@@ -1,29 +1,40 @@
 import { useLocation } from "react-router-dom";
 import ItemDetails from "./ItemDetails";
+import Tabs from "./InventoryTabs/Tabs";
+import { useEffect } from "react";
 
-function Item() {
+function Item({ handleSidebarCollapse }) {
   const location = useLocation();
   const { row } = location.state || {};
-  console.log(row);
+
+  useEffect(() => {
+    // Collapse sidebar when Item component is mounted
+    handleSidebarCollapse(true);
+
+    // Ensure the sidebar is restored when the component is unmounted
+    return () => {
+      handleSidebarCollapse(false);
+    };
+  }, [handleSidebarCollapse]);
   
   return (
     <>
       <div className="row mt-3 mx-3">
         <div
           className="border rounded-3"
-          style={{ height: "400px", backgroundColor: "#E8E7EC" }}
+          style={{ height: "350px", backgroundColor: "#E8E7EC" }}
         >
-          <p
-            className="h4 fw-bold mt-2 ms-3"
-            style={{ color: "#050505", fontFamily: "'Outfit', sans-serif" }}
-          >
-            Item Details
-          </p>
           <ItemDetails item={row} />
         </div>
       </div>
-
-      
+      <div className="row mt-3 mx-3">
+        <div
+          className="border rounded-3"
+          style={{ height: "400px", backgroundColor: "#E8E7EC" }}
+        >
+          <Tabs />
+        </div>
+      </div>
     </>
   );
 }
