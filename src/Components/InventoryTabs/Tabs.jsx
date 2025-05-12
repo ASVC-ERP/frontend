@@ -6,7 +6,7 @@ import PriceHistoryTab from "./PriceHistoryTab";
 function Tabs() {
   return (
     <div>
-      <ul className="nav nav-tabs" id="item-details-tabs" role="tablist">
+      <ul className="nav nav-tabs mt-2" id="item-details-tabs" role="tablist">
         <li className="nav-item" role="presentation">
           <button
             className="nav-link active"
@@ -58,18 +58,18 @@ function Tabs() {
       </ul>
 
       {/* tab content */}
-      <div className="tab-content p-3">
+      <div className="tab-content ">
         <div className="tab-pane fade show active" id="tab1" role="tabpanel">
           <CostHistoryTab />    
         </div>
         <div className="tab-pane fade" id="tab2" role="tabpanel">
-          Content for Tab 2
+          <SalesOrderHistoryTab />
         </div>
         <div className="tab-pane fade" id="tab3" role="tabpanel">
-          Content for Tab 3
+          <PhysicalCountTab />  
         </div>
         <div className="tab-pane fade" id="tab4" role="tabpanel">
-          Content for Tab 3
+          <PriceHistoryTab />
         </div>
       </div>
     </div>

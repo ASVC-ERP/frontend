@@ -8,6 +8,8 @@ import Swal from "sweetalert2";
 import Inventory from "./Components/Inventory.jsx";
 import Item from "./Components/Item.jsx"; // Import InventoryDetails component
 import AddItem from "./Components/AddItem.jsx"; // Import AddItem component
+import Supplier from "./Components/Supplier.jsx"; // Import Supplier component
+import AddSupplier from "./Components/AddSupplier.jsx"; // Import AddSupplier component
 
 function App() {
   const [query, setQuery] = useState("");
@@ -512,6 +514,133 @@ function App() {
     setItems((prevItems) => [...prevItems, newItem]);
   };
 
+  const [supplier, setSupplier] = useState([
+    {
+      name: "ABC Suppliers",
+      address: "123 Main Street, City A",
+      invoiceDate: "2025-05-12",
+      quantity: 100,
+      items: "Laptops",
+      description: "High-performance laptops for office use",
+      gPrice: "1000.00",
+      discount: "10%",
+      nPrice: "900.00",
+      totalValue: "90,000.00",
+    },
+    {
+      name: "XYZ Traders",
+      address: "456 Elm Street, City B",
+      invoiceDate: "2025-05-11",
+      quantity: 50,
+      items: "Smartphones",
+      description: "Latest model smartphones with warranty",
+      gPrice: "500.00",
+      discount: "5%",
+      nPrice: "475.00",
+      totalValue: "23,750.00",
+    },
+    {
+      name: "Global Supplies",
+      address: "789 Maple Avenue, City C",
+      invoiceDate: "2025-05-10",
+      quantity: 200,
+      items: "Office Chairs",
+      description: "Ergonomic chairs for office use",
+      gPrice: "80.00",
+      discount: "15%",
+      nPrice: "68.00",
+      totalValue: "13,600.00",
+    },
+    {
+      name: "Prime Traders",
+      address: "101 Oak Road, City D",
+      invoiceDate: "2025-05-09",
+      quantity: 30,
+      items: "Projectors",
+      description: "High-definition projectors for presentations",
+      gPrice: "300.00",
+      discount: "0%",
+      nPrice: "300.00",
+      totalValue: "9,000.00",
+    },
+    {
+      name: "Local Distributors",
+      address: "202 Pine Lane, City E",
+      invoiceDate: "2025-05-08",
+      quantity: 150,
+      items: "Desk Lamps",
+      description: "Adjustable LED desk lamps",
+      gPrice: "20.00",
+      discount: "5%",
+      nPrice: "19.00",
+      totalValue: "2,850.00",
+    },
+    {
+      name: "United Suppliers",
+      address: "303 Cedar Blvd, City F",
+      invoiceDate: "2025-05-07",
+      quantity: 80,
+      items: "Monitors",
+      description: "24-inch Full HD monitors",
+      gPrice: "150.00",
+      discount: "10%",
+      nPrice: "135.00",
+      totalValue: "10,800.00",
+    },
+    {
+      name: "Tech Solutions",
+      address: "404 Spruce Street, City G",
+      invoiceDate: "2025-05-06",
+      quantity: 60,
+      items: "Keyboards",
+      description: "Wireless mechanical keyboards",
+      gPrice: "40.00",
+      discount: "12%",
+      nPrice: "35.20",
+      totalValue: "2,112.00",
+    },
+    {
+      name: "Metro Suppliers",
+      address: "505 Birch Way, City H",
+      invoiceDate: "2025-05-05",
+      quantity: 120,
+      items: "Mice",
+      description: "Ergonomic wireless mice",
+      gPrice: "15.00",
+      discount: "8%",
+      nPrice: "13.80",
+      totalValue: "1,656.00",
+    },
+    {
+      name: "Bright Industries",
+      address: "606 Willow Lane, City I",
+      invoiceDate: "2025-05-04",
+      quantity: 40,
+      items: "Printers",
+      description: "Multifunction laser printers",
+      gPrice: "200.00",
+      discount: "7%",
+      nPrice: "186.00",
+      totalValue: "7,440.00",
+    },
+    {
+      name: "Elite Traders",
+      address: "707 Fir Road, City J",
+      invoiceDate: "2025-05-03",
+      quantity: 25,
+      items: "Scanners",
+      description: "High-speed document scanners",
+      gPrice: "250.00",
+      discount: "5%",
+      nPrice: "237.50",
+      totalValue: "5,937.50",
+    },
+  ]);
+
+  const handleAddSupplier = (newSupplier) => {
+    setSupplier((prevSupplier) => [...prevSupplier, newSupplier]);
+  };
+
   return (
     <Router>
       {/* Wrap the entire app with Router */}
@@ -527,7 +656,7 @@ function App() {
               transition: "width 0.3s ease",
             }}
           >
-            <Sidebar collapsed={isCollapsed}/>
+            <Sidebar collapsed={isCollapsed} />
           </div>
           <div
             className={`col-${
@@ -565,7 +694,10 @@ function App() {
                 path="/inventory"
                 element={<Inventory products={Object.values(items)} />}
               />
-              <Route path="/inventory/item" element={<Item handleSidebarCollapse={handleSidebarCollapse} />}></Route>
+              <Route
+                path="/inventory/item"
+                element={<Item handleSidebarCollapse={handleSidebarCollapse} />}
+              ></Route>
               <Route
                 path="/add-item"
                 element={
@@ -573,6 +705,17 @@ function App() {
                     onAddItem={handleAddItem}
                     items={items}
                     setItems={setItems}
+                  />
+                }
+              ></Route>
+              <Route path="/supplier" element={<Supplier supplier={Object.values(supplier)}/>} />
+              <Route
+                path="/add-supplier"
+                element={
+                  <AddSupplier
+                    onAddSupplier={handleAddSupplier}
+                    supplier={supplier}
+                    setSupplier={setSupplier}
                   />
                 }
               ></Route>

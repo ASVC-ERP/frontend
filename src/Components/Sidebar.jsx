@@ -1,21 +1,23 @@
 import { useState } from "react";
 import { BsBasketFill, BsBoxSeamFill, BsPersonCircle } from "react-icons/bs";
-import { FaFileInvoiceDollar } from "react-icons/fa";
-import { HiDocumentReport } from "react-icons/hi";
+import { MdWarehouse } from "react-icons/md";
 import { FaCashRegister } from "react-icons/fa6";
 import { IoReceipt } from "react-icons/io5";
+import { FaTruck } from "react-icons/fa";
+
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 import logo from "../assets/logo.png";
 
 export default function Sidebar({ collapsed }) {
-  const [isOpen, setIsOpen] = useState(false);
+  const [isSalesOpen, setIsSalesOpen] = useState(false);
+  const [isInvOpen, setIsInvOpen] = useState(false);
 
   return (
     <div
       className="d-flex flex-column vh-100 position-sticky"
       style={{
-        width: collapsed ? "60px" : "250px",
+        width: collapsed ? "80px" : "250px",
         transition: "width 0.3s ease",
         overflow: "hidden",
         backgroundColor: "#E8E7EC",
@@ -50,15 +52,18 @@ export default function Sidebar({ collapsed }) {
                 fontSize: "1.2rem",
                 cursor: "pointer",
               }}
-              onClick={() => setIsOpen(!isOpen)}
+              onClick={() => setIsSalesOpen(!isSalesOpen)}
             >
-              <BsBasketFill className="me-3" size={30} />
+              <BsBasketFill
+                className={`${collapsed ? "ms-3" : "me-3"}`}
+                size={30}
+              />
               <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
                 Sales
               </span>
             </a>
             {/* Dropdown Items - Only show if sidebar is not collapsed */}
-            {isOpen && (
+            {isSalesOpen && (
               <ul className="list-unstyled ms-4 mt-2">
                 <li>
                   <Link
@@ -70,7 +75,10 @@ export default function Sidebar({ collapsed }) {
                       textDecoration: "none",
                     }}
                   >
-                    <FaCashRegister className="me-3" size={20} />
+                    <FaCashRegister
+                      className={`${collapsed ? "ms-3" : "me-3"}`}
+                      size={20}
+                    />
                     <span
                       className={`sidebar-text ${collapsed ? "d-none" : ""}`}
                     >
@@ -84,7 +92,10 @@ export default function Sidebar({ collapsed }) {
                     className="nav-link"
                     style={{ color: "#0C1D61", fontSize: "1.2rem" }}
                   >
-                    <IoReceipt className="me-3" size={20} />
+                    <IoReceipt
+                      className={`${collapsed ? "ms-3" : "me-3"}`}
+                      size={20}
+                    />
                     <span
                       className={`sidebar-text ${collapsed ? "d-none" : ""}`}
                     >
@@ -96,28 +107,79 @@ export default function Sidebar({ collapsed }) {
             )}
           </li>
           <li className="nav-item mt-3">
-            <Link
+            <a
               to="/inventory"
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
                 fontSize: "1.2rem",
-                textDecoration: "none",
+                cursor: "pointer",
               }}
+              onClick={() => setIsInvOpen(!isInvOpen)}
             >
-              <BsBoxSeamFill className="me-3" size={30} />
+              <MdWarehouse
+                className={`${collapsed ? "ms-3" : "me-3"}`}
+                size={30}
+              />
               <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
                 Inventory
               </span>
-            </Link>
+            </a>
+            {/* Dropdown Items - Only show if sidebar is not collapsed */}
+            {isInvOpen && (
+              <ul className="list-unstyled ms-4 mt-2">
+                <li>
+                  <Link
+                    to="/inventory"
+                    className="nav-link"
+                    style={{
+                      color: "#0C1D61",
+                      fontSize: "1.2rem",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <BsBoxSeamFill
+                      className={`${collapsed ? "ms-3" : "me-3"}`}
+                      size={20}
+                    />
+                    <span
+                      className={`sidebar-text ${collapsed ? "d-none" : ""}`}
+                    >
+                      Product List
+                    </span>
+                  </Link>
+                </li>
+                <li>
+                  <Link
+                    to="/supplier"
+                    className="nav-link"
+                    style={{
+                      color: "#0C1D61",
+                      fontSize: "1.2rem",
+                      textDecoration: "none",
+                    }}
+                  >
+                    <FaTruck
+                      className={`${collapsed ? "ms-3" : "me-3"}`}
+                      size={20}
+                    />
+                    <span
+                      className={`sidebar-text ${collapsed ? "d-none" : ""}`}
+                    >
+                      Supplier List
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            )}
           </li>
-          <li className="nav-item mt-3">
+          {/* <li className="nav-item mt-3">
             <a
               href="#"
               className="nav-link d-flex align-items-center"
               style={{ color: "#0C1D61", fontSize: "1.2rem" }}
             >
-              <FaFileInvoiceDollar className="me-3" size={30} />
+              <FaFileInvoiceDollar className={`${collapsed ? "ms-3" : "me-3"}`} size={30} />
               <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
                 Accounting
               </span>
@@ -129,12 +191,12 @@ export default function Sidebar({ collapsed }) {
               className="nav-link d-flex align-items-center"
               style={{ color: "#0C1D61", fontSize: "1.2rem" }}
             >
-              <HiDocumentReport className="me-3" size={30} />
+              <HiDocumentReport className={`${collapsed ? "ms-3" : "me-3"}`} size={30} />
               <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
                 Report
               </span>
             </a>
-          </li>
+          </li> */}
         </ul>
       </div>
 

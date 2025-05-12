@@ -30,7 +30,7 @@ function Item({ handleSidebarCollapse }) {
       <div className="row mt-3 mx-3">
         <div
           className="border rounded-3"
-          style={{ height: "400px", backgroundColor: "#E8E7EC" }}
+          style={{ height: "335px", backgroundColor: "#E8E7EC" }}
         >
           <Tabs />
         </div>
