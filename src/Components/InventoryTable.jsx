@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
@@ -20,7 +20,11 @@ const columns = [
 function InventoryTable({ products }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState(Object.values(products));
+  const [filteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+  setFilteredData(Object.values(products));
+}, [products]);
 
   // Handle search input change
   const handleSearch = (event) => {

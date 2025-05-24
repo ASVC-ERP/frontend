@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
@@ -28,7 +28,11 @@ function OrdersTable({ orders }) {
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState(Object.values(orders));
+  const [filteredData, setFilteredData] = useState([]);
+
+  useEffect(() => {
+    setFilteredData(Object.values(orders));
+  }, [orders]);
 
   // Handle search input change
   const handleSearch = (event) => {
@@ -147,7 +151,9 @@ function OrdersTable({ orders }) {
                               }}
                             />
                             <div className="d-flex flex-column">
-                              <span className="fw-semibold">{item.name}</span>
+                              <span className="fw-semibold">
+                                {item.itemName}
+                              </span>
                             </div>
                           </div>
 
