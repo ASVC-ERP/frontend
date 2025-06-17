@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
-import defaultPic from "../assets/defaultPic.jpg";
+import defaultPic from "../../assets/defaultPic.jpg";
 
 // Define table columns
 const columns = [

@@ -6,13 +6,13 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 import Sidebar from "./Components/Sidebar.jsx";
-import SalesOrder from "./Components/SalesOrder.jsx";
-import CreateOrder from "./Components/CreateOrder.jsx";
-import Inventory from "./Components/Inventory.jsx";
-import Item from "./Components/Item.jsx";
-import AddItem from "./Components/AddItem.jsx";
-import Supplier from "./Components/Supplier.jsx";
-import AddSupplier from "./Components/AddSupplier.jsx";
+import SalesOrder from "./Components/Orders/SalesOrder.jsx";
+import CreateOrder from "./Components/Orders/CreateOrder.jsx";
+import Inventory from "./Components/Inventory/Inventory.jsx";
+import Item from "./Components/Inventory/SpecificItem/Item.jsx";
+import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
+import Supplier from "./Components/Supplier/Supplier.jsx";
+import AddSupplier from "./Components/Supplier/AddSupplier.jsx";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -133,6 +133,10 @@ function App() {
     );
     setOrderItems(updatedItems);
   };
+
+  const handleReserve = (items) => {
+    const reserveQty = orderItems
+  }
 
   //** INVENTORY MODULE **//
 

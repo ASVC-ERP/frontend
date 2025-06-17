@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import ItemDetails from "./ItemDetails";
-import Tabs from "./InventoryTabs/Tabs";
+import Tabs from "../InventoryTabs/Tabs";
 import { useEffect } from "react";
 
 function Item({ handleSidebarCollapse }) {

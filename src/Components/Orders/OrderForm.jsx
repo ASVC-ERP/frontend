@@ -1,7 +1,7 @@
 import React from 'react';
 import { IoIosSearch } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
-import defaultPic from "../assets/defaultPic.jpg"
+import defaultPic from "../../assets/defaultPic.jpg"
 
 function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProduct, onPriceChange, onUpdateOrderItem, onCalculateTotal, onCalculateTotalPrice, onRemoveProduct}) {
    

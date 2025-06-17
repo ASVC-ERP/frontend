@@ -1,31 +1,31 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { IoIosSearch } from "react-icons/io";
 
 const columns = [
   { name: "Supplier Name", selector: (row) => row.name, sortable: true },
   { name: "Supplier Address", selector: (row) => row.address, sortable: true },
-  {
-    name: "Date of Invoice",
-    selector: (row) => row.invoiceDate,
-    sortable: true,
-  },
-  { name: "Quantity", selector: (row) => row.quantity, sortable: true },
-  { name: "Item / s", selector: (row) => row.items, sortable: true },
-  { name: "Descriptions", selector: (row) => row.description, sortable: true },
-  { name: "Gross Price", selector: (row) => row.gPrice, sortable: true },
-  { name: "Discounts", selector: (row) => row.discount, sortable: true },
-  { name: "Net Price", selector: (row) => row.nPrice, sortable: true },
-  {
-    name: "Total Value of Invoice",
-    selector: (row) => row.totalValue,
-    sortable: true,
-  },
+  // {
+  //   name: "Date of Invoice",
+  //   selector: (row) => row.invoiceDate,
+  //   sortable: true,
+  // },
+  // { name: "Quantity", selector: (row) => row.quantity, sortable: true },
+  // { name: "Item / s", selector: (row) => row.items, sortable: true },
+  // { name: "Descriptions", selector: (row) => row.description, sortable: true },
+  // { name: "Gross Price", selector: (row) => row.gPrice, sortable: true },
+  // { name: "Discounts", selector: (row) => row.discount, sortable: true },
+  // { name: "Net Price", selector: (row) => row.nPrice, sortable: true },
+  // {
+  //   name: "Total Value of Invoice",
+  //   selector: (row) => row.totalValue,
+  //   sortable: true,
+  // },
 ];
 
 function SupplierTable({ supplier }) {
-//   const navigate = useNavigate();
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState(Object.values(supplier));
 
@@ -43,10 +43,10 @@ function SupplierTable({ supplier }) {
     setFilteredData(filtered);
   };
 
-//   const handleRowClick = (row) => {
-//     console.log("CLICKED", row); // Log the clicked row data
-//     navigate("/supplier/item", { state: { row } }); // Navigate to the details page with the selected row data
-//   };
+  const handleRowClick = (row) => {
+    console.log("CLICKED", row); // Log the clicked row data
+    navigate("/supplier/item", { state: { row } }); // Navigate to the details page with the selected row data
+  };
 
   return (
     <div>
@@ -82,7 +82,7 @@ function SupplierTable({ supplier }) {
           highlightOnHover
           fixedHeader
           fixedHeaderScrollHeight="500px"
-        //   onRowClicked={handleRowClick}
+          onRowClicked={handleRowClick}
           className="custom-data-table"
         />
       </div>
