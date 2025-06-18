@@ -53,8 +53,8 @@ export default function Sidebar() {
           </li>
 
           <li className="mt-2">
-            <a
-              href="#"
+           <Link
+              to="/invoice"
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
@@ -64,7 +64,7 @@ export default function Sidebar() {
             >
               <IoReceipt className="me-3" size={30} />
               <span className="sidebar-text">Invoice</span>
-            </a>
+            </Link>
           </li>
 
           <li className="mt-2">

@@ -8,6 +8,7 @@ import axios from "axios";
 import Sidebar from "./Components/Sidebar.jsx";
 import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
+import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
 import Inventory from "./Components/Inventory/Inventory.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
@@ -249,6 +250,7 @@ function App() {
                 />
               }
             />
+            <Route path="/invoice" element={<SalesInvoice />} />
             <Route
               path="/inventory"
               element={<Inventory products={Object.values(items)} />}

@@ -153,7 +153,7 @@ function SalesOrderHistoryTab() {
       name: "Sales Order No.",
       selector: (row) => row.salesOrderNum,
       sortable: true,
-      width: "150px", // Ensure enough width
+      width: "140px", // Ensure enough width
       cell: (row) => (
         <div style={{ whiteSpace: "nowrap" }}>{row.salesOrderNum}</div>
       ),
@@ -169,23 +169,23 @@ function SalesOrderHistoryTab() {
     },
     { name: "Unit Price", selector: (row) => row.unitPrice, sortable: true },
     { name: "Quantity", selector: (row) => row.quantity, sortable: true },
-    { name: "Packed Qty", selector: (row) => row.packedQty, sortable: true, },
+    { name: "Packed Qty", selector: (row) => row.packedQty, sortable: true, minWidth: "110px"},
     {
       name: "Unserved Qty",
       selector: (row) => row.unservedQty,
       sortable: true,
-      width: "150px", // Ensure enough width
+      minWidth: "130px", // Ensure enough width
       cell: (row) => (
         <div style={{ whiteSpace: "nowrap" }}>{row.unservedQty}</div>
       ),
     },
     { name: "Discount 1", selector: (row) => row.dc1, sortable: true },
-    { name: "Discount 2", selector: (row) => row.dc2, sortable: true },
+    { name: "Discount 2", selector: (row) => row.dc2, sortable: true,  minWidth: "110px",  },
     { name: "Agent", selector: (row) => row.agent, sortable: true },
     {
       name: "Created By",
       selector: (row) => row.createdBy,
-      sortable: true,
+      sortable: true,  minWidth: "110px", 
     },
   ];
 
