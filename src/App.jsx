@@ -12,17 +12,13 @@ import Inventory from "./Components/Inventory/Inventory.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
 import Supplier from "./Components/Supplier/Supplier.jsx";
+import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
 import AddSupplier from "./Components/Supplier/AddSupplier.jsx";
 
 function App() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
-  const [isCollapsed, setIsCollapsed] = useState(false);
-
-  const handleSidebarCollapse = (collapse) => {
-    setIsCollapsed(collapse);
-  };
 
   //** SALES MODULE **//
   const [orders, setOrders] = useState({});
@@ -89,7 +85,7 @@ function App() {
       ...orderItems,
       {
         ...items,
-        selectedMarkup: "original",
+        selectedMarkup: "price1",
         quantity: 1,
       },
     ]);
@@ -110,13 +106,13 @@ function App() {
   };
 
   const calculateTotal = (item) => {
-    const unitPrice = item.price[item.selectedMarkup];
+    const unitPrice = item[item.selectedMarkup];
     return unitPrice * item.quantity;
   };
 
   const calculateTotalPrice = () => {
     return orderItems.reduce((total, item) => {
-      const selectedPrice = item.price[item.selectedMarkup];
+      const selectedPrice = item[item.selectedMarkup];
       const quantity = item.quantity;
 
       // Ensure the values are valid numbers
@@ -135,8 +131,8 @@ function App() {
   };
 
   const handleReserve = (items) => {
-    const reserveQty = orderItems
-  }
+    const reserveQty = orderItems;
+  };
 
   //** INVENTORY MODULE **//
 
@@ -157,11 +153,10 @@ function App() {
           origin: item.origin,
           photo: item.photo,
           stock: item.stock,
-          price: {
-            original: item.original,
-            markup1: item.markup1,
-            markup2: item.markup2,
-          },
+          price1: item.price1,
+          price2: item.price2,
+          price3: item.price3,
+          price4: item.price4,
         }));
         setItems(transformedItems);
       })
@@ -193,128 +188,18 @@ function App() {
       });
   };
 
-  const [supplier, setSupplier] = useState([
-    {
-      name: "ABC Suppliers",
-      address: "123 Main Street, City A",
-      invoiceDate: "2025-05-12",
-      quantity: 100,
-      items: "Laptops",
-      description: "High-performance laptops for office use",
-      gPrice: "1000.00",
-      discount: "10%",
-      nPrice: "900.00",
-      totalValue: "90,000.00",
-    },
-    {
-      name: "XYZ Traders",
-      address: "456 Elm Street, City B",
-      invoiceDate: "2025-05-11",
-      quantity: 50,
-      items: "Smartphones",
-      description: "Latest model smartphones with warranty",
-      gPrice: "500.00",
-      discount: "5%",
-      nPrice: "475.00",
-      totalValue: "23,750.00",
-    },
-    {
-      name: "Global Supplies",
-      address: "789 Maple Avenue, City C",
-      invoiceDate: "2025-05-10",
-      quantity: 200,
-      items: "Office Chairs",
-      description: "Ergonomic chairs for office use",
-      gPrice: "80.00",
-      discount: "15%",
-      nPrice: "68.00",
-      totalValue: "13,600.00",
-    },
-    {
-      name: "Prime Traders",
-      address: "101 Oak Road, City D",
-      invoiceDate: "2025-05-09",
-      quantity: 30,
-      items: "Projectors",
-      description: "High-definition projectors for presentations",
-      gPrice: "300.00",
-      discount: "0%",
-      nPrice: "300.00",
-      totalValue: "9,000.00",
-    },
-    {
-      name: "Local Distributors",
-      address: "202 Pine Lane, City E",
-      invoiceDate: "2025-05-08",
-      quantity: 150,
-      items: "Desk Lamps",
-      description: "Adjustable LED desk lamps",
-      gPrice: "20.00",
-      discount: "5%",
-      nPrice: "19.00",
-      totalValue: "2,850.00",
-    },
-    {
-      name: "United Suppliers",
-      address: "303 Cedar Blvd, City F",
-      invoiceDate: "2025-05-07",
-      quantity: 80,
-      items: "Monitors",
-      description: "24-inch Full HD monitors",
-      gPrice: "150.00",
-      discount: "10%",
-      nPrice: "135.00",
-      totalValue: "10,800.00",
-    },
-    {
-      name: "Tech Solutions",
-      address: "404 Spruce Street, City G",
-      invoiceDate: "2025-05-06",
-      quantity: 60,
-      items: "Keyboards",
-      description: "Wireless mechanical keyboards",
-      gPrice: "40.00",
-      discount: "12%",
-      nPrice: "35.20",
-      totalValue: "2,112.00",
-    },
-    {
-      name: "Metro Suppliers",
-      address: "505 Birch Way, City H",
-      invoiceDate: "2025-05-05",
-      quantity: 120,
-      items: "Mice",
-      description: "Ergonomic wireless mice",
-      gPrice: "15.00",
-      discount: "8%",
-      nPrice: "13.80",
-      totalValue: "1,656.00",
-    },
-    {
-      name: "Bright Industries",
-      address: "606 Willow Lane, City I",
-      invoiceDate: "2025-05-04",
-      quantity: 40,
-      items: "Printers",
-      description: "Multifunction laser printers",
-      gPrice: "200.00",
-      discount: "7%",
-      nPrice: "186.00",
-      totalValue: "7,440.00",
-    },
-    {
-      name: "Elite Traders",
-      address: "707 Fir Road, City J",
-      invoiceDate: "2025-05-03",
-      quantity: 25,
-      items: "Scanners",
-      description: "High-speed document scanners",
-      gPrice: "250.00",
-      discount: "5%",
-      nPrice: "237.50",
-      totalValue: "5,937.50",
-    },
-  ]);
+  const [supplier, setSupplier] = useState([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/suppliers")
+      .then((response) => {
+        setSupplier(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching suppliers:", error);
+      });
+  }, []);
 
   const handleAddSupplier = (newSupplier) => {
     setSupplier((prevSupplier) => [...prevSupplier, newSupplier]);
@@ -322,87 +207,82 @@ function App() {
 
   return (
     <Router>
-      {/* Wrap the entire app with Router */}
-      <div className="container-fluid vh-100">
-        <div className="row h-100">
-          <div
-            className={`col-${
-              isCollapsed ? "1" : "2"
-            } overflow-hidden d-flex flex-column`}
-            style={{
-              backgroundColor: "#E8E7EC",
-              fontFamily: "'Outfit', sans-serif",
-              transition: "width 0.3s ease",
-            }}
-          >
-            <Sidebar collapsed={isCollapsed} />
-          </div>
-          <div
-            className={`col-${
-              isCollapsed ? "11" : "10"
-            } d-flex flex-column p-0`}
-          >
-            {/* Define routes here */}
-            <Routes>
-              <Route
-                path="/"
-                element={<SalesOrder orders={Object.values(orders)} />}
-              />
-              <Route
-                path="/create-order"
-                element={
-                  <CreateOrder
-                    query={query}
-                    suggestions={suggestions}
-                    orderItems={orderItems}
-                    setOrderItems={setOrderItems}
-                    onSearchChange={handleSearchChange}
-                    onSelectProduct={handleSelectProduct}
-                    onPriceChange={handlePriceChange}
-                    onUpdateOrderItem={updateOrderItem}
-                    onCalculateTotal={calculateTotal}
-                    onCalculateTotalPrice={calculateTotalPrice}
-                    onRemoveProduct={handleRemoveProduct}
-                    info={info}
-                    setInfo={setInfo}
-                    onAddOrder={handleAddOrder}
-                  />
-                }
-              />
-              <Route
-                path="/inventory"
-                element={<Inventory products={Object.values(items)} />}
-              />
-              <Route
-                path="/inventory/item"
-                element={<Item handleSidebarCollapse={handleSidebarCollapse} />}
-              ></Route>
-              <Route
-                path="/add-item"
-                element={
-                  <AddItem
-                    onAddItem={handleAddItem}
-                    items={items}
-                    setItems={setItems}
-                  />
-                }
-              ></Route>
-              <Route
-                path="/supplier"
-                element={<Supplier supplier={Object.values(supplier)} />}
-              />
-              <Route
-                path="/add-supplier"
-                element={
-                  <AddSupplier
-                    onAddSupplier={handleAddSupplier}
-                    supplier={supplier}
-                    setSupplier={setSupplier}
-                  />
-                }
-              ></Route>
-            </Routes>
-          </div>
+      <div className="container-fluid vh-100 d-flex p-0">
+        {/* Sidebar (static, slightly wider) */}
+        <div
+          style={{
+            width: "200px",
+            backgroundColor: "#E8E7EC",
+            fontFamily: "'Outfit', sans-serif",
+            overflow: "hidden",
+          }}
+          className="d-flex flex-column"
+        >
+          <Sidebar />
+        </div>
+
+        {/* Main content */}
+        <div className="flex-grow-1 d-flex flex-column p-0">
+          <Routes>
+            <Route
+              path="/"
+              element={<SalesOrder orders={Object.values(orders)} />}
+            />
+            <Route
+              path="/create-order"
+              element={
+                <CreateOrder
+                  query={query}
+                  suggestions={suggestions}
+                  orderItems={orderItems}
+                  setOrderItems={setOrderItems}
+                  onSearchChange={handleSearchChange}
+                  onSelectProduct={handleSelectProduct}
+                  onPriceChange={handlePriceChange}
+                  onUpdateOrderItem={updateOrderItem}
+                  onCalculateTotal={calculateTotal}
+                  onCalculateTotalPrice={calculateTotalPrice}
+                  onRemoveProduct={handleRemoveProduct}
+                  info={info}
+                  setInfo={setInfo}
+                  onAddOrder={handleAddOrder}
+                />
+              }
+            />
+            <Route
+              path="/inventory"
+              element={<Inventory products={Object.values(items)} />}
+            />
+            <Route path="/inventory/item" element={<Item />} />
+            <Route
+              path="/add-item"
+              element={
+                <AddItem
+                  onAddItem={handleAddItem}
+                  items={items}
+                  setItems={setItems}
+                />
+              }
+            />
+            <Route
+              path="/supplier"
+              element={<Supplier supplier={Object.values(supplier)} />}
+            />
+            <Route
+              path="/supplier/invoices"
+              element={<SupplierInvoicesTable />}
+            />
+            <Route
+              path="/add-supplier"
+              element={
+                <AddSupplier
+                  onAddSupplier={handleAddSupplier}
+                  supplier={supplier}
+                  setSupplier={setSupplier}
+                />
+              }
+            />
+          </Routes>
         </div>
       </div>
     </Router>

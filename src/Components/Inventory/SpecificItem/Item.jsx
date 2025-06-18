@@ -1,21 +1,11 @@
 import { useLocation } from "react-router-dom";
 import ItemDetails from "./ItemDetails";
 import Tabs from "../InventoryTabs/Tabs";
-import { useEffect } from "react";
 
-function Item({ handleSidebarCollapse }) {
+function Item () {
   const location = useLocation();
   const { row } = location.state || {};
 
-  useEffect(() => {
-    // Collapse sidebar when Item component is mounted
-    handleSidebarCollapse(true);
-
-    // Ensure the sidebar is restored when the component is unmounted
-    return () => {
-      handleSidebarCollapse(false);
-    };
-  }, [handleSidebarCollapse]);
   
   return (
     <>

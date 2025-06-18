@@ -34,7 +34,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="gPrice"
-            value={item.price.original}
+            value={item.price1}
           />
         </div>
       </div>
@@ -71,7 +71,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="aPrice"
-            value={item.price.markup1}
+            value={item.price2}
           />
         </div>
       </div>
@@ -108,7 +108,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="bPrice"
-            value={item.price.markup2}
+            value={item.price3}
           />
         </div>
       </div>
@@ -145,7 +145,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="sPrice"
-            value={item.price.special}
+            value={item.price4}
           />
         </div>
       </div>

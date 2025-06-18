@@ -12,7 +12,7 @@ const columns = [
   { name: "Stock", selector: (row) => row.stock, sortable: true },
   {
     name: "Cost per product",
-    selector: (row) => row.price.original,
+    selector: (row) => row.price1,
     sortable: true,
   },
 ];

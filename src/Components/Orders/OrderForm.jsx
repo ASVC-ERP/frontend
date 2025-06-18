@@ -92,9 +92,10 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                                 value={item.selectedMarkup}
                                 onChange={(e) => onPriceChange(idx, e.target.value)}
                                 >
-                                    <option value="original">₱{item.price.original}</option>
-                                    <option value="markup1">₱{item.price.markup1}</option>
-                                    <option value="markup2">₱{item.price.markup2}</option>
+                                    <option value="price1">₱{item.price1}</option>
+                                    <option value="price2">₱{item.price2}</option>
+                                    <option value="price3">₱{item.price3}</option>
+                                    <option value="price4">₱{item.price4}</option>
                                 </select>
                                 </td>
                                 <td style={{ color: "#ACACAC" }}> X </td>

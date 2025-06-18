@@ -7,29 +7,27 @@ import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 import logo from "../assets/logo.png";
 
-export default function Sidebar({ collapsed }) {
+export default function Sidebar() {
   return (
     <div
       className="d-flex flex-column vh-100 position-sticky"
       style={{
-        width: collapsed ? "80px" : "250px",
-        transition: "width 0.3s ease",
+        width: "200px", // fixed wider width
         overflow: "hidden",
         backgroundColor: "#E8E7EC",
+        fontFamily: "'Outfit', sans-serif",
       }}
     >
       {/* Logo and Company Name */}
-      <div className="d-flex align-items-center mb-3 px-3">
+      <div className="d-flex flex-column align-items-center mb-3 px-3">
         <img
           src={logo}
           alt="Logo"
-          className="m-0 p-0"
+          className="m-0 p-0 mt-2"
           style={{ height: "50px", width: "50px" }}
         />
         <p
-          className={`fw-bolder fs-5 m-0 p-0 sidebar-text ${
-            collapsed ? "d-none" : ""
-          }`}
+          className="fw-bolder fs-5 sidebar-text text-center"
           style={{ color: "#0C1D61", whiteSpace: "nowrap" }}
         >
           Company Name
@@ -49,15 +47,11 @@ export default function Sidebar({ collapsed }) {
                 cursor: "pointer",
               }}
             >
-              <FaCashRegister
-                className={`${collapsed ? "ms-3" : "me-3"}`}
-                size={30}
-              />
-              <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
-                Orders
-              </span>
+              <FaCashRegister className="me-3" size={30} />
+              <span className="sidebar-text">Orders</span>
             </Link>
           </li>
+
           <li className="mt-2">
             <a
               href="#"
@@ -68,13 +62,8 @@ export default function Sidebar({ collapsed }) {
                 cursor: "pointer",
               }}
             >
-              <IoReceipt
-                className={`${collapsed ? "ms-3" : "me-3"}`}
-                size={30}
-              />
-              <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
-                Invoice
-              </span>
+              <IoReceipt className="me-3" size={30} />
+              <span className="sidebar-text">Invoice</span>
             </a>
           </li>
 
@@ -88,15 +77,11 @@ export default function Sidebar({ collapsed }) {
                 cursor: "pointer",
               }}
             >
-              <BsBoxSeamFill
-                className={`${collapsed ? "ms-3" : "me-3"}`}
-                size={30}
-              />
-              <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
-                Inventory
-              </span>
+              <BsBoxSeamFill className="me-3" size={30} />
+              <span className="sidebar-text">Inventory</span>
             </Link>
           </li>
+
           <li className="mt-2">
             <Link
               to="/supplier"
@@ -107,37 +92,10 @@ export default function Sidebar({ collapsed }) {
                 cursor: "pointer",
               }}
             >
-              <FaTruck className={`${collapsed ? "ms-3" : "me-3"}`} size={30} />
-              <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
-                Supplier
-              </span>
+              <FaTruck className="me-3" size={30} />
+              <span className="sidebar-text">Supplier</span>
             </Link>
           </li>
-
-          {/* <li className="nav-item mt-3">
-            <a
-              href="#"
-              className="nav-link d-flex align-items-center"
-              style={{ color: "#0C1D61", fontSize: "1.2rem" }}
-            >
-              <FaFileInvoiceDollar className={`${collapsed ? "ms-3" : "me-3"}`} size={30} />
-              <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
-                Accounting
-              </span>
-            </a>
-          </li>
-          <li className="nav-item mt-3">
-            <a
-              href="#"
-              className="nav-link d-flex align-items-center"
-              style={{ color: "#0C1D61", fontSize: "1.2rem" }}
-            >
-              <HiDocumentReport className={`${collapsed ? "ms-3" : "me-3"}`} size={30} />
-              <span className={`sidebar-text ${collapsed ? "d-none" : ""}`}>
-                Report
-              </span>
-            </a>
-          </li> */}
         </ul>
       </div>
 
@@ -145,9 +103,7 @@ export default function Sidebar({ collapsed }) {
       <div className="d-flex align-items-center justify-content-center mb-4 mt-auto">
         <BsPersonCircle size={30} color="#0C1D61" />
         <p
-          className={`h5 fw-bolder ms-3 sidebar-text ${
-            collapsed ? "d-none" : ""
-          }`}
+          className="h5 fw-bolder ms-3 sidebar-text"
           style={{ color: "#0C1D61" }}
         >
           Hi, Prince 兄!
