@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, Navigate  } from "react-router-dom";
 
 import "./App.css";
 import { useState, useEffect } from "react";
@@ -6,20 +6,28 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 import Sidebar from "./Components/Sidebar.jsx";
+
 import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
+
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
+
 import Inventory from "./Components/Inventory/Inventory.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
+
 import Supplier from "./Components/Supplier/Supplier.jsx";
 import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
 import AddSupplier from "./Components/Supplier/AddSupplier.jsx";
+
+import LoginPage from "./Pages/LoginPage.jsx";
 
 function App() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
   //** SALES MODULE **//
   const [orders, setOrders] = useState({});
@@ -131,10 +139,6 @@ function App() {
     setOrderItems(updatedItems);
   };
 
-  const handleReserve = (items) => {
-    const reserveQty = orderItems;
-  };
-
   //** INVENTORY MODULE **//
 
   const [items, setItems] = useState([]);
@@ -208,85 +212,92 @@ function App() {
 
   return (
     <Router>
-      <div className="container-fluid vh-100 d-flex p-0">
-        {/* Sidebar (static, slightly wider) */}
-        <div
-          style={{
-            width: "200px",
-            backgroundColor: "#E8E7EC",
-            fontFamily: "'Outfit', sans-serif",
-            overflow: "hidden",
-          }}
-          className="d-flex flex-column"
-        >
-          <Sidebar />
-        </div>
+      {isAuthenticated ? (
+        <div className="container-fluid vh-100 d-flex p-0">
+          {/* Sidebar (static, slightly wider) */}
+          <div
+            style={{
+              width: "200px",
+              backgroundColor: "#E8E7EC",
+              fontFamily: "'Outfit', sans-serif",
+              overflow: "hidden",
+            }}
+            className="d-flex flex-column"
+          >
+            <Sidebar />
+          </div>
 
-        {/* Main content */}
-        <div className="flex-grow-1 d-flex flex-column p-0">
-          <Routes>
-            <Route
-              path="/"
-              element={<SalesOrder orders={Object.values(orders)} />}
-            />
-            <Route
-              path="/create-order"
-              element={
-                <CreateOrder
-                  query={query}
-                  suggestions={suggestions}
-                  orderItems={orderItems}
-                  setOrderItems={setOrderItems}
-                  onSearchChange={handleSearchChange}
-                  onSelectProduct={handleSelectProduct}
-                  onPriceChange={handlePriceChange}
-                  onUpdateOrderItem={updateOrderItem}
-                  onCalculateTotal={calculateTotal}
-                  onCalculateTotalPrice={calculateTotalPrice}
-                  onRemoveProduct={handleRemoveProduct}
-                  info={info}
-                  setInfo={setInfo}
-                  onAddOrder={handleAddOrder}
-                />
-              }
-            />
-            <Route path="/invoice" element={<SalesInvoice />} />
-            <Route
-              path="/inventory"
-              element={<Inventory products={Object.values(items)} />}
-            />
-            <Route path="/inventory/item" element={<Item />} />
-            <Route
-              path="/add-item"
-              element={
-                <AddItem
-                  onAddItem={handleAddItem}
-                  items={items}
-                  setItems={setItems}
-                />
-              }
-            />
-            <Route
-              path="/supplier"
-              element={<Supplier supplier={Object.values(supplier)} />}
-            />
-            <Route
-              path="/supplier/invoices"
-              element={<SupplierInvoicesTable />}
-            />
-            <Route
-              path="/add-supplier"
-              element={
-                <AddSupplier
-                  onAddSupplier={handleAddSupplier}
-                  supplier={supplier}
-                  setSupplier={setSupplier}
-                />
-              }
-            />
-          </Routes>
+          {/* Main content */}
+          <div className="flex-grow-1 d-flex flex-column p-0">
+            <Routes>
+              <Route
+                path="/order"
+                element={<SalesOrder orders={Object.values(orders)} />}
+              />
+              <Route
+                path="/create-order"
+                element={
+                  <CreateOrder
+                    query={query}
+                    suggestions={suggestions}
+                    orderItems={orderItems}
+                    setOrderItems={setOrderItems}
+                    onSearchChange={handleSearchChange}
+                    onSelectProduct={handleSelectProduct}
+                    onPriceChange={handlePriceChange}
+                    onUpdateOrderItem={updateOrderItem}
+                    onCalculateTotal={calculateTotal}
+                    onCalculateTotalPrice={calculateTotalPrice}
+                    onRemoveProduct={handleRemoveProduct}
+                    info={info}
+                    setInfo={setInfo}
+                    onAddOrder={handleAddOrder}
+                  />
+                }
+              />
+              <Route path="/invoice" element={<SalesInvoice />} />
+              <Route
+                path="/inventory"
+                element={<Inventory products={Object.values(items)} />}
+              />
+              <Route path="/inventory/item" element={<Item />} />
+              <Route
+                path="/add-item"
+                element={
+                  <AddItem
+                    onAddItem={handleAddItem}
+                    items={items}
+                    setItems={setItems}
+                  />
+                }
+              />
+              <Route
+                path="/supplier"
+                element={<Supplier supplier={Object.values(supplier)} />}
+              />
+              <Route
+                path="/supplier/invoices"
+                element={<SupplierInvoicesTable />}
+              />
+              <Route
+                path="/add-supplier"
+                element={
+                  <AddSupplier
+                    onAddSupplier={handleAddSupplier}
+                    supplier={supplier}
+                    setSupplier={setSupplier}
+                  />
+                }
+              />
+            </Routes>
+          </div>
         </div>
-      </div>
+      ) : (
+        <Routes>
+          <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      )}
     </Router>
   );
 }

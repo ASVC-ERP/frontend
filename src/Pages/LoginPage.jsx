@@ -1,0 +1,90 @@
+import { useState } from "react";
+import axios from "axios";
+import logo from "../assets/logo.png";
+import { useNavigate } from "react-router-dom";
+
+function LoginPage({ setIsAuthenticated }) {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post("http://localhost:3000/auth/login", {
+        username,
+        password,
+      });
+
+      // If successful, redirect to "/"
+      setIsAuthenticated(true);
+      navigate("/order");
+    } catch (err) {
+      setError(err.response?.data?.message || "Login failed");
+    }
+  };
+
+  return (
+    <div
+      className="d-flex vh-100 justify-content-center align-items-center"
+      style={{ backgroundColor: "#0C1D61" }}
+    >
+      <form
+        onSubmit={handleLogin}
+        className="p-5 pt-2 bg-light rounded shadow w-25"
+      >
+        <img
+          src={logo}
+          alt="companyLogo"
+          className="d-flex mx-auto mt-0 pt-0"
+        />
+
+        <div className="mb-3">
+          <label
+            className="form-label fw-semibold"
+            style={{ color: "#0C1D61" }}
+          >
+            Username
+          </label>
+          <input
+            type="text"
+            className="form-control"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+          />
+        </div>
+        <div className="mb-3">
+          <label
+            className="form-label fw-semibold"
+            style={{ color: "#0C1D61" }}
+          >
+            Password
+          </label>
+          <input
+            type="password"
+            className="form-control"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
+
+        {error && <div className="alert alert-danger mt-3">{error}</div>}
+
+        <button
+          type="submit"
+          className="btn w-100 text-white"
+          style={{ backgroundColor: "#0C1D61" }}
+        >
+          LOGIN
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default LoginPage;
