@@ -3,7 +3,7 @@ import axios from "axios";
 import logo from "../assets/logo.png";
 import { useNavigate } from "react-router-dom";
 
-function LoginPage({ setIsAuthenticated }) {
+function LoginPage({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,8 +19,14 @@ function LoginPage({ setIsAuthenticated }) {
         password,
       });
 
-      // If successful, redirect to "/"
-      setIsAuthenticated(true);
+      const user = response.data.user;
+
+      localStorage.setItem('isAuthenticated', 'true');
+      localStorage.setItem('user', JSON.stringify(user));
+
+      console.log("Login successful:", user);
+
+      onLoginSuccess();
       navigate("/order");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");

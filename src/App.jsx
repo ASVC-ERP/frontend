@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate  } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 
 import "./App.css";
 import { useState, useEffect } from "react";
@@ -6,6 +11,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 import Sidebar from "./Components/Sidebar.jsx";
+import ProfileModal from "./Components/ProfileModal";
 
 import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
@@ -26,8 +32,23 @@ function App() {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return localStorage.getItem("isAuthenticated") === "true";
+  });
 
+  // When logged in, store in localStorage
+  const handleLoginSuccess = () => {
+    setIsAuthenticated(true);
+    localStorage.setItem("isAuthenticated", "true");
+  };
+
+  // Optional: Logout handler
+  const handleLogout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("isAuthenticated");
+  };
+
+  const user = JSON.parse(localStorage.getItem("user"));
 
   //** SALES MODULE **//
   const [orders, setOrders] = useState({});
@@ -224,9 +245,8 @@ function App() {
             }}
             className="d-flex flex-column"
           >
-            <Sidebar />
+            <Sidebar onLogout={handleLogout} />
           </div>
-
           {/* Main content */}
           <div className="flex-grow-1 d-flex flex-column p-0">
             <Routes>
@@ -291,11 +311,18 @@ function App() {
               />
             </Routes>
           </div>
+          <ProfileModal user={user} />;
         </div>
       ) : (
         <Routes>
-          <Route path="/login" element={<LoginPage setIsAuthenticated={setIsAuthenticated} />} />
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route
+            path="/login"
+            element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
+          />
+          <Route
+            path="*"
+            element={<Navigate to={isAuthenticated ? "/order" : "/login"} />}
+          />
         </Routes>
       )}
     </Router>

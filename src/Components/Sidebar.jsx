@@ -7,7 +7,10 @@ import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
 import logo from "../assets/logo.png";
 
-export default function Sidebar() {
+
+export default function Sidebar({ onLogout }) {
+  const user = JSON.parse(localStorage.getItem("user"));
+
   return (
     <div
       className="d-flex flex-column vh-100 position-sticky"
@@ -33,7 +36,6 @@ export default function Sidebar() {
           Company Name
         </p>
       </div>
-
       {/* Navigation Links */}
       <div className="d-flex flex-column flex-grow-1">
         <ul className="nav flex-column list-unstyled ms-4 mt-2">
@@ -53,7 +55,7 @@ export default function Sidebar() {
           </li>
 
           <li className="mt-2">
-           <Link
+            <Link
               to="/invoice"
               className="nav-link d-flex align-items-center"
               style={{
@@ -98,16 +100,57 @@ export default function Sidebar() {
           </li>
         </ul>
       </div>
-
       {/* Profile Section at the Bottom */}
       <div className="d-flex align-items-center justify-content-center mb-4 mt-auto">
-        <BsPersonCircle size={30} color="#0C1D61" />
-        <p
-          className="h5 fw-bolder ms-3 sidebar-text"
-          style={{ color: "#0C1D61" }}
-        >
-          Hi, Prince 兄!
-        </p>
+        <div className="dropdown">
+          <button
+            className="btn p-0 border-0 bg-transparent d-flex align-items-center"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            id="profileDropdown"
+          >
+            <BsPersonCircle size={30} color="#0C1D61" />
+            <p
+              className="h5 fw-bolder ms-3 sidebar-text mb-0"
+              style={{ color: "#0C1D61" }}
+            >
+              Hi, {user.firstName} 兄!
+            </p>
+          </button>
+          <ul
+            className="dropdown-menu dropdown-menu-end"
+            aria-labelledby="profileDropdown"
+          >
+            <li>
+              <a
+                className="dropdown-item"
+                href="#profile"
+                data-bs-toggle="modal"
+                data-bs-target="#profileModal"
+              >
+                <i className="bi bi-person   me-2"></i>
+                Profile
+              </a>
+            </li>
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+            <li>
+              <button
+                className="dropdown-item text-danger"
+                href="#logout"
+                onClick={(e) => {
+                  e.preventDefault();
+                  onLogout();
+                }}
+              >
+                <i className="bi bi-box-arrow-right me-2"></i>
+                Logout
+              </button>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   );
