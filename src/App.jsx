@@ -23,6 +23,7 @@ import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
 
 import Supplier from "./Components/Supplier/Supplier.jsx";
+import SupplierTable from "./Components/Supplier/SupplierTable.jsx";
 import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
 import AddSupplier from "./Components/Supplier/AddSupplier.jsx";
 
@@ -216,6 +217,51 @@ function App() {
   };
 
   const [supplier, setSupplier] = useState([]);
+  useEffect(() => {
+    fetchSupplier();
+  }, []);
+
+  const fetchSupplier = () => {
+    axios
+    .get("http://localhost:3000/suppliers")
+    .then((response) => {
+      const transformedSuppliers = response.data.map((supplier) => ({
+        id: supplier.id,
+        name: supplier.name,
+        address: supplier.address,
+      }));
+      setSupplier(transformedSuppliers);
+    })
+    .catch((error) => {
+      console.error("Error fetching suppliers from backend:", error);
+    });
+  };
+
+  const handleAddSupplier = (newSupplier) => {
+    console.log("📦 Submitting supplier:", newSupplier);
+    axios
+      .post("http://localhost:3000/suppliers", newSupplier)
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          title: "Supplier added!",
+          text: "Supplier added successfully.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        fetchSupplier(); // refetch updated data
+      })
+      .catch((err) => {
+        console.error("Error adding supplier:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to add supplier. Please try again.",
+        });
+      });
+  };
+
+  /*
 
   useEffect(() => {
     axios
@@ -229,8 +275,31 @@ function App() {
   }, []);
 
   const handleAddSupplier = (newSupplier) => {
-    setSupplier((prevSupplier) => [...prevSupplier, newSupplier]);
+    console.log("📦 Submitting Supplier:", newItem);
+    axios
+      .post("http://localhost:3000/suppliers", newItem)
+      .then((response) => {
+        Swal.fire({
+          icon: "success",
+          title: "Added!",
+          text: "Item added successfully.",
+          timer: 2000,
+          showConfirmButton: false,
+        });
+        fetchItems();
+      })
+      .catch((err) => {
+        console.error("Error adding item:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Failed to add item. Please try again.",
+        });
+      });
   };
+  */
+
+
 
   return (
     <Router>
@@ -294,21 +363,16 @@ function App() {
               />
               <Route
                 path="/supplier"
-                element={<Supplier supplier={Object.values(supplier)} />}
+                element={
+                  <Supplier
+                    supplier={supplier} 
+                    onAddSupplier={handleAddSupplier} 
+                  />
+                }
               />
               <Route
                 path="/supplier/invoices"
                 element={<SupplierInvoicesTable />}
-              />
-              <Route
-                path="/add-supplier"
-                element={
-                  <AddSupplier
-                    onAddSupplier={handleAddSupplier}
-                    supplier={supplier}
-                    setSupplier={setSupplier}
-                  />
-                }
               />
             </Routes>
           </div>

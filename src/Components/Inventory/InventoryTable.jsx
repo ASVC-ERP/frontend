@@ -22,25 +22,9 @@ function InventoryTable({ products }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
 
-  /*
   useEffect(() => {
   setFilteredData(Object.values(products));
 }, [products]);
-*/
-
-  useEffect(() => {
-    const fetchInventory = async () => {
-      try {
-        const response = await fetch("http://localhost:3000/items");
-        const data = await response.json();
-        setFilteredData(data);
-      } catch (error) {
-        console.error("Failed to fetch inventory:", error);
-      }
-    };
-
-    fetchInventory();
-  }, []);
 
   // Handle search input change
   const handleSearch = (event) => {

@@ -1,6 +1,6 @@
 import SupplierTable from "./SupplierTable";
 
-function Supplier({supplier}) {
+function Supplier({supplier, onAddSupplier}) {
 return (
     <div className="container mt-3">
       <div className="d-flex justify-content-between align-items-center">
@@ -13,7 +13,10 @@ return (
       </div>
 
       <div className="row table-responsive mx-3">
-        <SupplierTable supplier={supplier} />
+        <SupplierTable 
+          supplier={supplier} 
+          onAddSupplier={onAddSupplier}
+        />
       </div>
     </div>
   );

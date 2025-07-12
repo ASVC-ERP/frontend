@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { IoIosSearch } from "react-icons/io";
-import axios from "axios";
 
 const columns = [
   { name: "Supplier Code", selector: (row) => row.id, sortable: true },
@@ -10,17 +9,15 @@ const columns = [
   { name: "Supplier Address", selector: (row) => row.address, sortable: true },
 ];
 
-function SupplierTable({ supplier }) {
+function SupplierTable({ supplier, onAddSupplier }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]); //useState(Object.values(supplier));
+  const [filteredData, setFilteredData] = useState([]);
 
-  // New local state for the form inputs
   const [newCode, setNewCode] = useState("");
   const [newName, setNewName] = useState("");
   const [newAddress, setNewAddress] = useState("");
 
-  // 🔄 Sync with latest supplier prop
   useEffect(() => {
     setFilteredData(supplier);
   }, [supplier]);
@@ -39,14 +36,8 @@ function SupplierTable({ supplier }) {
     setFilteredData(filtered);
   };
 
-
-  const handleRowClick = (row) => {
-    console.log("CLICKED", row); // Log the clicked row data
-    navigate("/supplier/invoices", { state: { row } }); // Navigate to the details page with the selected row data
-  };
-
-  const handleAddSupplier = async () => {
-    if (!newName.trim() || !newAddress.trim()) return;
+  const handleAddSupplierClick = () => {
+    if (!newCode.trim() || !newName.trim() || !newAddress.trim()) return;
 
     const newSupplier = {
       id: newCode,
@@ -54,17 +45,16 @@ function SupplierTable({ supplier }) {
       address: newAddress,
     };
 
-    try {
-      await axios.post("http://localhost:3000/suppliers", newSupplier);
-      onAddSupplier(newSupplier);
-      setNewCode("");
-      setNewName("");
-      setNewAddress("");
-    } catch (error) {
-      console.error("Failed to add supplier:", error);
-    }
+    onAddSupplier(newSupplier);
+    setNewCode("");
+    setNewName("");
+    setNewAddress("");
   };
 
+  const handleRowClick = (row) => {
+    console.log("CLICKED", row); // Log the clicked row data
+    navigate("/supplier/invoices", { state: { row } }); // Navigate to the details page with the selected row data
+  };
 
   return (
     <div className="container-fluid">
@@ -112,7 +102,7 @@ function SupplierTable({ supplier }) {
             type="button"
             className="btn"
             style={{ backgroundColor: "#0C1D61", color: "white", whiteSpace: "nowrap" }}
-            onClick={handleAddSupplier}
+            onClick={handleAddSupplierClick}
           >
             + Add Supplier
           </button>
