@@ -192,8 +192,9 @@ function App() {
   };
 
   const handleAddItem = (newItem) => {
+    console.log("📦 Submitting item:", newItem);
     axios
-      .post("http://localhost:3000/add_item", newItem)
+      .post("http://localhost:3000/items", newItem)
       .then((response) => {
         Swal.fire({
           icon: "success",

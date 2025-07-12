@@ -17,7 +17,7 @@ function AddItem({ onAddItem }) {
     e.preventDefault();
 
     const newItem = {
-      itemCode: Number(itemCode),
+      itemCode,
       itemName,
       brand,
       origin,

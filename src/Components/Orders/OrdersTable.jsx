@@ -3,6 +3,8 @@ import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
 import defaultPic from "../../assets/defaultPic.jpg";
+import axios from 'axios';
+
 
 // Define table columns
 const columns = [
@@ -23,16 +25,25 @@ const columns = [
 ];
 
 // Define table data
-function OrdersTable({ orders }) {
+function OrdersTable() {
   const [showRowModal, setShowRowModal] = useState(false);
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [orders, setOrders] = useState({});
 
   useEffect(() => {
-    setFilteredData(Object.values(orders));
-  }, [orders]);
+  axios.get("http://localhost:3000/orders")
+    .then((res) => {
+      setOrders(res.data);
+      setFilteredData(res.data);
+    })
+    .catch((err) => {
+      console.error("Failed to fetch orders:", err);
+    });
+}, []);
+
 
   // Handle search input change
   const handleSearch = (event) => {
