@@ -19,6 +19,7 @@ import CreateOrder from "./Components/Orders/CreateOrder.jsx";
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
 
 import Inventory from "./Components/Inventory/Inventory.jsx";
+import InventoryTable from "./Components/Inventory/InventoryTable.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
 
@@ -305,7 +306,6 @@ function App() {
     <Router>
       {isAuthenticated ? (
         <div className="container-fluid vh-100 d-flex p-0">
-          {/* Sidebar (static, slightly wider) */}
           <div
             style={{
               width: "200px",
@@ -346,18 +346,14 @@ function App() {
                 }
               />
               <Route path="/invoice" element={<SalesInvoice />} />
-              <Route
-                path="/inventory"
-                element={<Inventory products={Object.values(items)} />}
-              />
+
               <Route path="/inventory/item" element={<Item />} />
               <Route
-                path="/add-item"
+                path="/inventory"
                 element={
-                  <AddItem
-                    onAddItem={handleAddItem}
+                  <Inventory
                     items={items}
-                    setItems={setItems}
+                    onAddItem={handleAddItem}
                   />
                 }
               />

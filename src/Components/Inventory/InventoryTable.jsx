@@ -17,16 +17,20 @@ const columns = [
   },
 ];
 
-function InventoryTable({ products }) {
+function InventoryTable({ products=[], onAddItem = () => {} }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+
+  const [itemCode, setItemCode] = useState("");
+  const [itemName, setItemName] = useState("");
+  const [brand, setBrand] = useState("");
+  const [origin, setOrigin] = useState("");
 
   useEffect(() => {
   setFilteredData(Object.values(products));
 }, [products]);
 
-  // Handle search input change
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
@@ -38,6 +42,44 @@ function InventoryTable({ products }) {
     );
 
     setFilteredData(filtered);
+  };
+
+  const handleAddItemClick = () => {
+    if (!itemCode || !itemName || !brand || !origin) return;
+
+    const trimmedItem = {
+      itemCode: itemCode.trim(),
+      itemName: itemName.trim(),
+      brand: brand.trim(),
+      origin: origin.trim(),
+    };
+
+    if (
+      !trimmedItem.itemCode ||
+      !trimmedItem.itemName ||
+      !trimmedItem.brand ||
+      !trimmedItem.origin
+    ) {
+      alert("Please fill in all item details.");
+      return;
+    }
+
+    const newItem = {
+      ...trimmedItem,
+      stock: 0,
+      price1: 0,
+      price2: 0,
+      price3: 0,
+      price4: 0,
+    };
+
+    onAddItem(newItem);
+
+    // Reset inputs
+    setItemCode("");
+    setItemName("");
+    setBrand("");
+    setOrigin("");
   };
 
   const handleRowClick = (row) => {
@@ -62,6 +104,7 @@ function InventoryTable({ products }) {
             />
           </div>
 
+{/* Refactored Add Item Button
           <Link to="/add-item">
             <button
               type="button"
@@ -71,6 +114,51 @@ function InventoryTable({ products }) {
               + Add Inventory
             </button>
           </Link>
+*/}
+        </div>
+
+        <div className="d-flex gap-2 mb-4 flex-wrap">
+          <input
+            type="text"
+            placeholder="Item Code"
+            value={itemCode}
+            onChange={(e) => setItemCode(e.target.value)}
+            className="form-control"
+            style={{ maxWidth: "150px" }}
+          />
+          <input
+            type="text"
+            placeholder="Item Name"
+            value={itemName}
+            onChange={(e) => setItemName(e.target.value)}
+            className="form-control"
+            style={{ maxWidth: "200px" }}
+          />
+          <input
+            type="text"
+            placeholder="Brand"
+            value={brand}
+            onChange={(e) => setBrand(e.target.value)}
+            className="form-control"
+            style={{ maxWidth: "200px" }}
+          />
+          <input
+            type="text"
+            placeholder="Origin"
+            value={origin}
+            onChange={(e) => setOrigin(e.target.value)}
+            className="form-control"
+            style={{ maxWidth: "200px" }}
+          />
+
+          <button
+            type="button"
+            className="btn"
+            style={{ backgroundColor: "#0C1D61", color: "white", whiteSpace: "nowrap" }}
+            onClick={handleAddItemClick}
+          >
+            + Add Item
+          </button>
         </div>
 
         <DataTable

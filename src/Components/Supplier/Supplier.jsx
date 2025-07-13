@@ -13,7 +13,7 @@ return (
       </div>
 
       <div className="row table-responsive mx-3">
-        <SupplierTable 
+        <SupplierTable  
           supplier={supplier} 
           onAddSupplier={onAddSupplier}
         />
