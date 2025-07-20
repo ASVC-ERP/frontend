@@ -16,7 +16,11 @@ function SupplierInvoicesTable() {
   const [filteredData, setFilteredData] = useState([]);
 
   const [showEditModal, setShowEditModal] = useState(false);
-  const [editableSupplier, setEditableSupplier] = useState({ id: '', name: '', address: '' });
+  const [editableSupplier, setEditableSupplier] = useState({
+    id: "",
+    name: "",
+    address: "",
+  });
 
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -25,9 +29,16 @@ function SupplierInvoicesTable() {
   const [invoiceForm, setInvoiceForm] = useState({
     supplierInvoiceID: "",
     purchaseDate: "",
-    items: [{ itemCode: "", quantity: 1, unit: "", unitCost: 0, discount: 0 }],
+    items: [
+      {
+        itemCode: "",
+        quantity: null,
+        unit: "",
+        unitCost: null,
+        discount: null,
+      },
+    ],
   });
-
 
   useEffect(() => {
     if (!supplierID) return;
@@ -56,10 +67,13 @@ function SupplierInvoicesTable() {
 
   const handleUpdateSupplier = async () => {
     try {
-      await axios.put(`http://localhost:3000/suppliers/${editableSupplier.id}`, {
-        name: editableSupplier.name,
-        address: editableSupplier.address,
-      });
+      await axios.put(
+        `http://localhost:3000/suppliers/${editableSupplier.id}`,
+        {
+          name: editableSupplier.name,
+          address: editableSupplier.address,
+        }
+      );
 
       Swal.fire({
         icon: "success",
@@ -85,34 +99,43 @@ function SupplierInvoicesTable() {
         supplierInvoiceID: invoiceForm.supplierInvoiceID,
         purchaseDate: invoiceForm.purchaseDate,
         supplierID: supplierID,
-        items: invoiceForm.items.map(item => ({
+        items: invoiceForm.items.map((item) => ({
           ...item,
           grossPrice: item.unitCost * item.quantity - item.discount,
         })),
       };
 
-        console.log("📤 Submitting invoice data:", payload);
+      console.log("📤 Submitting invoice data:", payload);
 
-        await axios.post("http://localhost:3000/invoices", payload);
+      await axios.post("http://localhost:3000/invoices", payload);
 
       Swal.fire({
         icon: "success",
         title: "Invoice Submitted",
         text: "The supplier invoice has been added successfully!",
-        confirmButtonColor: "#0C1D61"
+        confirmButtonColor: "#0C1D61",
       });
 
       setShowCreateModal(false);
       setInvoiceForm({
         supplierInvoiceID: "",
         purchaseDate: "",
-        items: [{ itemCode: "", quantity: 1, unit: "", unitCost: 0, discount: 0 }],
+        items: [
+          {
+            itemCode: "",
+            quantity: null,
+            unit: "",
+            unitCost: null,
+            discount: null,
+          },
+        ],
       });
 
-      const res = await axios.get(`http://localhost:3000/invoices/${supplierID}`);
+      const res = await axios.get(
+        `http://localhost:3000/invoices/${supplierID}`
+      );
       setInvoiceData(res.data);
       setFilteredData(res.data);
-
     } catch (err) {
       console.error("Error submitting invoice:", err);
 
@@ -121,24 +144,31 @@ function SupplierInvoicesTable() {
           icon: "error",
           title: "Invoice Error",
           text: err.response.data.message,
-          confirmButtonColor: "#0C1D61"
+          confirmButtonColor: "#0C1D61",
         });
       } else {
         Swal.fire({
           icon: "error",
           title: "Error",
           text: "Failed to submit invoice. Please try again.",
-          confirmButtonColor: "#0C1D61"
+          confirmButtonColor: "#0C1D61",
         });
       }
     }
   };
 
-
   const columns = [
-    { name: "Invoice ID", selector: (row) => row.supplierInvoiceID, sortable: true },
+    {
+      name: "Invoice ID",
+      selector: (row) => row.supplierInvoiceID,
+      sortable: true,
+    },
     { name: "Date", selector: (row) => row.purchaseDate, sortable: true },
-    { name: "Number of Items", selector: (row) => row.items?.length || 0, sortable: true },
+    {
+      name: "Number of Items",
+      selector: (row) => row.items?.length || 0,
+      sortable: true,
+    },
     {
       name: "Total Gross Price",
       selector: (row) =>
@@ -171,11 +201,10 @@ function SupplierInvoicesTable() {
             />
           </div>
 
-
           <div className="d-flex justify-content-between align-items-center mb-3">
             {/* Left: Edit Supplier Button */}
             <button
-              className="btn btn-outline-primary"
+              className="btn button-edit-supplier"
               onClick={() => {
                 setEditableSupplier({ ...supplier });
                 setShowEditModal(true);
@@ -184,13 +213,18 @@ function SupplierInvoicesTable() {
               ✏️ Edit Supplier
             </button>
 
-          <button
-            className="btn btn-primary mb-3"
-            onClick={() => setShowCreateModal(true)}
-          >
-            + Create Invoice
-          </button>
-        </div>
+            <button
+              className="btn mb-3"
+              onClick={() => setShowCreateModal(true)}
+              style={{
+                backgroundColor: "#0C1D61",
+                color: "white",
+                whiteSpace: "nowrap",
+              }}
+            >
+              + Create Invoice
+            </button>
+          </div>
 
           <DataTable
             columns={columns}
@@ -206,8 +240,16 @@ function SupplierInvoicesTable() {
           />
 
           {showEditModal && (
-            <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-              <div className="modal-dialog" role="document">
+            <div
+              className="modal fade show d-block"
+              tabIndex="-1"
+              role="dialog"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <div
+                className="modal-dialog modal-dialog-centered"
+                role="document"
+              >
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title">Edit Supplier</h5>
@@ -232,7 +274,10 @@ function SupplierInvoicesTable() {
                       placeholder="Supplier Name"
                       value={editableSupplier.name}
                       onChange={(e) =>
-                        setEditableSupplier({ ...editableSupplier, name: e.target.value })
+                        setEditableSupplier({
+                          ...editableSupplier,
+                          name: e.target.value,
+                        })
                       }
                     />
                     <input
@@ -241,7 +286,10 @@ function SupplierInvoicesTable() {
                       placeholder="Supplier Address"
                       value={editableSupplier.address}
                       onChange={(e) =>
-                        setEditableSupplier({ ...editableSupplier, address: e.target.value })
+                        setEditableSupplier({
+                          ...editableSupplier,
+                          address: e.target.value,
+                        })
                       }
                     />
                   </div>
@@ -266,12 +314,24 @@ function SupplierInvoicesTable() {
           )}
 
           {showCreateModal && (
-            <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-              <div className="modal-dialog modal-lg" role="document">
+            <div
+              className="modal fade show d-block"
+              tabIndex="-1"
+              role="dialog"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <div
+                className="modal-dialog modal-lg modal-dialog-centered"
+                role="document"
+              >
                 <div className="modal-content">
                   <div className="modal-header">
                     <h5 className="modal-title">Create New Supplier Invoice</h5>
-                    <button type="button" className="btn-close" onClick={() => setShowCreateModal(false)}></button>
+                    <button
+                      type="button"
+                      className="btn-close"
+                      onClick={() => setShowCreateModal(false)}
+                    ></button>
                   </div>
                   <div className="modal-body">
                     <div className="mb-2">
@@ -281,7 +341,10 @@ function SupplierInvoicesTable() {
                         className="form-control"
                         value={invoiceForm.supplierInvoiceID}
                         onChange={(e) =>
-                          setInvoiceForm({ ...invoiceForm, supplierInvoiceID: e.target.value })
+                          setInvoiceForm({
+                            ...invoiceForm,
+                            supplierInvoiceID: e.target.value,
+                          })
                         }
                       />
                     </div>
@@ -292,13 +355,17 @@ function SupplierInvoicesTable() {
                         className="form-control"
                         value={invoiceForm.purchaseDate}
                         onChange={(e) =>
-                          setInvoiceForm({ ...invoiceForm, purchaseDate: e.target.value })
+                          setInvoiceForm({
+                            ...invoiceForm,
+                            purchaseDate: e.target.value,
+                          })
                         }
                       />
                     </div>
 
                     <div>
                       <h6>Items</h6>
+
                       {invoiceForm.items.map((item, index) => (
                         <div key={index} className="d-flex gap-2 mb-2">
                           <input
@@ -309,7 +376,10 @@ function SupplierInvoicesTable() {
                             onChange={(e) => {
                               const updated = [...invoiceForm.items];
                               updated[index].itemCode = e.target.value;
-                              setInvoiceForm({ ...invoiceForm, items: updated });
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: updated,
+                              });
                             }}
                           />
                           <input
@@ -319,8 +389,13 @@ function SupplierInvoicesTable() {
                             value={item.quantity}
                             onChange={(e) => {
                               const updated = [...invoiceForm.items];
-                              updated[index].quantity = parseInt(e.target.value);
-                              setInvoiceForm({ ...invoiceForm, items: updated });
+                              updated[index].quantity = parseInt(
+                                e.target.value
+                              );
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: updated,
+                              });
                             }}
                           />
                           <input
@@ -331,7 +406,10 @@ function SupplierInvoicesTable() {
                             onChange={(e) => {
                               const updated = [...invoiceForm.items];
                               updated[index].unit = e.target.value;
-                              setInvoiceForm({ ...invoiceForm, items: updated });
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: updated,
+                              });
                             }}
                           />
                           <input
@@ -341,8 +419,13 @@ function SupplierInvoicesTable() {
                             value={item.unitCost}
                             onChange={(e) => {
                               const updated = [...invoiceForm.items];
-                              updated[index].unitCost = parseFloat(e.target.value);
-                              setInvoiceForm({ ...invoiceForm, items: updated });
+                              updated[index].unitCost = parseFloat(
+                                e.target.value
+                              );
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: updated,
+                              });
                             }}
                           />
                           <input
@@ -352,16 +435,27 @@ function SupplierInvoicesTable() {
                             value={item.discount}
                             onChange={(e) => {
                               const updated = [...invoiceForm.items];
-                              updated[index].discount = parseFloat(e.target.value);
-                              setInvoiceForm({ ...invoiceForm, items: updated });
+                              updated[index].discount = parseFloat(
+                                e.target.value
+                              );
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: updated,
+                              });
                             }}
                           />
                           <button
-                            className="btn btn-danger"
+                            className="btn"
                             onClick={() => {
-                              const updated = invoiceForm.items.filter((_, i) => i !== index);
-                              setInvoiceForm({ ...invoiceForm, items: updated });
+                              const updated = invoiceForm.items.filter(
+                                (_, i) => i !== index
+                              );
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: updated,
+                              });
                             }}
+                            style={{ backgroundColor: "#B64345", color: "white" }}
                           >
                             ✕
                           </button>
@@ -372,25 +466,53 @@ function SupplierInvoicesTable() {
                         onClick={() =>
                           setInvoiceForm({
                             ...invoiceForm,
-                            items: [...invoiceForm.items, { itemCode: "", quantity: 1, unit: "", unitCost: 0, discount: 0 }],
+                            items: [
+                              ...invoiceForm.items,
+                              {
+                                itemCode: "",
+                                quantity: null,
+                                unit: "",
+                                unitCost: null,
+                                discount: null,
+                              },
+                            ],
                           })
                         }
                       >
                         + Add Item
                       </button>
+
+                      <div className="border-top pt-3 mt-3">
+                        <div className="d-flex justify-content-end">
+                          <div className="fw-bold fs-5">
+                            Total Gross Price: ₱
+                            {invoiceForm.items
+                              .reduce((total, item) => {
+                                return (
+                                  total +
+                                  (item.quantity * item.unitCost -
+                                    (item.discount || 0))
+                                );
+                              }, 0)
+                              .toFixed(2)}
+                          </div>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   <div className="modal-footer">
                     <button
-                      className="btn btn-secondary"
+                      className="btn"
                       onClick={() => setShowCreateModal(false)}
+                      style={{ backgroundColor: "#B64345", color: "white" }}
                     >
                       Cancel
                     </button>
                     <button
-                      className="btn btn-primary"
+                      className="btn"
                       onClick={handleSubmitInvoice}
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
                     >
                       Submit
                     </button>
@@ -400,18 +522,32 @@ function SupplierInvoicesTable() {
             </div>
           )}
 
-
           {showModal && selectedInvoice && (
-            <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-              <div className="modal-dialog" role="document">
+            <div
+              className="modal fade show d-block"
+              tabIndex="-1"
+              role="dialog"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <div
+                className="modal-dialog modal-dialog-centered"
+                role="document"
+              >
                 <div className="modal-content">
-
                   <div className="modal-header d-flex flex-column align-items-start">
                     <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                      <p className="mb-2" style={{ color: "#05050599", fontSize: "12px" }}>
-                        Supplier &gt; Invoices &gt; {selectedInvoice.supplierInvoiceID}
+                      <p
+                        className="mb-2"
+                        style={{ color: "#05050599", fontSize: "12px" }}
+                      >
+                        Supplier &gt; Invoices &gt;{" "}
+                        {selectedInvoice.supplierInvoiceID}
                       </p>
-                      <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                      <button
+                        type="button"
+                        className="btn-close"
+                        onClick={() => setShowModal(false)}
+                      ></button>
                     </div>
                     <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                       <h5 className="mb-0" style={{ color: "#0C1D61" }}>
@@ -421,7 +557,10 @@ function SupplierInvoicesTable() {
                   </div>
 
                   <div className="modal-body">
-                    <div className="rounded-3" style={{ maxHeight: "250px", overflowY: "auto" }}>
+                    <div
+                      className="rounded-3"
+                      style={{ maxHeight: "250px", overflowY: "auto" }}
+                    >
                       <ul className="list-unstyled">
                         {selectedInvoice.items.map((item, index) => (
                           <li key={index}>
@@ -439,17 +578,25 @@ function SupplierInvoicesTable() {
                                   }}
                                 />
                                 <div className="d-flex flex-column">
-                                  <span className="fw-semibold">{item.itemCode}</span>
-                                  <small className="text-muted">Qty: {item.quantity} {item.unit}</small>
+                                  <span className="fw-semibold">
+                                    {item.itemCode}
+                                  </span>
+                                  <small className="text-muted">
+                                    Qty: {item.quantity} {item.unit}
+                                  </small>
                                 </div>
                               </div>
 
                               <div className="text-end d-flex flex-column">
                                 <span className="fw-semibold">
-                                  ₱{item.grossPrice.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                  ₱
+                                  {item.grossPrice.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
                                 </span>
                                 <small className="text-muted">
-                                  Unit: ₱{item.unitCost} | Disc: ₱{item.discount}
+                                  Unit: ₱{item.unitCost} | Disc: ₱
+                                  {item.discount}
                                 </small>
                               </div>
                             </div>
@@ -462,20 +609,28 @@ function SupplierInvoicesTable() {
                       <span className="h5 fw-semibold">Gross Total</span>
                       <span className="fw-bold h5">
                         ₱
-                        {selectedInvoice.items.reduce((sum, item) => sum + item.grossPrice, 0).toLocaleString(undefined, {
-                          minimumFractionDigits: 2,
-                        })}
+                        {selectedInvoice.items
+                          .reduce((sum, item) => sum + item.grossPrice, 0)
+                          .toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                          })}
                       </span>
                     </div>
                   </div>
 
                   <div className="modal-footer d-flex justify-content-between align-items-end px-3">
                     <div>
-                      <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>{supplierName}</p>
-                      <p className="mb-0 small">Supplier ID: {selectedInvoice.supplierID}</p>
+                      <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
+                        {supplierName}
+                      </p>
+                      <p className="mb-0 small">
+                        Supplier ID: {selectedInvoice.supplierID}
+                      </p>
                     </div>
                     <p className="text-muted small mb-0">
-                      {new Date(selectedInvoice.purchaseDate).toLocaleDateString("en-GB", {
+                      {new Date(
+                        selectedInvoice.purchaseDate
+                      ).toLocaleDateString("en-GB", {
                         day: "2-digit",
                         month: "long",
                         year: "numeric",

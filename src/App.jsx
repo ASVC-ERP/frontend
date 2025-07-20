@@ -26,7 +26,6 @@ import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
 import Supplier from "./Components/Supplier/Supplier.jsx";
 import SupplierTable from "./Components/Supplier/SupplierTable.jsx";
 import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
-import AddSupplier from "./Components/Supplier/AddSupplier.jsx";
 
 import LoginPage from "./Pages/LoginPage.jsx";
 
@@ -321,7 +320,7 @@ function App() {
           <div className="flex-grow-1 d-flex flex-column p-0">
             <Routes>
               <Route
-                path="/order"
+                path="/"
                 element={<SalesOrder orders={Object.values(orders)} />}
               />
               <Route

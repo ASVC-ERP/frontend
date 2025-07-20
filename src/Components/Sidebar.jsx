@@ -41,7 +41,7 @@ export default function Sidebar({ onLogout }) {
         <ul className="nav flex-column list-unstyled ms-4 mt-2">
           <li className="mt-2">
             <Link
-              to="/order"
+              to="/"
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
