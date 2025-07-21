@@ -2,6 +2,9 @@ import { BsBoxSeamFill, BsPersonCircle } from "react-icons/bs";
 import { FaCashRegister } from "react-icons/fa6";
 import { IoReceipt } from "react-icons/io5";
 import { FaTruck } from "react-icons/fa";
+import { PiListChecksFill } from "react-icons/pi";
+import { FaUser } from "react-icons/fa";
+
 
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 
@@ -49,8 +52,23 @@ export default function Sidebar({ onLogout }) {
                 cursor: "pointer",
               }}
             >
+              <PiListChecksFill  className="me-3" size={30} />
+              <span className="sidebar-text">Approval</span>
+            </Link>
+          </li>
+
+          <li className="mt-2">
+            <Link
+              to="/order"
+              className="nav-link d-flex align-items-center"
+              style={{
+                color: "#0C1D61",
+                fontSize: "1.2rem",
+                cursor: "pointer",
+              }}
+            >
               <FaCashRegister className="me-3" size={30} />
-              <span className="sidebar-text">Orders</span>
+              <span className="sidebar-text">Order</span>
             </Link>
           </li>
 
@@ -96,6 +114,21 @@ export default function Sidebar({ onLogout }) {
             >
               <FaTruck className="me-3" size={30} />
               <span className="sidebar-text">Supplier</span>
+            </Link>
+          </li>
+
+          <li className="mt-2">
+            <Link
+              to="/customer"
+              className="nav-link d-flex align-items-center"
+              style={{
+                color: "#0C1D61",
+                fontSize: "1.2rem",
+                cursor: "pointer",
+              }}
+            >
+              <FaUser className="me-3" size={30} />
+              <span className="sidebar-text">Customer</span>
             </Link>
           </li>
         </ul>

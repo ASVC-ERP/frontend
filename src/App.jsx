@@ -13,19 +13,20 @@ import axios from "axios";
 import Sidebar from "./Components/Sidebar.jsx";
 import ProfileModal from "./Components/ProfileModal";
 
+import Approval from "./Components/Approval/Approval.jsx";
+
 import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
 
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
 
 import Inventory from "./Components/Inventory/Inventory.jsx";
-import InventoryTable from "./Components/Inventory/InventoryTable.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
-import AddItem from "./Components/Inventory/SpecificItem/AddItem.jsx";
 
 import Supplier from "./Components/Supplier/Supplier.jsx";
-import SupplierTable from "./Components/Supplier/SupplierTable.jsx";
 import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
+
+import Customer from "./Components/Customer/Customer.jsx";
 
 import LoginPage from "./Pages/LoginPage.jsx";
 
@@ -216,6 +217,7 @@ function App() {
       });
   };
 
+  //** SUPPLIER MODULE **//
   const [supplier, setSupplier] = useState([]);
   useEffect(() => {
     fetchSupplier();
@@ -321,6 +323,10 @@ function App() {
             <Routes>
               <Route
                 path="/"
+                element={<Approval supplier={supplier}/>}
+              />
+              <Route
+                path="/order"
                 element={<SalesOrder orders={Object.values(orders)} />}
               />
               <Route
@@ -368,6 +374,10 @@ function App() {
               <Route
                 path="/supplier/invoices"
                 element={<SupplierInvoicesTable />}
+              />
+              <Route
+                path="/customer"
+                element={<Customer />}
               />
             </Routes>
           </div>

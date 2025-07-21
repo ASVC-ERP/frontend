@@ -27,7 +27,7 @@ function LoginPage({ onLoginSuccess }) {
       console.log("Login successful:", user);
 
       onLoginSuccess();
-      navigate("/order");
+      navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
     }
