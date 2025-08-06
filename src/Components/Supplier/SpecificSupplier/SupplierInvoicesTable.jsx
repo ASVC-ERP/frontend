@@ -233,6 +233,7 @@ function SupplierInvoicesTable() {
             highlightOnHover
             fixedHeader
             fixedHeaderScrollHeight="500px"
+            className="custom-data-table"
             onRowClicked={(row) => {
               setSelectedInvoice(row);
               setShowModal(true);
@@ -298,12 +299,14 @@ function SupplierInvoicesTable() {
                     <button
                       className="btn btn-secondary"
                       onClick={() => setShowEditModal(false)}
+                      style={{ backgroundColor: "#B64345", color: "white" }}
                     >
                       Cancel
                     </button>
                     <button
                       className="btn btn-primary"
                       onClick={handleUpdateSupplier}
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
                     >
                       Save
                     </button>
@@ -455,7 +458,10 @@ function SupplierInvoicesTable() {
                                 items: updated,
                               });
                             }}
-                            style={{ backgroundColor: "#B64345", color: "white" }}
+                            style={{
+                              backgroundColor: "#B64345",
+                              color: "white",
+                            }}
                           >
                             ✕
                           </button>

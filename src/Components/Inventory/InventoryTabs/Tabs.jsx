@@ -3,7 +3,11 @@ import SalesOrderHistoryTab from "./SalesOrderHistoryTab";
 import PhysicalCountTab from "./PhysicalCountTab";
 import PriceHistoryTab from "./PriceHistoryTab";
 
+import { useState } from "react";
+
 function Tabs() {
+  const [activeTab, setActiveTab] = useState("tab1");
+
   return (
     <div>
       <ul className="nav nav-tabs mt-2" id="item-details-tabs" role="tablist">
@@ -15,6 +19,12 @@ function Tabs() {
             data-bs-target="#tab1"
             type="button"
             role="tab"
+            onClick={() => setActiveTab("tab1")}
+            style={{
+              backgroundColor: activeTab === "tab1" ? "#0C1D61" : "#ffffff",
+              color: activeTab === "tab1" ? "white" : "#0C1D61",
+              whiteSpace: "nowrap",
+            }}
           >
             Cost History
           </button>
@@ -27,6 +37,12 @@ function Tabs() {
             data-bs-target="#tab2"
             type="button"
             role="tab"
+            onClick={() => setActiveTab("tab2")}
+            style={{
+              backgroundColor: activeTab === "tab2" ? "#0C1D61" : "#ffffff",
+              color: activeTab === "tab2" ? "white" : "#0C1D61",
+              whiteSpace: "nowrap",
+            }}
           >
             Sales Order History
           </button>
@@ -39,6 +55,12 @@ function Tabs() {
             data-bs-target="#tab3"
             type="button"
             role="tab"
+            onClick={() => setActiveTab("tab3")}
+            style={{
+              backgroundColor: activeTab === "tab3" ? "#0C1D61" : "#ffffff",
+              color: activeTab === "tab3" ? "white" : "#0C1D61",
+              whiteSpace: "nowrap",
+            }}
           >
             Physical Count
           </button>
@@ -51,6 +73,12 @@ function Tabs() {
             data-bs-target="#tab4"
             type="button"
             role="tab"
+            onClick={() => setActiveTab("tab4")}
+            style={{
+              backgroundColor: activeTab === "tab4" ? "#0C1D61" : "#ffffff",
+              color: activeTab === "tab4" ? "white" : "#0C1D61",
+              whiteSpace: "nowrap",
+            }}
           >
             Price History
           </button>
@@ -60,13 +88,13 @@ function Tabs() {
       {/* tab content */}
       <div className="tab-content ">
         <div className="tab-pane fade show active" id="tab1" role="tabpanel">
-          <CostHistoryTab />    
+          <CostHistoryTab />
         </div>
         <div className="tab-pane fade" id="tab2" role="tabpanel">
           <SalesOrderHistoryTab />
         </div>
         <div className="tab-pane fade" id="tab3" role="tabpanel">
-          <PhysicalCountTab />  
+          <PhysicalCountTab />
         </div>
         <div className="tab-pane fade" id="tab4" role="tabpanel">
           <PriceHistoryTab />

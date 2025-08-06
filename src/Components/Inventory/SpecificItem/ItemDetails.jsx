@@ -1,5 +1,20 @@
+import { useState } from "react";
+
 function ItemDetails({ item }) {
-  console.log("ITEM", item);
+  const [showStockModal, setShowStockModal] = useState(false);
+  const [stockData, setStockData] = useState({
+    currentCount: 100, // replace with actual value
+    newCount: "",
+    remarks: "",
+  });
+
+  const handleStockUpdate = () => {
+    // Add validation or API logic here
+    console.log("Updated Stock:", stockData.newCount);
+    console.log("Reason:", stockData.remarks);
+    setShowStockModal(false);
+  };
+
   return (
     <div>
       {/* First Row */}
@@ -163,7 +178,93 @@ function ItemDetails({ item }) {
             value={item.unit}
           />
         </div>
+
+        <div className="col-auto d-flex align-items-end ms-auto mt-3 me-5">
+          <button
+            type="button"
+            className="btn"
+            style={{
+              backgroundColor: "#0C1D61",
+              color: "white",
+              whiteSpace: "nowrap",
+            }}
+            onClick={() => setShowStockModal(true)}
+          >
+            Stock Count
+          </button>
+        </div>
       </div>
+
+      {showStockModal && (
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          role="dialog"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Update Stock Count</h5>
+                <button
+                  type="button"
+                  className="btn-close"
+                  onClick={() => setShowStockModal(false)}
+                ></button>
+              </div>
+
+              <div className="modal-body">
+                <input
+                  type="text"
+                  className="form-control mb-2"
+                  placeholder="Current Stock"
+                  value={stockData.currentCount}
+                  disabled
+                />
+                <input
+                  type="number"
+                  className="form-control mb-2"
+                  placeholder="New Stock Count"
+                  value={stockData.newCount}
+                  onChange={(e) =>
+                    setStockData({ ...stockData, newCount: e.target.value })
+                  }
+                />
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  placeholder="Reason for stock change"
+                  value={stockData.remarks}
+                  onChange={(e) =>
+                    setStockData({ ...stockData, remarks: e.target.value })
+                  }
+                ></textarea>
+              </div>
+
+              <div className="modal-footer">
+                <button
+                  className="btn btn-secondary"
+                  onClick={() => setShowStockModal(false)}
+                  style={{ backgroundColor: "#B64345", color: "white" }}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="btn"
+                  style={{
+                    backgroundColor: "#0C1D61",
+                    color: "white",
+                    whiteSpace: "nowrap",
+                  }}
+                  onClick={handleStockUpdate}
+                >
+                  Save
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
