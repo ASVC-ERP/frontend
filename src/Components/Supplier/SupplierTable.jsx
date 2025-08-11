@@ -77,18 +77,26 @@ function SupplierTable({ supplier, onAddSupplier }) {
   return (
     <div className="container-fluid">
       <div className="my-3">
-        <div className="position-relative mb-3" style={{ maxWidth: "310px" }}>
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search inventory"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
+        <div
+          className="d-flex align-items-center justify-content-between mb-4"
+          style={{ gap: "10px" }}
+        >
+          {/* Search box */}
+          <div
+            className="position-relative flex-grow-1"
+            style={{ maxWidth: "310px" }}
+          >
+            <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+            <input
+              type="text"
+              placeholder="Search inventory"
+              value={searchTerm}
+              onChange={handleSearch}
+              className="form-control ps-5 border-2 rounded-3"
+            />
+          </div>
 
-        <div className="d-flex justify-content-end mb-4">
+          {/* Add Supplier button */}
           <button
             type="button"
             className="btn"

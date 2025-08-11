@@ -23,6 +23,7 @@ function Tabs() {
             style={{
               backgroundColor: activeTab === "tab1" ? "#0C1D61" : "#ffffff",
               color: activeTab === "tab1" ? "white" : "#0C1D61",
+              border: activeTab === "tab1" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}
           >
@@ -41,6 +42,7 @@ function Tabs() {
             style={{
               backgroundColor: activeTab === "tab2" ? "#0C1D61" : "#ffffff",
               color: activeTab === "tab2" ? "white" : "#0C1D61",
+              border: activeTab === "tab2" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}
           >
@@ -59,6 +61,7 @@ function Tabs() {
             style={{
               backgroundColor: activeTab === "tab3" ? "#0C1D61" : "#ffffff",
               color: activeTab === "tab3" ? "white" : "#0C1D61",
+              border: activeTab === "tab3" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}
           >
@@ -77,6 +80,7 @@ function Tabs() {
             style={{
               backgroundColor: activeTab === "tab4" ? "#0C1D61" : "#ffffff",
               color: activeTab === "tab4" ? "white" : "#0C1D61",
+              border: activeTab === "tab4" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}
           >

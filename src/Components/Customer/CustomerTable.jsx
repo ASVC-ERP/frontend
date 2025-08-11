@@ -4,23 +4,97 @@ import { IoIosSearch } from "react-icons/io";
 
 function InvoiceTable() {
   const customerData = [
-  { custId: "CUST-001", customerName: "John Doe", contact: "0917-123-4567", address: "123 Elm Street, Quezon City" },
-  { custId: "CUST-002", customerName: "Jane Smith", contact: "0928-987-6543", address: "456 Pine Avenue, Makati" },
-  { custId: "CUST-003", customerName: "Carlos Mendoza", contact: "0935-555-1234", address: "789 Oak Road, Taguig" },
-  { custId: "CUST-004", customerName: "Maricar Santos", contact: "0918-321-7890", address: "321 Birch Street, Pasig" },
-  { custId: "CUST-005", customerName: "Luis Reyes", contact: "0947-111-2233", address: "654 Maple Drive, Manila" },
-  { custId: "CUST-006", customerName: "Ana Dela Cruz", contact: "0956-456-7890", address: "88 Acacia Lane, Marikina" },
-  { custId: "CUST-007", customerName: "Miguel Rivera", contact: "0967-000-3456", address: "12 Kalayaan Ave, BGC, Taguig" },
-  { custId: "CUST-008", customerName: "Sophia Tan", contact: "0933-234-5678", address: "90 Jasmine St, Mandaluyong" },
-  { custId: "CUST-009", customerName: "Daniel Cruz", contact: "0922-456-7891", address: "45 Camia Rd, San Juan City" },
-  { custId: "CUST-010", customerName: "Patricia Lim", contact: "0916-222-3334", address: "18 Lilac Street, Antipolo" },
-  { custId: "CUST-011", customerName: "Joshua Garcia", contact: "0945-345-6678", address: "72 Mango Ave, Las Piñas" },
-  { custId: "CUST-012", customerName: "Andrea Lopez", contact: "0919-123-4321", address: "500 Nicanor Reyes St, Sampaloc" },
-  { custId: "CUST-013", customerName: "Ramon Velasco", contact: "0927-765-4321", address: "101 Bonifacio St, Caloocan" },
-  { custId: "CUST-014", customerName: "Katrina Go", contact: "0951-234-8765", address: "33 Sunflower Road, Parañaque" },
-  { custId: "CUST-015", customerName: "Emilio Aquino", contact: "0938-888-9990", address: "200 Rizal Blvd, Muntinlupa" },
-];
-
+    {
+      custId: "CUST-001",
+      customerName: "John Doe",
+      contact: "0917-123-4567",
+      address: "123 Elm Street, Quezon City",
+    },
+    {
+      custId: "CUST-002",
+      customerName: "Jane Smith",
+      contact: "0928-987-6543",
+      address: "456 Pine Avenue, Makati",
+    },
+    {
+      custId: "CUST-003",
+      customerName: "Carlos Mendoza",
+      contact: "0935-555-1234",
+      address: "789 Oak Road, Taguig",
+    },
+    {
+      custId: "CUST-004",
+      customerName: "Maricar Santos",
+      contact: "0918-321-7890",
+      address: "321 Birch Street, Pasig",
+    },
+    {
+      custId: "CUST-005",
+      customerName: "Luis Reyes",
+      contact: "0947-111-2233",
+      address: "654 Maple Drive, Manila",
+    },
+    {
+      custId: "CUST-006",
+      customerName: "Ana Dela Cruz",
+      contact: "0956-456-7890",
+      address: "88 Acacia Lane, Marikina",
+    },
+    {
+      custId: "CUST-007",
+      customerName: "Miguel Rivera",
+      contact: "0967-000-3456",
+      address: "12 Kalayaan Ave, BGC, Taguig",
+    },
+    {
+      custId: "CUST-008",
+      customerName: "Sophia Tan",
+      contact: "0933-234-5678",
+      address: "90 Jasmine St, Mandaluyong",
+    },
+    {
+      custId: "CUST-009",
+      customerName: "Daniel Cruz",
+      contact: "0922-456-7891",
+      address: "45 Camia Rd, San Juan City",
+    },
+    {
+      custId: "CUST-010",
+      customerName: "Patricia Lim",
+      contact: "0916-222-3334",
+      address: "18 Lilac Street, Antipolo",
+    },
+    {
+      custId: "CUST-011",
+      customerName: "Joshua Garcia",
+      contact: "0945-345-6678",
+      address: "72 Mango Ave, Las Piñas",
+    },
+    {
+      custId: "CUST-012",
+      customerName: "Andrea Lopez",
+      contact: "0919-123-4321",
+      address: "500 Nicanor Reyes St, Sampaloc",
+    },
+    {
+      custId: "CUST-013",
+      customerName: "Ramon Velasco",
+      contact: "0927-765-4321",
+      address: "101 Bonifacio St, Caloocan",
+    },
+    {
+      custId: "CUST-014",
+      customerName: "Katrina Go",
+      contact: "0951-234-8765",
+      address: "33 Sunflower Road, Parañaque",
+    },
+    {
+      custId: "CUST-015",
+      customerName: "Emilio Aquino",
+      contact: "0938-888-9990",
+      address: "200 Rizal Blvd, Muntinlupa",
+    },
+  ];
 
   const columns = [
     {
@@ -51,6 +125,38 @@ function InvoiceTable() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState(customerData);
 
+  const [showCustomerModal, setShowCustomerModal] = useState(false);
+  const [customerName, setCustomerName] = useState("");
+  const [contactNum, setContactNum] = useState("");
+  const [customerAddress, setCustomerAddress] = useState("");
+
+  const handleAddCustomerClick = () => {
+    setShowCustomerModal(true);
+  };
+
+  const handleCloseCustomerModal = () => {
+    setShowCustomerModal(false);
+    // Clear form fields when closing
+    setCustomerName("");
+    setContactNum("");
+    setCustomerAddress("");
+  };
+
+  const handleSubmitCustomer = () => {
+    // Your customer addition logic here
+    if (customerName && contactNum && customerAddress) {
+      // Add customer logic
+      console.log("Adding customer:", {
+        customerName,
+        contactNum,
+        customerAddress,
+      });
+
+      // Close modal and clear fields
+      handleCloseCustomerModal();
+    }
+  };
+
   // Handle search input change
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
@@ -66,30 +172,300 @@ function InvoiceTable() {
   };
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center">
-        {/* Search input field */}
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search inventory"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
+    <div className="container-fluid">
+      <div className="my-3">
+        <div
+          className="d-flex align-items-center justify-content-between mb-4"
+          style={{ gap: "10px" }}
+        >
+          {/* Search input field */}
+          <div className="position-relative w-25 my-0">
+            <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+            <input
+              type="text"
+              placeholder="Search inventory"
+              value={searchTerm}
+              onChange={handleSearch}
+              className="form-control ps-5 border-2 rounded-3"
+            />
+          </div>
+
+          {/* Add Customer button */}
+          <button
+            type="button"
+            className="btn"
+            style={{
+              backgroundColor: "#0C1D61",
+              color: "white",
+              whiteSpace: "nowrap",
+            }}
+            onClick={handleAddCustomerClick}
+          >
+            + Add Customer
+          </button>
+        </div>
+
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          pagination
+          highlightOnHover
+          fixedHeader
+          fixedHeaderScrollHeight="500px"
+          className="custom-data-table"
+        />
+      </div>
+
+      {/* Add Customer Modal */}
+      <div
+        className={`modal fade ${showCustomerModal ? "show" : ""}`}
+        tabIndex="-1"
+        style={{ display: showCustomerModal ? "block" : "none" }}
+        aria-hidden={!showCustomerModal}
+      >
+        <div className="modal-dialog modal-dialog-centered modal-lg w-50">
+          <div className="modal-content shadow-lg border-0">
+            {/* Header with gradient background */}
+            <div
+              className="modal-header text-white position-relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                borderRadius: "0.5rem 0.5rem 0 0",
+              }}
+            >
+              <div className="d-flex align-items-center">
+                <div>
+                  <h5 className="modal-title mb-0">Add New Customer</h5>
+                  <small className="opacity-75">
+                    Create a new customer record
+                  </small>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-close btn-close-white"
+                onClick={handleCloseCustomerModal}
+                aria-label="Close"
+              ></button>
+
+              {/* Decorative elements */}
+              <div
+                className="position-absolute"
+                style={{
+                  top: "-50px",
+                  right: "-50px",
+                  width: "100px",
+                  height: "100px",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  borderRadius: "50%",
+                }}
+              ></div>
+              <div
+                className="position-absolute"
+                style={{
+                  bottom: "-30px",
+                  left: "-30px",
+                  width: "60px",
+                  height: "60px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  borderRadius: "50%",
+                }}
+              ></div>
+            </div>
+
+            <div className="modal-body p-4">
+              <form>
+                <div className="row g-3">
+                  {/* Customer Name */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="customerName"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-user-tie me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Customer Name
+                    </label>
+                    <input
+                      type="text"
+                      id="customerName"
+                      placeholder="Enter customer/company name"
+                      value={customerName}
+                      onChange={(e) => setCustomerName(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Contact Name */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="contactName"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-user me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Contact Number
+                    </label>
+                    <input
+                      type="text"
+                      id="contactName"
+                      placeholder="Enter contact number"
+                      value={contactNum}
+                      onChange={(e) => setContactNum(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Customer Address */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="customerAddress"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-map-marker-alt me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Customer Address
+                    </label>
+                    <textarea
+                      id="customerAddress"
+                      placeholder="Enter complete customer address"
+                      value={customerAddress}
+                      onChange={(e) => setCustomerAddress(e.target.value)}
+                      className="form-control"
+                      rows="3"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        resize: "vertical",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+                </div>
+              </form>
+
+              {/* Additional info card */}
+              <div
+                className="mt-4 p-3 rounded-3"
+                style={{
+                  backgroundColor: "rgba(12, 29, 97, 0.05)",
+                  border: "1px solid rgba(12, 29, 97, 0.1)",
+                }}
+              >
+                <div className="d-flex align-items-center">
+                  <i
+                    className="fas fa-info-circle me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
+                  <small className="text-muted">
+                    Customer information will be used for invoicing and
+                    communication.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer bg-light border-0 rounded-bottom">
+              <button
+                type="button"
+                className="btn px-4 py-2 me-2"
+                onClick={handleCloseCustomerModal}
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "0.5rem",
+                  fontWeight: "500",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = "#5a6268";
+                  e.target.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = "#6c757d";
+                  e.target.style.transform = "translateY(0)";
+                }}
+              >
+                <i className="fas fa-times me-2"></i>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn px-4 py-2"
+                onClick={handleSubmitCustomer}
+                disabled={!customerName || !contactNum || !customerAddress}
+                style={{
+                  backgroundColor:
+                    !customerName || !contactNum || !customerAddress
+                      ? "#6c757d"
+                      : "#0C1D61",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "0.5rem",
+                  fontWeight: "500",
+                  transition: "all 0.3s ease",
+                  cursor:
+                    !customerName || !contactNum || !customerAddress
+                      ? "not-allowed"
+                      : "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (customerName && contactNum && customerAddress) {
+                    e.target.style.backgroundColor = "#1e3c72";
+                    e.target.style.transform = "translateY(-1px)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (customerName && contactName && customerAddress) {
+                    e.target.style.backgroundColor = "#0C1D61";
+                    e.target.style.transform = "translateY(0)";
+                  }
+                }}
+              >
+                <i className="fas fa-user-plus me-2"></i>
+                Add Customer
+              </button>
+            </div>
+          </div>
         </div>
       </div>
 
-      <DataTable
-        columns={columns}
-        data={filteredData}
-        pagination
-        highlightOnHover
-        fixedHeader
-        fixedHeaderScrollHeight="500px"
-        className="custom-data-table"
-      />
+      {/* Modal backdrop for Add Customer */}
+      {showCustomerModal && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={handleCloseCustomerModal}
+        ></div>
+      )}
     </div>
   );
 }

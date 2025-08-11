@@ -43,6 +43,7 @@ function ApprovalTables() {
   const filteredByStatus = supplierInvoice.filter(
     (inv) => inv.status === activeTab
   );
+  
   const filteredData = filteredByStatus.filter((row) =>
     Object.values(row).some((field) =>
       field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
@@ -145,6 +146,12 @@ function ApprovalTables() {
               setActiveTab(tab);
               setSearchTerm("");
               setSelectedInvoices([]);
+            }}
+            style={{
+              backgroundColor: activeTab === tab ? "#0C1D61" : "#ffffff",
+              color: activeTab === tab ? "white" : "#0C1D61",
+              border: activeTab === tab ? "" : "1px solid #c9c9c9ad",
+              whiteSpace: "nowrap",
             }}
           >
             {tab}

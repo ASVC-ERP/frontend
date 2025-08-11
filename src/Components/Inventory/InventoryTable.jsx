@@ -106,11 +106,14 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
   };
 
   return (
-    <div>
-      <div>
-        <div className="d-flex justify-content-between align-items-center">
+    <div className="container-fluid">
+      <div className="my-3">
+        <div
+          className="d-flex align-items-center justify-content-between mb-4"
+          style={{ gap: "10px" }}
+        >
           {/* Search input field */}
-          <div className="position-relative w-25 my-3">
+          <div className="position-relative w-25 my-0">
             <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
             <input
               type="text"
@@ -121,20 +124,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
             />
           </div>
 
-          {/* Refactored Add Item Button
-          <Link to="/add-item">
-            <button
-              type="button"
-              className="btn me-5"
-              style={{ backgroundColor: "#0C1D61", color: "white" }}
-            >
-              + Add Inventory
-            </button>
-          </Link>
-*/}
-        </div>
-
-        <div className="d-flex justify-content-end mb-4">
+          {/* Add Item button */}
           <button
             type="button"
             className="btn"
@@ -148,7 +138,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
             + Add Item
           </button>
         </div>
-        
+
         <DataTable
           columns={columns}
           data={filteredData}
@@ -231,7 +221,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                         className="fas fa-qrcode me-2"
                         style={{ color: "#0C1D61" }}
                       ></i>
-                      Item Code <span className="text-danger">*</span>
+                      Item Code
                     </label>
                     <input
                       type="text"
@@ -262,7 +252,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                         className="fas fa-box me-2"
                         style={{ color: "#0C1D61" }}
                       ></i>
-                      Item Name <span className="text-danger">*</span>
+                      Item Name
                     </label>
                     <input
                       type="text"
@@ -293,7 +283,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                         className="fas fa-tag me-2"
                         style={{ color: "#0C1D61" }}
                       ></i>
-                      Brand <span className="text-danger">*</span>
+                      Brand
                     </label>
                     <input
                       type="text"
@@ -324,7 +314,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                         className="fas fa-globe me-2"
                         style={{ color: "#0C1D61" }}
                       ></i>
-                      Origin <span className="text-danger">*</span>
+                      Origin
                     </label>
                     <input
                       type="text"
@@ -361,9 +351,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                     style={{ color: "#0C1D61" }}
                   ></i>
                   <small className="text-muted">
-                    All fields marked with{" "}
-                    <span className="text-danger">*</span> are required. Make
-                    sure the item code is unique in your inventory.
+                    Make sure the item code is unique in your inventory.
                   </small>
                 </div>
               </div>

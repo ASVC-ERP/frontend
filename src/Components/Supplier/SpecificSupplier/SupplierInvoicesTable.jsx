@@ -4,6 +4,8 @@ import { IoIosSearch } from "react-icons/io";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { FaTrashAlt } from "react-icons/fa";
+
 
 function SupplierInvoicesTable() {
   const location = useLocation();
@@ -248,67 +250,256 @@ function SupplierInvoicesTable() {
               style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
             >
               <div
-                className="modal-dialog modal-dialog-centered"
+                className="modal-dialog modal-dialog-centered modal-lg w-50"
                 role="document"
               >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Edit Supplier</h5>
+                <div className="modal-content shadow-lg border-0">
+                  {/* Header with gradient background */}
+                  <div
+                    className="modal-header text-white position-relative overflow-hidden"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                      borderRadius: "0.5rem 0.5rem 0 0",
+                    }}
+                  >
+                    <div className="d-flex align-items-center">
+                      <div>
+                        <h5 className="modal-title mb-0">Edit Supplier</h5>
+                        <small className="opacity-75">
+                          Modify supplier information
+                        </small>
+                      </div>
+                    </div>
                     <button
                       type="button"
-                      className="btn-close"
+                      className="btn-close btn-close-white"
                       onClick={() => setShowEditModal(false)}
+                      aria-label="Close"
                     ></button>
+
+                    {/* Decorative elements */}
+                    <div
+                      className="position-absolute"
+                      style={{
+                        top: "-50px",
+                        right: "-50px",
+                        width: "100px",
+                        height: "100px",
+                        background: "rgba(255, 255, 255, 0.1)",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                    <div
+                      className="position-absolute"
+                      style={{
+                        bottom: "-30px",
+                        left: "-30px",
+                        width: "60px",
+                        height: "60px",
+                        background: "rgba(255, 255, 255, 0.05)",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
                   </div>
 
-                  <div className="modal-body">
-                    <input
-                      type="text"
-                      className="form-control mb-2"
-                      placeholder="Supplier ID"
-                      value={editableSupplier.id}
-                      disabled
-                    />
-                    <input
-                      type="text"
-                      className="form-control mb-2"
-                      placeholder="Supplier Name"
-                      value={editableSupplier.name}
-                      onChange={(e) =>
-                        setEditableSupplier({
-                          ...editableSupplier,
-                          name: e.target.value,
-                        })
-                      }
-                    />
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Supplier Address"
-                      value={editableSupplier.address}
-                      onChange={(e) =>
-                        setEditableSupplier({
-                          ...editableSupplier,
-                          address: e.target.value,
-                        })
-                      }
-                    />
-                  </div>
+                  <div className="modal-body p-4">
+                    <form>
+                      <div className="row g-3">
+                        {/* Supplier ID (Read-only) */}
+                        <div className="col-12">
+                          <label
+                            htmlFor="supplierId"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-id-badge me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Supplier ID
+                          </label>
+                          <input
+                            type="text"
+                            id="supplierId"
+                            placeholder="Supplier ID"
+                            value={editableSupplier.id}
+                            disabled
+                            style={{
+                              backgroundColor: "#f8f9fa",
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.95rem",
+                              fontWeight: "500",
+                            }}
+                          />
+                        </div>
 
-                  <div className="modal-footer">
-                    <button
-                      className="btn btn-secondary"
-                      onClick={() => setShowEditModal(false)}
-                      style={{ backgroundColor: "#B64345", color: "white" }}
+                        {/* Supplier Name */}
+                        <div className="col-12">
+                          <label
+                            htmlFor="supplierNameEdit"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-building me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Supplier Name
+                          </label>
+                          <input
+                            type="text"
+                            id="supplierNameEdit"
+                            placeholder="Enter supplier name"
+                            value={editableSupplier.name}
+                            onChange={(e) =>
+                              setEditableSupplier({
+                                ...editableSupplier,
+                                name: e.target.value,
+                              })
+                            }
+                            className="form-control"
+                            required
+                            style={{
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.95rem",
+                              transition: "border-color 0.3s ease",
+                            }}
+                            onFocus={(e) =>
+                              (e.target.style.borderColor = "#0C1D61")
+                            }
+                            onBlur={(e) =>
+                              (e.target.style.borderColor = "#e9ecef")
+                            }
+                          />
+                        </div>
+
+                        {/* Supplier Address */}
+                        <div className="col-12">
+                          <label
+                            htmlFor="supplierAddressEdit"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-map-marker-alt me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Supplier Address{" "}
+                          </label>
+                          <textarea
+                            id="supplierAddressEdit"
+                            placeholder="Enter supplier address"
+                            value={editableSupplier.address}
+                            onChange={(e) =>
+                              setEditableSupplier({
+                                ...editableSupplier,
+                                address: e.target.value,
+                              })
+                            }
+                            className="form-control"
+                            rows="3"
+                            required
+                            style={{
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.95rem",
+                              resize: "vertical",
+                              transition: "border-color 0.3s ease",
+                            }}
+                            onFocus={(e) =>
+                              (e.target.style.borderColor = "#0C1D61")
+                            }
+                            onBlur={(e) =>
+                              (e.target.style.borderColor = "#e9ecef")
+                            }
+                          />
+                        </div>
+                      </div>
+                    </form>
+
+                    {/* Additional info card */}
+                    <div
+                      className="mt-4 p-3 rounded-3"
+                      style={{
+                        backgroundColor: "rgba(12, 29, 97, 0.05)",
+                        border: "1px solid rgba(12, 29, 97, 0.1)",
+                      }}
                     >
+                      <div className="d-flex align-items-center">
+                        <i
+                          className="fas fa-info-circle me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        <small className="text-muted">
+                          Changes will be saved immediately. Make sure all
+                          information is accurate before saving.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="modal-footer bg-light border-0 rounded-bottom">
+                    <button
+                      type="button"
+                      className="btn px-4 py-2 me-2"
+                      onClick={() => setShowEditModal(false)}
+                      style={{
+                        backgroundColor: "#dc3545",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "0.5rem",
+                        fontWeight: "500",
+                        transition: "all 0.3s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "#c82333";
+                        e.target.style.transform = "translateY(-1px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = "#dc3545";
+                        e.target.style.transform = "translateY(0)";
+                      }}
+                    >
+                      <i className="fas fa-times me-2"></i>
                       Cancel
                     </button>
                     <button
-                      className="btn btn-primary"
+                      type="button"
+                      className="btn px-4 py-2"
                       onClick={handleUpdateSupplier}
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      disabled={
+                        !editableSupplier.name || !editableSupplier.address
+                      }
+                      style={{
+                        backgroundColor:
+                          !editableSupplier.name || !editableSupplier.address
+                            ? "#6c757d"
+                            : "#0C1D61",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "0.5rem",
+                        fontWeight: "500",
+                        transition: "all 0.3s ease",
+                        cursor:
+                          !editableSupplier.name || !editableSupplier.address
+                            ? "not-allowed"
+                            : "pointer",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (editableSupplier.name && editableSupplier.address) {
+                          e.target.style.backgroundColor = "#1e3c72";
+                          e.target.style.transform = "translateY(-1px)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (editableSupplier.name && editableSupplier.address) {
+                          e.target.style.backgroundColor = "#0C1D61";
+                          e.target.style.transform = "translateY(0)";
+                        }
+                      }}
                     >
-                      Save
+                      <i className="fas fa-save me-2"></i>
+                      Save Changes
                     </button>
                   </div>
                 </div>
@@ -324,203 +515,502 @@ function SupplierInvoicesTable() {
               style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
             >
               <div
-                className="modal-dialog modal-lg modal-dialog-centered"
+                className="modal-dialog modal-xl modal-dialog-centered"
                 role="document"
               >
-                <div className="modal-content">
-                  <div className="modal-header">
-                    <h5 className="modal-title">Create New Supplier Invoice</h5>
+                <div className="modal-content shadow-lg border-0">
+                  {/* Header with gradient background */}
+                  <div
+                    className="modal-header text-white position-relative overflow-hidden"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                      borderRadius: "0.5rem 0.5rem 0 0",
+                    }}
+                  >
+                    <div className="d-flex align-items-center">
+                      <div>
+                        <h5 className="modal-title mb-0">
+                          Create New Supplier Invoice
+                        </h5>
+                        <small className="opacity-75">
+                          Generate a new purchase invoice
+                        </small>
+                      </div>
+                    </div>
                     <button
                       type="button"
-                      className="btn-close"
+                      className="btn-close btn-close-white"
                       onClick={() => setShowCreateModal(false)}
+                      aria-label="Close"
                     ></button>
+
+                    {/* Decorative elements */}
+                    <div
+                      className="position-absolute"
+                      style={{
+                        top: "-50px",
+                        right: "-50px",
+                        width: "100px",
+                        height: "100px",
+                        background: "rgba(255, 255, 255, 0.1)",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
+                    <div
+                      className="position-absolute"
+                      style={{
+                        bottom: "-30px",
+                        left: "-30px",
+                        width: "60px",
+                        height: "60px",
+                        background: "rgba(255, 255, 255, 0.05)",
+                        borderRadius: "50%",
+                      }}
+                    ></div>
                   </div>
-                  <div className="modal-body">
-                    <div className="mb-2">
-                      <label>Invoice Number</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={invoiceForm.supplierInvoiceID}
-                        onChange={(e) =>
-                          setInvoiceForm({
-                            ...invoiceForm,
-                            supplierInvoiceID: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
-                    <div className="mb-2">
-                      <label>Purchase Date</label>
-                      <input
-                        type="date"
-                        className="form-control"
-                        value={invoiceForm.purchaseDate}
-                        onChange={(e) =>
-                          setInvoiceForm({
-                            ...invoiceForm,
-                            purchaseDate: e.target.value,
-                          })
-                        }
-                      />
-                    </div>
 
-                    <div>
-                      <h6>Items</h6>
-
-                      {invoiceForm.items.map((item, index) => (
-                        <div key={index} className="d-flex gap-2 mb-2">
+                  <div className="modal-body p-4">
+                    <form>
+                      {/* Invoice Header Information */}
+                      <div className="row g-3 mb-4">
+                        <div className="col-md-6">
+                          <label
+                            htmlFor="invoiceNumber"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-file-invoice me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Invoice Number{" "}
+                          </label>
                           <input
                             type="text"
-                            placeholder="Item Code"
+                            id="invoiceNumber"
                             className="form-control"
-                            value={item.itemCode}
-                            onChange={(e) => {
-                              const updated = [...invoiceForm.items];
-                              updated[index].itemCode = e.target.value;
+                            placeholder="Enter invoice number"
+                            value={invoiceForm.supplierInvoiceID}
+                            onChange={(e) =>
                               setInvoiceForm({
                                 ...invoiceForm,
-                                items: updated,
-                              });
-                            }}
-                          />
-                          <input
-                            type="number"
-                            placeholder="Qty"
-                            className="form-control"
-                            value={item.quantity}
-                            onChange={(e) => {
-                              const updated = [...invoiceForm.items];
-                              updated[index].quantity = parseInt(
-                                e.target.value
-                              );
-                              setInvoiceForm({
-                                ...invoiceForm,
-                                items: updated,
-                              });
-                            }}
-                          />
-                          <input
-                            type="text"
-                            placeholder="Unit"
-                            className="form-control"
-                            value={item.unit}
-                            onChange={(e) => {
-                              const updated = [...invoiceForm.items];
-                              updated[index].unit = e.target.value;
-                              setInvoiceForm({
-                                ...invoiceForm,
-                                items: updated,
-                              });
-                            }}
-                          />
-                          <input
-                            type="number"
-                            placeholder="Unit Cost"
-                            className="form-control"
-                            value={item.unitCost}
-                            onChange={(e) => {
-                              const updated = [...invoiceForm.items];
-                              updated[index].unitCost = parseFloat(
-                                e.target.value
-                              );
-                              setInvoiceForm({
-                                ...invoiceForm,
-                                items: updated,
-                              });
-                            }}
-                          />
-                          <input
-                            type="number"
-                            placeholder="Discount"
-                            className="form-control"
-                            value={item.discount}
-                            onChange={(e) => {
-                              const updated = [...invoiceForm.items];
-                              updated[index].discount = parseFloat(
-                                e.target.value
-                              );
-                              setInvoiceForm({
-                                ...invoiceForm,
-                                items: updated,
-                              });
-                            }}
-                          />
-                          <button
-                            className="btn"
-                            onClick={() => {
-                              const updated = invoiceForm.items.filter(
-                                (_, i) => i !== index
-                              );
-                              setInvoiceForm({
-                                ...invoiceForm,
-                                items: updated,
-                              });
-                            }}
+                                supplierInvoiceID: e.target.value,
+                              })
+                            }
                             style={{
-                              backgroundColor: "#B64345",
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.95rem",
+                              transition: "border-color 0.3s ease",
+                            }}
+                            onFocus={(e) =>
+                              (e.target.style.borderColor = "#0C1D61")
+                            }
+                            onBlur={(e) =>
+                              (e.target.style.borderColor = "#e9ecef")
+                            }
+                          />
+                        </div>
+
+                        <div className="col-md-6">
+                          <label
+                            htmlFor="purchaseDate"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-calendar-alt me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Purchase Date
+                          </label>
+                          <input
+                            type="date"
+                            id="purchaseDate"
+                            className="form-control"
+                            value={invoiceForm.purchaseDate}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                purchaseDate: e.target.value,
+                              })
+                            }
+                            style={{
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.95rem",
+                              transition: "border-color 0.3s ease",
+                            }}
+                            onFocus={(e) =>
+                              (e.target.style.borderColor = "#0C1D61")
+                            }
+                            onBlur={(e) =>
+                              (e.target.style.borderColor = "#e9ecef")
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      {/* Items Section */}
+                      <div className="mb-4">
+                        <div className="d-flex align-items-center justify-content-between mb-3">
+                          <h6
+                            className="mb-0 fw-semibold"
+                            style={{ color: "#0C1D61" }}
+                          >
+                            <i className="fas fa-list me-2"></i>
+                            Invoice Items
+                          </h6>
+                          <button
+                            type="button"
+                            className="btn btn-sm"
+                            onClick={() =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: [
+                                  ...invoiceForm.items,
+                                  {
+                                    itemCode: "",
+                                    quantity: null,
+                                    unit: "",
+                                    unitCost: null,
+                                    discount: null,
+                                  },
+                                ],
+                              })
+                            }
+                            style={{
+                              backgroundColor: "#28a745",
                               color: "white",
+                              border: "none",
+                              borderRadius: "0.375rem",
+                              fontWeight: "500",
+                              transition: "all 0.3s ease",
+                            }}
+                            onMouseEnter={(e) => {
+                              e.target.style.backgroundColor = "#218838";
+                              e.target.style.transform = "translateY(-1px)";
+                            }}
+                            onMouseLeave={(e) => {
+                              e.target.style.backgroundColor = "#28a745";
+                              e.target.style.transform = "translateY(0)";
                             }}
                           >
-                            ✕
+                            <i className="fas fa-plus me-1"></i>
+                            Add Item
                           </button>
                         </div>
-                      ))}
-                      <button
-                        className="btn btn-outline-secondary"
-                        onClick={() =>
-                          setInvoiceForm({
-                            ...invoiceForm,
-                            items: [
-                              ...invoiceForm.items,
-                              {
-                                itemCode: "",
-                                quantity: null,
-                                unit: "",
-                                unitCost: null,
-                                discount: null,
-                              },
-                            ],
-                          })
-                        }
-                      >
-                        + Add Item
-                      </button>
 
-                      <div className="border-top pt-3 mt-3">
-                        <div className="d-flex justify-content-end">
-                          <div className="fw-bold fs-5">
-                            Total Gross Price: ₱
-                            {invoiceForm.items
-                              .reduce((total, item) => {
-                                return (
-                                  total +
-                                  (item.quantity * item.unitCost -
-                                    (item.discount || 0))
-                                );
-                              }, 0)
-                              .toFixed(2)}
+                        {/* Items Table Header */}
+                        <div
+                          className="row g-2 mb-2 py-2 px-2 rounded-2"
+                          style={{
+                            backgroundColor: "#f8f9fa",
+                            fontWeight: "600",
+                            fontSize: "0.85rem",
+                            color: "#495057",
+                          }}
+                        >
+                          <div className="col-2">Item Code</div>
+                          <div className="col-2">Quantity</div>
+                          <div className="col-2">Unit</div>
+                          <div className="col-2">Unit Cost</div>
+                          <div className="col-2">Discount</div>
+                          <div className="col-1">Subtotal</div>
+                          <div className="col-1">Action</div>
+                        </div>
+
+                        {/* Items List */}
+                        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                          {invoiceForm.items.map((item, index) => (
+                            <div
+                              key={index}
+                              className="row g-2 mb-2 align-items-center"
+                            >
+                              <div className="col-2">
+                                <input
+                                  type="text"
+                                  placeholder="Item Code"
+                                  className="form-control form-control-sm"
+                                  value={item.itemCode}
+                                  onChange={(e) => {
+                                    const updated = [...invoiceForm.items];
+                                    updated[index].itemCode = e.target.value;
+                                    setInvoiceForm({
+                                      ...invoiceForm,
+                                      items: updated,
+                                    });
+                                  }}
+                                  style={{
+                                    border: "1px solid #e9ecef",
+                                    borderRadius: "0.375rem",
+                                    fontSize: "0.875rem",
+                                  }}
+                                />
+                              </div>
+                              <div className="col-2">
+                                <input
+                                  type="number"
+                                  placeholder="Qty"
+                                  className="form-control form-control-sm"
+                                  value={item.quantity || ""}
+                                  onChange={(e) => {
+                                    const updated = [...invoiceForm.items];
+                                    updated[index].quantity =
+                                      parseInt(e.target.value) || 0;
+                                    setInvoiceForm({
+                                      ...invoiceForm,
+                                      items: updated,
+                                    });
+                                  }}
+                                  style={{
+                                    border: "1px solid #e9ecef",
+                                    borderRadius: "0.375rem",
+                                    fontSize: "0.875rem",
+                                  }}
+                                />
+                              </div>
+                              <div className="col-2">
+                                <input
+                                  type="text"
+                                  placeholder="Unit"
+                                  className="form-control form-control-sm"
+                                  value={item.unit}
+                                  onChange={(e) => {
+                                    const updated = [...invoiceForm.items];
+                                    updated[index].unit = e.target.value;
+                                    setInvoiceForm({
+                                      ...invoiceForm,
+                                      items: updated,
+                                    });
+                                  }}
+                                  style={{
+                                    border: "1px solid #e9ecef",
+                                    borderRadius: "0.375rem",
+                                    fontSize: "0.875rem",
+                                  }}
+                                />
+                              </div>
+                              <div className="col-2">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="Cost"
+                                  className="form-control form-control-sm"
+                                  value={item.unitCost || ""}
+                                  onChange={(e) => {
+                                    const updated = [...invoiceForm.items];
+                                    updated[index].unitCost =
+                                      parseFloat(e.target.value) || 0;
+                                    setInvoiceForm({
+                                      ...invoiceForm,
+                                      items: updated,
+                                    });
+                                  }}
+                                  style={{
+                                    border: "1px solid #e9ecef",
+                                    borderRadius: "0.375rem",
+                                    fontSize: "0.875rem",
+                                  }}
+                                />
+                              </div>
+                              <div className="col-2">
+                                <input
+                                  type="number"
+                                  step="0.01"
+                                  placeholder="Discount"
+                                  className="form-control form-control-sm"
+                                  value={item.discount || ""}
+                                  onChange={(e) => {
+                                    const updated = [...invoiceForm.items];
+                                    updated[index].discount =
+                                      parseFloat(e.target.value) || 0;
+                                    setInvoiceForm({
+                                      ...invoiceForm,
+                                      items: updated,
+                                    });
+                                  }}
+                                  style={{
+                                    border: "1px solid #e9ecef",
+                                    borderRadius: "0.375rem",
+                                    fontSize: "0.875rem",
+                                  }}
+                                />
+                              </div>
+                              <div className="col-1">
+                                <span
+                                  className="badge bg-light text-dark fw-normal"
+                                  style={{ fontSize: "0.75rem" }}
+                                >
+                                  ₱
+                                  {(
+                                    (item.quantity || 0) *
+                                      (item.unitCost || 0) -
+                                    (item.discount || 0)
+                                  ).toFixed(2)}
+                                </span>
+                              </div>
+                              <div className="col-1">
+                                <button
+                                  type="button"
+                                  className="btn btn-sm"
+                                  onClick={() => {
+                                    const updated = invoiceForm.items.filter(
+                                      (_, i) => i !== index
+                                    );
+                                    setInvoiceForm({
+                                      ...invoiceForm,
+                                      items: updated,
+                                    });
+                                  }}
+                                  
+                                >
+                                  <FaTrashAlt style={{ color: "#B64345"}} size={18} />
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Total Section */}
+                        <div
+                          className="border-top pt-3 mt-3"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, rgba(12, 29, 97, 0.05) 0%, rgba(30, 60, 114, 0.05) 100%)",
+                            borderRadius: "0.5rem",
+                            padding: "1rem",
+                          }}
+                        >
+                          <div className="row">
+                            <div className="col-md-8"></div>
+                            <div className="col-md-4">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <span
+                                  className="fw-semibold"
+                                  style={{ color: "#0C1D61" }}
+                                >
+                                  <i className="fas fa-calculator me-2"></i>
+                                  Total Gross Price:
+                                </span>
+                                <span
+                                  className="fw-bold fs-4"
+                                  style={{ color: "#0C1D61" }}
+                                >
+                                  ₱
+                                  {invoiceForm.items
+                                    .reduce((total, item) => {
+                                      return (
+                                        total +
+                                        (item.quantity * item.unitCost -
+                                          (item.discount || 0))
+                                      );
+                                    }, 0)
+                                    .toFixed(2)}
+                                </span>
+                              </div>
+                            </div>
                           </div>
                         </div>
+                      </div>
+                    </form>
+
+                    {/* Additional info card */}
+                    <div
+                      className="mt-4 p-3 rounded-3"
+                      style={{
+                        backgroundColor: "rgba(12, 29, 97, 0.05)",
+                        border: "1px solid rgba(12, 29, 97, 0.1)",
+                      }}
+                    >
+                      <div className="d-flex align-items-center">
+                        <i
+                          className="fas fa-info-circle me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        <small className="text-muted">
+                          Make sure to add at least one item before submitting
+                          the invoice.
+                        </small>
                       </div>
                     </div>
                   </div>
 
-                  <div className="modal-footer">
+                  <div className="modal-footer bg-light border-0 rounded-bottom">
                     <button
-                      className="btn"
+                      type="button"
+                      className="btn px-4 py-2 me-2"
                       onClick={() => setShowCreateModal(false)}
-                      style={{ backgroundColor: "#B64345", color: "white" }}
+                      style={{
+                        backgroundColor: "#dc3545",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "0.5rem",
+                        fontWeight: "500",
+                        transition: "all 0.3s ease",
+                      }}
+                      onMouseEnter={(e) => {
+                        e.target.style.backgroundColor = "#c82333";
+                        e.target.style.transform = "translateY(-1px)";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.target.style.backgroundColor = "#dc3545";
+                        e.target.style.transform = "translateY(0)";
+                      }}
                     >
+                      <i className="fas fa-times me-2"></i>
                       Cancel
                     </button>
                     <button
-                      className="btn"
+                      type="button"
+                      className="btn px-4 py-2"
                       onClick={handleSubmitInvoice}
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      disabled={
+                        !invoiceForm.supplierInvoiceID ||
+                        !invoiceForm.purchaseDate ||
+                        invoiceForm.items.length === 0
+                      }
+                      style={{
+                        backgroundColor:
+                          !invoiceForm.supplierInvoiceID ||
+                          !invoiceForm.purchaseDate ||
+                          invoiceForm.items.length === 0
+                            ? "#6c757d"
+                            : "#0C1D61",
+                        color: "white",
+                        border: "none",
+                        borderRadius: "0.5rem",
+                        fontWeight: "500",
+                        transition: "all 0.3s ease",
+                        cursor:
+                          !invoiceForm.supplierInvoiceID ||
+                          !invoiceForm.purchaseDate ||
+                          invoiceForm.items.length === 0
+                            ? "not-allowed"
+                            : "pointer",
+                      }}
+                      onMouseEnter={(e) => {
+                        if (
+                          invoiceForm.supplierInvoiceID &&
+                          invoiceForm.purchaseDate &&
+                          invoiceForm.items.length > 0
+                        ) {
+                          e.target.style.backgroundColor = "#1e3c72";
+                          e.target.style.transform = "translateY(-1px)";
+                        }
+                      }}
+                      onMouseLeave={(e) => {
+                        if (
+                          invoiceForm.supplierInvoiceID &&
+                          invoiceForm.purchaseDate &&
+                          invoiceForm.items.length > 0
+                        ) {
+                          e.target.style.backgroundColor = "#0C1D61";
+                          e.target.style.transform = "translateY(0)";
+                        }
+                      }}
                     >
-                      Submit
+                      <i className="fas fa-paper-plane me-2"></i>
+                      Submit Invoice
                     </button>
                   </div>
                 </div>

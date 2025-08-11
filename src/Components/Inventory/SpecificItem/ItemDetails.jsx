@@ -202,63 +202,285 @@ function ItemDetails({ item }) {
           role="dialog"
           style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
         >
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="modal-title">Update Stock Count</h5>
+          <div
+            className="modal-dialog modal-dialog-centered modal-lg w-50"
+            role="document"
+          >
+            <div className="modal-content shadow-lg border-0">
+              {/* Header with gradient background */}
+              <div
+                className="modal-header text-white position-relative overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                  borderRadius: "0.5rem 0.5rem 0 0",
+                }}
+              >
+                <div className="d-flex align-items-center">
+                  <div>
+                    <h5 className="modal-title mb-0">Update Stock Count</h5>
+                    <small className="opacity-75">
+                      Modify inventory stock levels
+                    </small>
+                  </div>
+                </div>
                 <button
                   type="button"
-                  className="btn-close"
+                  className="btn-close btn-close-white"
                   onClick={() => setShowStockModal(false)}
+                  aria-label="Close"
                 ></button>
+
+                {/* Decorative elements */}
+                <div
+                  className="position-absolute"
+                  style={{
+                    top: "-50px",
+                    right: "-50px",
+                    width: "100px",
+                    height: "100px",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+                <div
+                  className="position-absolute"
+                  style={{
+                    bottom: "-30px",
+                    left: "-30px",
+                    width: "60px",
+                    height: "60px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
               </div>
 
-              <div className="modal-body">
-                <input
-                  type="text"
-                  className="form-control mb-2"
-                  placeholder="Current Stock"
-                  value={stockData.currentCount}
-                  disabled
-                />
-                <input
-                  type="number"
-                  className="form-control mb-2"
-                  placeholder="New Stock Count"
-                  value={stockData.newCount}
-                  onChange={(e) =>
-                    setStockData({ ...stockData, newCount: e.target.value })
-                  }
-                />
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  placeholder="Reason for stock change"
-                  value={stockData.remarks}
-                  onChange={(e) =>
-                    setStockData({ ...stockData, remarks: e.target.value })
-                  }
-                ></textarea>
-              </div>
+              <div className="modal-body p-4">
+                <div className="row g-3">
+                  {/* Current Stock (Read-only) */}
+                  <div className="col-12">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-boxes me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Current Stock Count
+                    </label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Current Stock"
+                      value={stockData.currentCount}
+                      disabled
+                      style={{
+                        backgroundColor: "#f8f9fa",
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        fontWeight: "500",
+                      }}
+                    />
+                  </div>
 
-              <div className="modal-footer">
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setShowStockModal(false)}
-                  style={{ backgroundColor: "#B64345", color: "white" }}
+                  {/* New Stock Count */}
+                  <div className="col-12">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-edit me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      New Stock Count
+                    </label>
+                    <input
+                      type="number"
+                      className="form-control"
+                      placeholder="Enter new stock count"
+                      value={stockData.newCount}
+                      onChange={(e) =>
+                        setStockData({ ...stockData, newCount: e.target.value })
+                      }
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Remarks/Reason */}
+                  <div className="col-12">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-comment-alt me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Reason for Stock Change{" "}
+                    </label>
+                    <textarea
+                      className="form-control"
+                      rows="4"
+                      placeholder="Enter reason for stock change (e.g., damaged goods, recount, sales adjustment, etc.)"
+                      value={stockData.remarks}
+                      onChange={(e) =>
+                        setStockData({ ...stockData, remarks: e.target.value })
+                      }
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        resize: "vertical",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+                </div>
+
+                {/* Stock Difference Indicator */}
+                {stockData.newCount && stockData.currentCount && (
+                  <div
+                    className="mt-4 p-3 rounded-3"
+                    style={{
+                      backgroundColor:
+                        parseInt(stockData.newCount) >
+                        parseInt(stockData.currentCount)
+                          ? "rgba(25, 135, 84, 0.1)"
+                          : parseInt(stockData.newCount) <
+                            parseInt(stockData.currentCount)
+                          ? "rgba(220, 53, 69, 0.1)"
+                          : "rgba(12, 29, 97, 0.05)",
+                      border: `1px solid ${
+                        parseInt(stockData.newCount) >
+                        parseInt(stockData.currentCount)
+                          ? "rgba(25, 135, 84, 0.2)"
+                          : parseInt(stockData.newCount) <
+                            parseInt(stockData.currentCount)
+                          ? "rgba(220, 53, 69, 0.2)"
+                          : "rgba(12, 29, 97, 0.1)"
+                      }`,
+                    }}
+                  >
+                    <div className="d-flex align-items-center">
+                      <i
+                        className={`fas ${
+                          parseInt(stockData.newCount) >
+                          parseInt(stockData.currentCount)
+                            ? "fa-arrow-up text-success"
+                            : parseInt(stockData.newCount) <
+                              parseInt(stockData.currentCount)
+                            ? "fa-arrow-down text-danger"
+                            : "fa-equals"
+                        } me-2`}
+                      ></i>
+                      <small className="text-muted">
+                        <strong>Stock Change: </strong>
+                        {parseInt(stockData.newCount) -
+                          parseInt(stockData.currentCount) >
+                        0
+                          ? "+"
+                          : ""}
+                        {parseInt(stockData.newCount) -
+                          parseInt(stockData.currentCount)}{" "}
+                        units
+                        {parseInt(stockData.newCount) >
+                          parseInt(stockData.currentCount) &&
+                          " (Stock Increase)"}
+                        {parseInt(stockData.newCount) <
+                          parseInt(stockData.currentCount) &&
+                          " (Stock Decrease)"}
+                        {parseInt(stockData.newCount) ===
+                          parseInt(stockData.currentCount) && " (No Change)"}
+                      </small>
+                    </div>
+                  </div>
+                )}
+
+                {/* Info card */}
+                <div
+                  className="mt-3 p-3 rounded-3"
+                  style={{
+                    backgroundColor: "rgba(12, 29, 97, 0.05)",
+                    border: "1px solid rgba(12, 29, 97, 0.1)",
+                  }}
                 >
+                  <div className="d-flex align-items-center">
+                    <i
+                      className="fas fa-info-circle me-2"
+                      style={{ color: "#0C1D61" }}
+                    ></i>
+                    <small className="text-muted">
+                      Stock updates will be logged with timestamp and user
+                      information for audit purposes.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer bg-light border-0 rounded-bottom">
+                <button
+                  type="button"
+                  className="btn px-4 py-2 me-2"
+                  onClick={() => setShowStockModal(false)}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#c82333";
+                    e.target.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "#dc3545";
+                    e.target.style.transform = "translateY(0)";
+                  }}
+                >
+                  <i className="fas fa-times me-2"></i>
                   Cancel
                 </button>
                 <button
-                  className="btn"
-                  style={{
-                    backgroundColor: "#0C1D61",
-                    color: "white",
-                    whiteSpace: "nowrap",
-                  }}
+                  type="button"
+                  className="btn px-4 py-2"
                   onClick={handleStockUpdate}
+                  disabled={!stockData.newCount || !stockData.remarks}
+                  style={{
+                    backgroundColor:
+                      !stockData.newCount || !stockData.remarks
+                        ? "#6c757d"
+                        : "#0C1D61",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                    cursor:
+                      !stockData.newCount || !stockData.remarks
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (stockData.newCount && stockData.remarks) {
+                      e.target.style.backgroundColor = "#1e3c72";
+                      e.target.style.transform = "translateY(-1px)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (stockData.newCount && stockData.remarks) {
+                      e.target.style.backgroundColor = "#0C1D61";
+                      e.target.style.transform = "translateY(0)";
+                    }
+                  }}
                 >
-                  Save
+                  <i className="fas fa-save me-2"></i>
+                  Update Stock
                 </button>
               </div>
             </div>
