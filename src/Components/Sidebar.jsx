@@ -1,15 +1,11 @@
 import { BsBoxSeamFill, BsPersonCircle } from "react-icons/bs";
 import { FaCashRegister } from "react-icons/fa6";
 import { IoReceipt } from "react-icons/io5";
-import { FaTruck } from "react-icons/fa";
+import { FaTruck, FaUser } from "react-icons/fa";
 import { PiListChecksFill } from "react-icons/pi";
-import { FaUser } from "react-icons/fa";
 
-
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
-
+import { Link } from "react-router-dom";
 import logo from "../assets/logo.png";
-
 
 export default function Sidebar({ onLogout }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -18,7 +14,7 @@ export default function Sidebar({ onLogout }) {
     <div
       className="d-flex flex-column vh-100 position-sticky"
       style={{
-        width: "200px", // fixed wider width
+        width: "200px",
         overflow: "hidden",
         backgroundColor: "#E8E7EC",
         fontFamily: "'Outfit', sans-serif",
@@ -39,23 +35,28 @@ export default function Sidebar({ onLogout }) {
           Company Name
         </p>
       </div>
+
       {/* Navigation Links */}
       <div className="d-flex flex-column flex-grow-1">
         <ul className="nav flex-column list-unstyled ms-4 mt-2">
-          <li className="mt-2">
-            <Link
-              to="/"
-              className="nav-link d-flex align-items-center"
-              style={{
-                color: "#0C1D61",
-                fontSize: "1.2rem",
-                cursor: "pointer",
-              }}
-            >
-              <PiListChecksFill  className="me-3" size={30} />
-              <span className="sidebar-text">Approval</span>
-            </Link>
-          </li>
+
+          {/* Approval - Only show for Admin */}
+          {user?.role === "admin" && (
+            <li className="mt-2">
+              <Link
+                to="/"
+                className="nav-link d-flex align-items-center"
+                style={{
+                  color: "#0C1D61",
+                  fontSize: "1.2rem",
+                  cursor: "pointer",
+                }}
+              >
+                <PiListChecksFill className="me-3" size={30} />
+                <span className="sidebar-text">Approval</span>
+              </Link>
+            </li>
+          )}
 
           <li className="mt-2">
             <Link
@@ -133,6 +134,7 @@ export default function Sidebar({ onLogout }) {
           </li>
         </ul>
       </div>
+
       {/* Profile Section at the Bottom */}
       <div className="d-flex align-items-center justify-content-center mb-4 mt-auto">
         <div className="dropdown">
@@ -162,7 +164,7 @@ export default function Sidebar({ onLogout }) {
                 data-bs-toggle="modal"
                 data-bs-target="#profileModal"
               >
-                <i className="bi bi-person   me-2"></i>
+                <i className="bi bi-person me-2"></i>
                 Profile
               </a>
             </li>
@@ -172,7 +174,6 @@ export default function Sidebar({ onLogout }) {
             <li>
               <button
                 className="dropdown-item text-danger"
-                href="#logout"
                 onClick={(e) => {
                   e.preventDefault();
                   onLogout();

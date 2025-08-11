@@ -17,7 +17,7 @@ const columns = [
   },
 ];
 
-function InventoryTable({ products=[], onAddItem = () => {} }) {
+function InventoryTable({ products = [], onAddItem = () => {} }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -27,24 +27,26 @@ function InventoryTable({ products=[], onAddItem = () => {} }) {
   const [brand, setBrand] = useState("");
   const [origin, setOrigin] = useState("");
 
+  const [showItemModal, setShowItemModal] = useState(false);
+
   useEffect(() => {
-  setFilteredData(Object.values(products));
-}, [products]);
-
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    const filtered = Object.values(products).filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
-    );
-
-    setFilteredData(filtered);
-  };
+    setFilteredData(Object.values(products));
+  }, [products]);
 
   const handleAddItemClick = () => {
+    setShowItemModal(true);
+  };
+
+  const handleCloseItemModal = () => {
+    setShowItemModal(false);
+    // Clear form fields when closing
+    setItemCode("");
+    setItemName("");
+    setBrand("");
+    setOrigin("");
+  };
+
+  const handleSubmitItem = () => {
     if (!itemCode || !itemName || !brand || !origin) return;
 
     const trimmedItem = {
@@ -80,13 +82,28 @@ function InventoryTable({ products=[], onAddItem = () => {} }) {
     setItemName("");
     setBrand("");
     setOrigin("");
+
+    // Close modal and clear fields
+    handleCloseItemModal();
+  };
+
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = Object.values(products).filter((row) =>
+      Object.values(row).some((field) =>
+        field?.toString().toLowerCase().includes(value)
+      )
+    );
+
+    setFilteredData(filtered);
   };
 
   const handleRowClick = (row) => {
     console.log("CLICKED", row); // Log the clicked row data
-    navigate("/inventory/item",  { state: { row } }  ); // Navigate to the details page with the selected row data
+    navigate("/inventory/item", { state: { row } }); // Navigate to the details page with the selected row data
   };
-
 
   return (
     <div>
@@ -104,7 +121,7 @@ function InventoryTable({ products=[], onAddItem = () => {} }) {
             />
           </div>
 
-{/* Refactored Add Item Button
+          {/* Refactored Add Item Button
           <Link to="/add-item">
             <button
               type="button"
@@ -117,50 +134,21 @@ function InventoryTable({ products=[], onAddItem = () => {} }) {
 */}
         </div>
 
-        <div className="d-flex gap-2 mb-4 flex-wrap">
-          <input
-            type="text"
-            placeholder="Item Code"
-            value={itemCode}
-            onChange={(e) => setItemCode(e.target.value)}
-            className="form-control"
-            style={{ maxWidth: "150px" }}
-          />
-          <input
-            type="text"
-            placeholder="Item Name"
-            value={itemName}
-            onChange={(e) => setItemName(e.target.value)}
-            className="form-control"
-            style={{ maxWidth: "200px" }}
-          />
-          <input
-            type="text"
-            placeholder="Brand"
-            value={brand}
-            onChange={(e) => setBrand(e.target.value)}
-            className="form-control"
-            style={{ maxWidth: "200px" }}
-          />
-          <input
-            type="text"
-            placeholder="Origin"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-            className="form-control"
-            style={{ maxWidth: "200px" }}
-          />
-
+        <div className="d-flex justify-content-end mb-4">
           <button
             type="button"
             className="btn"
-            style={{ backgroundColor: "#0C1D61", color: "white", whiteSpace: "nowrap" }}
+            style={{
+              backgroundColor: "#0C1D61",
+              color: "white",
+              whiteSpace: "nowrap",
+            }}
             onClick={handleAddItemClick}
           >
             + Add Item
           </button>
         </div>
-
+        
         <DataTable
           columns={columns}
           data={filteredData}
@@ -172,6 +160,288 @@ function InventoryTable({ products=[], onAddItem = () => {} }) {
           className="custom-data-table"
         />
       </div>
+
+      {/* Add Item Modal */}
+      <div
+        className={`modal fade ${showItemModal ? "show" : ""}`}
+        tabIndex="-1"
+        style={{ display: showItemModal ? "block" : "none" }}
+        aria-hidden={!showItemModal}
+      >
+        <div className="modal-dialog modal-dialog-centered modal-lg w-50">
+          <div className="modal-content shadow-lg border-0">
+            {/* Header with gradient background */}
+            <div
+              className="modal-header text-white position-relative overflow-hidden"
+              style={{
+                background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                borderRadius: "0.5rem 0.5rem 0 0",
+              }}
+            >
+              <div className="d-flex align-items-center">
+                <div>
+                  <h5 className="modal-title mb-0">Add New Item</h5>
+                  <small className="opacity-75">
+                    Create a new inventory item
+                  </small>
+                </div>
+              </div>
+              <button
+                type="button"
+                className="btn-close btn-close-white"
+                onClick={handleCloseItemModal}
+                aria-label="Close"
+              ></button>
+
+              {/* Decorative elements */}
+              <div
+                className="position-absolute"
+                style={{
+                  top: "-50px",
+                  right: "-50px",
+                  width: "100px",
+                  height: "100px",
+                  background: "rgba(255, 255, 255, 0.1)",
+                  borderRadius: "50%",
+                }}
+              ></div>
+              <div
+                className="position-absolute"
+                style={{
+                  bottom: "-30px",
+                  left: "-30px",
+                  width: "60px",
+                  height: "60px",
+                  background: "rgba(255, 255, 255, 0.05)",
+                  borderRadius: "50%",
+                }}
+              ></div>
+            </div>
+
+            <div className="modal-body p-4">
+              <form>
+                <div className="row g-3">
+                  {/* Item Code */}
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="itemCode"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-qrcode me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Item Code <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="itemCode"
+                      placeholder="Enter item code"
+                      value={itemCode}
+                      onChange={(e) => setItemCode(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Item Name */}
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="itemName"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-box me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Item Name <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="itemName"
+                      placeholder="Enter item name"
+                      value={itemName}
+                      onChange={(e) => setItemName(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Brand */}
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="brand"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-tag me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Brand <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="brand"
+                      placeholder="Enter brand name"
+                      value={brand}
+                      onChange={(e) => setBrand(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Origin */}
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="origin"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-globe me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Origin <span className="text-danger">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      id="origin"
+                      placeholder="Enter origin/country"
+                      value={origin}
+                      onChange={(e) => setOrigin(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+                </div>
+              </form>
+
+              {/* Additional info card */}
+              <div
+                className="mt-4 p-3 rounded-3"
+                style={{
+                  backgroundColor: "rgba(12, 29, 97, 0.05)",
+                  border: "1px solid rgba(12, 29, 97, 0.1)",
+                }}
+              >
+                <div className="d-flex align-items-center">
+                  <i
+                    className="fas fa-info-circle me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
+                  <small className="text-muted">
+                    All fields marked with{" "}
+                    <span className="text-danger">*</span> are required. Make
+                    sure the item code is unique in your inventory.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div className="modal-footer bg-light border-0 rounded-bottom">
+              <button
+                type="button"
+                className="btn px-4 py-2 me-2"
+                onClick={handleCloseItemModal}
+                style={{
+                  backgroundColor: "#6c757d",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "0.5rem",
+                  fontWeight: "500",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = "#5a6268";
+                  e.target.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = "#6c757d";
+                  e.target.style.transform = "translateY(0)";
+                }}
+              >
+                <i className="fas fa-times me-2"></i>
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn px-4 py-2"
+                onClick={handleSubmitItem}
+                disabled={!itemCode || !itemName || !brand || !origin}
+                style={{
+                  backgroundColor:
+                    !itemCode || !itemName || !brand || !origin
+                      ? "#6c757d"
+                      : "#0C1D61",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "0.5rem",
+                  fontWeight: "500",
+                  transition: "all 0.3s ease",
+                  cursor:
+                    !itemCode || !itemName || !brand || !origin
+                      ? "not-allowed"
+                      : "pointer",
+                }}
+                onMouseEnter={(e) => {
+                  if (!(!itemCode || !itemName || !brand || !origin)) {
+                    e.target.style.backgroundColor = "#1e3c72";
+                    e.target.style.transform = "translateY(-1px)";
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!(!itemCode || !itemName || !brand || !origin)) {
+                    e.target.style.backgroundColor = "#0C1D61";
+                    e.target.style.transform = "translateY(0)";
+                  }
+                }}
+              >
+                <i className="fas fa-plus me-2"></i>
+                Add Item
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal backdrop for Add Item */}
+      {showItemModal && (
+        <div
+          className="modal-backdrop fade show"
+          onClick={handleCloseItemModal}
+        ></div>
+      )}
     </div>
   );
 }
