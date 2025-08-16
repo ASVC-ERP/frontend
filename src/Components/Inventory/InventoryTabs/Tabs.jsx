@@ -68,7 +68,7 @@ function Tabs() {
             Physical Count
           </button>
         </li>
-        <li className="nav-item" role="presentation">
+        {/* <li className="nav-item" role="presentation">
           <button
             className="nav-link"
             id="tab4-tab"
@@ -86,7 +86,7 @@ function Tabs() {
           >
             Price History
           </button>
-        </li>
+        </li> */}
       </ul>
 
       {/* tab content */}

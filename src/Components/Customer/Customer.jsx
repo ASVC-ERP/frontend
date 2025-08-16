@@ -1,6 +1,6 @@
 import CustomerTable from "./CustomerTable.jsx";
 
-function Customer() {
+function Customer({ customers }) {
   return (
     <div className="container mt-3">
       <div className="d-flex justify-content-between align-items-center">
@@ -13,7 +13,7 @@ function Customer() {
       </div>
 
       <div className="row table-responsive mx-3">
-        <CustomerTable />
+        <CustomerTable customers={customers} />
       </div>
     </div>
   );

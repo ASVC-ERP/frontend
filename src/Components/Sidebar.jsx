@@ -44,7 +44,7 @@ export default function Sidebar({ onLogout }) {
           {user?.role === "admin" && (
             <li className="mt-2">
               <Link
-                to="/"
+                to="/approval"
                 className="nav-link d-flex align-items-center"
                 style={{
                   color: "#0C1D61",
@@ -60,7 +60,7 @@ export default function Sidebar({ onLogout }) {
 
           <li className="mt-2">
             <Link
-              to="/order"
+              to="/"
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",

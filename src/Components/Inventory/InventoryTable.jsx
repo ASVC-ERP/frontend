@@ -26,6 +26,7 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
   const [itemName, setItemName] = useState("");
   const [brand, setBrand] = useState("");
   const [origin, setOrigin] = useState("");
+  const [minimumStock, setMinimumStock] = useState("");
 
   const [showItemModal, setShowItemModal] = useState(false);
 
@@ -334,6 +335,38 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
+
+                  {/* Minimum Stock */}
+                  <div className="col-md-6">
+                    <label
+                      htmlFor="minimumStock"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-exclamation-triangle me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Minimum Stock
+                    </label>
+                    <input
+                      type="number"
+                      id="minimumStock"
+                      placeholder="Enter minimum stock level"
+                      value={minimumStock}
+                      onChange={(e) => setMinimumStock(e.target.value)}
+                      className="form-control"
+                      min="0"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
                 </div>
               </form>
 
@@ -345,51 +378,59 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                   border: "1px solid rgba(12, 29, 97, 0.1)",
                 }}
               >
-                <div className="d-flex align-items-center">
+                <div className="d-flex align-items-start">
                   <i
-                    className="fas fa-info-circle me-2"
+                    className="fas fa-info-circle me-2 mt-1"
                     style={{ color: "#0C1D61" }}
                   ></i>
-                  <small className="text-muted">
-                    Make sure the item code is unique in your inventory.
-                  </small>
+                  <div>
+                    <small className="text-muted d-block">
+                      Make sure the item code is unique in your inventory.
+                    </small>
+                    <small className="text-muted">
+                      The minimum stock level will help you track when to
+                      restock this item.
+                    </small>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="modal-footer bg-light border-0 rounded-bottom">
               <button
-                type="button"
-                className="btn px-4 py-2 me-2"
-                onClick={handleCloseItemModal}
-                style={{
-                  backgroundColor: "#6c757d",
-                  color: "white",
-                  border: "none",
-                  borderRadius: "0.5rem",
-                  fontWeight: "500",
-                  transition: "all 0.3s ease",
-                }}
-                onMouseEnter={(e) => {
-                  e.target.style.backgroundColor = "#5a6268";
-                  e.target.style.transform = "translateY(-1px)";
-                }}
-                onMouseLeave={(e) => {
-                  e.target.style.backgroundColor = "#6c757d";
-                  e.target.style.transform = "translateY(0)";
-                }}
-              >
-                <i className="fas fa-times me-2"></i>
-                Cancel
-              </button>
+                  type="button"
+                  className="btn px-4 py-2 me-2"
+                  onClick={handleCloseItemModal}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#c82333";
+                    e.target.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "#dc3545";
+                    e.target.style.transform = "translateY(0)";
+                  }}
+                >
+                  <i className="fas fa-times me-2"></i>
+                  Cancel
+                </button>
               <button
                 type="button"
                 className="btn px-4 py-2"
                 onClick={handleSubmitItem}
-                disabled={!itemCode || !itemName || !brand || !origin}
+                disabled={
+                  !itemCode || !itemName || !brand || !origin || !minimumStock
+                }
                 style={{
                   backgroundColor:
-                    !itemCode || !itemName || !brand || !origin
+                    !itemCode || !itemName || !brand || !origin || !minimumStock
                       ? "#6c757d"
                       : "#0C1D61",
                   color: "white",
@@ -398,18 +439,34 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
                   fontWeight: "500",
                   transition: "all 0.3s ease",
                   cursor:
-                    !itemCode || !itemName || !brand || !origin
+                    !itemCode || !itemName || !brand || !origin || !minimumStock
                       ? "not-allowed"
                       : "pointer",
                 }}
                 onMouseEnter={(e) => {
-                  if (!(!itemCode || !itemName || !brand || !origin)) {
+                  if (
+                    !(
+                      !itemCode ||
+                      !itemName ||
+                      !brand ||
+                      !origin ||
+                      !minimumStock
+                    )
+                  ) {
                     e.target.style.backgroundColor = "#1e3c72";
                     e.target.style.transform = "translateY(-1px)";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (!(!itemCode || !itemName || !brand || !origin)) {
+                  if (
+                    !(
+                      !itemCode ||
+                      !itemName ||
+                      !brand ||
+                      !origin ||
+                      !minimumStock
+                    )
+                  ) {
                     e.target.style.backgroundColor = "#0C1D61";
                     e.target.style.transform = "translateY(0)";
                   }

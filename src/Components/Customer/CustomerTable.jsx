@@ -1,134 +1,44 @@
 import DataTable from "react-data-table-component";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
+import axios from "axios";
+import Swal from "sweetalert2";
 
-function InvoiceTable() {
-  const customerData = [
-    {
-      custId: "CUST-001",
-      customerName: "John Doe",
-      contact: "0917-123-4567",
-      address: "123 Elm Street, Quezon City",
-    },
-    {
-      custId: "CUST-002",
-      customerName: "Jane Smith",
-      contact: "0928-987-6543",
-      address: "456 Pine Avenue, Makati",
-    },
-    {
-      custId: "CUST-003",
-      customerName: "Carlos Mendoza",
-      contact: "0935-555-1234",
-      address: "789 Oak Road, Taguig",
-    },
-    {
-      custId: "CUST-004",
-      customerName: "Maricar Santos",
-      contact: "0918-321-7890",
-      address: "321 Birch Street, Pasig",
-    },
-    {
-      custId: "CUST-005",
-      customerName: "Luis Reyes",
-      contact: "0947-111-2233",
-      address: "654 Maple Drive, Manila",
-    },
-    {
-      custId: "CUST-006",
-      customerName: "Ana Dela Cruz",
-      contact: "0956-456-7890",
-      address: "88 Acacia Lane, Marikina",
-    },
-    {
-      custId: "CUST-007",
-      customerName: "Miguel Rivera",
-      contact: "0967-000-3456",
-      address: "12 Kalayaan Ave, BGC, Taguig",
-    },
-    {
-      custId: "CUST-008",
-      customerName: "Sophia Tan",
-      contact: "0933-234-5678",
-      address: "90 Jasmine St, Mandaluyong",
-    },
-    {
-      custId: "CUST-009",
-      customerName: "Daniel Cruz",
-      contact: "0922-456-7891",
-      address: "45 Camia Rd, San Juan City",
-    },
-    {
-      custId: "CUST-010",
-      customerName: "Patricia Lim",
-      contact: "0916-222-3334",
-      address: "18 Lilac Street, Antipolo",
-    },
-    {
-      custId: "CUST-011",
-      customerName: "Joshua Garcia",
-      contact: "0945-345-6678",
-      address: "72 Mango Ave, Las Piñas",
-    },
-    {
-      custId: "CUST-012",
-      customerName: "Andrea Lopez",
-      contact: "0919-123-4321",
-      address: "500 Nicanor Reyes St, Sampaloc",
-    },
-    {
-      custId: "CUST-013",
-      customerName: "Ramon Velasco",
-      contact: "0927-765-4321",
-      address: "101 Bonifacio St, Caloocan",
-    },
-    {
-      custId: "CUST-014",
-      customerName: "Katrina Go",
-      contact: "0951-234-8765",
-      address: "33 Sunflower Road, Parañaque",
-    },
-    {
-      custId: "CUST-015",
-      customerName: "Emilio Aquino",
-      contact: "0938-888-9990",
-      address: "200 Rizal Blvd, Muntinlupa",
-    },
-  ];
-
+function CustomerTable({ customers }) {
   const columns = [
     {
       name: "Customer ID",
-      selector: (row) => row.custId,
+      selector: (row) => row.customerID,
       sortable: true,
     },
     {
       name: "Customer Name",
       selector: (row) => row.customerName,
       sortable: true,
-      minWidth: "200px",
     },
     {
       name: "Contact Number",
-      selector: (row) => row.contact,
+      selector: (row) => row.customerContact,
       sortable: true,
-      center: true,
     },
     {
       name: "Address",
-      selector: (row) => row.address,
+      selector: (row) => row.customerAddress,
       sortable: true,
-      center: true,
     },
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState(customerData);
+  const [filteredData, setFilteredData] = useState([]);
 
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerName, setCustomerName] = useState("");
-  const [contactNum, setContactNum] = useState("");
+  const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+
+  useEffect(() => {
+    setFilteredData(customers);
+  }, [customers]);
 
   const handleAddCustomerClick = () => {
     setShowCustomerModal(true);
@@ -138,22 +48,36 @@ function InvoiceTable() {
     setShowCustomerModal(false);
     // Clear form fields when closing
     setCustomerName("");
-    setContactNum("");
+    setCustomerContact("");
     setCustomerAddress("");
   };
 
-  const handleSubmitCustomer = () => {
-    // Your customer addition logic here
-    if (customerName && contactNum && customerAddress) {
-      // Add customer logic
-      console.log("Adding customer:", {
+  const handleSubmitCustomer = (e) => {
+    e.preventDefault();
+    try {
+      const newCustomer = {
         customerName,
-        contactNum,
+        customerContact,
         customerAddress,
+      };
+
+      axios.post("http://localhost:3000/customers", newCustomer);
+
+      Swal.fire({
+        icon: "success",
+        title: "Customer Added",
+        text: "The customer has been added successfully!",
+        confirmButtonColor: "#3085d6",
       });
 
-      // Close modal and clear fields
       handleCloseCustomerModal();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Failed",
+        text: error.response?.data?.message || "Something went wrong",
+        confirmButtonColor: "#d33",
+      });
     }
   };
 
@@ -162,7 +86,7 @@ function InvoiceTable() {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
 
-    const filtered = Object.values(customerData).filter((row) =>
+    const filtered = Object.values(customers).filter((row) =>
       Object.values(row).some((field) =>
         field?.toString().toLowerCase().includes(value)
       )
@@ -323,8 +247,8 @@ function InvoiceTable() {
                       type="text"
                       id="contactName"
                       placeholder="Enter contact number"
-                      value={contactNum}
-                      onChange={(e) => setContactNum(e.target.value)}
+                      value={customerContact}
+                      onChange={(e) => setCustomerContact(e.target.value)}
                       className="form-control"
                       required
                       style={{
@@ -422,10 +346,10 @@ function InvoiceTable() {
                 type="button"
                 className="btn px-4 py-2"
                 onClick={handleSubmitCustomer}
-                disabled={!customerName || !contactNum || !customerAddress}
+                disabled={!customerName || !customerContact || !customerAddress}
                 style={{
                   backgroundColor:
-                    !customerName || !contactNum || !customerAddress
+                    !customerName || !customerContact || !customerAddress
                       ? "#6c757d"
                       : "#0C1D61",
                   color: "white",
@@ -434,18 +358,18 @@ function InvoiceTable() {
                   fontWeight: "500",
                   transition: "all 0.3s ease",
                   cursor:
-                    !customerName || !contactNum || !customerAddress
+                    !customerName || !customerContact || !customerAddress
                       ? "not-allowed"
                       : "pointer",
                 }}
                 onMouseEnter={(e) => {
-                  if (customerName && contactNum && customerAddress) {
+                  if (customerName && customerContact && customerAddress) {
                     e.target.style.backgroundColor = "#1e3c72";
                     e.target.style.transform = "translateY(-1px)";
                   }
                 }}
                 onMouseLeave={(e) => {
-                  if (customerName && contactName && customerAddress) {
+                  if (customerName && customerContact && customerAddress) {
                     e.target.style.backgroundColor = "#0C1D61";
                     e.target.style.transform = "translateY(0)";
                   }
@@ -470,4 +394,4 @@ function InvoiceTable() {
   );
 }
 
-export default InvoiceTable;
+export default CustomerTable;

@@ -1,18 +1,54 @@
 import { useState } from "react";
+import { FaEdit } from "react-icons/fa";
 
 function ItemDetails({ item }) {
+  // Edit Stock
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState({
-    currentCount: 100, // replace with actual value
+    currentCount: 100,
     newCount: "",
     remarks: "",
   });
 
   const handleStockUpdate = () => {
-    // Add validation or API logic here
     console.log("Updated Stock:", stockData.newCount);
     console.log("Reason:", stockData.remarks);
     setShowStockModal(false);
+  };
+
+  // Edit Special Price
+  const [showEditSpecialPriceModal, setShowEditSpecialPriceModal] =
+    useState(false);
+  const [currentSpecialPrice, setCurrentSpecialPrice] = useState("");
+  const [newSpecialPrice, setNewSpecialPrice] = useState("");
+
+  const handleEditSpecialPriceClick = (currentPrice) => {
+    setCurrentSpecialPrice(currentPrice);
+    setNewSpecialPrice(currentPrice);
+    setShowEditSpecialPriceModal(true);
+  };
+
+  const handleCloseSpecialPriceModal = () => {
+    setShowEditSpecialPriceModal(false);
+    // Clear form fields when closing
+    setCurrentSpecialPrice("");
+    setNewSpecialPrice("");
+  };
+
+  const handleSubmitSpecialPrice = () => {
+    // Your special price update logic here
+    if (newSpecialPrice) {
+      // Update special price logic
+      console.log(
+        "Updating special price from",
+        currentSpecialPrice,
+        "to",
+        newSpecialPrice
+      );
+
+      // Close modal and clear fields
+      handleCloseSpecialPriceModal();
+    }
   };
 
   return (
@@ -31,25 +67,35 @@ function ItemDetails({ item }) {
           />
         </div>
         <div className="col-4">
-          <label htmlFor="size" className="form-label h6">
-            Size:
+          <label htmlFor="Stock" className="form-label h6">
+            Stock:
           </label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="size"
-            value={item.size}
-          />
+          <div className="d-flex align-items-center">
+            <input
+              type="text"
+              className="form-control form-control-sm me-2"
+              id="Stock"
+              value={item.stock}
+              readOnly
+            />
+            <FaEdit
+              onClick={() => setShowStockModal(true)}
+              style={{ cursor: "pointer", margin: "0px 15px" }}
+              color="#0C1D61"
+              size={30}
+            />
+          </div>
         </div>
         <div className="col-4">
           <label htmlFor="gPrice" className="form-label h6">
-            Gross Price:
+            Price 1:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
             id="gPrice"
             value={item.price1}
+            readOnly
           />
         </div>
       </div>
@@ -80,13 +126,14 @@ function ItemDetails({ item }) {
         </div>
         <div className="col-4">
           <label htmlFor="aPrice" className="form-label h6">
-            Net-A Price:
+            Price 2:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
             id="aPrice"
             value={item.price2}
+            readOnly
           />
         </div>
       </div>
@@ -117,13 +164,14 @@ function ItemDetails({ item }) {
         </div>
         <div className="col-4">
           <label htmlFor="bPrice" className="form-label h6">
-            Net-B Price:
+            Price 3:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
             id="bPrice"
             value={item.price3}
+            readOnly
           />
         </div>
       </div>
@@ -154,14 +202,23 @@ function ItemDetails({ item }) {
         </div>
         <div className="col-4">
           <label htmlFor="sPrice" className="form-label h6">
-            Special Price:
+            Price 4:
           </label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="sPrice"
-            value={item.price4}
-          />
+          <div className="d-flex align-items-center">
+            <input
+              type="text"
+              className="form-control form-control-sm me-2"
+              id="sPrice"
+              value={item.price4}
+              readOnly
+            />
+            <FaEdit
+              onClick={() => setShowEditSpecialPriceModal(true)}
+              style={{ cursor: "pointer", margin: "0px 15px" }}
+              color="#0C1D61"
+              size={30}
+            />
+          </div>
         </div>
       </div>
 
@@ -179,18 +236,18 @@ function ItemDetails({ item }) {
           />
         </div>
 
-        <div className="col-auto d-flex align-items-end ms-auto mt-3 me-5">
+        <div className="col-auto d-flex align-items-end ms-auto mt-4">
           <button
             type="button"
             className="btn"
             style={{
-              backgroundColor: "#0C1D61",
+              backgroundColor: "#198754", // Bootstrap green
               color: "white",
               whiteSpace: "nowrap",
             }}
-            onClick={() => setShowStockModal(true)}
+            onClick={() => console.log("Save clicked")}
           >
-            Stock Count
+            Save
           </button>
         </div>
       </div>
@@ -481,6 +538,291 @@ function ItemDetails({ item }) {
                 >
                   <i className="fas fa-save me-2"></i>
                   Update Stock
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Special Price Modal */}
+      {showEditSpecialPriceModal && (
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          role="dialog"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div
+            className="modal-dialog modal-dialog-centered modal-lg w-50"
+            role="document"
+          >
+            <div className="modal-content shadow-lg border-0">
+              {/* Header with gradient background */}
+              <div
+                className="modal-header text-white position-relative overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                  borderRadius: "0.5rem 0.5rem 0 0",
+                }}
+              >
+                <div className="d-flex align-items-center">
+                  <div>
+                    <h5 className="modal-title mb-0">Edit Price 4</h5>
+                    <small className="opacity-75">
+                      Modify pricing 4 for item
+                    </small>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn-close btn-close-white"
+                  onClick={handleCloseSpecialPriceModal}
+                  aria-label="Close"
+                ></button>
+
+                {/* Decorative elements */}
+                <div
+                  className="position-absolute"
+                  style={{
+                    top: "-50px",
+                    right: "-50px",
+                    width: "100px",
+                    height: "100px",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+                <div
+                  className="position-absolute"
+                  style={{
+                    bottom: "-30px",
+                    left: "-30px",
+                    width: "60px",
+                    height: "60px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+              </div>
+
+              <div className="modal-body p-4">
+                <form>
+                  <div className="row g-3">
+                    {/* Current Special Price (Read-only) */}
+                    <div className="col-12">
+                      <label className="form-label fw-semibold text-muted small">
+                        <i
+                          className="fas fa-tag me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Current Price 4
+                      </label>
+                      <div className="input-group">
+                        <span
+                          className="input-group-text"
+                          style={{
+                            backgroundColor: "#f8f9fa",
+                            color: "#495057",
+                          }}
+                        >
+                          ₱
+                        </span>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={currentSpecialPrice}
+                          disabled
+                          style={{
+                            backgroundColor: "#f8f9fa",
+                            border: "1px solid #e9ecef",
+                            fontSize: "0.95rem",
+                            fontWeight: "500",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* New Special Price */}
+                    <div className="col-12">
+                      <label
+                        htmlFor="newSpecialPrice"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-star me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        New Price 4
+                      </label>
+                      <div className="input-group">
+                        <span
+                          className="input-group-text"
+                          style={{ backgroundColor: "#fff", color: "#495057" }}
+                        >
+                          ₱
+                        </span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          id="newSpecialPrice"
+                          className="form-control"
+                          placeholder="0.00"
+                          value={newSpecialPrice}
+                          onChange={(e) => setNewSpecialPrice(e.target.value)}
+                          style={{
+                            border: "1px solid #e9ecef",
+                            fontSize: "0.95rem",
+                            transition: "border-color 0.3s ease",
+                          }}
+                          onFocus={(e) =>
+                            (e.target.style.borderColor = "#0C1D61")
+                          }
+                          onBlur={(e) =>
+                            (e.target.style.borderColor = "#e9ecef")
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+                {/* Price Change Indicator */}
+                {currentSpecialPrice &&
+                  newSpecialPrice &&
+                  currentSpecialPrice !== newSpecialPrice && (
+                    <div
+                      className="mt-4 p-3 rounded-3"
+                      style={{
+                        backgroundColor:
+                          parseFloat(newSpecialPrice) <
+                          parseFloat(currentSpecialPrice)
+                            ? "rgba(25, 135, 84, 0.1)"
+                            : parseFloat(newSpecialPrice) >
+                              parseFloat(currentSpecialPrice)
+                            ? "rgba(255, 193, 7, 0.1)"
+                            : "rgba(12, 29, 97, 0.05)",
+                        border: `1px solid ${
+                          parseFloat(newSpecialPrice) <
+                          parseFloat(currentSpecialPrice)
+                            ? "rgba(25, 135, 84, 0.2)"
+                            : parseFloat(newSpecialPrice) >
+                              parseFloat(currentSpecialPrice)
+                            ? "rgba(255, 193, 7, 0.2)"
+                            : "rgba(12, 29, 97, 0.1)"
+                        }`,
+                      }}
+                    >
+                      <div className="d-flex align-items-center">
+                        <i
+                          className={`fas ${
+                            parseFloat(newSpecialPrice) <
+                            parseFloat(currentSpecialPrice)
+                              ? "fa-arrow-down text-success"
+                              : parseFloat(newSpecialPrice) >
+                                parseFloat(currentSpecialPrice)
+                              ? "fa-arrow-up text-warning"
+                              : "fa-equals text-secondary"
+                          } me-2`}
+                        ></i>
+                        <small className="text-muted">
+                          <strong>Price Change: </strong>
+                          {parseFloat(newSpecialPrice) >
+                          parseFloat(currentSpecialPrice)
+                            ? "+"
+                            : ""}
+                          ₱
+                          {(
+                            parseFloat(newSpecialPrice) -
+                            parseFloat(currentSpecialPrice)
+                          ).toFixed(2)}
+                          {parseFloat(newSpecialPrice) <
+                            parseFloat(currentSpecialPrice) &&
+                            " (Price Decrease)"}
+                          {parseFloat(newSpecialPrice) >
+                            parseFloat(currentSpecialPrice) &&
+                            " (Price Increase)"}
+                        </small>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Info card */}
+                <div
+                  className="mt-4 p-3 rounded-3"
+                  style={{
+                    backgroundColor: "rgba(12, 29, 97, 0.05)",
+                    border: "1px solid rgba(12, 29, 97, 0.1)",
+                  }}
+                >
+                  <div className="d-flex align-items-center">
+                    <i
+                      className="fas fa-info-circle me-2"
+                      style={{ color: "#0C1D61" }}
+                    ></i>
+                    <small className="text-muted">
+                      Changes will be applied immediately. Make sure the new
+                      price is accurate before saving.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer bg-light border-0 rounded-bottom">
+                <button
+                  type="button"
+                  className="btn px-4 py-2 me-2"
+                  onClick={() => setShowEditSpecialPriceModal(false)}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#c82333";
+                    e.target.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "#dc3545";
+                    e.target.style.transform = "translateY(0)";
+                  }}
+                >
+                  <i className="fas fa-times me-2"></i>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn px-4 py-2"
+                  onClick={handleSubmitSpecialPrice}
+                  disabled={!newSpecialPrice}
+                  style={{
+                    backgroundColor: !newSpecialPrice ? "#6c757d" : "#0C1D61",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                    cursor: !newSpecialPrice ? "not-allowed" : "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (newSpecialPrice) {
+                      e.target.style.backgroundColor = "#1e3c72";
+                      e.target.style.transform = "translateY(-1px)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (newSpecialPrice) {
+                      e.target.style.backgroundColor = "#0C1D61";
+                      e.target.style.transform = "translateY(0)";
+                    }
+                  }}
+                >
+                  <i className="fas fa-save me-2"></i>
+                  Update Price 4
                 </button>
               </div>
             </div>

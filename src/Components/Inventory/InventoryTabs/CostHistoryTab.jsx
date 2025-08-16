@@ -74,70 +74,89 @@ function CostHistoryTab() {
 
   // Define table columns
   const columns = [
-    { name: "P.O #", selector: (row) => row.poNum, sortable: true },
     {
-      name: "Warehouse Name",
-      selector: (row) => row.itemName,
+      id: 1,
+      name: "Invoice #",
+      selector: (row) => row.invoiceNum,
       sortable: true,
-      width: "150px", // Ensure enough width
-      cell: (row) => (
-        <div style={{ whiteSpace: "nowrap" }}>{row.itemName}</div>
-      ),
+      width: "100px",
     },
     {
-      name: "Supplier Name",
+      id: 2,
+      name: "Supplier",
       selector: (row) => row.supplierName,
       sortable: true,
     },
-    { name: "Invoice #", selector: (row) => row.invoiceNum, sortable: true },
-    { name: "Name", selector: (row) => row.name, sortable: true },
-    { name: "Quantity", selector: (row) => row.quantity, sortable: true },
-    { name: "Price", selector: (row) => row.unitCost, sortable: true },
-    { name: "Currency", selector: (row) => row.currency, sortable: true },
     {
+      id: 3,
+      name: "P.O #",
+      selector: (row) => row.poNum,
+      sortable: true,
+      width: "100px",
+    },
+    { id: 4, name: "Name", selector: (row) => row.name, sortable: true },
+    {
+      id: 5,
+      name: "Quantity",
+      selector: (row) => row.quantity,
+      sortable: true,
+      width: "100px",
+    },
+    {
+      id: 6,
+      name: "Price 1",
+      selector: (row) => row.unitCost,
+      sortable: false,
+      width: "75px",
+    },
+    {
+      id: 7,
+      name: "Price 2",
+      selector: (row) => row.unitCost,
+      sortable: false,
+      width: "75px",
+    },
+    {
+      id: 8,
+      name: "Price 3",
+      selector: (row) => row.unitCost,
+      sortable: false,
+      width: "75px",
+    },
+    {
+      id: 9,
+      name: "Price 4",
+      selector: (row) => row.unitCost,
+      sortable: false,
+      width: "75px",
+    },
+    {
+      id: 10,
+      name: "Currency",
+      selector: (row) => row.currency,
+      sortable: true,
+      width: "100px",
+    },
+    {
+      id: 11,
       name: "Conversion Factor",
       selector: (row) => row.convertedFactor,
       sortable: true,
-      width: "170px", // Ensure enough width
-      cell: (row) => (
-        <div style={{ whiteSpace: "nowrap" }}>{row.convertedFactor}</div>
-      ),
+      cell: (row) => {
+        row.convertedFactor;
+      },
+    },
+    {
+      id: 12,
+      name: " Date",
+      selector: (row) => row.updatedDate,
+      sortable: true,
+      width: "100px",
     },
   ];
 
-  //   const [searchTerm, setSearchTerm] = useState("");
-  //   const [filteredData, setFilteredData] = useState(Object.values(data));
-
-  // Handle search input change
-  //   const handleSearch = (event) => {
-  //     const value = event.target.value.toLowerCase();
-  //     setSearchTerm(value);
-
-  //     const filtered = Object.values(data).filter((row) =>
-  //       Object.values(row).some((field) =>
-  //         field?.toString().toLowerCase().includes(value)
-  //       )
-  //     );
-
-  //     setFilteredData(filtered);
-  //   };
-
   return (
     <div>
-      {/* <div className="d-flex justify-content-between align-items-center">
-        Search input field
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search inventory"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
-      </div> */}
-
       <DataTable
         columns={columns}
         data={data}
@@ -146,7 +165,9 @@ function CostHistoryTab() {
         fixedHeader
         fixedHeaderScrollHeight="200px"
         customStyles={customStyles}
-        dense={true}
+        dense
+        defaultSortFieldId={1}
+        defaultSortAsc={false}
       />
     </div>
   );

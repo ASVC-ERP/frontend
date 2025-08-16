@@ -1,97 +1,12 @@
 import DataTable from "react-data-table-component";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
 
-function InvoiceTable() {
-  const salesInvoices = [
-    {
-      invoiceId: "SI-001",
-      date: "2025-06-15",
-      customerName: "Juan Dela Cruz",
-      customerAddress: "123 Rizal St., Manila",
-      customerNumber: "09171234567",
-      items: [
-        {
-          itemName: "Red T-Shirt",
-          quantity: 2,
-          unitPrice: 250.0,
-          grossPrice: 500.0,
-          discount: 50.0,
-          netPrice: 450.0,
-        },
-        {
-          itemName: "Blue Jeans",
-          quantity: 1,
-          unitPrice: 800.0,
-          grossPrice: 800.0,
-          discount: 0.0,
-          netPrice: 800.0,
-        },
-      ],
-      totalGross: 1300.0,
-      totalDiscount: 50.0,
-      totalNet: 1250.0,
-      salesAgent: "Ana Lopez",
-      status: "Paid",
-    },
-    {
-      invoiceId: "SI-002",
-      date: "2025-06-16",
-      customerName: "Maria Santos",
-      customerAddress: "456 Mabini St., Quezon City",
-      customerNumber: "09181234567",
-      items: [
-        {
-          itemName: "White Sneakers",
-          quantity: 1,
-          unitPrice: 1500.0,
-          grossPrice: 1500.0,
-          discount: 100.0,
-          netPrice: 1400.0,
-        },
-      ],
-      totalGross: 1500.0,
-      totalDiscount: 100.0,
-      totalNet: 1400.0,
-      salesAgent: "Mark Reyes",
-      status: "Pending",
-    },
-    {
-      invoiceId: "SI-003",
-      date: "2025-06-17",
-      customerName: "Pedro Mendoza",
-      customerAddress: "789 Bonifacio Ave., Pasig",
-      customerNumber: "09191234567",
-      items: [
-        {
-          itemName: "Black Hoodie",
-          quantity: 1,
-          unitPrice: 1200.0,
-          grossPrice: 1200.0,
-          discount: 0.0,
-          netPrice: 1200.0,
-        },
-        {
-          itemName: "Cap",
-          quantity: 2,
-          unitPrice: 200.0,
-          grossPrice: 400.0,
-          discount: 40.0,
-          netPrice: 360.0,
-        },
-      ],
-      totalGross: 1600.0,
-      totalDiscount: 40.0,
-      totalNet: 1560.0,
-      salesAgent: "Ana Lopez",
-      status: "Paid",
-    },
-  ];
-
+function InvoiceTable({ invoices }) {
   const columns = [
     {
       name: "Invoice ID",
-      selector: (row) => row.invoiceId,
+      selector: (row) => row.invoiceID,
       sortable: true,
     },
     {
@@ -112,14 +27,14 @@ function InvoiceTable() {
     },
     {
       name: "No. of Items",
-      selector: (row) => row.items.length,
+      selector: (row) => row.numItems,
       sortable: true,
       center: true,
     },
     {
       name: "Gross Price",
       selector: (row) =>
-        `₱${row.totalGross.toLocaleString(undefined, {
+        `₱${row.grossPrice.toLocaleString(undefined, {
           minimumFractionDigits: 2,
         })}`,
       sortable: true,
@@ -128,7 +43,7 @@ function InvoiceTable() {
     {
       name: "Discount",
       selector: (row) =>
-        `₱${row.totalDiscount.toLocaleString(undefined, {
+        `₱${row.discount.toLocaleString(undefined, {
           minimumFractionDigits: 2,
         })}`,
       sortable: true,
@@ -137,7 +52,7 @@ function InvoiceTable() {
     {
       name: "Net Price",
       selector: (row) =>
-        `₱${row.totalNet.toLocaleString(undefined, {
+        `₱${row.netPrice.toLocaleString(undefined, {
           minimumFractionDigits: 2,
         })}`,
       sortable: true,
@@ -154,6 +69,8 @@ function InvoiceTable() {
               ? "bg-success"
               : row.status === "Pending"
               ? "bg-warning text-dark"
+              : row.status === "Overdue"
+              ? "bg-danger"
               : "bg-secondary"
           }`}
         >
@@ -164,14 +81,19 @@ function InvoiceTable() {
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState(salesInvoices);
+  const [filteredData, setFilteredData] = useState([]);
+
+  // Update filtered data when invoices change
+  useEffect(() => {
+    setFilteredData(invoices);
+  }, [invoices]);
 
   // Handle search input change
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
 
-    const filtered = Object.values(salesInvoices).filter((row) =>
+    const filtered = Object.values(invoices).filter((row) =>
       Object.values(row).some((field) =>
         field?.toString().toLowerCase().includes(value)
       )

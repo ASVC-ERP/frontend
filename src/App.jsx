@@ -29,6 +29,8 @@ import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/Suppli
 import Customer from "./Components/Customer/Customer.jsx";
 
 import LoginPage from "./Pages/LoginPage.jsx";
+import ProtectedRoute from "./Components/ProtectedRoute.jsx";
+import Unauthorized from "./Pages/Unauthorized.jsx";
 
 function App() {
   const [query, setQuery] = useState("");
@@ -162,6 +164,24 @@ function App() {
     setOrderItems(updatedItems);
   };
 
+  //** INVOICE MODULE **//
+  const [invoices, setInvoices] = useState([]);
+
+  useEffect(() => {
+    fetchInvoices();
+  }, []);
+
+  const fetchInvoices = () => {
+    axios
+      .get("http://localhost:3000/invoice")
+      .then((response) => {
+        setInvoices(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching invoices:", error);
+      });
+  };
+
   //** INVENTORY MODULE **//
 
   const [items, setItems] = useState([]);
@@ -225,18 +245,18 @@ function App() {
 
   const fetchSupplier = () => {
     axios
-    .get("http://localhost:3000/suppliers")
-    .then((response) => {
-      const transformedSuppliers = response.data.map((supplier) => ({
-        id: supplier.id,
-        name: supplier.name,
-        address: supplier.address,
-      }));
-      setSupplier(transformedSuppliers);
-    })
-    .catch((error) => {
-      console.error("Error fetching suppliers from backend:", error);
-    });
+      .get("http://localhost:3000/suppliers")
+      .then((response) => {
+        const transformedSuppliers = response.data.map((supplier) => ({
+          id: supplier.id,
+          name: supplier.name,
+          address: supplier.address,
+        }));
+        setSupplier(transformedSuppliers);
+      })
+      .catch((error) => {
+        console.error("Error fetching suppliers from backend:", error);
+      });
   };
 
   const handleAddSupplier = (newSupplier) => {
@@ -301,7 +321,15 @@ function App() {
   };
   */
 
+  //* CUSTOMER MODULE **//
+  const [customers, setCustomers] = useState([]);
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/customers")
+      .then((res) => setCustomers(res.data))
+      .catch((err) => console.error(err));
+  }, []);
 
   return (
     <Router>
@@ -322,11 +350,17 @@ function App() {
           <div className="flex-grow-1 d-flex flex-column p-0">
             <Routes>
               <Route
-                path="/"
-                element={<Approval supplier={supplier}/>}
+                path="/approval"
+                element={
+                  <ProtectedRoute user={user} requiredRole="admin">
+                    <Approval supplier={supplier} />
+                  </ProtectedRoute>
+                }
               />
+              <Route path="/unauthorized" element={<Unauthorized />} />
+
               <Route
-                path="/order"
+                path="/"
                 element={<SalesOrder orders={Object.values(orders)} />}
               />
               <Route
@@ -350,24 +384,19 @@ function App() {
                   />
                 }
               />
-              <Route path="/invoice" element={<SalesInvoice />} />
+              <Route path="/invoice" element={<SalesInvoice invoices={invoices} />} />
 
               <Route path="/inventory/item" element={<Item />} />
               <Route
                 path="/inventory"
-                element={
-                  <Inventory
-                    items={items}
-                    onAddItem={handleAddItem}
-                  />
-                }
+                element={<Inventory items={items} onAddItem={handleAddItem} />}
               />
               <Route
                 path="/supplier"
                 element={
                   <Supplier
-                    supplier={supplier} 
-                    onAddSupplier={handleAddSupplier} 
+                    supplier={supplier}
+                    onAddSupplier={handleAddSupplier}
                   />
                 }
               />
@@ -377,7 +406,7 @@ function App() {
               />
               <Route
                 path="/customer"
-                element={<Customer />}
+                element={<Customer customers={customers} />}
               />
             </Routes>
           </div>

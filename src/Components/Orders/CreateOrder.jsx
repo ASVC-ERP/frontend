@@ -44,7 +44,7 @@ function CreateOrder({query, suggestions, orderItems, setOrderItems, onSearchCha
 
     // Handle the cancel action
     const handleCancel = () => {
-        navigate("/order");  // Navigate back to SalesOrder page
+        navigate("/");  // Navigate back to SalesOrder page
     };
 
     return (
