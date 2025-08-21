@@ -174,6 +174,7 @@ function SupplierInvoicesTable({ items }) {
         items: [
           {
             itemCode: "",
+            itemName: "",
             quantity: null,
             unit: "",
             unitCost: null,
