@@ -1,13 +1,14 @@
 import DataTable from "react-data-table-component";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { IoIosSearch } from "react-icons/io";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaTrashAlt } from "react-icons/fa";
 
+import SuggestionList from "./SuggestionList";
 
-function SupplierInvoicesTable() {
+function SupplierInvoicesTable({ items }) {
   const location = useLocation();
   const supplier = location.state?.row || {};
   const supplierName = supplier.name || "Supplier";
@@ -42,14 +43,41 @@ function SupplierInvoicesTable() {
     ],
   });
 
+  const inputRefs = useRef([]);
+
+  const [queries, setQueries] = useState({}); // per item input text
+  const [suggestions, setSuggestions] = useState({}); // per item suggestions
+
+  const handleSearchChange = (index, value) => {
+    setQueries((prev) => ({ ...prev, [index]: value }));
+
+    if (value.length > 0) {
+      const filtered = items.filter(
+        (p) =>
+          p.itemName.toLowerCase().includes(value.toLowerCase()) ||
+          p.itemCode.toLowerCase().includes(value.toLowerCase())  
+      );
+      setSuggestions((prev) => ({ ...prev, [index]: filtered }));
+      console.log("Filtered suggestions:", filtered);
+    } else {
+      setSuggestions((prev) => ({ ...prev, [index]: [] }));
+    }
+  };
+
+  const handleSelectSuggestion = (index, suggestion) => {
+    setQueries((prev) => ({ ...prev, [index]: suggestion.itemName }));
+    setSuggestions((prev) => ({ ...prev, [index]: [] }));
+  };
+
   useEffect(() => {
     if (!supplierID) return;
 
     axios
-      .get(`http://localhost:3000/invoices/${supplierID}`)
+      .get(`http://localhost:3000/suppliers/supplier-invoices/${supplierID}`)
       .then((res) => {
         setInvoiceData(res.data);
         setFilteredData(res.data);
+        console.log("📥 Fetched invoices:", res.data);
       })
       .catch((err) => console.error("Error fetching invoices:", err));
   }, [supplierID]);
@@ -512,7 +540,7 @@ function SupplierInvoicesTable() {
               className="modal fade show d-block"
               tabIndex="-1"
               role="dialog"
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)"}}
             >
               <div
                 className="modal-dialog modal-xl modal-dialog-centered"
@@ -710,8 +738,8 @@ function SupplierInvoicesTable() {
                             color: "#495057",
                           }}
                         >
-                          <div className="col-2">Item Code</div>
-                          <div className="col-2">Quantity</div>
+                          <div className="col-3">Item Name</div>
+                          <div className="col-1">Quantity</div>
                           <div className="col-2">Unit</div>
                           <div className="col-2">Unit Cost</div>
                           <div className="col-2">Discount</div>
@@ -720,34 +748,41 @@ function SupplierInvoicesTable() {
                         </div>
 
                         {/* Items List */}
-                        <div style={{ maxHeight: "300px", overflowY: "auto" }}>
+                        <div style={{ maxHeight: "300px"}}>
                           {invoiceForm.items.map((item, index) => (
                             <div
                               key={index}
                               className="row g-2 mb-2 align-items-center"
                             >
-                              <div className="col-2">
+                              <div className="position-relative col-3">
                                 <input
+                                  ref={(el) => (inputRefs.current[index] = el)} // ✅ this line
                                   type="text"
-                                  placeholder="Item Code"
+                                  placeholder="Item Name"
                                   className="form-control form-control-sm"
-                                  value={item.itemCode}
-                                  onChange={(e) => {
-                                    const updated = [...invoiceForm.items];
-                                    updated[index].itemCode = e.target.value;
-                                    setInvoiceForm({
-                                      ...invoiceForm,
-                                      items: updated,
-                                    });
-                                  }}
+                                  value={queries[index] ?? item.itemName ?? ""}
+                                  onChange={(e) =>
+                                    handleSearchChange(index, e.target.value)
+                                  }
                                   style={{
                                     border: "1px solid #e9ecef",
                                     borderRadius: "0.375rem",
                                     fontSize: "0.875rem",
                                   }}
                                 />
+
+                                <SuggestionList
+                                  anchorRef={{
+                                    current: inputRefs.current[index],
+                                  }}
+                                  suggestions={suggestions[index]}
+                                  onSelect={(s) =>
+                                    handleSelectSuggestion(index, s)
+                                  }
+                                />
                               </div>
-                              <div className="col-2">
+
+                              <div className="col-1">
                                 <input
                                   type="number"
                                   placeholder="Qty"
@@ -862,9 +897,11 @@ function SupplierInvoicesTable() {
                                       items: updated,
                                     });
                                   }}
-                                  
                                 >
-                                  <FaTrashAlt style={{ color: "#B64345"}} size={18} />
+                                  <FaTrashAlt
+                                    style={{ color: "#B64345" }}
+                                    size={18}
+                                  />
                                 </button>
                               </div>
                             </div>
@@ -1075,11 +1112,23 @@ function SupplierInvoicesTable() {
                                 />
                                 <div className="d-flex flex-column">
                                   <span className="fw-semibold">
-                                    {item.itemCode}
+                                    {item.itemName}
                                   </span>
                                   <small className="text-muted">
                                     Qty: {item.quantity} {item.unit}
                                   </small>
+                                  <span
+                                    style={{ width: "fit-content" }}
+                                    className={`badge ${
+                                      item.status === "Purchased"
+                                        ? "bg-success"
+                                        : item.status === "Return"
+                                        ? "bg-danger"
+                                        : "bg-secondary"
+                                    } mt-1`}
+                                  >
+                                    {item.status || "N/A"}
+                                  </span>
                                 </div>
                               </div>
 
