@@ -8,7 +8,7 @@ function Inventory({ items, onAddItem }) {
           className="h1 fw-bold mb-0 ms-3"
           style={{ color: "#0C1D61", fontFamily: "'Outfit', sans-serif" }}
         >
-          Products
+          Inventory
         </p>
       </div>
 

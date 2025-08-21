@@ -2,6 +2,7 @@ import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 
 function ItemDetails({ item }) {
+  console.log("ItemDetails received item:", item); // <-- top of component
   // Edit Stock
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState({
@@ -12,8 +13,7 @@ function ItemDetails({ item }) {
 
   const handleStockUpdate = () => {
     console.log("Updated Stock:", stockData.newCount);
-    console.log("Reason:", stockData.remarks);
-    setShowStockModal(false);
+    console.log("Reason:", stockData.remarks);    setShowStockModal(false);
   };
 
   // Edit Special Price
@@ -86,6 +86,7 @@ function ItemDetails({ item }) {
             />
           </div>
         </div>
+        {console.log("Rendering item:", item)}
         <div className="col-4">
           <label htmlFor="gPrice" className="form-label h6">
             Price 1:
@@ -94,7 +95,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="gPrice"
-            value={item.price1}
+            value={item.price?.price1}
             readOnly
           />
         </div>
@@ -132,7 +133,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="aPrice"
-            value={item.price2}
+            value={item.price?.price2}
             readOnly
           />
         </div>
@@ -170,7 +171,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="bPrice"
-            value={item.price3}
+            value={item.price?.price3}
             readOnly
           />
         </div>
@@ -209,7 +210,7 @@ function ItemDetails({ item }) {
               type="text"
               className="form-control form-control-sm me-2"
               id="sPrice"
-              value={item.price4}
+              value={item.price?.price4}
               readOnly
             />
             <FaEdit

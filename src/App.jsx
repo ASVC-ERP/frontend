@@ -140,18 +140,17 @@ function App() {
   };
 
   const calculateTotal = (item) => {
-    const unitPrice = item[item.selectedMarkup];
+    const unitPrice = item.price?.[item.selectedMarkup];
     return unitPrice * item.quantity;
   };
 
   const calculateTotalPrice = () => {
     return orderItems.reduce((total, item) => {
-      const selectedPrice = item[item.selectedMarkup];
+      const selectedPrice = item.price?.[item.selectedMarkup]; // <-- access inside price
       const quantity = item.quantity;
 
-      // Ensure the values are valid numbers
-      const validSelectedPrice = isNaN(selectedPrice) ? 0 : selectedPrice;
-      const validQuantity = isNaN(quantity) ? 0 : quantity;
+      const validSelectedPrice = parseFloat(selectedPrice) || 0;
+      const validQuantity = parseInt(quantity) || 0;
 
       return total + validSelectedPrice * validQuantity;
     }, 0);
@@ -201,10 +200,7 @@ function App() {
           origin: item.origin,
           photo: item.photo,
           stock: item.stock,
-          price1: item.price1,
-          price2: item.price2,
-          price3: item.price3,
-          price4: item.price4,
+          price: item.price,
         }));
         setItems(transformedItems);
       })

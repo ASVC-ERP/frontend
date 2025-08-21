@@ -17,6 +17,7 @@ function SupplierInvoicesTable({ items }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [invoiceData, setInvoiceData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [searchResults, setSearchResults] = useState({});
 
   const [showEditModal, setShowEditModal] = useState(false);
   const [editableSupplier, setEditableSupplier] = useState({

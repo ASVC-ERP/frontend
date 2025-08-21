@@ -5,6 +5,8 @@ import Tabs from "../InventoryTabs/Tabs";
 function Item () {
   const location = useLocation();
   const { row } = location.state || {};
+  console.log("Row received from location.state:", row);
+
 
   
   return (

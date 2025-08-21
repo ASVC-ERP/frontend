@@ -12,7 +12,7 @@ const columns = [
   { name: "Stock", selector: (row) => row.stock, sortable: true },
   {
     name: "Cost per product",
-    selector: (row) => row.price1,
+    selector: (row) => row.price?.price1 ?? 0,
     sortable: true,
   },
 ];
@@ -70,10 +70,12 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
     const newItem = {
       ...trimmedItem,
       stock: 0,
-      price1: 0,
-      price2: 0,
-      price3: 0,
-      price4: 0,
+      price: {
+        price1: 0,
+        price2: 0,
+        price3: 0,
+        price4: 0,
+      }
     };
 
     onAddItem(newItem);

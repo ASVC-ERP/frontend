@@ -31,7 +31,7 @@ function OrdersTable() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
-  const [orders, setOrders] = useState({});
+  const [orders, setOrders] = useState([]);
 
   useEffect(() => {
   axios.get("http://localhost:3000/orders")
@@ -146,7 +146,7 @@ function OrdersTable() {
                   style={{ maxHeight: "250px", overflowY: "auto" }}
                 >
                   <ul className="list-unstyled">
-                    {selectedRow.orderItems.map((item, index) => (
+                    {selectedRow.orderedItems.map((item, index) => (
                       <li key={index}>
                         <div className="d-flex justify-content-between align-items-start mb-2">
                           {/* Image and Product Info */}
@@ -173,7 +173,7 @@ function OrdersTable() {
                             <span className="fw-semibold">
                               ₱
                               {(
-                                item.price[item.selectedMarkup] * item.quantity
+                                item.price * item.quantity
                               ).toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
                               })}

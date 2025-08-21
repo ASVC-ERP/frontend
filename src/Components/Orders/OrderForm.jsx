@@ -92,10 +92,10 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                                 value={item.selectedMarkup}
                                 onChange={(e) => onPriceChange(idx, e.target.value)}
                                 >
-                                    <option value="price1">₱{item.price1}</option>
-                                    <option value="price2">₱{item.price2}</option>
-                                    <option value="price3">₱{item.price3}</option>
-                                    <option value="price4">₱{item.price4}</option>
+                                    <option value="price1">₱{item.price?.price1}</option>
+                                    <option value="price2">₱{item.price?.price2}</option>
+                                    <option value="price3">₱{item.price?.price3}</option>
+                                    <option value="price4">₱{item.price?.price4}</option>
                                 </select>
                                 </td>
                                 <td style={{ color: "#ACACAC" }}> X </td>
@@ -113,12 +113,14 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                                     <span>₱</span>
                                     <span>{onCalculateTotal(item).toLocaleString(undefined, { minimumFractionDigits: 2 })}</span>
                                 </td>
+                                {/*
                                 <td>
                                     <div className='d-flex gap-2'>
                                     <button type="button" className="btn btn-secondary btn-sm">Reserve</button>
                                     <button type="button" className="btn bg-transparent btn-sm" onClick={() => onRemoveProduct(idx)}><FaTrashAlt style={{ color: "#B64345"}} size={18}/></button>
                                     </div>
                                 </td>
+                                */}
                             </tr>
                         ))}
                         {orderItems.length === 0 && (

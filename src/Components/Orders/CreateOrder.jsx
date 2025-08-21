@@ -19,6 +19,7 @@ function CreateOrder({query, suggestions, orderItems, setOrderItems, onSearchCha
         setOrderItems([]);  // Reset order items array
     }, []);
 
+    /*
     const handleSubmit = (e) => {
         e.preventDefault();
 
@@ -40,6 +41,78 @@ function CreateOrder({query, suggestions, orderItems, setOrderItems, onSearchCha
 
         onAddOrder(newOrder); // will use orderId as key
         navigate("/");
+    };
+    */
+    const generateNextOrderId = async () => {
+        try {
+            // Fetch all orders from backend
+            const res = await fetch('http://localhost:3000/orders');
+            const orders = await res.json();
+
+            if (!orders || orders.length === 0) {
+            return 'ORD001';
+            }
+
+            // Find the highest order number
+            const latestOrder = orders
+            .map(o => o.orderId.replace('ORD', '')) // remove prefix
+            .map(Number) // convert to number
+            .sort((a, b) => b - a)[0]; // get the largest
+
+            const nextNumber = (latestOrder + 1).toString().padStart(3, '0');
+            return `ORD${nextNumber}`;
+        } catch (err) {
+            console.error('Failed to generate order ID:', err);
+            return 'ORD001'; // fallback
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const orderId = await generateNextOrderId();
+
+        const newOrder = {
+            orderId,
+            date: new Date().toISOString().split("T")[0],
+            ...info,
+            orderedItems: orderItems.map(item => ({
+                itemName: item.itemName,
+                quantity: item.quantity,
+                price: item.price?.[item.selectedMarkup] // Use selected price
+            })),
+            totalPrice: orderItems.reduce((sum, item) => sum + item.price?.[item.selectedMarkup] * item.quantity, 0),
+            status: "Pending",
+            salesAgent: info.salesAgent
+        };
+
+        console.log("Final Order Data:", newOrder);
+        // Show the final JSON string in console
+        const finalJson = JSON.stringify(newOrder, null, 2); // pretty-print
+        console.log("JSON to be POSTed:\n", finalJson);
+
+        try {
+            const response = await fetch('http://localhost:3000/orders', { // <-- your backend endpoint
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newOrder)
+            });
+
+            if (!response.ok) throw new Error('Failed to create order');
+
+            const createdOrder = await response.json();
+            console.log('Order created successfully:', createdOrder);
+
+            // Optionally call local handler to update UI
+            onAddOrder(createdOrder);
+
+            Swal.fire('Success!', 'Order has been created.', 'success');
+
+            navigate("/");  // Go back to order list
+        } catch (err) {
+            console.error(err);
+            Swal.fire('Error', 'Failed to create order.', 'error');
+        }
     };
 
     // Handle the cancel action
