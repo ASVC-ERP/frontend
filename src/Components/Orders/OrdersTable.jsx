@@ -260,19 +260,13 @@ function OrdersTable() {
                     className="btn"
                     style={{ backgroundColor: "#0C1D61", color: "white" }}
                   >
-                    Sales Invoice
+                    Delivery Receipt with Invoice
                   </button>
                   <button
                     className="btn"
                     style={{ backgroundColor: "#0C1D61", color: "white" }}
                   >
                     Delivery Receipt
-                  </button>
-                  <button
-                    className="btn"
-                    style={{ backgroundColor: "#0C1D61", color: "white" }}
-                  >
-                    SI/DR
                   </button>
                 </div>
               </div>
