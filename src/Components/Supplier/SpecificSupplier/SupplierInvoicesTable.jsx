@@ -149,7 +149,8 @@ function SupplierInvoicesTable({ items }) {
           unitCost: item.unitCost,
           currency: item.currency,
           conversionFactor: item.conversionFactor,
-          subTotal: item.unitCost * item.quantity * (item.conversionFactor || 1),
+          subTotal:
+            item.unitCost * item.quantity * (item.conversionFactor || 1),
         })),
       };
 
@@ -167,14 +168,12 @@ function SupplierInvoicesTable({ items }) {
         confirmButtonColor: "#0C1D61",
       });
 
-      setShowCreateModal(false);
       setInvoiceForm({
         poNum: "",
         purchaseDate: "",
-        invoiceType: "Purchasing",
+        invoiceType: "Purchased",
         items: [
           {
-            itemCode: "",
             itemName: "",
             quantity: null,
             unit: "",
@@ -184,6 +183,10 @@ function SupplierInvoicesTable({ items }) {
           },
         ],
       });
+      setQueries({});
+      setSuggestions({});
+
+      setShowCreateModal(false);
 
       const res = await axios.get(
         `http://localhost:3000/suppliers/supplier-invoices/${supplierID}`
@@ -1163,8 +1166,7 @@ function SupplierInvoicesTable({ items }) {
                         className="mb-2"
                         style={{ color: "#05050599", fontSize: "12px" }}
                       >
-                        Supplier &gt; Invoices &gt;{" "}
-                        {selectedInvoice.poNum}
+                        Supplier &gt; Invoices &gt; {selectedInvoice.poNum}
                       </p>
                       <button
                         type="button"
@@ -1257,9 +1259,7 @@ function SupplierInvoicesTable({ items }) {
                       <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
                         {supplierName}
                       </p>
-                      <p className="mb-0 small">
-                        Supplier ID: {supplierID}
-                      </p>
+                      <p className="mb-0 small">Supplier ID: {supplierID}</p>
                     </div>
                     <p className="text-muted small mb-0">
                       {new Date(
