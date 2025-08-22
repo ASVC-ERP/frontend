@@ -44,6 +44,16 @@ function OrdersTable() {
     });
 }, []);
 
+  const handleCreateDeliveryReceipt = (withInvoice) => {
+    const url = withInvoice
+      ? "http://localhost:3000/delivery-receipts/invoice"
+      : "http://localhost:3000/delivery-receipts/delivery-receipts-no-invoice";
+
+    // Open PDF in new tab
+    window.open(`${url}?orderId=${selectedRow.orderId}`, "_blank");
+
+    setShowRequestModal(false);
+  };
 
   // Handle search input change
   const handleSearch = (event) => {
@@ -259,12 +269,14 @@ function OrdersTable() {
                   <button
                     className="btn"
                     style={{ backgroundColor: "#0C1D61", color: "white" }}
+                    onClick={() => handleCreateDeliveryReceipt(true)}
                   >
                     Delivery Receipt with Invoice
                   </button>
                   <button
                     className="btn"
                     style={{ backgroundColor: "#0C1D61", color: "white" }}
+                    onClick={() => handleCreateDeliveryReceipt(false)}
                   >
                     Delivery Receipt
                   </button>
