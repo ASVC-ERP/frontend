@@ -2,18 +2,61 @@ import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 
 function ItemDetails({ item }) {
-  console.log("ItemDetails received item:", item); // <-- top of component
   // Edit Stock
   const [showStockModal, setShowStockModal] = useState(false);
-  const [stockData, setStockData] = useState({
-    currentCount: 100,
-    newCount: "",
-    remarks: "",
+  const [stockData, setStockData] = useState();
+
+  const [formData, setFormData] = useState({
+    itemCode: item.itemCode || "",
+    itemName: item.itemName || "",
+    minStock: item.minStock || "",
+    partNo: item.partNo || "",
+    category: item.category || "",
+    brand: item.brand || "",
+    unit: item.unit || "",
+    model: item.model || "",
   });
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  // to follow backend
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`/api/items/${item.itemCode}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) throw new Error("Failed to update item");
+
+      console.log("Item updated successfully");
+      alert("Item details updated!");
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Error updating item details");
+    }
+  };
 
   const handleStockUpdate = () => {
     console.log("Updated Stock:", stockData.newCount);
-    console.log("Reason:", stockData.remarks);    setShowStockModal(false);
+    console.log("Reason:", stockData.remarks);
+    setShowStockModal(false);
+  };
+
+  const handleEditStockClick = () => {
+    setStockData({
+      currentCount: item.stock,
+      newCount: "",
+      remarks: "",
+    });
+    setShowStockModal(true);
   };
 
   // Edit Special Price
@@ -54,39 +97,34 @@ function ItemDetails({ item }) {
   return (
     <div>
       {/* First Row */}
-      <div className="row mx-4 d-flex align-items-start">
+      <div className="row mx-4 d-flex align-items-start py-1">
         <div className="col-4">
           <label htmlFor="pid" className="form-label h6">
-            Product ID:
+            Item Code:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
             id="pid"
-            value={item.itemCode}
+            value={formData.itemCode}
+            onChange={handleChange}
           />
         </div>
+
+        {/* name */}
         <div className="col-4">
-          <label htmlFor="Stock" className="form-label h6">
-            Stock:
+          <label htmlFor="itemName" className="form-label h6">
+            Item Name:
           </label>
-          <div className="d-flex align-items-center">
-            <input
-              type="text"
-              className="form-control form-control-sm me-2"
-              id="Stock"
-              value={item.stock}
-              readOnly
-            />
-            <FaEdit
-              onClick={() => setShowStockModal(true)}
-              style={{ cursor: "pointer", margin: "0px 15px" }}
-              color="#0C1D61"
-              size={30}
-            />
-          </div>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="itemName"
+            value={formData.itemName}
+            onChange={handleChange}
+          />
         </div>
-        {console.log("Rendering item:", item)}
+
         <div className="col-4">
           <label htmlFor="gPrice" className="form-label h6">
             Price 1:
@@ -103,28 +141,41 @@ function ItemDetails({ item }) {
 
       {/* Second Row */}
       <div className="row mx-4 mt-2 d-flex align-items-start">
+        {/* stock */}
         <div className="col-4">
-          <label htmlFor="itemName" className="form-label h6">
-            Item Name:
+          <label htmlFor="Stock" className="form-label h6">
+            Stock:
           </label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="itemName"
-            value={item.itemName}
-          />
+          <div className="d-flex align-items-center">
+            <input
+              type="text"
+              className="form-control form-control-sm me-2"
+              id="Stock"
+              value={formData.stock}
+              readOnly
+            />
+            <FaEdit
+              onClick={() => setShowStockModal(true)}
+              style={{ cursor: "pointer", margin: "0px 15px" }}
+              color="#0C1D61"
+              size={30}
+            />
+          </div>
         </div>
+
         <div className="col-4">
           <label htmlFor="model" className="form-label h6">
-            Model:
+            Minimum Stock:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
-            id="model"
-            value={item.model}
+            id="minStock"
+            value={formData.minStock}
+            onChange={handleChange}
           />
         </div>
+
         <div className="col-4">
           <label htmlFor="aPrice" className="form-label h6">
             Price 2:
@@ -149,7 +200,8 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="partNo"
-            value={item.partNo}
+            value={formData.partNo}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -161,6 +213,7 @@ function ItemDetails({ item }) {
             className="form-control form-control-sm"
             id="category"
             value={item.category}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -187,7 +240,8 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="interchangeNo"
-            value={item.interchangeNo}
+            value={formData.interchangeNo}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -198,7 +252,8 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="brand"
-            value={item.brand}
+            value={formData.brand}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -214,7 +269,7 @@ function ItemDetails({ item }) {
               readOnly
             />
             <FaEdit
-              onClick={() => setShowEditSpecialPriceModal(true)}
+              onClick={() => handleEditSpecialPriceClick(item.price?.price4)}
               style={{ cursor: "pointer", margin: "0px 15px" }}
               color="#0C1D61"
               size={30}
@@ -233,7 +288,21 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="unit"
-            value={item.unit}
+            value={formData.unit}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="col-4">
+          <label htmlFor="model" className="form-label h6">
+            Model:
+          </label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="model"
+            value={formData.model}
+            onChange={handleChange}
           />
         </div>
 
@@ -246,7 +315,7 @@ function ItemDetails({ item }) {
               color: "white",
               whiteSpace: "nowrap",
             }}
-            onClick={() => console.log("Save clicked")}
+            onClick={handleSave}
           >
             Save
           </button>
