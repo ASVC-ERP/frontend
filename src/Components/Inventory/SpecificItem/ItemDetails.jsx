@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
+import axios from "axios";
 
-function ItemDetails({ item }) {
+function ItemDetails({ item, onUpdate }) {
+  const user = JSON.parse(localStorage.getItem("user"));
   // Edit Stock
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState();
@@ -9,13 +11,28 @@ function ItemDetails({ item }) {
   const [formData, setFormData] = useState({
     itemCode: item.itemCode || "",
     itemName: item.itemName || "",
-    minStock: item.minStock || "",
-    partNo: item.partNo || "",
-    category: item.category || "",
-    brand: item.brand || "",
+    partNo: item.partNum || "",
+    interchangeNo: item.interNum || "",
     unit: item.unit || "",
+    minStock: item.minStock || "",
+    category: item.category || "",
     model: item.model || "",
+    brand: item.brand || "",
   });
+
+  useEffect(() => {
+    setFormData({
+      itemCode: item.itemCode || "",
+      itemName: item.itemName || "",
+      partNo: item.partNo || "",
+      interchangeNo: item.interchangeNo || "",
+      unit: item.unit || "",
+      minStock: item.minStock || "",
+      category: item.category || "",
+      model: item.model || "",
+      brand: item.brand || "",
+    });
+  }, [item]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -25,14 +42,24 @@ function ItemDetails({ item }) {
     }));
   };
 
-  // to follow backend
   const handleSave = async () => {
     try {
-      const response = await fetch(`/api/items/${item.itemCode}`, {
-        method: "PUT",
+      const response = await fetch(`http://localhost:3000/inventory/update-inventory`, {
+        method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          itemName: item.itemName,
+          brand: formData.brand,
+          minStock: formData.minStock,
+          partNum: formData.partNo,
+          interNum: formData.interchangeNo,
+          unit: formData.unit,
+          model: formData.model,
+          category: formData.category,
+        }),
       });
+
+    
 
       if (!response.ok) throw new Error("Failed to update item");
 
@@ -44,10 +71,28 @@ function ItemDetails({ item }) {
     }
   };
 
-  const handleStockUpdate = () => {
-    console.log("Updated Stock:", stockData.newCount);
-    console.log("Reason:", stockData.remarks);
-    setShowStockModal(false);
+  const handleStockUpdate = async () => {
+    try {
+      const PIC = user.firstName || "";
+      const response = await axios.get("http://localhost:3000/inventory/adjust-stock", {
+        params: {
+          itemName: item.itemName,
+          PIC: PIC,
+          stock: stockData.newCount,
+          remarks: stockData.remarks,
+        },
+      });
+
+      console.log("Stock adjusted successfully:", response.data);
+      alert("Stock updated successfully!");
+      setShowStockModal(false);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (err) {
+      console.error("Stock adjustment error:", err);
+      alert("Error updating stock.");
+    }
   };
 
   const handleEditStockClick = () => {
@@ -78,19 +123,26 @@ function ItemDetails({ item }) {
     setNewSpecialPrice("");
   };
 
-  const handleSubmitSpecialPrice = () => {
-    // Your special price update logic here
-    if (newSpecialPrice) {
-      // Update special price logic
-      console.log(
-        "Updating special price from",
-        currentSpecialPrice,
-        "to",
-        newSpecialPrice
-      );
+  const handleSubmitSpecialPrice = async () => {
+    if (!newSpecialPrice) return;
 
-      // Close modal and clear fields
+    try {
+      const response = await axios.get("http://localhost:3000/inventory/update-price", {
+        params: {
+          itemName: item.itemName,
+          price: newSpecialPrice,
+        },
+      });
+
+      console.log("Price 4 updated successfully:", response.data);
+      alert("Price 4 updated successfully!");
       handleCloseSpecialPriceModal();
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (err) {
+      console.error("Price 4 update error:", err);
+      alert("Error updating Price 4.");
     }
   };
 
@@ -106,8 +158,9 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="pid"
-            value={formData.itemCode}
-            onChange={handleChange}
+            value={item.itemCode}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
           />
         </div>
 
@@ -120,8 +173,9 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="itemName"
-            value={formData.itemName}
-            onChange={handleChange}
+            value={item.itemName}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
           />
         </div>
 
@@ -134,6 +188,7 @@ function ItemDetails({ item }) {
             className="form-control form-control-sm"
             id="gPrice"
             value={item.price?.price1}
+            style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
         </div>
@@ -151,11 +206,12 @@ function ItemDetails({ item }) {
               type="text"
               className="form-control form-control-sm me-2"
               id="Stock"
-              value={formData.stock}
+              value={item.stock}
+              style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
             <FaEdit
-              onClick={() => setShowStockModal(true)}
+              onClick={handleEditStockClick}
               style={{ cursor: "pointer", margin: "0px 15px" }}
               color="#0C1D61"
               size={30}
@@ -185,6 +241,7 @@ function ItemDetails({ item }) {
             className="form-control form-control-sm"
             id="aPrice"
             value={item.price?.price2}
+            style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
         </div>
@@ -212,7 +269,7 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="category"
-            value={item.category}
+            value={formData.category}
             onChange={handleChange}
           />
         </div>
@@ -225,6 +282,7 @@ function ItemDetails({ item }) {
             className="form-control form-control-sm"
             id="bPrice"
             value={item.price?.price3}
+            style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
         </div>
@@ -266,6 +324,7 @@ function ItemDetails({ item }) {
               className="form-control form-control-sm me-2"
               id="sPrice"
               value={item.price?.price4}
+              style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
             <FaEdit

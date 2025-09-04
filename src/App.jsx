@@ -382,7 +382,10 @@ function App() {
               />
               <Route path="/invoice" element={<SalesInvoice invoices={invoices} />} />
 
-              <Route path="/inventory/item" element={<Item />} />
+              <Route
+                path="/inventory/item"
+                element={<Item onItemsUpdate={fetchItems} />}
+              />
               <Route
                 path="/inventory"
                 element={<Inventory items={items} onAddItem={handleAddItem} />}
