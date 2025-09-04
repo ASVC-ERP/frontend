@@ -5,7 +5,7 @@ import { FaTruck, FaUser } from "react-icons/fa";
 import { PiListChecksFill } from "react-icons/pi";
 
 import { Link } from "react-router-dom";
-import logo from "../assets/logo.png";
+import logo from "../assets/logo.svg";
 
 export default function Sidebar({ onLogout }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -26,14 +26,8 @@ export default function Sidebar({ onLogout }) {
           src={logo}
           alt="Logo"
           className="m-0 p-0 mt-2"
-          style={{ height: "50px", width: "50px" }}
+          style={{ height: "150px", width: "150px" }}
         />
-        <p
-          className="fw-bolder fs-5 sidebar-text text-center"
-          style={{ color: "#0C1D61", whiteSpace: "nowrap" }}
-        >
-          Company Name
-        </p>
       </div>
 
       {/* Navigation Links */}

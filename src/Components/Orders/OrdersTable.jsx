@@ -22,7 +22,24 @@ const columns = [
     sortable: true,
   },
   { name: "Sales Agent", selector: (row) => row.salesAgent, sortable: true },
-  { name: "Status", selector: (row) => row.status, sortable: true },
+  { name: "Status",
+    selector: (row) => row.status,
+    sortable: true,
+    cell: (row) => (
+      <span
+        className={`badge ${
+          row.status === "Served"
+            ? "bg-success"
+            : row.status === "Pending"
+            ? "bg-warning text-dark"
+            : row.status === "Dropped"
+            ? "bg-danger"
+            : "bg-secondary"
+        }`}
+      >
+        {row.status}
+      </span> 
+    )},
 ];
 
 // Define table data
@@ -43,6 +60,10 @@ function OrdersTable() {
   const [suggestions, setSuggestions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
 
+  const [showServeModal, setShowServeModal] = useState(false);
+  const [serveData, setServeData] = useState([]);
+
+
   useEffect(() => {
     axios.get("http://localhost:3000/orders")
       .then((res) => {
@@ -54,6 +75,8 @@ function OrdersTable() {
       });
   }, []);
 
+// delivery receipt generation
+/*
   const handleCreateDeliveryReceipt = (withInvoice) => {
     const url = withInvoice
       ? "http://localhost:3000/delivery-receipts/invoice"
@@ -64,6 +87,7 @@ function OrdersTable() {
 
     setShowRequestModal(false);
   };
+*/
 
   // Handle search input change
   const handleSearch = (event) => {
@@ -225,9 +249,63 @@ function OrdersTable() {
     setActiveIndex(null);
   };
 
+/*
   const handleRequestInvoice = () => {
     setShowRequestModal(true); // Show the Request Invoice modal
     setShowRowModal(false); // Close the current order details modal (optional)
+  };
+*/
+  const handlePrint = async () => {
+    if (!selectedRow) return;
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/packing-list/invoice',
+        selectedRow,
+        { responseType: 'blob' } // important to handle PDF
+      );
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blobUrl = window.URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Print Failed',
+        text: 'Failed to generate PDF. See console for details.',
+      });
+    }
+  };
+
+  const handleServe = (row) => {
+    setSelectedRow(row);
+    setServeData(
+      row.orderedItems.map(item => ({
+        itemName: item.itemName,
+        quantityOrdered: item.quantity,
+        quantityServed: 0,
+        quantityUnserved: item.quantity,
+      }))
+    );
+    setShowServeModal(true);
+  };
+
+  const updateServeQuantity = (index, field, value) => {
+    setServeData(prev => {
+      const updated = [...prev];
+      const val = Number(value) || 0;
+
+      if (field === 'quantityServed') {
+        updated[index].quantityServed = val;
+        updated[index].quantityUnserved = updated[index].quantityOrdered - val;
+      } else if (field === 'quantityUnserved') {
+        updated[index].quantityUnserved = val;
+        updated[index].quantityServed = updated[index].quantityOrdered - val;
+      }
+
+      return updated;
+    });
   };
 
   return (
@@ -290,6 +368,7 @@ function OrdersTable() {
                     Order ID: {selectedRow.orderId}
                   </h5>
                   <div className="d-flex gap-2">
+{/*
                     <button
                       type="button"
                       className="btn btn-sm"
@@ -298,9 +377,11 @@ function OrdersTable() {
                     >
                       Request Invoice
                     </button>
+*/}
                     <button
                       type="button"
-                      className="btn btn-sm btn-warning"
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
                       onClick={() => {
                         setShowRowModal(false);
                         setShowEditModal(true);
@@ -308,6 +389,25 @@ function OrdersTable() {
                     >
                       Edit
                     </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      onClick={() => handlePrint(true)}
+                    >
+                      Print
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      onClick={() => {
+                        setShowRowModal(false);
+                        handleServe(selectedRow);
+                      }}
+                    >
+                      Serve
+                </button>
                   </div>
                 </div>
               </div>
@@ -611,6 +711,96 @@ function OrdersTable() {
           </div>
         </div>
       )}
+
+      {/* SERVE MODAL */}
+      {showServeModal && selectedRow && (
+      <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+        <div className="modal-dialog modal-lg" role="document">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="mb-0">Serve Items for Order {selectedRow.orderId}</h5>
+              <button
+                type="button"
+                className="btn-close"
+                onClick={() => setShowServeModal(false)}
+              ></button>
+            </div>
+
+            <div className="modal-body">
+              {serveData.map((item, index) => (
+                <div key={index} className="d-flex gap-2 align-items-center mb-2">
+                  <div className="flex-grow-1">{item.itemName}</div>
+                  <div>
+                    <input
+                      type="number"
+                      min={0}
+                      max={item.quantityOrdered}
+                      value={item.quantityServed}
+                      onChange={e => updateServeQuantity(index, 'quantityServed', e.target.value)}
+                      className="form-control"
+                      placeholder="Served"
+                      style={{ width: "100px" }}
+                    />
+                  </div>
+                  <div>
+                    <input
+                      type="number"
+                      min={0}
+                      max={item.quantityOrdered}
+                      value={item.quantityUnserved}
+                      onChange={e => updateServeQuantity(index, 'quantityUnserved', e.target.value)}
+                      className="form-control"
+                      placeholder="Unserved"
+                      style={{ width: "100px" }}
+                    />
+                  </div>
+                  <div>Ordered: {item.quantityOrdered}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="modal-footer">
+              <button
+                type="button"
+                className="btn btn-secondary"
+                onClick={() => setShowServeModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                className="btn btn-primary"
+                onClick={async () => {
+                  // send data to backend
+                  try {
+                    await axios.patch(`http://localhost:3000/orders/${selectedRow.orderId}/serve`, serveData);
+                    Swal.fire({
+                      icon: "success",
+                      title: "Served",
+                      text: "Serve data submitted successfully",
+                      timer: 2000,
+                      showConfirmButton: false
+                    });
+                    setShowServeModal(false);
+                  } catch (err) {
+                    console.error(err);
+                    Swal.fire({
+                      icon: "error",
+                      title: "Error",
+                      text: "Failed to submit serve data"
+                    });
+                  }
+                }}
+              >
+                Serve
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    )}
+
+
     </div>
   );
 }

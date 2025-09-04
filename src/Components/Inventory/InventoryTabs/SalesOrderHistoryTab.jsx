@@ -1,11 +1,14 @@
-import DataTable from "react-data-table-component";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import DataTable from "react-data-table-component";
 
-function SalesOrderHistoryTab({item}) {
+/*
+function SalesOrderHistoryTab({ itemName }) {
+*/
+function SalesOrderHistoryTab({itemName}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemName = item?.itemName || "";
+
   const customStyles = {
     headCells: {
       style: {
@@ -44,8 +47,36 @@ function SalesOrderHistoryTab({item}) {
     fetchData();
   }, [itemName]);
 
-  // Define table columns
+/*
+  // Fetch sales order history for the item when component mounts
+  useEffect(() => {
+    if (!itemName) {
+      setData([]);
+      setLoading(false);
+      return;
+    }
+
+    const fetchData = async () => {
+      try {
+        const encodedName = encodeURIComponent(itemName);
+        const response = await axios.get(
+          `http://localhost:3000/orders/item/${encodedName}`
+        );
+        setData(response.data);
+      } catch (err) {
+        console.error(err);
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [itemName]);
+*/
+
   const columns = [
+/*
     { name: "Date", selector: (row) => row.date, sortable: true },
     {
       name: "Sales Order No.",
@@ -85,41 +116,19 @@ function SalesOrderHistoryTab({item}) {
       selector: (row) => row.createdBy,
       sortable: true,  minWidth: "110px", 
     },
+*/
+    { name: "Date", selector: row => row.date, sortable: true },
+    { name: "Order ID", selector: row => row.orderId, sortable: true },
+    { name: "Customer Name", selector: row => row.customerName, sortable: true },
+    { name: "Price", selector: row => row.price, sortable: true },
+    { name: "Quantity", selector: row => row.quantity, sortable: true },
+    { name: "Served", selector: row => row.served, sortable: true },
+    { name: "Unserved", selector: row => row.unserved, sortable: true },
+    { name: "Total Price", selector: row => row.totalPrice, sortable: true },
   ];
-
-  //   const [searchTerm, setSearchTerm] = useState("");
-  //   const [filteredData, setFilteredData] = useState(Object.values(data));
-
-  // Handle search input change
-  //   const handleSearch = (event) => {
-  //     const value = event.target.value.toLowerCase();
-  //     setSearchTerm(value);
-
-  //     const filtered = Object.values(data).filter((row) =>
-  //       Object.values(row).some((field) =>
-  //         field?.toString().toLowerCase().includes(value)
-  //       )
-  //     );
-
-  //     setFilteredData(filtered);
-  //   };
 
   return (
     <div>
-      {/* <div className="d-flex justify-content-between align-items-center">
-        Search input field
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search inventory"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
-      </div> */}
-
       <DataTable
         columns={columns}
         data={data}
@@ -127,12 +136,12 @@ function SalesOrderHistoryTab({item}) {
         pagination
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="200px"
+        fixedHeaderScrollHeight="400px"
         customStyles={customStyles}
-        dense={true}
+        dense
       />
     </div>
   );
-}
+};
 
 export default SalesOrderHistoryTab;
