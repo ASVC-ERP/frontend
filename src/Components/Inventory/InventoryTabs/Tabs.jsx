@@ -3,10 +3,15 @@ import SalesOrderHistoryTab from "./SalesOrderHistoryTab";
 import PhysicalCountTab from "./PhysicalCountTab";
 import PriceHistoryTab from "./PriceHistoryTab";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function Tabs() {
+function Tabs({ item }) {
   const [activeTab, setActiveTab] = useState("tab1");
+
+  useEffect(() => {
+    console.log("Tabs component received item:", item);
+    console.log("Item Name:", item?.itemName);
+  } );
 
   return (
     <div>
@@ -92,13 +97,13 @@ function Tabs() {
       {/* tab content */}
       <div className="tab-content ">
         <div className="tab-pane fade show active" id="tab1" role="tabpanel">
-          <CostHistoryTab />
+          <CostHistoryTab item={item} />
         </div>
         <div className="tab-pane fade" id="tab2" role="tabpanel">
-          <SalesOrderHistoryTab />
+          <SalesOrderHistoryTab item={item}/>
         </div>
         <div className="tab-pane fade" id="tab3" role="tabpanel">
-          <PhysicalCountTab />
+          <PhysicalCountTab item={item}/>
         </div>
         <div className="tab-pane fade" id="tab4" role="tabpanel">
           <PriceHistoryTab />

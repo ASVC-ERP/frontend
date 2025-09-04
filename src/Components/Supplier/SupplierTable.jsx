@@ -6,6 +6,7 @@ import { IoIosSearch } from "react-icons/io";
 const columns = [
   { name: "Supplier Code", selector: (row) => row.id, sortable: true },
   { name: "Supplier Name", selector: (row) => row.name, sortable: true },
+  { name: "Supplier Currency", selector: (row) => row.currency, sortable: true },
   { name: "Supplier Address", selector: (row) => row.address, sortable: true },
 ];
 
@@ -16,6 +17,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
 
   const [newCode, setNewCode] = useState("");
   const [newName, setNewName] = useState("");
+  const [newCurrency, setNewCurrency] = useState("");
   const [newAddress, setNewAddress] = useState("");
 
   const [showModal, setShowModal] = useState(false);
@@ -216,7 +218,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                   </div>
 
                   {/* Supplier Name */}
-                  <div className="col-md-8">
+                  <div className="col-md-4">
                     <label
                       htmlFor="supplierName"
                       className="form-label fw-semibold text-muted small"
@@ -233,6 +235,37 @@ function SupplierTable({ supplier, onAddSupplier }) {
                       placeholder="Enter supplier name"
                       value={newName}
                       onChange={(e) => setNewName(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Supplier Currency */}
+                  <div className="col-md-4">
+                    <label
+                      htmlFor="supplierCurrency"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-dollar-sign me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Supplier Currency
+                    </label>
+                    <input
+                      type="text"
+                      id="supplierCurrency"
+                      placeholder="Enter supplier currency"
+                      value={newCurrency}
+                      onChange={(e) => setNewCurrency(e.target.value)}
                       className="form-control"
                       required
                       style={{

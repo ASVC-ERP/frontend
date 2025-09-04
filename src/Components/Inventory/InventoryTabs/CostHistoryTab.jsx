@@ -1,7 +1,12 @@
+import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import { IoIosSearch } from "react-icons/io";
+import axios from "axios";
 
-function CostHistoryTab() {
+function CostHistoryTab({item}) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const itemName = item?.itemName || "";
+
   const customStyles = {
     headCells: {
       style: {
@@ -14,63 +19,31 @@ function CostHistoryTab() {
     },
   };
 
-  const data = [
-    {
-      poNum: "PO12345",
-      itemName: "Main Warehouse",
-      supplierName: "ABC Suppliers",
-      invoiceNum: "INV001",
-      name: "Product A",
-      quantity: "10",
-      unitCost: "50.00",
-      currency: "USD",
-      convertedFactor: "1.0",
-    },
-    {
-      poNum: "PO12346",
-      itemName: "Branch A Warehouse",
-      supplierName: "XYZ Traders",
-      invoiceNum: "INV002",
-      name: "Product B",
-      quantity: "20",
-      unitCost: "30.00",
-      currency: "USD",
-      convertedFactor: "1.0",
-    },
-    {
-      poNum: "PO12347",
-      itemName: "Main Warehouse",
-      supplierName: "Global Supplies",
-      invoiceNum: "INV003",
-      name: "Product C",
-      quantity: "15",
-      unitCost: "40.00",
-      currency: "USD",
-      convertedFactor: "1.0",
-    },
-    {
-      poNum: "PO12348",
-      itemName: "Branch B Warehouse",
-      supplierName: "Local Distributors",
-      invoiceNum: "INV004",
-      name: "Product D",
-      quantity: "25",
-      unitCost: "20.00",
-      currency: "USD",
-      convertedFactor: "1.0",
-    },
-    {
-      poNum: "PO12349",
-      itemName: "Main Warehouse",
-      supplierName: "Prime Traders",
-      invoiceNum: "INV005",
-      name: "Product E",
-      quantity: "30",
-      unitCost: "15.00",
-      currency: "USD",
-      convertedFactor: "1.0",
-    },
-  ];
+  useEffect(() => {
+    console.log("Fetching cost history for item:", itemName);
+    const fetchData = async () => {
+      if (!itemName) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await axios.get("http://localhost:3000/inventory/cost-history", {
+          params: { itemName },
+        });
+        console.log("Cost History Data:", response.data);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching cost history:", error);
+        setData([]); // Set to empty array on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [itemName]);
 
   // Define table columns
   const columns = [
@@ -83,63 +56,63 @@ function CostHistoryTab() {
     {
       id: 2,
       name: "Invoice ID",
-      selector: (row) => row.invoiceNum,
+      selector: (row) => row.invoiceID,
       sortable: true,
     },
     {
       id: 3,
-      name: "Supplier",
-      selector: (row) => row.supplierName,
-      sortable: true,
-    },
-    {
-      id: 4,
       name: "Quantity",
       selector: (row) => row.quantity,
       sortable: true,
       width: "100px",
     },
     {
-      id: 5,
-      name: "Price 1",
-      selector: (row) => row.unitCost,
-      sortable: false,
-      width: "75px",
-    },
-    {
-      id: 6,
-      name: "Price 2",
-      selector: (row) => row.unitCost,
-      sortable: false,
-      width: "75px",
-    },
-    {
-      id: 7,
-      name: "Price 3",
-      selector: (row) => row.unitCost,
-      sortable: false,
-      width: "75px",
-    },
-    {
-      id: 8,
+      id: 4,
       name: "Currency",
       selector: (row) => row.currency,
       sortable: true,
       width: "100px",
     },
     {
-      id: 9,
+      id: 5,
       name: "Conversion Factor",
-      selector: (row) => row.convertedFactor,
+      selector: (row) => row.conversionFactor,
       sortable: true,
-      cell: (row) => {
-        row.convertedFactor;
-      },
+      cell: (row) => row.conversionFactor,
+    },
+    {
+      id: 6,
+      name: "Cost",
+      selector: (row) => row.unitCost,
+      sortable: true,
+      width: "75px",
+      cell: (row) => row.unitCost,
+    },
+    {
+      id: 7,
+      name: "Price 1",
+      selector: (row) => row.unitCost,
+      sortable: false,
+      width: "75px",
+    },
+    {
+      id: 8,
+      name: "Price 2",
+      selector: (row) => row.unitCost,
+      sortable: false,
+      width: "75px",
+    },
+    {
+      id: 9,
+      name: "Price 3",
+      selector: (row) => row.unitCost,
+      sortable: false,
+      width: "75px",
     },
     {
       id: 10,
       name: " Date",
-      selector: (row) => row.updatedDate,
+      selector: (row) => row.purchaseDate,
       sortable: true,
     },
   ];
@@ -149,6 +122,7 @@ function CostHistoryTab() {
       <DataTable
         columns={columns}
         data={data}
+        progressPending={loading}
         pagination
         highlightOnHover
         fixedHeader

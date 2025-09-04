@@ -279,7 +279,7 @@ function SupplierInvoicesTable({ items }) {
                 whiteSpace: "nowrap",
               }}
             >
-              + Create Invoice
+              + Add Invoice
             </button>
           </div>
 
@@ -376,6 +376,7 @@ function SupplierInvoicesTable({ items }) {
                           <input
                             type="text"
                             id="supplierId"
+                            className="ms-1 ps-2"
                             placeholder="Supplier ID"
                             value={editableSupplier.id}
                             disabled
@@ -586,11 +587,8 @@ function SupplierInvoicesTable({ items }) {
                     <div className="d-flex align-items-center">
                       <div>
                         <h5 className="modal-title mb-0">
-                          Create New Supplier Invoice
+                          Add Supplier Invoice
                         </h5>
-                        <small className="opacity-75">
-                          Generate a new purchase invoice
-                        </small>
                       </div>
                     </div>
                     <button
@@ -669,7 +667,7 @@ function SupplierInvoicesTable({ items }) {
                         </div>
 
                         {/* Purchase Date */}
-                        <div className="col-md-4">
+                        <div className="col-md-2">
                           <label
                             htmlFor="purchaseDate"
                             className="form-label fw-semibold text-muted small"
@@ -744,6 +742,82 @@ function SupplierInvoicesTable({ items }) {
                             <option value="Returned">Returning</option>
                           </select>
                         </div>
+
+                        <div className="col-md-2">
+                          <label
+                            htmlFor="currency"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-dollar-sign me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Currency
+                          </label>
+                          <input
+                            type="text"
+                            id="currency"
+                            className="form-control"
+                            value={invoiceForm.currency}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                currency: e.target.value,
+                              })
+                            }
+                            style={{
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.95rem",
+                              transition: "border-color 0.3s ease",
+                            }}
+                            onFocus={(e) =>
+                              (e.target.style.borderColor = "#0C1D61")
+                            }
+                            onBlur={(e) =>
+                              (e.target.style.borderColor = "#e9ecef")
+                            }
+                            readOnly
+                          />
+                        </div>
+
+                        <div className="col-md-2">
+                          <label
+                            htmlFor="conversionFactor"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-dollar-sign me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Conversion Factor
+                          </label>
+                          <input
+                            type="text"
+                            id="conversionFactor"
+                            className="form-control"
+                            value={invoiceForm.conversionFactor}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                conversionFactor: e.target.value,
+                              })
+                            }
+                            style={{
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.95rem",
+                              transition: "border-color 0.3s ease",
+                            }}
+                            onFocus={(e) =>
+                              (e.target.style.borderColor = "#0C1D61")
+                            }
+                            onBlur={(e) =>
+                              (e.target.style.borderColor = "#e9ecef")
+                            }
+                          />
+                        </div>
+
                       </div>
 
                       {/* Items Section */}
@@ -798,7 +872,7 @@ function SupplierInvoicesTable({ items }) {
 
                         {/* Items Table Header */}
                         <div
-                          className="row g-2 mb-2 py-2 px-2 rounded-2"
+                          className="row gap-4 mb-2 py-2 px-2 rounded-2 justify-content-center"
                           style={{
                             backgroundColor: "#f8f9fa",
                             fontWeight: "600",
@@ -806,13 +880,10 @@ function SupplierInvoicesTable({ items }) {
                             color: "#495057",
                           }}
                         >
-                          <div className="col-3">Item Name</div>
+                          <div className="col-4">Item Name</div>
                           <div className="col-1">Quantity</div>
                           <div className="col-2">Unit</div>
                           <div className="col-1">Unit Cost</div>
-                          {/* <div className="col-2">Discount</div> */}
-                          <div className="col-1">Currency</div>
-                          <div className="col-2">Coversion Factor</div>
                           <div className="col-1">Subtotal</div>
                           <div className="col-1">Action</div>
                         </div>
@@ -822,9 +893,9 @@ function SupplierInvoicesTable({ items }) {
                           {invoiceForm.items.map((item, index) => (
                             <div
                               key={index}
-                              className="row g-2 mb-2 align-items-center"
+                              className="row g-2 mb-2 gap-4 justify-content-center align-items-center"
                             >
-                              <div className="position-relative col-3">
+                              <div className="position-relative col-4">
                                 <input
                                   ref={(el) => (inputRefs.current[index] = el)} // ✅ this line
                                   type="text"
@@ -919,51 +990,6 @@ function SupplierInvoicesTable({ items }) {
                                 />
                               </div>
                               <div className="col-1">
-                                <input
-                                  type="text"
-                                  step="0.01"
-                                  placeholder="Currency"
-                                  className="form-control form-control-sm"
-                                  value={item.currency || ""}
-                                  onChange={(e) => {
-                                    const updated = [...invoiceForm.items];
-                                    updated[index].currency = e.target.value;
-                                    setInvoiceForm({
-                                      ...invoiceForm,
-                                      items: updated,
-                                    });
-                                  }}
-                                  style={{
-                                    border: "1px solid #e9ecef",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem",
-                                  }}
-                                />
-                              </div>
-                              <div className="col-2">
-                                <input
-                                  type="number"
-                                  step="0.01"
-                                  placeholder="C. Factor"
-                                  className="form-control form-control-sm"
-                                  value={item.conversionFactor || ""}
-                                  onChange={(e) => {
-                                    const updated = [...invoiceForm.items];
-                                    updated[index].conversionFactor =
-                                      parseFloat(e.target.value);
-                                    setInvoiceForm({
-                                      ...invoiceForm,
-                                      items: updated,
-                                    });
-                                  }}
-                                  style={{
-                                    border: "1px solid #e9ecef",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem",
-                                  }}
-                                />
-                              </div>
-                              <div className="col-1">
                                 <span
                                   className="badge bg-light text-dark fw-normal"
                                   style={{ fontSize: "0.75rem" }}
@@ -972,7 +998,7 @@ function SupplierInvoicesTable({ items }) {
                                   {(
                                     (item.quantity || 0) *
                                     (item.unitCost || 0) *
-                                    (item.conversionFactor || 1)
+                                    (invoiceForm.conversionFactor || 1)
                                   ).toFixed(2)}
                                 </span>
                               </div>
@@ -1032,7 +1058,7 @@ function SupplierInvoicesTable({ items }) {
                                         total +
                                         item.quantity *
                                           item.unitCost *
-                                          (item.conversionFactor || 1)
+                                          (invoiceForm.conversionFactor || 1)
                                       );
                                     }, 0)
                                     .toFixed(2)}
@@ -1140,7 +1166,7 @@ function SupplierInvoicesTable({ items }) {
                       }}
                     >
                       <i className="fas fa-paper-plane me-2"></i>
-                      Submit Invoice
+                      Submit
                     </button>
                   </div>
                 </div>

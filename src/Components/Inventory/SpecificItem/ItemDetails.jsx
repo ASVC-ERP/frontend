@@ -1,19 +1,107 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
+import axios from "axios";
 
-function ItemDetails({ item }) {
-  console.log("ItemDetails received item:", item); // <-- top of component
+function ItemDetails({ item, onUpdate }) {
+  const user = JSON.parse(localStorage.getItem("user"));
   // Edit Stock
   const [showStockModal, setShowStockModal] = useState(false);
-  const [stockData, setStockData] = useState({
-    currentCount: 100,
-    newCount: "",
-    remarks: "",
+  const [stockData, setStockData] = useState();
+
+  const [formData, setFormData] = useState({
+    itemCode: item.itemCode || "",
+    itemName: item.itemName || "",
+    partNo: item.partNum || "",
+    interchangeNo: item.interNum || "",
+    unit: item.unit || "",
+    minStock: item.minStock || "",
+    category: item.category || "",
+    model: item.model || "",
+    brand: item.brand || "",
   });
 
-  const handleStockUpdate = () => {
-    console.log("Updated Stock:", stockData.newCount);
-    console.log("Reason:", stockData.remarks);    setShowStockModal(false);
+  useEffect(() => {
+    setFormData({
+      itemCode: item.itemCode || "",
+      itemName: item.itemName || "",
+      partNo: item.partNo || "",
+      interchangeNo: item.interchangeNo || "",
+      unit: item.unit || "",
+      minStock: item.minStock || "",
+      category: item.category || "",
+      model: item.model || "",
+      brand: item.brand || "",
+    });
+  }, [item]);
+
+  const handleChange = (e) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/inventory/update-inventory`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itemName: item.itemName,
+          brand: formData.brand,
+          minStock: formData.minStock,
+          partNum: formData.partNo,
+          interNum: formData.interchangeNo,
+          unit: formData.unit,
+          model: formData.model,
+          category: formData.category,
+        }),
+      });
+
+    
+
+      if (!response.ok) throw new Error("Failed to update item");
+
+      console.log("Item updated successfully");
+      alert("Item details updated!");
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Error updating item details");
+    }
+  };
+
+  const handleStockUpdate = async () => {
+    try {
+      const PIC = user.firstName || "";
+      const response = await axios.get("http://localhost:3000/inventory/adjust-stock", {
+        params: {
+          itemName: item.itemName,
+          PIC: PIC,
+          stock: stockData.newCount,
+          remarks: stockData.remarks,
+        },
+      });
+
+      console.log("Stock adjusted successfully:", response.data);
+      alert("Stock updated successfully!");
+      setShowStockModal(false);
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (err) {
+      console.error("Stock adjustment error:", err);
+      alert("Error updating stock.");
+    }
+  };
+
+  const handleEditStockClick = () => {
+    setStockData({
+      currentCount: item.stock,
+      newCount: "",
+      remarks: "",
+    });
+    setShowStockModal(true);
   };
 
   // Edit Special Price
@@ -35,37 +123,80 @@ function ItemDetails({ item }) {
     setNewSpecialPrice("");
   };
 
-  const handleSubmitSpecialPrice = () => {
-    // Your special price update logic here
-    if (newSpecialPrice) {
-      // Update special price logic
-      console.log(
-        "Updating special price from",
-        currentSpecialPrice,
-        "to",
-        newSpecialPrice
-      );
+  const handleSubmitSpecialPrice = async () => {
+    if (!newSpecialPrice) return;
 
-      // Close modal and clear fields
+    try {
+      const response = await axios.get("http://localhost:3000/inventory/update-price", {
+        params: {
+          itemName: item.itemName,
+          price: newSpecialPrice,
+        },
+      });
+
+      console.log("Price 4 updated successfully:", response.data);
+      alert("Price 4 updated successfully!");
       handleCloseSpecialPriceModal();
+      if (onUpdate) {
+        onUpdate();
+      }
+    } catch (err) {
+      console.error("Price 4 update error:", err);
+      alert("Error updating Price 4.");
     }
   };
 
   return (
     <div>
       {/* First Row */}
-      <div className="row mx-4 d-flex align-items-start">
+      <div className="row mx-4 d-flex align-items-start py-1">
         <div className="col-4">
           <label htmlFor="pid" className="form-label h6">
-            Product ID:
+            Item Code:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
             id="pid"
             value={item.itemCode}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
           />
         </div>
+
+        {/* name */}
+        <div className="col-4">
+          <label htmlFor="itemName" className="form-label h6">
+            Item Name:
+          </label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="itemName"
+            value={item.itemName}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
+          />
+        </div>
+
+        <div className="col-4">
+          <label htmlFor="gPrice" className="form-label h6">
+            Price 1:
+          </label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="gPrice"
+            value={item.price?.price1}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
+          />
+        </div>
+      </div>
+
+      {/* Second Row */}
+      <div className="row mx-4 mt-2 d-flex align-items-start">
+        {/* stock */}
         <div className="col-4">
           <label htmlFor="Stock" className="form-label h6">
             Stock:
@@ -76,55 +207,31 @@ function ItemDetails({ item }) {
               className="form-control form-control-sm me-2"
               id="Stock"
               value={item.stock}
+              style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
             <FaEdit
-              onClick={() => setShowStockModal(true)}
+              onClick={handleEditStockClick}
               style={{ cursor: "pointer", margin: "0px 15px" }}
               color="#0C1D61"
               size={30}
             />
           </div>
         </div>
-        {console.log("Rendering item:", item)}
-        <div className="col-4">
-          <label htmlFor="gPrice" className="form-label h6">
-            Price 1:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="gPrice"
-            value={item.price?.price1}
-            readOnly
-          />
-        </div>
-      </div>
 
-      {/* Second Row */}
-      <div className="row mx-4 mt-2 d-flex align-items-start">
-        <div className="col-4">
-          <label htmlFor="itemName" className="form-label h6">
-            Item Name:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="itemName"
-            value={item.itemName}
-          />
-        </div>
         <div className="col-4">
           <label htmlFor="model" className="form-label h6">
-            Model:
+            Minimum Stock:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
-            id="model"
-            value={item.model}
+            id="minStock"
+            value={formData.minStock}
+            onChange={handleChange}
           />
         </div>
+
         <div className="col-4">
           <label htmlFor="aPrice" className="form-label h6">
             Price 2:
@@ -134,6 +241,7 @@ function ItemDetails({ item }) {
             className="form-control form-control-sm"
             id="aPrice"
             value={item.price?.price2}
+            style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
         </div>
@@ -149,7 +257,8 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="partNo"
-            value={item.partNo}
+            value={formData.partNo}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -160,7 +269,8 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="category"
-            value={item.category}
+            value={formData.category}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -172,6 +282,7 @@ function ItemDetails({ item }) {
             className="form-control form-control-sm"
             id="bPrice"
             value={item.price?.price3}
+            style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
         </div>
@@ -187,7 +298,8 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="interchangeNo"
-            value={item.interchangeNo}
+            value={formData.interchangeNo}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -198,7 +310,8 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="brand"
-            value={item.brand}
+            value={formData.brand}
+            onChange={handleChange}
           />
         </div>
         <div className="col-4">
@@ -211,10 +324,11 @@ function ItemDetails({ item }) {
               className="form-control form-control-sm me-2"
               id="sPrice"
               value={item.price?.price4}
+              style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
             <FaEdit
-              onClick={() => setShowEditSpecialPriceModal(true)}
+              onClick={() => handleEditSpecialPriceClick(item.price?.price4)}
               style={{ cursor: "pointer", margin: "0px 15px" }}
               color="#0C1D61"
               size={30}
@@ -233,7 +347,21 @@ function ItemDetails({ item }) {
             type="text"
             className="form-control form-control-sm"
             id="unit"
-            value={item.unit}
+            value={formData.unit}
+            onChange={handleChange}
+          />
+        </div>
+
+        <div className="col-4">
+          <label htmlFor="model" className="form-label h6">
+            Model:
+          </label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="model"
+            value={formData.model}
+            onChange={handleChange}
           />
         </div>
 
@@ -246,7 +374,7 @@ function ItemDetails({ item }) {
               color: "white",
               whiteSpace: "nowrap",
             }}
-            onClick={() => console.log("Save clicked")}
+            onClick={handleSave}
           >
             Save
           </button>

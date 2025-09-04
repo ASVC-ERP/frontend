@@ -1,6 +1,12 @@
 import DataTable from "react-data-table-component";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
-function PhysicalCountTab() {
+function PhysicalCountTab({item}) {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const itemName = item?.itemName || "";
+
   const customStyles = {
     headCells: {
       style: {
@@ -13,88 +19,31 @@ function PhysicalCountTab() {
     },
   };
 
-  const data = [
-    {
-      fromQuantity: 100,
-      toQuanty: 90,
-      adjQuantity: -10,
-      date: "2025-05-12",
-      pic: "John Doe",
-      remarks: "Damaged during storage",
-    },
-    {
-      fromQuantity: 200,
-      toQuanty: 210,
-      adjQuantity: 10,
-      date: "2025-05-11",
-      pic: "Jane Smith",
-      remarks: "Stock replenished",
-    },
-    {
-      fromQuantity: 150,
-      toQuanty: 145,
-      adjQuantity: -5,
-      date: "2025-05-10",
-      pic: "Michael Lee",
-      remarks: "Minor discrepancies",
-    },
-    {
-      fromQuantity: 300,
-      toQuanty: 320,
-      adjQuantity: 20,
-      date: "2025-05-09",
-      pic: "Sarah Connor",
-      remarks: "New stock received",
-    },
-    {
-      fromQuantity: 400,
-      toQuanty: 395,
-      adjQuantity: -5,
-      date: "2025-05-08",
-      pic: "David Miller",
-      remarks: "Shrinkage during transfer",
-    },
-    {
-      fromQuantity: 500,
-      toQuanty: 500,
-      adjQuantity: 0,
-      date: "2025-05-07",
-      pic: "Emily Clark",
-      remarks: "Stock counted, no changes",
-    },
-    {
-      fromQuantity: 600,
-      toQuanty: 610,
-      adjQuantity: 10,
-      date: "2025-05-06",
-      pic: "Robert King",
-      remarks: "Extra stock identified",
-    },
-    {
-      fromQuantity: 700,
-      toQuanty: 690,
-      adjQuantity: -10,
-      date: "2025-05-05",
-      pic: "Alice Johnson",
-      remarks: "Stock adjustment due to error",
-    },
-    {
-      fromQuantity: 800,
-      toQuanty: 800,
-      adjQuantity: 0,
-      date: "2025-05-04",
-      pic: "Charlie Brown",
-      remarks: "Stock verified, no changes",
-    },
-    {
-      fromQuantity: 900,
-      toQuanty: 890,
-      adjQuantity: -10,
-      date: "2025-05-03",
-      pic: "Olivia White",
-      remarks: "Damaged items removed",
-    },
-  ];
+    useEffect(() => {
+    console.log("Fetching physical count for item:", itemName);
+    const fetchData = async () => {
+      if (!itemName) {
+        setData([]);
+        setLoading(false);
+        return;
+      }
+      setLoading(true);
+      try {
+        const response = await axios.get("http://localhost:3000/inventory/physical-count", {
+          params: { itemName },
+        });
+        console.log("Physical Count Data:", response.data);
+        setData(response.data);
+      } catch (error) {
+        console.error("Error fetching Physical Count:", error);
+        setData([]); // Set to empty array on error
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [itemName]);
 
   // Define table columns
   const columns = [
@@ -103,15 +52,15 @@ function PhysicalCountTab() {
       selector: (row) => row.fromQuantity,
       sortable: true,
     },
-    { name: "To Quantity", selector: (row) => row.toQuanty, sortable: true },
+    { name: "To Quantity", selector: (row) => row.toQuantity, sortable: true },
     {
       name: "Adjusted Quantity",
-      selector: (row) => row.adjQuantity,
+      selector: (row) => row.adjustedQuantity,
       sortable: true,
     },
-    { name: "Date", selector: (row) => row.date, sortable: true },
-    { name: "PIC", selector: (row) => row.pic, sortable: true },
-    { name: "Remarks", selector: (row) => row.remarks, sortable: true },
+    { name: "Date", selector: (row) => row.Date, sortable: true },
+    { name: "PIC", selector: (row) => row.PIC, sortable: true },
+    { name: "Remarks", selector: (row) => row.Remarks, sortable: true },
   ];
 
   //   const [searchTerm, setSearchTerm] = useState("");
@@ -150,6 +99,7 @@ function PhysicalCountTab() {
       <DataTable
         columns={columns}
         data={data}
+        progressPending={loading}
         pagination
         highlightOnHover
         fixedHeader
