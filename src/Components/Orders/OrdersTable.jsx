@@ -280,28 +280,38 @@ function OrdersTable() {
 
   const handleServe = (row) => {
     setSelectedRow(row);
-    setServeData(
-      row.orderedItems.map(item => ({
+
+    // Prepare the object exactly matching ServeOrderDto
+    const payload = {
+      date: row.date,
+      customerName: row.customerName,
+      customerAddress: row.customerAddress,
+      customerNumber: row.customerNumber,
+      salesAgent: row.salesAgent,
+      items: row.orderedItems.map(item => ({
         itemName: item.itemName,
+        price: item.price,
         quantityOrdered: item.quantity,
-        quantityServed: 0,
+        quantityServed: 0, // initially 0
         quantityUnserved: item.quantity,
-      }))
-    );
+      })),
+    };
+
+    setServeData(payload);
     setShowServeModal(true);
   };
 
   const updateServeQuantity = (index, field, value) => {
     setServeData(prev => {
-      const updated = [...prev];
+      const updated = { ...prev };
       const val = Number(value) || 0;
 
       if (field === 'quantityServed') {
-        updated[index].quantityServed = val;
-        updated[index].quantityUnserved = updated[index].quantityOrdered - val;
+        updated.items[index].quantityServed = val;
+        updated.items[index].quantityUnserved = updated.items[index].quantityOrdered - val;
       } else if (field === 'quantityUnserved') {
-        updated[index].quantityUnserved = val;
-        updated[index].quantityServed = updated[index].quantityOrdered - val;
+        updated.items[index].quantityUnserved = val;
+        updated.items[index].quantityServed = updated.items[index].quantityOrdered - val;
       }
 
       return updated;
@@ -733,7 +743,7 @@ function OrdersTable() {
             </div>
 
             <div className="modal-body">
-              {serveData.map((item, index) => (
+              {serveData.items.map((item, index) => (
                 <div key={index} className="d-flex gap-2 align-items-center mb-2">
                   <div className="flex-grow-1">{item.itemName}</div>
                   <div>
