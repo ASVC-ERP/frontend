@@ -1,6 +1,7 @@
 import DataTable from "react-data-table-component";
 import { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
+import defaultPic from "../../assets/defaultPic.jpg";
 import axios from 'axios';
 import Swal from "sweetalert2";
 
@@ -99,54 +100,62 @@ function InvoiceTable({ invoices }) {
     return items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
   };
 
-const handlePrint = async () => {
-  if (!selectedRow) return;
+  const handlePrint = async () => {
+    if (!selectedRow) return;
 
-  try {
-    // Construct proper payload
-    const payload = {
-      invoiceID: selectedRow.invoiceID,
-      date: selectedRow.date,
-      customerName: selectedRow.customerName,
-      customerAddress: selectedRow.customerAddress,
-      customerNumber: selectedRow.customerNumber,
-      salesAgent: selectedRow.salesAgent,
-      status: selectedRow.status,
-      items: selectedRow.items.map(item => ({
-        itemName: item.itemName,
-        quantity: item.quantity,
-        price: item.price,
-        totalPrice: item.totalPrice || item.price * item.quantity,
-      })),
-      totalPrice: selectedRow.items.reduce(
-        (sum, item) => sum + (item.totalPrice || item.price * item.quantity),
-        0
-      ),
-    };
+    try {
+      // Prepare payload
+      const payload = {
+        invoiceID: selectedRow.invoiceID,
+        date: selectedRow.date,
+        customerName: selectedRow.customerName,
+        customerAddress: selectedRow.customerAddress,
+        items: selectedRow.items, // send items array as-is
+      };
 
-    const response = await axios.post(
-      "http://localhost:3000/packing-list/invoice",
-      payload,
-      { responseType: "blob" }
-    );
+      const response = await axios.post(
+        'http://localhost:3000/packing-list/invoice-final',
+        payload,
+        { responseType: 'blob' } // important for PDF
+      );
 
-    const blob = new Blob([response.data], { type: "application/pdf" });
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.target = "_blank";
-    link.click();
-    window.URL.revokeObjectURL(url);
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blobUrl = window.URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Print Failed',
+        text: 'Failed to generate PDF. See console for details.',
+      });
+    }
+  };
 
-  } catch (err) {
-    console.error("Failed to generate PDF:", err);
-    Swal.fire({
-      icon: "error",
-      title: "Print Failed",
-      text: "Failed to generate PDF. See console for details.",
-    });
-  }
-};
+  // Frontend example for Delivery Receipt A
+  const handlePrintDR = async (type, selectedRow) => {
+    if (!selectedRow) return;
+
+    try {
+      // type should be 'a' or 'b'
+      const response = await axios.post(
+        `http://localhost:3000/delivery-receipts/${type}`,
+        selectedRow,
+        { responseType: 'blob' } // important for PDF
+      );
+
+      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blobUrl = window.URL.createObjectURL(blob);
+      window.open(blobUrl, '_blank');
+    } catch (err) {
+      console.error('Failed to generate PDF:', err);
+      Swal.fire({
+        icon: 'error',
+        title: 'Print Failed',
+        text: 'Failed to generate PDF. See console for details.',
+      });
+    }
+  };
 
 
   return (
@@ -167,70 +176,102 @@ const handlePrint = async () => {
       {/* Row Modal */}
       {showRowModal && selectedRow && (
         <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog modal-lg" role="document">
+          <div className="modal-dialog" role="document">
             <div className="modal-content">
               <div className="modal-header d-flex flex-column align-items-start">
                 <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <p
-                    className="mb-2"
-                    style={{ color: "#05050599", fontSize: "12px" }}
-                  >
-                    Sales &gt; Invoice &gt; {selectedRow.invoiceID}
+                  <p className="mb-2" style={{ color: "#05050599", fontSize: "12px" }}>
+                    Sales &gt; Invoice &gt; {selectedRow.invoiceId || selectedRow.orderId}
                   </p>
-                  <button
-                    type="button"
-                    className="btn-close"
-                    onClick={() => setShowRowModal(false)}
-                  ></button>
+                  <button type="button" className="btn-close" onClick={() => setShowRowModal(false)}></button>
                 </div>
-                <h5 className="mb-0" style={{ color: "#0C1D61" }}>
-                  Invoice ID: {selectedRow.invoiceID}
-                </h5>
-                <button
-                  type="button"
-                  className="btn btn-sm"
-                  style={{ backgroundColor: "#0C1D61", color: "white" }}
-                  onClick={() => handlePrint(true)}
-                >
-                  Print
-                </button>
+                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                  <h5 className="mb-0" style={{ color: "#0C1D61" }}>
+                    Invoice ID: {selectedRow.invoiceId || selectedRow.orderId}
+                  </h5>
+                  <div className="d-flex gap-2">
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      onClick={() => handlePrintDR('a', selectedRow)}
+                    >
+                      DR1
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      onClick={() => handlePrintDR('b', selectedRow)}
+                    >
+                      DR2
+                    </button>
+                    <button
+                      type="button"
+                      className="btn btn-sm"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      onClick={() => handlePrint(selectedRow)}
+                    >
+                      Print
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <div className="modal-body">
-                <p>
-                  Customer: {selectedRow.customerName} <br />
-                  Date: {new Date(selectedRow.date).toLocaleDateString("en-GB")} <br />
-                  Status: {selectedRow.status}
-                </p>
-
-                <table className="table table-striped">
-                  <thead>
-                    <tr>
-                      <th>Item Name</th>
-                      <th>Quantity</th>
-                      <th>Price</th>
-                      <th>Total</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {selectedRow.items.map((item, idx) => (
-                      <tr key={idx}>
-                        <td>{item.itemName}</td>
-                        <td>{item.quantity}</td>
-                        <td>₱{item.price.toLocaleString()}</td>
-                        <td>₱{(item.totalPrice || (item.price * item.quantity)).toLocaleString()}</td>
-                      </tr>
+                <div className="rounded-3" style={{ maxHeight: "250px", overflowY: "auto" }}>
+                  <ul className="list-unstyled">
+                    {(selectedRow.orderedItems || selectedRow.items || []).map((item, index) => (
+                      <li key={index}>
+                        <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div className="d-flex align-items-center gap-3">
+                            <img
+                              src={defaultPic}
+                              alt="Product"
+                              style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "6px" }}
+                            />
+                            <div className="d-flex flex-column">
+                              <span className="fw-semibold">{item.itemName}</span>
+                            </div>
+                          </div>
+                          <div className="text-end d-flex flex-column">
+                            <span className="fw-semibold">
+                              ₱{(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                            </span>
+                            <small className="text-muted">Qty: {item.quantity}</small>
+                          </div>
+                        </div>
+                      </li>
                     ))}
-                  </tbody>
-                </table>
-                <div className="d-flex justify-content-end mt-3">
-                  <strong>Total: ₱{getInvoiceTotal(selectedRow.items).toLocaleString()}</strong>
+                  </ul>
                 </div>
+
+                <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
+                  <span className="h5 fw-semibold">Total</span>
+                  <span className="fw-bold h5">
+                    ₱
+                    {(selectedRow.totalPrice || (selectedRow.orderedItems || selectedRow.items || []).reduce(
+                      (sum, item) => sum + (item.price * item.quantity), 0
+                    )).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                  </span>
+                </div>
+              </div>
+
+              <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
+                <div>
+                  <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>{selectedRow.customerName}</p>
+                  <p className="mb-0 small">{selectedRow.customerAddress}</p>
+                  <p className="mb-0 small">{selectedRow.customerNumber}</p>
+                </div>
+                <p className="text-muted small mb-0">
+                  {new Date(selectedRow.date).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
+                </p>
               </div>
             </div>
           </div>
         </div>
       )}
+
 
       <DataTable
         columns={columns}
