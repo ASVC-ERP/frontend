@@ -5,10 +5,10 @@ import DataTable from "react-data-table-component";
 /*
 function SalesOrderHistoryTab({ itemName }) {
 */
-function SalesOrderHistoryTab({itemName}) {
+function SalesOrderHistoryTab({item}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const itemName = item?.itemName || "";
   const customStyles = {
     headCells: {
       style: {
