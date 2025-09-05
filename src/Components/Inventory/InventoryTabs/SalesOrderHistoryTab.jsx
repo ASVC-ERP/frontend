@@ -47,78 +47,9 @@ function SalesOrderHistoryTab({item}) {
     fetchData();
   }, [itemName]);
 
-/*
-  // Fetch sales order history for the item when component mounts
-  useEffect(() => {
-    if (!itemName) {
-      setData([]);
-      setLoading(false);
-      return;
-    }
-
-    const fetchData = async () => {
-      try {
-        const encodedName = encodeURIComponent(itemName);
-        const response = await axios.get(
-          `http://localhost:3000/orders/item/${encodedName}`
-        );
-        setData(response.data);
-      } catch (err) {
-        console.error(err);
-        setData([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [itemName]);
-*/
-
   const columns = [
-/*
-    { name: "Date", selector: (row) => row.date, sortable: true },
-    {
-      name: "Sales Order No.",
-      selector: (row) => row.orderID,
-      sortable: true,
-      width: "140px", // Ensure enough width
-      cell: (row) => (
-        <div style={{ whiteSpace: "nowrap" }}>{row.orderID}</div>
-      ),
-    },
-    {
-      name: "Customer Name",
-      selector: (row) => row.customerName,
-      sortable: true,
-      width: "150px", // Ensure enough width
-      cell: (row) => (
-        <div style={{ whiteSpace: "nowrap" }}>{row.customerName}</div>
-      ),
-    },
-    { name: "Unit Price", selector: (row) => row.price, sortable: true },
-    { name: "Quantity", selector: (row) => row.quantity, sortable: true },
-    { name: "Packed Qty", selector: (row) => row.packedQty, sortable: true, minWidth: "110px"},
-    {
-      name: "Unserved Qty",
-      selector: (row) => row.unservedQty,
-      sortable: true,
-      minWidth: "130px", // Ensure enough width
-      cell: (row) => (
-        <div style={{ whiteSpace: "nowrap" }}>{row.unservedQty}</div>
-      ),
-    },
-    { name: "Discount 1", selector: (row) => row.dc1, sortable: true },
-    { name: "Discount 2", selector: (row) => row.dc2, sortable: true,  minWidth: "110px",  },
-    { name: "Agent", selector: (row) => row.salesAgent, sortable: true },
-    {
-      name: "Created By",
-      selector: (row) => row.createdBy,
-      sortable: true,  minWidth: "110px", 
-    },
-*/
     { name: "Date", selector: row => row.date, sortable: true },
-    { name: "Order ID", selector: row => row.orderId, sortable: true },
+    { name: "Order ID", selector: row => row.orderID, sortable: true },
     { name: "Customer Name", selector: row => row.customerName, sortable: true },
     { name: "Price", selector: row => row.price, sortable: true },
     { name: "Quantity", selector: row => row.quantity, sortable: true },

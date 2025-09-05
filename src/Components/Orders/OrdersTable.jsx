@@ -378,36 +378,42 @@ function OrdersTable() {
                       Request Invoice
                     </button>
 */}
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => {
-                        setShowRowModal(false);
-                        setShowEditModal(true);
-                      }}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handlePrint(true)}
-                    >
-                      Print
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => {
-                        setShowRowModal(false);
-                        handleServe(selectedRow);
-                      }}
-                    >
-                      Serve
-                </button>
+                    {selectedRow?.status?.trim().toLowerCase() !== "served" && (
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={{ backgroundColor: "#0C1D61", color: "white" }}
+                        onClick={() => {
+                          setShowRowModal(false);
+                          setShowEditModal(true);
+                        }}
+                      >
+                        Edit
+                      </button>
+                    )}
+                    {selectedRow?.status?.trim().toLowerCase() !== "served" && (
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={{ backgroundColor: "#0C1D61", color: "white" }}
+                        onClick={() => handlePrint(true)}
+                      >
+                        Print
+                      </button>
+                    )}
+                    {selectedRow?.status?.trim().toLowerCase() !== "served" && (
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        style={{ backgroundColor: "#0C1D61", color: "white" }}
+                        onClick={() => {
+                          setShowRowModal(false);
+                          handleServe(selectedRow);
+                        }}
+                      >
+                        Serve
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -795,6 +801,7 @@ function OrdersTable() {
                 Serve
               </button>
             </div>
+
           </div>
         </div>
       </div>
