@@ -2,8 +2,10 @@ import DataTable from "react-data-table-component";
 import { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
 import defaultPic from "../../assets/defaultPic.jpg";
+import { Button, Dropdown } from "react-bootstrap";
 import axios from 'axios';
 import Swal from "sweetalert2";
+import { FaSave } from "react-icons/fa";
 
 function InvoiceTable({ invoices }) {
   const columns = [
@@ -45,31 +47,65 @@ function InvoiceTable({ invoices }) {
       sortable: true,
     },
     {
-      name: "Status",
-      selector: row => row.status,
-      sortable: true,
-      cell: row => (
-        <span
-          className={`badge ${
-            row.status === "Paid"
-              ? "bg-success"
-              : row.status === "Pending"
-              ? "bg-warning text-dark"
-              : row.status === "Overdue"
-              ? "bg-danger"
-              : "bg-secondary"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
+    name: "Status",
+    cell: row => {
+      const effectiveStatus = pendingChanges[row.invoiceID] ?? row.status;
+
+      return (
+        <div className="d-flex align-items-center gap-2">
+          <Dropdown onClick={e => e.stopPropagation()}>
+            <Dropdown.Toggle
+              size="sm"
+              className={`badge ${
+                effectiveStatus === "Pending"
+                  ? "bg-secondary"
+                  : effectiveStatus === "Out For Delivery"
+                  ? "bg-warning text-dark"
+                  : effectiveStatus === "Delivered"
+                  ? "bg-success"
+                  : "bg-dark"
+              }`}
+            >
+              {effectiveStatus}
+            </Dropdown.Toggle>
+
+            <Dropdown.Menu>
+              <Dropdown.Item onClick={() => handleStatusChange(row, "Pending")}>
+                <span className="badge bg-secondary">Pending</span>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleStatusChange(row, "Out For Delivery")}>
+                <span className="badge bg-warning text-dark">Out For Delivery</span>
+              </Dropdown.Item>
+              <Dropdown.Item onClick={() => handleStatusChange(row, "Delivered")}>
+                <span className="badge bg-success">Delivered</span>
+              </Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+
+          <Button
+            variant="outline-success"
+            size="sm"
+            className="p-1 d-flex align-items-center justify-content-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleSave(row);
+            }}
+            title="Save"
+          >
+            <FaSave size={14} />
+          </Button>
+        </div>
+      );
     },
+  },
+
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showRowModal, setShowRowModal] = useState(false);
+  const [pendingChanges, setPendingChanges] = useState({});
 
   useEffect(() => {
     setFilteredData(invoices);
@@ -157,6 +193,47 @@ function InvoiceTable({ invoices }) {
     }
   };
 
+  const handleStatusChange = (row, newStatus) => {
+    // Just update local pending changes
+    setPendingChanges(prev => ({
+      ...prev,
+      [row.invoiceID]: newStatus,
+    }));
+  };
+
+  const handleSave = (row) => {
+    const newStatus = pendingChanges[row.invoiceID];
+    if (!newStatus) return;
+
+    axios.put(`http://localhost:3000/invoice/${row.invoiceID}/status`, { status: newStatus })
+      .then(() => {
+        const updatedData = filteredData.map(item =>
+          item.invoiceID === row.invoiceID ? { ...item, status: newStatus } : item
+        );
+        setFilteredData(updatedData);
+        setPendingChanges(prev => {
+          const copy = { ...prev };
+          delete copy[row.invoiceID];
+          return copy;
+        });
+
+        Swal.fire({
+          icon: "success",
+          title: "Status Updated",
+          text: `Invoice ${row.invoiceID} marked as ${newStatus}`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      })
+      .catch(err => {
+        console.error("Failed to update status:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: "Could not update invoice status.",
+        });
+      });
+  };
 
   return (
     <div>

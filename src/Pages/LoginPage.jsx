@@ -46,6 +46,7 @@ function LoginPage({ onLoginSuccess }) {
           src={logo}
           alt="companyLogo"
           className="d-flex mx-auto mt-0 pt-0"
+          style={{ width: "100px" }}
         />
 
         <div className="mb-3">

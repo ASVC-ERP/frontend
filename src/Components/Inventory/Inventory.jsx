@@ -1,6 +1,6 @@
 import InventoryTable from "./InventoryTable";
 
-function Inventory({ items, onAddItem }) {
+function Inventory({ items, onAddItem, onRefreshItems }) {
   return (
     <div className="container mt-3">
       <div className="d-flex justify-content-between align-items-center">
@@ -15,7 +15,8 @@ function Inventory({ items, onAddItem }) {
       <div className="row table-responsive mx-3">
         <InventoryTable 
           products={items} 
-          onAddItem={onAddItem} 
+          onAddItem={onAddItem}
+          onRefreshItems={onRefreshItems}
         />
       </div>
     </div>

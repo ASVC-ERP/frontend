@@ -388,7 +388,7 @@ function App() {
               />
               <Route
                 path="/inventory"
-                element={<Inventory items={items} onAddItem={handleAddItem} />}
+                element={<Inventory items={items} onAddItem={handleAddItem} onRefreshItems={fetchItems}/>}
               />
               <Route
                 path="/supplier"

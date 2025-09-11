@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 // Define table columns
 const columns = [
@@ -17,7 +19,7 @@ const columns = [
   },
 ];
 
-function InventoryTable({ products = [], onAddItem = () => {} }) {
+function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = () => {} }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -108,6 +110,41 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
     navigate("/inventory/item", { state: { row } }); // Navigate to the details page with the selected row data
   };
 
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/items/import",
+        formData,
+        { headers: { "Content-Type": "multipart/form-data" } }
+      );
+
+      Swal.fire({
+        icon: "success",
+        title: "Imported!",
+        text: response.data.message || "Items imported successfully",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      // Refresh items table
+      onRefreshItems();
+    } catch (error) {
+      console.error("Error importing items:", error);
+      const errMsg = error.response?.data?.message || error.message;
+      Swal.fire({
+        icon: "error",
+        title: "Import failed",
+        text: errMsg,
+      });
+    }
+  };
+
   return (
     <div className="container-fluid">
       <div className="my-3">
@@ -127,19 +164,41 @@ function InventoryTable({ products = [], onAddItem = () => {} }) {
             />
           </div>
 
-          {/* Add Item button */}
-          <button
-            type="button"
-            className="btn"
-            style={{
-              backgroundColor: "#0C1D61",
-              color: "white",
-              whiteSpace: "nowrap",
-            }}
-            onClick={handleAddItemClick}
-          >
-            + Add Item
-          </button>
+          {/* Add + Import Buttons beside each other */}
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button
+              type="button"
+              className="btn"
+              style={{
+                backgroundColor: "#0C1D61",
+                color: "white",
+                whiteSpace: "nowrap",
+              }}
+              onClick={handleAddItemClick}
+            >
+              + Add Item
+            </button>
+
+             <label
+              htmlFor="fileUpload"
+              className="btn"
+              style={{
+                backgroundColor: "#198754",
+                color: "white",
+                cursor: "pointer",
+                marginLeft: "10px",
+              }}
+            >
+              📂 Import
+            </label>
+            <input
+              type="file"
+              id="fileUpload"
+              accept=".xlsx"
+              style={{ display: "none" }}
+              onChange={handleFileUpload}
+            />
+          </div>
         </div>
 
         <DataTable
