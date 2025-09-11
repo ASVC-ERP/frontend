@@ -1,83 +1,89 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Check, X } from "lucide-react";
 import { IoIosSearch } from "react-icons/io";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 function ApprovalTables() {
   const [activeTab, setActiveTab] = useState("Pending");
   const [searchTerm, setSearchTerm] = useState("");
-  const [selectedInvoices, setSelectedInvoices] = useState([]);
-  const [supplierInvoice, setSupplierInvoice] = useState([
-    {
-      id: 1,
-      supplierName: "Tech Solutions",
-      invoiceNo: "INV-001",
-      status: "Pending",
-    },
-    {
-      id: 2,
-      supplierName: "Office Supplies",
-      invoiceNo: "INV-002",
-      status: "Approved",
-    },
-    {
-      id: 3,
-      supplierName: "Marketing Ltd.",
-      invoiceNo: "INV-003",
-      status: "Rejected",
-    },
-    {
-      id: 4,
-      supplierName: "Cloud Pro",
-      invoiceNo: "INV-004",
-      status: "Pending",
-    },
-    {
-      id: 5,
-      supplierName: "Legal Team",
-      invoiceNo: "INV-005",
-      status: "Pending",
-    },
-  ]);
+  const [selectedOrders, setSelectedOrders] = useState([]);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const filteredByStatus = supplierInvoice.filter(
-    (inv) => inv.status === activeTab
-  );
-  
-  const filteredData = filteredByStatus.filter((row) =>
+  const fetchOrders = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get(
+        "http://localhost:3000/orders/sales-orders/by-status",
+        {
+          params: { status: activeTab },
+        }
+      );
+      setData(response.data);
+    } catch (err) {
+      setError("Failed to fetch orders. Please try again later.");
+      console.error("Error fetching orders:", err);
+      setData([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchOrders();
+  }, [activeTab]);
+
+  const handleApprove = async () => {
+    try {
+      const response = await axios.post("http://localhost:3000/orders/serve-approved", {
+        orderIds: selectedOrders,
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Approved!",
+        text: "Selected orders have been approved successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setSelectedOrders([]);
+      fetchOrders(); // Refetch orders to update the table
+    } catch (error) {
+      console.error("Error approving orders:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to approve orders. Please try again.",
+      });
+    }
+  };
+
+  const filteredData = data.filter((row) =>
     Object.values(row).some((field) =>
       field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
     )
   );
 
   const handleSelectRow = (row) => {
-    const updated = selectedInvoices.includes(row.id)
-      ? selectedInvoices.filter((id) => id !== row.id)
-      : [...selectedInvoices, row.id];
-    setSelectedInvoices(updated);
+    const updated = selectedOrders.includes(row.orderID)
+      ? selectedOrders.filter((id) => id !== row.orderID)
+      : [...selectedOrders, row.orderID];
+    setSelectedOrders(updated);
   };
 
   const handleSelectAll = (isChecked) => {
-    const filteredIds = filteredByStatus.map((row) => row.id);
-    setSelectedInvoices(isChecked ? filteredIds : []);
-  };
-
-  const handleApprove = () => {
-    setSupplierInvoice((prev) =>
-      prev.map((inv) =>
-        selectedInvoices.includes(inv.id) ? { ...inv, status: "Approved" } : inv
-      )
-    );
-    setSelectedInvoices([]);
+    setSelectedOrders(isChecked ? data.map((row) => row.orderID) : []);
   };
 
   const handleReject = () => {
-    setSupplierInvoice((prev) =>
-      prev.map((inv) =>
-        selectedInvoices.includes(inv.id) ? { ...inv, status: "Rejected" } : inv
-      )
-    );
-    setSelectedInvoices([]);
+    // This should now call a backend endpoint to reject orders
+    console.log("Rejecting orders:", selectedOrders);
+    setSelectedOrders([]);
   };
 
   const columns = [
@@ -88,8 +94,7 @@ function ApprovalTables() {
             type="checkbox"
             onChange={(e) => handleSelectAll(e.target.checked)}
             checked={
-              filteredByStatus.length > 0 &&
-              filteredByStatus.every((inv) => selectedInvoices.includes(inv.id))
+              data.length > 0 && data.every((row) => selectedOrders.includes(row.orderID))
             }
           />
         ) : null,
@@ -97,23 +102,26 @@ function ApprovalTables() {
         activeTab === "Pending" ? (
           <input
             type="checkbox"
-            checked={selectedInvoices.includes(row.id)}
+            checked={selectedOrders.includes(row.orderID)}
             onChange={() => handleSelectRow(row)}
           />
         ) : null,
       ignoreRowClick: true,
       width: "60px",
     },
+    { name: "Order ID", selector: (row) => row.orderID, sortable: true },
+    { name: "Date", selector: (row) => row.date, sortable: true },
     {
-      name: "Supplier Name",
-      selector: (row) => row.supplierName,
-      sortable: true,
-    },
-    {
-      name: "Invoice No",
-      selector: (row) => row.invoiceNo,
-      sortable: true,
-    },
+    name: "Customer Name",
+    selector: (row) => row.customerName,
+    sortable: true,
+  },
+  {
+    name: "Customer Address",
+    selector: (row) => row.customerAddress,
+    sortable: true,
+  },
+  { name: "Sales Agent", selector: (row) => row.salesAgent, sortable: true },
     {
       name: "Status",
       cell: (row) => (
@@ -121,7 +129,7 @@ function ApprovalTables() {
           className={`badge ${
             row.status === "Pending"
               ? "bg-warning text-dark"
-              : row.status === "Approved"
+              : row.status === "Served"
               ? "bg-success"
               : row.status === "Rejected"
               ? "bg-danger"
@@ -145,7 +153,7 @@ function ApprovalTables() {
             onClick={() => {
               setActiveTab(tab);
               setSearchTerm("");
-              setSelectedInvoices([]);
+              setSelectedOrders([]);
             }}
             style={{
               backgroundColor: activeTab === tab ? "#0C1D61" : "#ffffff",
@@ -177,19 +185,21 @@ function ApprovalTables() {
           <button
             onClick={handleApprove}
             className="btn btn-success"
-            disabled={selectedInvoices.length === 0}
+            disabled={selectedOrders.length === 0}
           >
             <Check size={16} /> Approve
           </button>
           <button
             onClick={handleReject}
             className="btn btn-danger"
-            disabled={selectedInvoices.length === 0}
+            disabled={selectedOrders.length === 0}
           >
             <X size={16} /> Reject
           </button>
         </div>
       )}
+
+      {error && <div className="alert alert-danger">{error}</div>}
 
       {/* Table */}
       <DataTable
@@ -202,6 +212,7 @@ function ApprovalTables() {
         responsive
         fixedHeader
         fixedHeaderScrollHeight="400px"
+        progressPending={loading}
       />
     </div>
   );
