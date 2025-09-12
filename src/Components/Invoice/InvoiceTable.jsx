@@ -7,7 +7,7 @@ import axios from 'axios';
 import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";
 
-function InvoiceTable({ invoices }) {
+function InvoiceTable({ invoices, fetchInvoices }) {
   const columns = [
     {
       name: "Invoice ID",
@@ -56,6 +56,7 @@ function InvoiceTable({ invoices }) {
           <Dropdown onClick={e => e.stopPropagation()}>
             <Dropdown.Toggle
               size="sm"
+              variant="secondary"
               className={`badge ${
                 effectiveStatus === "Pending"
                   ? "bg-secondary"
@@ -69,7 +70,7 @@ function InvoiceTable({ invoices }) {
               {effectiveStatus}
             </Dropdown.Toggle>
 
-            <Dropdown.Menu>
+            <Dropdown.Menu container={document.body}>
               <Dropdown.Item onClick={() => handleStatusChange(row, "Pending")}>
                 <span className="badge bg-secondary">Pending</span>
               </Dropdown.Item>
@@ -82,23 +83,36 @@ function InvoiceTable({ invoices }) {
             </Dropdown.Menu>
           </Dropdown>
 
-          <Button
-            variant="outline-success"
-            size="sm"
-            className="p-1 d-flex align-items-center justify-content-center"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleSave(row);
-            }}
-            title="Save"
-          >
-            <FaSave size={14} />
-          </Button>
-        </div>
-      );
-    },
-  },
+            <Button
+              variant="outline-success"
+              size="sm"
+              className="p-1 d-flex align-items-center justify-content-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSave(row);
+              }}
+              title="Save"
+            >
+              <FaSave size={14} />
+            </Button>
 
+            {/* Delete button */}
+            <Button
+              variant="outline-danger"
+              size="sm"
+              className="p-1 d-flex align-items-center justify-content-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(row);
+              }}
+              title="Delete"
+            >
+              🗑️
+            </Button>
+        </div>
+        );
+      },
+    },
   ];
 
   const [searchTerm, setSearchTerm] = useState("");
@@ -233,6 +247,46 @@ function InvoiceTable({ invoices }) {
           text: "Could not update invoice status.",
         });
       });
+  };
+
+  const handleDelete = (row) => {
+    Swal.fire({
+      icon: "warning",
+      title: "Delete Invoice",
+      text: `Are you sure you want to delete invoice ${row.invoiceID}?`,
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`http://localhost:3000/invoice/${row.invoiceID}`)
+          .then((res) => {
+            // Remove invoice from table
+            setFilteredData(prev =>
+              prev.filter(item => item.invoiceID !== row.invoiceID)
+            );
+
+            fetchInvoices();
+
+            Swal.fire({
+              icon: "success",
+              title: "Deleted!",
+              text: `Invoice ${row.invoiceID} has been deleted and items returned to stock.`,
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          })
+          .catch(err => {
+            console.error("Failed to delete invoice:", err);
+            Swal.fire({
+              icon: "error",
+              title: "Delete Failed",
+              text: "Could not delete invoice. See console for details.",
+            });
+          });
+      }
+    });
   };
 
   return (

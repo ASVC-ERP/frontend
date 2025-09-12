@@ -1,0 +1,20 @@
+.table-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* full viewport height */
+}
+
+.custom-data-table {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto; /* table fills remaining space */
+}
+
+.custom-data-table .rdt_TableWrapper {
+  flex: 1 1 auto; /* table body scrolls */
+  overflow-y: auto;
+}
+
+.custom-data-table .rdt_Pagination {
+  flex-shrink: 0; /* stays at bottom */
+}

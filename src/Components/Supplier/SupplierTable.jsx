@@ -2,12 +2,35 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { IoIosSearch } from "react-icons/io";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const columns = [
   { name: "Supplier Code", selector: (row) => row.id, sortable: true },
   { name: "Supplier Name", selector: (row) => row.name, sortable: true },
   { name: "Supplier Currency", selector: (row) => row.currency, sortable: true },
   { name: "Supplier Address", selector: (row) => row.address, sortable: true },
+  {
+      name: "Actions",
+      cell: (row) => (
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-sm btn-outline-primary"
+            onClick={() => handleEditCustomer(row)}
+          >
+            <FaEdit />
+          </button>
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => handleDeleteCustomer(row.customerID)}
+          >
+            <FaTrash />
+          </button>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
 ];
 
 function SupplierTable({ supplier, onAddSupplier }) {

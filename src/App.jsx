@@ -327,6 +327,13 @@ function App() {
       .catch((err) => console.error(err));
   }, []);
 
+  const fetchCustomers = () => {
+    axios
+      .get("http://localhost:3000/customers")
+      .then((res) => setCustomers(res.data))
+      .catch((err) => console.error(err));
+};
+
   return (
     <Router>
       {isAuthenticated ? (
@@ -380,7 +387,7 @@ function App() {
                   />
                 }
               />
-              <Route path="/invoice" element={<SalesInvoice invoices={invoices} />} />
+              <Route path="/invoice" element={<SalesInvoice invoices={invoices} onfetchInvoices={fetchInvoices} />} />
 
               <Route
                 path="/inventory/item"
@@ -405,7 +412,7 @@ function App() {
               />
               <Route
                 path="/customer"
-                element={<Customer customers={customers} />}
+                element={<Customer customers={customers} onRefreshCustomers={fetchCustomers} />}
               />
             </Routes>
           </div>

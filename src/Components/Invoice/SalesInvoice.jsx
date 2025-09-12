@@ -1,6 +1,6 @@
 import InvoiceTable from "./InvoiceTable";
 
-function SalesInvoice({ invoices }) {
+function SalesInvoice({ invoices, onfetchInvoices }) {
   return (
     <div className="container mt-3">
       <div className="d-flex justify-content-between align-items-center">
@@ -13,7 +13,7 @@ function SalesInvoice({ invoices }) {
       </div>
 
       <div className="row table-responsive mx-3">
-        <InvoiceTable invoices={invoices} />
+        <InvoiceTable invoices={invoices} fetchInvoices={onfetchInvoices} />
       </div>
     </div>
   );
