@@ -789,14 +789,29 @@ function OrdersTable() {
                 onClick={async () => {
                   // send data to backend
                   try {
-                    await axios.patch(`http://localhost:3000/orders/${selectedRow.orderId}/serve`, serveData);
-                    Swal.fire({
+                    const user = JSON.parse(localStorage.getItem("user"));
+                    const role = user?.role || "";
+                    await axios.patch(`http://localhost:3000/orders/${selectedRow.orderId}/serve`, serveData, {
+                      params: { role }
+                    });
+                    if(role.toLowerCase() === 'admin') {
+                      Swal.fire({
                       icon: "success",
                       title: "Served",
                       text: "Serve data submitted successfully",
                       timer: 2000,
                       showConfirmButton: false
                     });
+                    } else {
+                      Swal.fire({
+                      icon: "success",
+                      title: "Requested",
+                      text: "Serve data Requested successfully",
+                      timer: 2000,
+                      showConfirmButton: false
+                    });
+                    }
+                    
                     setShowServeModal(false);
                   } catch (err) {
                     console.error(err);

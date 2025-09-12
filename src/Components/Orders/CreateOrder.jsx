@@ -9,11 +9,12 @@ function CreateOrder({query, suggestions, orderItems, setOrderItems, onSearchCha
     const navigate = useNavigate();
 
     useEffect(() => {
+
         setInfo({
             customerName: "",
             customerAddress: "",
             customerNumber: "",
-            salesAgent: "Prince 兄",
+            salesAgent: "",
             // reset other fields...
         });
         setOrderItems([]);  // Reset order items array
@@ -68,6 +69,8 @@ function CreateOrder({query, suggestions, orderItems, setOrderItems, onSearchCha
     };
 
     const handleSubmit = async (e) => {
+        const user = JSON.parse(localStorage.getItem("user"));
+        const fullName = `${user.firstName} ${user.lastName}`;
         e.preventDefault();
 
         const orderId = await generateNextOrderId();
@@ -83,7 +86,7 @@ function CreateOrder({query, suggestions, orderItems, setOrderItems, onSearchCha
             })),
             totalPrice: orderItems.reduce((sum, item) => sum + item.price?.[item.selectedMarkup] * item.quantity, 0),
             status: "Pending",
-            salesAgent: info.salesAgent
+            salesAgent: fullName
         };
 
         console.log("Final Order Data:", newOrder);
