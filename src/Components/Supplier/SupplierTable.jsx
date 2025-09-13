@@ -3,25 +3,39 @@ import { Link, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import { IoIosSearch } from "react-icons/io";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
+import axios from "axios";
 
-const columns = [
-  { name: "Supplier Code", selector: (row) => row.id, sortable: true },
-  { name: "Supplier Name", selector: (row) => row.name, sortable: true },
-  { name: "Supplier Currency", selector: (row) => row.currency, sortable: true },
-  { name: "Supplier Address", selector: (row) => row.address, sortable: true },
-  {
+function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
+  const columns = [
+    { name: "Supplier Code", selector: (row) => row.id, sortable: true },
+    { name: "Supplier Name", selector: (row) => row.name, sortable: true },
+    {
+      name: "Supplier Currency",
+      selector: (row) => row.currency,
+      sortable: true,
+    },
+    {
+      name: "Supplier Address",
+      selector: (row) => row.address,
+      sortable: true,
+    },
+    {
       name: "Actions",
       cell: (row) => (
         <div className="d-flex gap-2">
           <button
             className="btn btn-sm btn-outline-primary"
-            onClick={() => handleEditCustomer(row)}
+            onClick={() => handleEditSupplier(row)}
           >
             <FaEdit />
           </button>
           <button
             className="btn btn-sm btn-outline-danger"
-            onClick={() => handleDeleteCustomer(row.customerID)}
+            onClick={() => {
+              console.log("Row data:", row);
+              handleDeleteSupplier(row.id);
+            }}
           >
             <FaTrash />
           </button>
@@ -31,9 +45,8 @@ const columns = [
       allowOverflow: true,
       button: true,
     },
-];
+  ];
 
-function SupplierTable({ supplier, onAddSupplier }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -97,6 +110,43 @@ function SupplierTable({ supplier, onAddSupplier }) {
 
     // Close modal and clear fields
     handleCloseModal();
+  };
+
+  const handleDeleteSupplier = async (supplierID) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This supplier will be permanently deleted.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await axios.delete(`http://localhost:3000/suppliers/${supplierID}`);
+
+      Swal.fire({
+        icon: "success",
+        title: "Deleted!",
+        text: "Supplier deleted successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      onRefreshSupplier(); // 👈 refresh supplier list
+    } catch (err) {
+      console.error("Error deleting supplier:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text:
+          err.response?.data?.message ||
+          "Failed to delete supplier. Please try again.",
+      });
+    }
   };
 
   return (

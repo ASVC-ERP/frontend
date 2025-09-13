@@ -1,6 +1,6 @@
 import SupplierTable from "./SupplierTable";
 
-function Supplier({ supplier, onAddSupplier }) {
+function Supplier({ supplier, onAddSupplier, onRefreshSupplier }) {
   return (
     <div className="container-fluid mt-3">
       {/* Header */}
@@ -20,7 +20,7 @@ function Supplier({ supplier, onAddSupplier }) {
       <div className="row mx-2 mt-3">
         <div className="col-12">
           <div className="table-responsive ">
-            <SupplierTable supplier={supplier} onAddSupplier={onAddSupplier} />
+            <SupplierTable supplier={supplier} onAddSupplier={onAddSupplier} onRefreshSupplier={onRefreshSupplier} />
           </div>
         </div>
       </div>

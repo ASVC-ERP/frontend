@@ -198,9 +198,9 @@ function App() {
           itemName: item.itemName,
           brand: item.brand,
           origin: item.origin,
-          photo: item.photo,
           stock: item.stock,
           price: item.price,
+          minStock: item.minStock,
         }));
         setItems(transformedItems);
       })
@@ -235,9 +235,6 @@ function App() {
 
   //** SUPPLIER MODULE **//
   const [supplier, setSupplier] = useState([]);
-  useEffect(() => {
-    fetchSupplier();
-  }, []);
 
   const fetchSupplier = () => {
     axios
@@ -254,6 +251,10 @@ function App() {
         console.error("Error fetching suppliers from backend:", error);
       });
   };
+
+    useEffect(() => {
+    fetchSupplier();
+  }, []);
 
   const handleAddSupplier = (newSupplier) => {
     console.log("📦 Submitting supplier:", newSupplier);
@@ -403,6 +404,7 @@ function App() {
                   <Supplier
                     supplier={supplier}
                     onAddSupplier={handleAddSupplier}
+                    onRefreshSupplier={fetchSupplier}
                   />
                 }
               />

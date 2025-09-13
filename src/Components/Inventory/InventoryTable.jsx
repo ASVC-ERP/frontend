@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import { Link, useNavigate } from "react-router-dom"; // Import Link from react-router-dom
+import { Link, useNavigate } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
 import Swal from "sweetalert2";
 import axios from "axios";
@@ -57,6 +57,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
       itemName: itemName.trim(),
       brand: brand.trim(),
       origin: origin.trim(),
+      minStock: minimumStock || 0,
     };
 
     if (
@@ -87,6 +88,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
     setItemName("");
     setBrand("");
     setOrigin("");
+  
 
     // Close modal and clear fields
     handleCloseItemModal();

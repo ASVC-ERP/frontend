@@ -227,7 +227,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm"
             id="minStock"
-            value={formData.minStock}
+            value={item.minStock}
             onChange={handleChange}
           />
         </div>
