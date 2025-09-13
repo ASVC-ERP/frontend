@@ -7,7 +7,7 @@ import axios from "axios";
 
 // Define table columns
 const columns = [
-  { name: "Product ID", selector: (row) => row.itemCode, sortable: true },
+  { name: "Product Code", selector: (row) => row.itemCode, sortable: true },
   { name: "Product Name", selector: (row) => row.itemName, sortable: true },
   { name: "Brand", selector: (row) => row.brand, sortable: true },
   { name: "Origin", selector: (row) => row.origin, sortable: true },
@@ -232,15 +232,15 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
             >
               <div className="d-flex align-items-center">
                 <div>
-                  <h5 className="modal-title mb-0">Add New Item</h5>
+                  <h5 className="modal-title mb-0">Add New Product</h5>
                   <small className="opacity-75">
-                    Create a new inventory item
+                    Create a new inventory product
                   </small>
                 </div>
               </div>
               <button
                 type="button"
-                className="btn-close btn-close-white"
+                className="btn-close btn-close-white p-4"
                 onClick={handleCloseItemModal}
                 aria-label="Close"
               ></button>
@@ -274,7 +274,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
               <form>
                 <div className="row g-3">
                   {/* Item Code */}
-                  <div className="col-md-6">
+                  <div className="col-md-3">
                     <label
                       htmlFor="itemCode"
                       className="form-label fw-semibold text-muted small"
@@ -283,12 +283,12 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                         className="fas fa-qrcode me-2"
                         style={{ color: "#0C1D61" }}
                       ></i>
-                      Item Code
+                      Product Code
                     </label>
                     <input
                       type="text"
                       id="itemCode"
-                      placeholder="Enter item code"
+                      placeholder="Enter product code"
                       value={itemCode}
                       onChange={(e) => setItemCode(e.target.value)}
                       className="form-control"
@@ -296,7 +296,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -305,7 +305,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                   </div>
 
                   {/* Item Name */}
-                  <div className="col-md-6">
+                  <div className="col-md-9">
                     <label
                       htmlFor="itemName"
                       className="form-label fw-semibold text-muted small"
@@ -314,12 +314,12 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                         className="fas fa-box me-2"
                         style={{ color: "#0C1D61" }}
                       ></i>
-                      Item Name
+                      Product Name
                     </label>
                     <input
                       type="text"
                       id="itemName"
-                      placeholder="Enter item name"
+                      placeholder="Enter product name"
                       value={itemName}
                       onChange={(e) => setItemName(e.target.value)}
                       className="form-control"
@@ -327,7 +327,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -336,7 +336,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                   </div>
 
                   {/* Brand */}
-                  <div className="col-md-6">
+                  <div className="col-md-4">
                     <label
                       htmlFor="brand"
                       className="form-label fw-semibold text-muted small"
@@ -358,7 +358,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -367,7 +367,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                   </div>
 
                   {/* Origin */}
-                  <div className="col-md-6">
+                  <div className="col-md-4">
                     <label
                       htmlFor="origin"
                       className="form-label fw-semibold text-muted small"
@@ -381,7 +381,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                     <input
                       type="text"
                       id="origin"
-                      placeholder="Enter origin/country"
+                      placeholder="Enter origin"
                       value={origin}
                       onChange={(e) => setOrigin(e.target.value)}
                       className="form-control"
@@ -389,7 +389,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -398,7 +398,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                   </div>
 
                   {/* Minimum Stock */}
-                  <div className="col-md-6">
+                  <div className="col-md-4">
                     <label
                       htmlFor="minimumStock"
                       className="form-label fw-semibold text-muted small"
@@ -412,7 +412,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                     <input
                       type="number"
                       id="minimumStock"
-                      placeholder="Enter minimum stock level"
+                      placeholder="Enter min stock"
                       value={minimumStock}
                       onChange={(e) => setMinimumStock(e.target.value)}
                       className="form-control"
@@ -421,7 +421,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -446,7 +446,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
                   ></i>
                   <div>
                     <small className="text-muted d-block">
-                      Make sure the item code is unique in your inventory.
+                      Make sure the product code is unique in your inventory.
                     </small>
                     <small className="text-muted">
                       The minimum stock level will help you track when to

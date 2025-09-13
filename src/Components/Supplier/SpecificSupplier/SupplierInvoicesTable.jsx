@@ -328,7 +328,7 @@ function SupplierInvoicesTable({ items }) {
                     </div>
                     <button
                       type="button"
-                      className="btn-close btn-close-white"
+                      className="btn-close btn-close-white p-4"
                       onClick={() => setShowEditModal(false)}
                       aria-label="Close"
                     ></button>
@@ -384,7 +384,7 @@ function SupplierInvoicesTable({ items }) {
                               backgroundColor: "#f8f9fa",
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               fontWeight: "500",
                             }}
                           />
@@ -418,7 +418,7 @@ function SupplierInvoicesTable({ items }) {
                             style={{
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
@@ -458,7 +458,7 @@ function SupplierInvoicesTable({ items }) {
                             style={{
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               resize: "vertical",
                               transition: "border-color 0.3s ease",
                             }}
@@ -593,7 +593,7 @@ function SupplierInvoicesTable({ items }) {
                     </div>
                     <button
                       type="button"
-                      className="btn-close btn-close-white"
+                      className="btn-close btn-close-white p-4"
                       onClick={() => setShowCreateModal(false)}
                       aria-label="Close"
                     ></button>
@@ -654,7 +654,7 @@ function SupplierInvoicesTable({ items }) {
                             style={{
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
@@ -692,7 +692,7 @@ function SupplierInvoicesTable({ items }) {
                             style={{
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
@@ -728,7 +728,7 @@ function SupplierInvoicesTable({ items }) {
                             style={{
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
@@ -768,7 +768,7 @@ function SupplierInvoicesTable({ items }) {
                             style={{
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
@@ -806,7 +806,7 @@ function SupplierInvoicesTable({ items }) {
                             style={{
                               border: "1px solid #e9ecef",
                               borderRadius: "0.5rem",
-                              fontSize: "0.95rem",
+                              fontSize: "0.90rem",
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
@@ -817,7 +817,6 @@ function SupplierInvoicesTable({ items }) {
                             }
                           />
                         </div>
-
                       </div>
 
                       {/* Items Section */}
@@ -889,7 +888,13 @@ function SupplierInvoicesTable({ items }) {
                         </div>
 
                         {/* Items List */}
-                        <div style={{ maxHeight: "300px" }}>
+                        <div
+                          style={{
+                            maxHeight: "250px",
+                            overflowY: "auto",
+                            overflowX: "hidden",
+                          }}
+                        >
                           {invoiceForm.items.map((item, index) => (
                             <div
                               key={index}
@@ -1196,7 +1201,7 @@ function SupplierInvoicesTable({ items }) {
                       </p>
                       <button
                         type="button"
-                        className="btn-close"
+                        className="btn-close p-4"
                         onClick={() => setShowModal(false)}
                       ></button>
                     </div>

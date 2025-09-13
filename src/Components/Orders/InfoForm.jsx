@@ -63,6 +63,7 @@ function InfoForm({ info, setInfo }) {
             className="form-control form-control-sm"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
+            onBlur={() => setTimeout(() => setSuggestions([]), 100)}
             placeholder="Search customer..."
           />
           {suggestions.length > 0 && (

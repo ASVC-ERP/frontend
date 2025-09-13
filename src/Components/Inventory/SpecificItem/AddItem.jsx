@@ -72,7 +72,7 @@ function AddItem({ onAddItem }) {
               <div className="row mt-3">
                 <div className="col-md-4">
                   <label htmlFor="itemCode" className="form-label h6">
-                    Item Code:
+                    Product Code:
                   </label>
                   <input
                     type="text"
@@ -84,7 +84,7 @@ function AddItem({ onAddItem }) {
                 </div>
                 <div className="col-md-4">
                   <label htmlFor="itemName" className="form-label h6">
-                    Item Name:
+                    Product Name:
                   </label>
                   <input
                     type="text"

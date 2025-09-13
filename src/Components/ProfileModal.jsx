@@ -27,7 +27,7 @@ const ProfileModal = ({ user }) => {
             </div>
             <button
               type="button"
-              className="btn-close btn-close-white"
+              className="btn-close btn-close-white p-4"
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>

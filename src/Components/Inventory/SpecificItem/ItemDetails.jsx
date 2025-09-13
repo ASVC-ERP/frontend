@@ -152,7 +152,7 @@ function ItemDetails({ item, onUpdate }) {
       <div className="row mx-4 d-flex align-items-start py-1">
         <div className="col-4">
           <label htmlFor="pid" className="form-label h6">
-            Item Code:
+            Product Code:
           </label>
           <input
             type="text"
@@ -167,7 +167,7 @@ function ItemDetails({ item, onUpdate }) {
         {/* name */}
         <div className="col-4">
           <label htmlFor="itemName" className="form-label h6">
-            Item Name:
+            Product Name:
           </label>
           <input
             type="text"
@@ -412,7 +412,7 @@ function ItemDetails({ item, onUpdate }) {
                 </div>
                 <button
                   type="button"
-                  className="btn-close btn-close-white"
+                  className="btn-close btn-close-white p-4"
                   onClick={() => setShowStockModal(false)}
                   aria-label="Close"
                 ></button>
@@ -706,7 +706,7 @@ function ItemDetails({ item, onUpdate }) {
                 </div>
                 <button
                   type="button"
-                  className="btn-close btn-close-white"
+                  className="btn-close btn-close-white p-4"
                   onClick={handleCloseSpecialPriceModal}
                   aria-label="Close"
                 ></button>

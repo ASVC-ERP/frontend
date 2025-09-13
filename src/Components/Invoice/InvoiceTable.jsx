@@ -314,7 +314,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                   <p className="mb-2" style={{ color: "#05050599", fontSize: "12px" }}>
                     Sales &gt; Invoice &gt; {selectedRow.invoiceId || selectedRow.orderId}
                   </p>
-                  <button type="button" className="btn-close" onClick={() => setShowRowModal(false)}></button>
+                  <button type="button" className="btn-close p-4" onClick={() => setShowRowModal(false)}></button>
                 </div>
                 <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                   <h5 className="mb-0" style={{ color: "#0C1D61" }}>

@@ -176,7 +176,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
               </div>
               <button
                 type="button"
-                className="btn-close btn-close-white"
+                className="btn-close btn-close-white p-4"
                 onClick={handleCloseModal}
                 aria-label="Close"
               ></button>
@@ -210,7 +210,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
               <form>
                 <div className="row g-3">
                   {/* Supplier Code */}
-                  <div className="col-md-4">
+                  <div className="col-md-3">
                     <label
                       htmlFor="supplierCode"
                       className="form-label fw-semibold text-muted small"
@@ -232,7 +232,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -241,7 +241,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                   </div>
 
                   {/* Supplier Name */}
-                  <div className="col-md-4">
+                  <div className="col-md-6">
                     <label
                       htmlFor="supplierName"
                       className="form-label fw-semibold text-muted small"
@@ -263,7 +263,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -272,7 +272,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                   </div>
 
                   {/* Supplier Currency */}
-                  <div className="col-md-4">
+                  <div className="col-md-3">
                     <label
                       htmlFor="supplierCurrency"
                       className="form-label fw-semibold text-muted small"
@@ -286,7 +286,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                     <input
                       type="text"
                       id="supplierCurrency"
-                      placeholder="Enter supplier currency"
+                      placeholder="Enter currency"
                       value={newCurrency}
                       onChange={(e) => setNewCurrency(e.target.value)}
                       className="form-control"
@@ -294,7 +294,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
@@ -325,7 +325,7 @@ function SupplierTable({ supplier, onAddSupplier }) {
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
+                        fontSize: "0.90rem",
                         resize: "vertical",
                         transition: "border-color 0.3s ease",
                       }}

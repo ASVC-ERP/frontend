@@ -369,7 +369,7 @@ function OrdersTable() {
                   </p>
                   <button
                     type="button"
-                    className="btn-close"
+                    className="btn-close p-4"
                     onClick={() => setShowRowModal(false)}
                   ></button>
                 </div>
@@ -524,7 +524,7 @@ function OrdersTable() {
                   </p>
                   <button
                     type="button"
-                    className="btn-close"
+                    className="btn-close p-4"
                     onClick={() => setShowRequestModal(false)}
                   ></button>
                 </div>
@@ -591,7 +591,7 @@ function OrdersTable() {
                 <h5 className="mb-0">Edit Order {selectedRow.orderId}</h5>
                 <button
                   type="button"
-                  className="btn-close"
+                  className="btn-close p-4"
                   onClick={() => setShowEditModal(false)}
                 ></button>
               </div>
@@ -737,7 +737,7 @@ function OrdersTable() {
               <h5 className="mb-0">Serve Items for Order {selectedRow.orderId}</h5>
               <button
                 type="button"
-                className="btn-close"
+                className="btn-close p-4"
                 onClick={() => setShowServeModal(false)}
               ></button>
             </div>

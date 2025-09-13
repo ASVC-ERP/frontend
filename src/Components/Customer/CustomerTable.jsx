@@ -251,7 +251,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
               </div>
               <button
                 type="button"
-                className="btn-close btn-close-white"
+                className="btn-close btn-close-white p-4"
                 onClick={handleCloseCustomerModal}
                 aria-label="Close"
               ></button>
@@ -504,7 +504,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
               </div>
               <button
                 type="button"
-                className="btn-close btn-close-white"
+                className="btn-close btn-close-white p-4"
                 onClick={() => setShowEditModal(false)}
                 aria-label="Close"
               ></button>
