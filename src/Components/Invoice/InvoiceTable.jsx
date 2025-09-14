@@ -13,7 +13,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       name: "Invoice ID",
       selector: (row) => row.invoiceID,
       sortable: true,
-      maxwidth: "50px",
+      maxWidth: "130px",
     },
     {
       name: "Date",
@@ -24,6 +24,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           year: "numeric",
         }),
       sortable: true,
+      width: "120px",
     },
     {
       name: "Customer Name",
@@ -44,6 +45,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       name: "Sales Agent",
       selector: (row) => row.salesAgent,
       sortable: true,
+      width: "150px",
     },
     {
       name: "Status",
@@ -335,7 +337,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                     style={{ color: "#05050599", fontSize: "12px" }}
                   >
                     Sales &gt; Invoice &gt;{" "}
-                    {selectedRow.invoiceId || selectedRow.orderId}
+                    {selectedRow.invoiceID || selectedRow.orderId}
                   </p>
                   <button
                     type="button"

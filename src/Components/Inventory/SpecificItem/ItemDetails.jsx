@@ -8,11 +8,13 @@ function ItemDetails({ item, onUpdate }) {
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState();
 
+  console.log("Item details:", item);
+
   const [formData, setFormData] = useState({
     itemCode: item.itemCode || "",
     itemName: item.itemName || "",
-    partNo: item.partNum || "",
-    interchangeNo: item.interNum || "",
+    partNum: item.partNum || "",
+    interNum: item.interNum || "",
     unit: item.unit || "",
     minStock: item.minStock || "",
     category: item.category || "",
@@ -24,8 +26,8 @@ function ItemDetails({ item, onUpdate }) {
     setFormData({
       itemCode: item.itemCode || "",
       itemName: item.itemName || "",
-      partNo: item.partNo || "",
-      interchangeNo: item.interchangeNo || "",
+      partNum: item.partNum || "",
+      interNum: item.interNum || "",
       unit: item.unit || "",
       minStock: item.minStock || "",
       category: item.category || "",
@@ -44,50 +46,59 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`http://localhost:3000/inventory/update-inventory`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          itemName: item.itemName,
-          brand: formData.brand,
-          minStock: formData.minStock,
-          partNum: formData.partNo,
-          interNum: formData.interchangeNo,
-          unit: formData.unit,
-          model: formData.model,
-          category: formData.category,
-        }),
-      });
+      const response = await fetch(
+        `http://localhost:3000/inventory/update-inventory`,
+        {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            itemName: item.itemName,
+            brand: formData.brand,
+            minStock: formData.minStock,
+            partNum: formData.partNum,
+            interNum: formData.interNum,
+            unit: formData.unit,
+            model: formData.model,
+            category: formData.category,
+          }),
+        }
+      );
 
-    
+      if (response.ok) {
+        alert("Item updated successfully!");
 
-      if (!response.ok) throw new Error("Failed to update item");
-
-      console.log("Item updated successfully");
-      alert("Item details updated!");
-    } catch (err) {
-      console.error("Update error:", err);
-      alert("Error updating item details");
+        // 🔄 Immediately refresh data from backend
+        if (onUpdate) {
+          onUpdate(); // calls fetchItem
+        }
+      } else {
+        alert("Failed to update item.");
+      }
+    } catch (error) {
+      console.error("Error updating item:", error);
     }
   };
 
   const handleStockUpdate = async () => {
     try {
       const PIC = user.firstName || "";
-      const response = await axios.get("http://localhost:3000/inventory/adjust-stock", {
-        params: {
-          itemName: item.itemName,
-          PIC: PIC,
-          stock: stockData.newCount,
-          remarks: stockData.remarks,
-        },
-      });
+      const response = await axios.get(
+        "http://localhost:3000/inventory/adjust-stock",
+        {
+          params: {
+            itemName: item.itemName,
+            PIC: PIC,
+            stock: stockData.newCount,
+            remarks: stockData.remarks,
+          },
+        }
+      );
 
       console.log("Stock adjusted successfully:", response.data);
       alert("Stock updated successfully!");
       setShowStockModal(false);
       if (onUpdate) {
-        onUpdate();
+        if (onUpdate) onUpdate({ ...item, stock: stockData.newCount });
       }
     } catch (err) {
       console.error("Stock adjustment error:", err);
@@ -127,19 +138,24 @@ function ItemDetails({ item, onUpdate }) {
     if (!newSpecialPrice) return;
 
     try {
-      const response = await axios.get("http://localhost:3000/inventory/update-price", {
-        params: {
-          itemName: item.itemName,
-          price: newSpecialPrice,
-        },
-      });
+      const response = await axios.get(
+        "http://localhost:3000/inventory/update-price",
+        {
+          params: {
+            itemName: item.itemName,
+            price: newSpecialPrice,
+          },
+        }
+      );
 
       console.log("Price 4 updated successfully:", response.data);
       alert("Price 4 updated successfully!");
       handleCloseSpecialPriceModal();
-      if (onUpdate) {
-        onUpdate();
-      }
+      if (onUpdate)
+        onUpdate({
+          ...item,
+          price: { ...item.price, price4: newSpecialPrice },
+        });
     } catch (err) {
       console.error("Price 4 update error:", err);
       alert("Error updating Price 4.");
@@ -227,7 +243,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm"
             id="minStock"
-            value={item.minStock}
+            value={formData.minStock}
             onChange={handleChange}
           />
         </div>
@@ -250,14 +266,14 @@ function ItemDetails({ item, onUpdate }) {
       {/* Third Row */}
       <div className="row mx-4 mt-2 d-flex align-items-start">
         <div className="col-4">
-          <label htmlFor="partNo" className="form-label h6">
+          <label htmlFor="partNum" className="form-label h6">
             Part No.:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
-            id="partNo"
-            value={formData.partNo}
+            id="partNum"
+            value={formData.partNum}
             onChange={handleChange}
           />
         </div>
@@ -291,14 +307,14 @@ function ItemDetails({ item, onUpdate }) {
       {/* Fourth Row */}
       <div className="row mx-4 mt-2 d-flex align-items-start">
         <div className="col-4">
-          <label htmlFor="interchangeNo" className="form-label h6">
+          <label htmlFor="interNum" className="form-label h6">
             Interchange No.:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
-            id="interchangeNo"
-            value={formData.interchangeNo}
+            id="interNum"
+            value={formData.interNum}
             onChange={handleChange}
           />
         </div>

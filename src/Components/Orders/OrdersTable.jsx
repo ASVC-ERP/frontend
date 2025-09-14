@@ -199,6 +199,7 @@ function OrdersTable() {
         `http://localhost:3000/orders/${editableRow.orderId}`,
         payload
       );
+
       setOrders((prev) =>
         prev.map((o) =>
           o.orderId === editableRow.orderId ? { ...editableRow } : o
@@ -211,6 +212,7 @@ function OrdersTable() {
       );
       setSelectedRow({ ...editableRow });
       setIsEditing(false);
+
       Swal.fire({
         icon: "success",
         title: "Order Updated",
@@ -218,6 +220,7 @@ function OrdersTable() {
         timer: 2000,
         showConfirmButton: false,
       });
+
       fetchOrders();
       setShowEditModal(false);
     } catch (err) {

@@ -201,6 +201,11 @@ function App() {
           stock: item.stock,
           price: item.price,
           minStock: item.minStock,
+          partNum: item.partNum,
+          interNum: item.interNum,
+          unit: item.unit,
+          model: item.model,
+          category: item.category,
         }));
         setItems(transformedItems);
       })
