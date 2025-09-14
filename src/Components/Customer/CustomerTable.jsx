@@ -61,10 +61,17 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-
   useEffect(() => {
     setFilteredData(customers);
   }, [customers]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      onRefreshCustomers();
+    }, 10000); // every 10s
+
+    return () => clearInterval(interval);
+  }, [onRefreshCustomers]);
 
   const handleAddCustomerClick = () => {
     setShowCustomerModal(true);
@@ -97,6 +104,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         confirmButtonColor: "#3085d6",
       });
 
+      onRefreshCustomers();
       handleCloseCustomerModal();
     } catch (error) {
       Swal.fire({
@@ -119,7 +127,11 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const handleSubmitEditCustomer = async (e) => {
     e.preventDefault();
     try {
-      const updatedCustomer = { customerName, customerContact, customerAddress };
+      const updatedCustomer = {
+        customerName,
+        customerContact,
+        customerAddress,
+      };
       await axios.put(
         `http://localhost:3000/customers/${editingCustomer.customerID}`,
         updatedCustomer
@@ -132,6 +144,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         confirmButtonColor: "#3085d6",
       });
 
+      onRefreshCustomers();
       handleCloseCustomerModal();
     } catch (error) {
       Swal.fire({
@@ -162,8 +175,8 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     try {
       await axios.delete(`http://localhost:3000/customers/${customerID}`);
       Swal.fire({
-        icon: 'success',
-        title: 'Deleted!',
+        icon: "success",
+        title: "Deleted!",
         text: `Customer ${customerID} deleted successfully`,
         timer: 2000,
         showConfirmButton: false,
@@ -172,9 +185,9 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     } catch (err) {
       console.error(err);
       Swal.fire({
-        icon: 'error',
-        title: 'Error',
-        text: 'Failed to delete customer.',
+        icon: "error",
+        title: "Error",
+        text: "Failed to delete customer.",
       });
     }
   };
@@ -475,8 +488,6 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         ></div>
       )}
 
-
-
       {/* Edit Customer Modal */}
       <div
         className={`modal fade ${showEditModal ? "show" : ""}`}
@@ -542,7 +553,10 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       htmlFor="editCustomerName"
                       className="form-label fw-semibold text-muted small"
                     >
-                      <i className="fas fa-user-tie me-2" style={{ color: "#0C1D61" }}></i>
+                      <i
+                        className="fas fa-user-tie me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
                       Customer Name
                     </label>
                     <input
@@ -561,7 +575,10 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       htmlFor="editCustomerContact"
                       className="form-label fw-semibold text-muted small"
                     >
-                      <i className="fas fa-user me-2" style={{ color: "#0C1D61" }}></i>
+                      <i
+                        className="fas fa-user me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
                       Contact Number
                     </label>
                     <input
@@ -580,7 +597,10 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       htmlFor="editCustomerAddress"
                       className="form-label fw-semibold text-muted small"
                     >
-                      <i className="fas fa-map-marker-alt me-2" style={{ color: "#0C1D61" }}></i>
+                      <i
+                        className="fas fa-map-marker-alt me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
                       Customer Address
                     </label>
                     <textarea
@@ -604,9 +624,13 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                 }}
               >
                 <div className="d-flex align-items-center">
-                  <i className="fas fa-info-circle me-2" style={{ color: "#0C1D61" }}></i>
+                  <i
+                    className="fas fa-info-circle me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
                   <small className="text-muted">
-                    Customer information will be used for invoicing and communication.
+                    Customer information will be used for invoicing and
+                    communication.
                   </small>
                 </div>
               </div>

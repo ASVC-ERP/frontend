@@ -39,9 +39,12 @@ function ApprovalTables() {
 
   const handleApprove = async () => {
     try {
-      const response = await axios.post("http://localhost:3000/orders/serve-approved", {
-        orderIds: selectedOrders,
-      });
+      const response = await axios.post(
+        "http://localhost:3000/orders/serve-approved",
+        {
+          orderIds: selectedOrders,
+        }
+      );
 
       Swal.fire({
         icon: "success",
@@ -52,7 +55,7 @@ function ApprovalTables() {
       });
 
       setSelectedOrders([]);
-      fetchOrders(); // Refetch orders to update the table
+      fetchOrders();
     } catch (error) {
       console.error("Error approving orders:", error);
       Swal.fire({
@@ -80,10 +83,30 @@ function ApprovalTables() {
     setSelectedOrders(isChecked ? data.map((row) => row.orderID) : []);
   };
 
-  const handleReject = () => {
-    // This should now call a backend endpoint to reject orders
-    console.log("Rejecting orders:", selectedOrders);
-    setSelectedOrders([]);
+  const handleReject = async () => {
+    try {
+      await axios.post("http://localhost:3000/orders/reject", {
+        orderIds: selectedOrders,
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Rejected!",
+        text: "Selected orders have been rejected successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setSelectedOrders([]);
+      fetchOrders(); // refresh after reject
+    } catch (error) {
+      console.error("Error rejecting orders:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to reject orders. Please try again.",
+      });
+    }
   };
 
   const columns = [
@@ -94,7 +117,8 @@ function ApprovalTables() {
             type="checkbox"
             onChange={(e) => handleSelectAll(e.target.checked)}
             checked={
-              data.length > 0 && data.every((row) => selectedOrders.includes(row.orderID))
+              data.length > 0 &&
+              data.every((row) => selectedOrders.includes(row.orderID))
             }
           />
         ) : null,
@@ -112,16 +136,16 @@ function ApprovalTables() {
     { name: "Order ID", selector: (row) => row.orderID, sortable: true },
     { name: "Date", selector: (row) => row.date, sortable: true },
     {
-    name: "Customer Name",
-    selector: (row) => row.customerName,
-    sortable: true,
-  },
-  {
-    name: "Customer Address",
-    selector: (row) => row.customerAddress,
-    sortable: true,
-  },
-  { name: "Sales Agent", selector: (row) => row.salesAgent, sortable: true },
+      name: "Customer Name",
+      selector: (row) => row.customerName,
+      sortable: true,
+    },
+    {
+      name: "Customer Address",
+      selector: (row) => row.customerAddress,
+      sortable: true,
+    },
+    { name: "Sales Agent", selector: (row) => row.salesAgent, sortable: true },
     {
       name: "Status",
       cell: (row) => (

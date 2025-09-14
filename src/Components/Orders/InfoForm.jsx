@@ -51,107 +51,108 @@ function InfoForm({ info, setInfo }) {
   };
 
   return (
-    <div>
-      {/* Customer Name / Dropdown */}
-      <div className="row mx-5 d-flex align-items-center">
-        <div className="col-1">
-          <label className="h6">Customer: </label>
-        </div>
-        <div className="col-6 position-relative">
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            onBlur={() => setTimeout(() => setSuggestions([]), 100)}
-            placeholder="Search customer..."
-          />
-          {suggestions.length > 0 && (
-            <ul
-              style={{
-                position: "absolute",
-                top: "38px",
-                left: 0,
-                right: 0,
-                backgroundColor: "#fff",
-                border: "1px solid #ccc",
-                listStyleType: "none",
-                margin: 0,
-                padding: 0,
-                maxHeight: "150px",
-                overflowY: "auto",
-                zIndex: 1000,
-              }}
-            >
-              {suggestions.map((c) => (
-                <li
-                  key={c.customerID}
-                  onClick={() => handleSelectCustomer(c)}
-                  style={{
-                    padding: "8px",
-                    cursor: "pointer",
-                    borderBottom: "1px solid #eee",
-                  }}
-                >
-                  {c.customerName} - {c.customerContact}
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="col-2">
-          <label htmlFor="customerNumber" className="ms-5 h6">
-            Contact No:
-          </label>
-        </div>
-        <div className="col-3">
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="customerNumber"
-            value={info.customerNumber}
-            onChange={handleChange}
-          />
-        </div>
+  <div>
+    {/* Customer Name / Dropdown */}
+    <div className="row mx-5 d-flex align-items-center">
+      <div className="col-1">
+        <label className="h6">Customer: </label>
+      </div>
+      <div className="col-6 position-relative">
+        <input
+          type="text"
+          className="form-control form-control-sm"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          onBlur={() => setTimeout(() => setSuggestions([]), 100)}
+          placeholder="Search customer..."
+        />
+        {suggestions.length > 0 && (
+          <ul
+            style={{
+              position: "absolute",
+              top: "38px",
+              left: 0,
+              right: 0,
+              backgroundColor: "#fff",
+              border: "1px solid #ccc",
+              listStyleType: "none",
+              margin: 0,
+              padding: 0,
+              maxHeight: "150px",
+              overflowY: "auto",
+              zIndex: 1000,
+            }}
+          >
+            {suggestions.map((c) => (
+              <li
+                key={c.customerID}
+                onClick={() => handleSelectCustomer(c)}
+                style={{
+                  padding: "8px",
+                  cursor: "pointer",
+                  borderBottom: "1px solid #eee",
+                }}
+              >
+                {c.customerName} - {c.customerContact}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
-      {/* Address and Delivery */}
-      <div className="row mx-5 mt-3 d-flex align-items-center">
-        <div className="col-1">
-          <label htmlFor="customerAddress" className="h6">
-            Address:
-          </label>
-        </div>
-        <div className="col-6">
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="customerAddress"
-            value={info.customerAddress}
-            onChange={handleChange}
-          />
-        </div>
-        <div className="col-2">
-          <label htmlFor="delivery" className="ms-5 h6">
-            Delivery Type:
-          </label>
-        </div>
-        <div className="col-3">
-          <select
-            className="form-select"
-            aria-label="Default select example"
-            id="delivery"
-            value={info.delivery}
-            onChange={handleChange}
-          >
-            <option value="1">Shipping</option>
-            <option value="2">Pick-up</option>
-          </select>
-        </div>
+      <div className="col-2">
+        <label htmlFor="customerNumber" className="ms-5 h6">
+          Contact No:
+        </label>
+      </div>
+      <div className="col-3">
+        <input
+          type="text"
+          className="form-control form-control-sm"
+          id="customerNumber"
+          value={info.customerNumber}
+          onChange={handleChange}
+        />
       </div>
     </div>
-  );
+
+    {/* Address and Delivery */}
+    <div className="row mx-5 mt-3 d-flex align-items-center">
+      <div className="col-1">
+        <label htmlFor="customerAddress" className="h6">
+          Address:
+        </label>
+      </div>
+      <div className="col-6">
+        <input
+          type="text"
+          className="form-control form-control-sm"
+          id="customerAddress"
+          value={info.customerAddress}
+          onChange={handleChange}
+        />
+      </div>
+      <div className="col-2">
+        <label htmlFor="delivery" className="ms-5 h6">
+          Delivery Type:
+        </label>
+      </div>
+      <div className="col-3">
+        <select
+          className="form-select"
+          aria-label="Default select example"
+          id="delivery"
+          value={info.delivery}
+          onChange={handleChange}
+        >
+          <option value="1">Shipping</option>
+          <option value="2">Pick-up</option>
+        </select>
+      </div>
+    </div>
+  </div>
+);
+
 }
 
 export default InfoForm;

@@ -56,7 +56,21 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const [newCurrency, setNewCurrency] = useState("");
   const [newAddress, setNewAddress] = useState("");
 
+  const [selectedInvoice, setSelectedInvoice] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+
   const [showModal, setShowModal] = useState(false);
+
+  const handleEditSupplier = (row) => {
+    console.log("Editing row:", row);
+    setSelectedInvoice(row); // set invoice/supplier row for modal
+    setShowEditModal(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setSelectedInvoice(null);
+    setShowEditModal(false);
+  };
 
   const handleAddSupplierClick = () => {
     setShowModal(true);
@@ -73,6 +87,14 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   useEffect(() => {
     setFilteredData(supplier);
   }, [supplier]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      onRefreshSupplier();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [onRefreshSupplier]);
 
   // Handle search input change
   const handleSearch = (event) => {
@@ -93,6 +115,34 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     navigate("/supplier/invoices", { state: { row } }); // Navigate to the details page with the selected row data
   };
 
+  const handleUpdateSupplier = async () => {
+    try {
+      await axios.put(`http://localhost:3000/suppliers/${selectedInvoice.id}`, {
+        name: selectedInvoice.name,
+        address: selectedInvoice.address,
+        currency: selectedInvoice.currency,
+      });
+
+      Swal.fire({
+        icon: "success",
+        title: "Supplier Updated",
+        text: "Supplier details have been successfully updated.",
+        confirmButtonColor: "#0C1D61",
+      });
+
+      onRefreshSupplier();
+
+      setShowEditModal(false);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Update Failed",
+        text: error.response?.data?.message || "Something went wrong.",
+        confirmButtonColor: "#0C1D61",
+      });
+    }
+  };
+
   const handleSubmitSupplier = () => {
     console.log("▶ Add Item Clicked");
     if (!newCode.trim() || !newName.trim() || !newAddress.trim()) return;
@@ -108,6 +158,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     setNewName("");
     setNewAddress("");
 
+    onRefreshSupplier();
     // Close modal and clear fields
     handleCloseModal();
   };
@@ -476,6 +527,321 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
           className="modal-backdrop fade show"
           onClick={handleCloseModal}
         ></div>
+      )}
+
+      {/* Edit Invoice Modal */}
+      {showEditModal && (
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          role="dialog"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div
+            className="modal-dialog modal-dialog-centered modal-lg w-50"
+            role="document"
+          >
+            <div className="modal-content shadow-lg border-0">
+              {/* Header with gradient background */}
+              <div
+                className="modal-header text-white position-relative overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                  borderRadius: "0.5rem 0.5rem 0 0",
+                }}
+              >
+                <div className="d-flex align-items-center">
+                  <div>
+                    <h5 className="modal-title mb-0">Edit Supplier</h5>
+                    <small className="opacity-75">
+                      Modify supplier information
+                    </small>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn-close btn-close-white p-4"
+                  onClick={() => handleCloseEditModal()}
+                  aria-label="Close"
+                ></button>
+
+                {/* Decorative elements */}
+                <div
+                  className="position-absolute"
+                  style={{
+                    top: "-50px",
+                    right: "-50px",
+                    width: "100px",
+                    height: "100px",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+                <div
+                  className="position-absolute"
+                  style={{
+                    bottom: "-30px",
+                    left: "-30px",
+                    width: "60px",
+                    height: "60px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+              </div>
+
+              <div className="modal-body p-4">
+                <form>
+                  <div className="row g-3">
+                    {/* Supplier ID (Read-only) */}
+                    <div className="col-12">
+                      <label
+                        htmlFor="supplierId"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-id-badge me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier ID
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierId"
+                        className="ms-1 ps-2"
+                        placeholder="Supplier ID"
+                        value={selectedInvoice.id}
+                        disabled
+                        style={{
+                          backgroundColor: "#f8f9fa",
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          fontWeight: "500",
+                        }}
+                      />
+                    </div>
+
+                    {/* Supplier Name */}
+                    <div className="col-12">
+                      <label
+                        htmlFor="supplierNameEdit"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-building me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Name
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierNameEdit"
+                        placeholder="Enter supplier name"
+                        value={selectedInvoice.name}
+                        onChange={(e) =>
+                          setSelectedInvoice({
+                            ...selectedInvoice,
+                            name: e.target.value,
+                          })
+                        }
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
+
+                    {/* Supplier Address */}
+                    <div className="col-12">
+                      <label
+                        htmlFor="supplierAddressEdit"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-map-marker-alt me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Address{" "}
+                      </label>
+                      <textarea
+                        id="supplierAddressEdit"
+                        placeholder="Enter supplier address"
+                        value={selectedInvoice.address}
+                        onChange={(e) =>
+                          setSelectedInvoice({
+                            ...selectedInvoice,
+                            address: e.target.value,
+                          })
+                        }
+                        className="form-control"
+                        rows="3"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          resize: "vertical",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
+
+                    {/* Supplier Currency */}
+                    <div className="col-12">
+                      <label
+                        htmlFor="supplierCurrencyEdit"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-money-bill-wave me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Currency
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierCurrencyEdit"
+                        placeholder="Enter supplier currency (e.g. USD, PHP, EUR)"
+                        value={selectedInvoice.currency || ""}
+                        onChange={(e) =>
+                          setSelectedInvoice({
+                            ...selectedInvoice,
+                            currency: e.target.value,
+                          })
+                        }
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
+                  </div>
+                </form>
+
+                {/* Additional info card */}
+                <div
+                  className="mt-4 p-3 rounded-3"
+                  style={{
+                    backgroundColor: "rgba(12, 29, 97, 0.05)",
+                    border: "1px solid rgba(12, 29, 97, 0.1)",
+                  }}
+                >
+                  <div className="d-flex align-items-center">
+                    <i
+                      className="fas fa-info-circle me-2"
+                      style={{ color: "#0C1D61" }}
+                    ></i>
+                    <small className="text-muted">
+                      Changes will be saved immediately. Make sure all
+                      information is accurate before saving.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer bg-light border-0 rounded-bottom">
+                <button
+                  type="button"
+                  className="btn px-4 py-2 me-2"
+                  onClick={() => setShowEditModal(false)}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#c82333";
+                    e.target.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "#dc3545";
+                    e.target.style.transform = "translateY(0)";
+                  }}
+                >
+                  <i className="fas fa-times me-2"></i>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn px-4 py-2"
+                  onClick={handleUpdateSupplier}
+                  disabled={
+                    !selectedInvoice.name ||
+                    !selectedInvoice.address ||
+                    !selectedInvoice.currency
+                  }
+                  style={{
+                    backgroundColor:
+                      !selectedInvoice.name ||
+                      !selectedInvoice.address ||
+                      !selectedInvoice.currency
+                        ? "#6c757d"
+                        : "#0C1D61",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                    cursor:
+                      !selectedInvoice.name ||
+                      !selectedInvoice.address ||
+                      !selectedInvoice.currency
+                        ? "not-allowed"
+                        : "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (
+                      selectedInvoice.name &&
+                      selectedInvoice.address &&
+                      selectedInvoice.currency
+                    ) {
+                      e.target.style.backgroundColor = "#1e3c72";
+                      e.target.style.transform = "translateY(-1px)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (
+                      selectedInvoice.name &&
+                      selectedInvoice.address &&
+                      selectedInvoice.currency
+                    ) {
+                      e.target.style.backgroundColor = "#0C1D61";
+                      e.target.style.transform = "translateY(0)";
+                    }
+                  }}
+                >
+                  <i className="fas fa-save me-2"></i>
+                  Save Changes
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

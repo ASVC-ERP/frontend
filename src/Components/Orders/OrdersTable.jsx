@@ -3,9 +3,8 @@ import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
 import defaultPic from "../../assets/defaultPic.jpg";
-import axios from 'axios';
+import axios from "axios";
 import Swal from "sweetalert2";
-
 
 // Define table columns
 const columns = [
@@ -22,7 +21,8 @@ const columns = [
     sortable: true,
   },
   { name: "Sales Agent", selector: (row) => row.salesAgent, sortable: true },
-  { name: "Status",
+  {
+    name: "Status",
     selector: (row) => row.status,
     sortable: true,
     cell: (row) => (
@@ -38,8 +38,9 @@ const columns = [
         }`}
       >
         {row.status}
-      </span> 
-    )},
+      </span>
+    ),
+  },
 ];
 
 // Define table data
@@ -47,7 +48,7 @@ function OrdersTable() {
   const [orders, setOrders] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
-  
+
   const [selectedRow, setSelectedRow] = useState(null);
   const [editableRow, setEditableRow] = useState(null);
 
@@ -63,10 +64,10 @@ function OrdersTable() {
   const [showServeModal, setShowServeModal] = useState(false);
   const [serveData, setServeData] = useState([]);
 
-
   // Function to fetch orders
   const fetchOrders = () => {
-    axios.get("http://localhost:3000/orders")
+    axios
+      .get("http://localhost:3000/orders")
       .then((res) => {
         setOrders(res.data);
         setFilteredData(res.data);
@@ -81,8 +82,17 @@ function OrdersTable() {
     fetchOrders();
   }, []);
 
-// delivery receipt generation
-/*
+  // Auto-refresh orders every 10 seconds
+  useEffect(() => {
+    const interval = setInterval(() => {
+      fetchOrders();
+    }, 10000); // adjust interval as needed (ms)
+
+    return () => clearInterval(interval);
+  }, []);
+
+  // delivery receipt generation
+  /*
   const handleCreateDeliveryReceipt = (withInvoice) => {
     const url = withInvoice
       ? "http://localhost:3000/delivery-receipts/invoice"
@@ -115,7 +125,9 @@ function OrdersTable() {
 
     setEditableRow({
       ...row,
-      orderedItems: Array.isArray(row.orderedItems) ? [...row.orderedItems] : [],
+      orderedItems: Array.isArray(row.orderedItems)
+        ? [...row.orderedItems]
+        : [],
     });
 
     setIsEditing(false);
@@ -130,14 +142,16 @@ function OrdersTable() {
 
   // Add a new item row
   const addItem = () => {
-    setEditableRow(prev => {
-      const newItems = [...(prev.orderedItems || []), { itemName: "", quantity: 1 }];
+    setEditableRow((prev) => {
+      const newItems = [
+        ...(prev.orderedItems || []),
+        { itemName: "", quantity: 1 },
+      ];
       setActiveIndex(newItems.length - 1); // focus last added item
       return { ...prev, orderedItems: newItems };
     });
     setQuery("");
   };
-
 
   // Remove an item by index
   const removeItem = (index) => {
@@ -161,7 +175,6 @@ function OrdersTable() {
     });
   };
 
-
   const handleSave = async () => {
     try {
       const payload = {
@@ -172,7 +185,7 @@ function OrdersTable() {
         customerNumber: editableRow.customerNumber,
         status: editableRow.status,
         salesAgent: editableRow.salesAgent,
-        orderedItems: (editableRow.orderedItems || []).map(it => ({
+        orderedItems: (editableRow.orderedItems || []).map((it) => ({
           itemName: it.itemName,
           quantity: Number(it.quantity) || 0,
           price: it.price || 0,
@@ -182,9 +195,20 @@ function OrdersTable() {
 
       console.log("Payload being sent:", payload);
 
-      await axios.patch(`http://localhost:3000/orders/${editableRow.orderId}`, payload);
-      setOrders(prev => prev.map(o => o.orderId === editableRow.orderId ? { ...editableRow } : o));
-      setFilteredData(prev => prev.map(o => o.orderId === editableRow.orderId ? { ...editableRow } : o));
+      await axios.patch(
+        `http://localhost:3000/orders/${editableRow.orderId}`,
+        payload
+      );
+      setOrders((prev) =>
+        prev.map((o) =>
+          o.orderId === editableRow.orderId ? { ...editableRow } : o
+        )
+      );
+      setFilteredData((prev) =>
+        prev.map((o) =>
+          o.orderId === editableRow.orderId ? { ...editableRow } : o
+        )
+      );
       setSelectedRow({ ...editableRow });
       setIsEditing(false);
       Swal.fire({
@@ -192,8 +216,9 @@ function OrdersTable() {
         title: "Order Updated",
         text: `Order ${editableRow.orderId} was updated successfully!`,
         timer: 2000,
-        showConfirmButton: false
+        showConfirmButton: false,
       });
+      fetchOrders();
       setShowEditModal(false);
     } catch (err) {
       console.error("Failed to update order:", err);
@@ -206,7 +231,7 @@ function OrdersTable() {
     }
   };
 
-    const handleSearchChange = async (index, value) => {
+  const handleSearchChange = async (index, value) => {
     setQuery(value);
     setActiveIndex(index);
 
@@ -216,12 +241,16 @@ function OrdersTable() {
     }
 
     try {
-      const res = await axios.get(`http://localhost:3000/items?search=${value}`);
-      
+      const res = await axios.get(
+        `http://localhost:3000/items?search=${value}`
+      );
+
       // Map prices into array for dropdown
-      const itemsWithPrices = res.data.map(item => ({
+      const itemsWithPrices = res.data.map((item) => ({
         ...item,
-        prices: [item.price1, item.price2, item.price3, item.price4].filter(p => p != null)
+        prices: [item.price1, item.price2, item.price3, item.price4].filter(
+          (p) => p != null
+        ),
       }));
 
       setSuggestions(itemsWithPrices);
@@ -242,8 +271,13 @@ function OrdersTable() {
         itemName: item.itemName,
         stock: item.stock,
         quantity: 1,
-        availablePrices: [priceObj.price1, priceObj.price2, priceObj.price3, priceObj.price4].filter(p => p != null),
-        price: priceObj.price1
+        availablePrices: [
+          priceObj.price1,
+          priceObj.price2,
+          priceObj.price3,
+          priceObj.price4,
+        ].filter((p) => p != null),
+        price: priceObj.price1,
       };
       console.log("Updated items:", updatedItems);
       return { ...prev, orderedItems: updatedItems };
@@ -255,7 +289,7 @@ function OrdersTable() {
     setActiveIndex(null);
   };
 
-/*
+  /*
   const handleRequestInvoice = () => {
     setShowRequestModal(true); // Show the Request Invoice modal
     setShowRowModal(false); // Close the current order details modal (optional)
@@ -266,20 +300,20 @@ function OrdersTable() {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/packing-list/invoice',
+        "http://localhost:3000/packing-list/invoice",
         selectedRow,
-        { responseType: 'blob' } // important to handle PDF
+        { responseType: "blob" } // important to handle PDF
       );
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
-      window.open(blobUrl, '_blank');
+      window.open(blobUrl, "_blank");
     } catch (err) {
-      console.error('Failed to generate PDF:', err);
+      console.error("Failed to generate PDF:", err);
       Swal.fire({
-        icon: 'error',
-        title: 'Print Failed',
-        text: 'Failed to generate PDF. See console for details.',
+        icon: "error",
+        title: "Print Failed",
+        text: "Failed to generate PDF. See console for details.",
       });
     }
   };
@@ -294,7 +328,7 @@ function OrdersTable() {
       customerAddress: row.customerAddress,
       customerNumber: row.customerNumber,
       salesAgent: row.salesAgent,
-      items: row.orderedItems.map(item => ({
+      items: row.orderedItems.map((item) => ({
         itemName: item.itemName,
         price: item.price,
         quantityOrdered: item.quantity,
@@ -304,24 +338,24 @@ function OrdersTable() {
     };
 
     fetchOrders();
-    
+
     setServeData(payload);
     setShowServeModal(true);
-
-     
   };
 
   const updateServeQuantity = (index, field, value) => {
-    setServeData(prev => {
+    setServeData((prev) => {
       const updated = { ...prev };
       const val = Number(value) || 0;
 
-      if (field === 'quantityServed') {
+      if (field === "quantityServed") {
         updated.items[index].quantityServed = val;
-        updated.items[index].quantityUnserved = updated.items[index].quantityOrdered - val;
-      } else if (field === 'quantityUnserved') {
+        updated.items[index].quantityUnserved =
+          updated.items[index].quantityOrdered - val;
+      } else if (field === "quantityUnserved") {
         updated.items[index].quantityUnserved = val;
-        updated.items[index].quantityServed = updated.items[index].quantityOrdered - val;
+        updated.items[index].quantityServed =
+          updated.items[index].quantityOrdered - val;
       }
 
       return updated;
@@ -388,7 +422,7 @@ function OrdersTable() {
                     Order ID: {selectedRow.orderId}
                   </h5>
                   <div className="d-flex gap-2">
-{/*
+                    {/*
                     <button
                       type="button"
                       className="btn btn-sm"
@@ -469,11 +503,12 @@ function OrdersTable() {
                           <div className="text-end d-flex flex-column">
                             <span className="fw-semibold">
                               ₱
-                              {(
-                                item.price * item.quantity
-                              ).toLocaleString(undefined, {
-                                minimumFractionDigits: 2,
-                              })}
+                              {(item.price * item.quantity).toLocaleString(
+                                undefined,
+                                {
+                                  minimumFractionDigits: 2,
+                                }
+                              )}
                             </span>
                             <small className="text-muted">
                               Qty: {item.quantity}
@@ -629,12 +664,17 @@ function OrdersTable() {
                   <hr />
                   <h6>Ordered Items</h6>
                   {editableRow?.orderedItems.map((item, index) => (
-                    <div key={index} className="position-relative d-flex gap-2 mb-2 align-items-center">
+                    <div
+                      key={index}
+                      className="position-relative d-flex gap-2 mb-2 align-items-center"
+                    >
                       <div className="flex-grow-1 position-relative">
                         <input
                           type="text"
                           value={activeIndex === index ? query : item.itemName}
-                          onChange={(e) => handleSearchChange(index, e.target.value)}
+                          onChange={(e) =>
+                            handleSearchChange(index, e.target.value)
+                          }
                           className="form-control"
                           placeholder="Search item..."
                         />
@@ -661,7 +701,11 @@ function OrdersTable() {
                               <li
                                 key={i}
                                 onClick={() => handleSelectSuggestion(index, s)}
-                                style={{ padding: "8px", cursor: "pointer", borderBottom: "1px solid #eee" }}
+                                style={{
+                                  padding: "8px",
+                                  cursor: "pointer",
+                                  borderBottom: "1px solid #eee",
+                                }}
                               >
                                 <strong>{s.itemName}</strong> <br />
                                 Stock: {s.stock}
@@ -675,25 +719,38 @@ function OrdersTable() {
                       <input
                         type="number"
                         value={item.quantity}
-                        onChange={e => updateItem(index, "quantity", e.target.value)}
+                        onChange={(e) =>
+                          updateItem(index, "quantity", e.target.value)
+                        }
                         className="form-control"
                         style={{ width: "80px" }}
                       />
 
                       <select
                         value={item.price || 0}
-                        onChange={e => updateItem(index, "price", e.target.value)}
+                        onChange={(e) =>
+                          updateItem(index, "price", e.target.value)
+                        }
                         className="form-select"
                         style={{ width: "120px" }}
                       >
                         {item.availablePrices?.map((p, i) => (
-                          <option key={i} value={p}>₱{p.toLocaleString()}</option>
+                          <option key={i} value={p}>
+                            ₱{p.toLocaleString()}
+                          </option>
                         ))}
                       </select>
 
                       {/* Total for this item */}
-                      <div className="text-end fw-semibold" style={{ width: "100px" }}>
-                        ₱{(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                      <div
+                        className="text-end fw-semibold"
+                        style={{ width: "100px" }}
+                      >
+                        ₱
+                        {(item.price * item.quantity).toLocaleString(
+                          undefined,
+                          { minimumFractionDigits: 2 }
+                        )}
                       </div>
 
                       <button
@@ -740,109 +797,130 @@ function OrdersTable() {
 
       {/* SERVE MODAL */}
       {showServeModal && selectedRow && (
-      <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-        <div className="modal-dialog modal-lg" role="document">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="mb-0">Serve Items for Order {selectedRow.orderId}</h5>
-              <button
-                type="button"
-                className="btn-close p-4"
-                onClick={() => setShowServeModal(false)}
-              ></button>
-            </div>
+        <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+          <div className="modal-dialog modal-lg" role="document">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="mb-0">
+                  Serve Items for Order {selectedRow.orderId}
+                </h5>
+                <button
+                  type="button"
+                  className="btn-close p-4"
+                  onClick={() => setShowServeModal(false)}
+                ></button>
+              </div>
 
-            <div className="modal-body">
-              {serveData.items.map((item, index) => (
-                <div key={index} className="d-flex gap-2 align-items-center mb-2">
-                  <div className="flex-grow-1">{item.itemName}</div>
-                  <div>
-                    <input
-                      type="number"
-                      min={0}
-                      max={item.quantityOrdered}
-                      value={item.quantityServed}
-                      onChange={e => updateServeQuantity(index, 'quantityServed', e.target.value)}
-                      className="form-control"
-                      placeholder="Served"
-                      style={{ width: "100px" }}
-                    />
+              <div className="modal-body">
+                {serveData.items.map((item, index) => (
+                  <div
+                    key={index}
+                    className="d-flex gap-2 align-items-center mb-2"
+                  >
+                    <div className="flex-grow-1">{item.itemName}</div>
+                    <div>
+                      <input
+                        type="number"
+                        min={0}
+                        max={item.quantityOrdered}
+                        value={item.quantityServed}
+                        onChange={(e) =>
+                          updateServeQuantity(
+                            index,
+                            "quantityServed",
+                            e.target.value
+                          )
+                        }
+                        className="form-control"
+                        placeholder="Served"
+                        style={{ width: "100px" }}
+                      />
+                    </div>
+                    <div>
+                      <input
+                        type="number"
+                        min={0}
+                        max={item.quantityOrdered}
+                        value={item.quantityUnserved}
+                        onChange={(e) =>
+                          updateServeQuantity(
+                            index,
+                            "quantityUnserved",
+                            e.target.value
+                          )
+                        }
+                        className="form-control"
+                        placeholder="Unserved"
+                        style={{ width: "100px" }}
+                      />
+                    </div>
+                    <div>Ordered: {item.quantityOrdered}</div>
                   </div>
-                  <div>
-                    <input
-                      type="number"
-                      min={0}
-                      max={item.quantityOrdered}
-                      value={item.quantityUnserved}
-                      onChange={e => updateServeQuantity(index, 'quantityUnserved', e.target.value)}
-                      className="form-control"
-                      placeholder="Unserved"
-                      style={{ width: "100px" }}
-                    />
-                  </div>
-                  <div>Ordered: {item.quantityOrdered}</div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
 
-            <div className="modal-footer">
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => setShowServeModal(false)}
-              >
-                Cancel
-              </button>
-              <button
-                type="button"
-                className="btn btn-primary"
-                onClick={async () => {
-                  // send data to backend
-                  try {
-                    const user = JSON.parse(localStorage.getItem("user"));
-                    const role = user?.role || "";
-                    await axios.patch(`http://localhost:3000/orders/${selectedRow.orderId}/serve`, serveData, {
-                      params: { role }
-                    });
-                    if(role.toLowerCase() === 'admin') {
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowServeModal(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={async () => {
+                    // send data to backend
+                    try {
+                      const user = JSON.parse(localStorage.getItem("user"));
+                      const role = user?.role || "";
+                      await axios.patch(
+                        `http://localhost:3000/orders/${selectedRow.orderId}/serve`,
+                        serveData,
+                        {
+                          params: { role },
+                        }
+                      );
+                      if (role.toLowerCase() === "admin") {
+                        Swal.fire({
+                          icon: "success",
+                          title: "Served",
+                          text: "Serve data submitted successfully",
+                          timer: 2000,
+                          showConfirmButton: false,
+                        });
+
+                        fetchOrders();
+                      } else {
+                        Swal.fire({
+                          icon: "success",
+                          title: "Requested",
+                          text: "Serve data Requested successfully",
+                          timer: 2000,
+                          showConfirmButton: false,
+                        });
+                        fetchOrders();
+                      }
+
+                      setShowServeModal(false);
+                    } catch (err) {
+                      console.error(err);
                       Swal.fire({
-                      icon: "success",
-                      title: "Served",
-                      text: "Serve data submitted successfully",
-                      timer: 2000,
-                      showConfirmButton: false
-                    });
-                    } else {
-                      Swal.fire({
-                      icon: "success",
-                      title: "Requested",
-                      text: "Serve data Requested successfully",
-                      timer: 2000,
-                      showConfirmButton: false
-                    });
+                        icon: "error",
+                        title: "Error",
+                        text: "Failed to submit serve data",
+                      });
                     }
-                    
-                    setShowServeModal(false);
-                  } catch (err) {
-                    console.error(err);
-                    Swal.fire({
-                      icon: "error",
-                      title: "Error",
-                      text: "Failed to submit serve data"
-                    });
-                  }
-                }}
-              >
-                Serve
-              </button>
+                  }}
+                >
+                  Serve
+                </button>
+              </div>
             </div>
-
           </div>
         </div>
-      </div>
-    )}
-
-
+      )}
     </div>
   );
 }

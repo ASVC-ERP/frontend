@@ -144,10 +144,10 @@ function CreateOrder({
     <form onSubmit={handleSubmit}>
       <div className="container-fluid mt-3">
         {/* Header */}
-        <div className="row mx-2">
+        <div className="row px-3 px-md-4">
           <div className="col-12">
             <p
-              className="h3 h1-md fw-bold mb-2"
+              className="fw-bold fs-4 fs-md-2 mb-2"
               style={{ color: "#0C1D61", fontFamily: "'Outfit', sans-serif" }}
             >
               Create Order
@@ -156,14 +156,14 @@ function CreateOrder({
         </div>
 
         {/* Customer Info */}
-        <div className="row mt-3 mx-2">
+        <div className="row mt-3 px-3 px-md-4">
           <div className="col-12">
             <div
-              className="border rounded-3 p-3"
+              className="border rounded-3 p-3 bg-light"
               style={{ backgroundColor: "#E8E7EC" }}
             >
               <p
-                className="h5 fw-bold mb-3"
+                className="fw-bold fs-5 mb-3"
                 style={{ color: "#050505", fontFamily: "'Outfit', sans-serif" }}
               >
                 Customer Info
@@ -174,14 +174,14 @@ function CreateOrder({
         </div>
 
         {/* Product Details */}
-        <div className="row mt-3 mx-2">
+        <div className="row mt-3 px-3 px-md-4">
           <div className="col-12">
             <div
-              className="border rounded-3 p-3"
+              className="border rounded-3 p-3 bg-light"
               style={{ backgroundColor: "#E8E7EC" }}
             >
               <p
-                className="h5 fw-bold mb-3"
+                className="fw-bold fs-5 mb-3"
                 style={{ color: "#050505", fontFamily: "'Outfit', sans-serif" }}
               >
                 Product Details
@@ -203,11 +203,11 @@ function CreateOrder({
         </div>
 
         {/* Buttons */}
-        <div className="row mt-3 mx-2">
-          <div className="col-12 d-flex justify-content-end">
+        <div className="row mt-3 px-3 px-md-4">
+          <div className="col-12 d-flex justify-content-end gap-2 flex-wrap">
             <button
               type="button"
-              className="btn me-2"
+              className="btn"
               style={{ backgroundColor: "#B64345", color: "white" }}
               onClick={handleCancel}
             >

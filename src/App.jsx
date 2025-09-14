@@ -244,6 +244,7 @@ function App() {
           id: supplier.id,
           name: supplier.name,
           address: supplier.address,
+          currency: supplier.currency,
         }));
         setSupplier(transformedSuppliers);
       })

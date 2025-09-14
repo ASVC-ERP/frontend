@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { IoIosSearch } from "react-icons/io";
 import defaultPic from "../../assets/defaultPic.jpg";
 import { Button, Dropdown } from "react-bootstrap";
-import axios from 'axios';
+import axios from "axios";
 import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";
 
@@ -11,12 +11,13 @@ function InvoiceTable({ invoices, fetchInvoices }) {
   const columns = [
     {
       name: "Invoice ID",
-      selector: row => row.invoiceID,
+      selector: (row) => row.invoiceID,
       sortable: true,
+      maxwidth: "50px",
     },
     {
       name: "Date",
-      selector: row =>
+      selector: (row) =>
         new Date(row.date).toLocaleDateString("en-GB", {
           day: "2-digit",
           month: "short",
@@ -26,62 +27,68 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     },
     {
       name: "Customer Name",
-      selector: row => row.customerName,
+      selector: (row) => row.customerName,
       sortable: true,
-      minWidth: "180px",
     },
     {
       name: "Customer Address",
-      selector: row => row.customerAddress,
+      selector: (row) => row.customerAddress,
       sortable: true,
-      minWidth: "250px",
     },
     {
       name: "Customer Number",
-      selector: row => row.customerNumber,
+      selector: (row) => row.customerNumber,
       sortable: true,
     },
     {
       name: "Sales Agent",
-      selector: row => row.salesAgent,
+      selector: (row) => row.salesAgent,
       sortable: true,
     },
     {
-    name: "Status",
-    cell: row => {
-      const effectiveStatus = pendingChanges[row.invoiceID] ?? row.status;
+      name: "Status",
+      cell: (row) => {
+        const effectiveStatus = pendingChanges[row.invoiceID] ?? row.status;
 
-      return (
-        <div className="d-flex align-items-center gap-2">
-          <Dropdown onClick={e => e.stopPropagation()}>
-            <Dropdown.Toggle
-              size="sm"
-              variant="secondary"
-              className={`badge ${
-                effectiveStatus === "Pending"
-                  ? "bg-secondary"
-                  : effectiveStatus === "Out For Delivery"
-                  ? "bg-warning text-dark"
-                  : effectiveStatus === "Delivered"
-                  ? "bg-success"
-                  : "bg-dark"
-              }`}
-            >
-              {effectiveStatus}
-            </Dropdown.Toggle>
+        return (
+          <div className="d-flex align-items-center gap-2">
+            <Dropdown onClick={(e) => e.stopPropagation()}>
+              <Dropdown.Toggle
+                size="sm"
+                variant="secondary"
+                className={`badge ${
+                  effectiveStatus === "Pending"
+                    ? "bg-secondary"
+                    : effectiveStatus === "Out For Delivery"
+                    ? "bg-warning text-dark"
+                    : effectiveStatus === "Delivered"
+                    ? "bg-success"
+                    : "bg-dark"
+                }`}
+              >
+                {effectiveStatus}
+              </Dropdown.Toggle>
 
-            <Dropdown.Menu container={document.body}>
-              <Dropdown.Item onClick={() => handleStatusChange(row, "Pending")}>
-                <span className="badge bg-secondary">Pending</span>
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleStatusChange(row, "Out For Delivery")}>
-                <span className="badge bg-warning text-dark">Out For Delivery</span>
-              </Dropdown.Item>
-              <Dropdown.Item onClick={() => handleStatusChange(row, "Delivered")}>
-                <span className="badge bg-success">Delivered</span>
-              </Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
+              <Dropdown.Menu container={document.body}>
+                <Dropdown.Item
+                  onClick={() => handleStatusChange(row, "Pending")}
+                >
+                  <span className="badge bg-secondary">Pending</span>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => handleStatusChange(row, "Out For Delivery")}
+                >
+                  <span className="badge bg-warning text-dark">
+                    Out For Delivery
+                  </span>
+                </Dropdown.Item>
+                <Dropdown.Item
+                  onClick={() => handleStatusChange(row, "Delivered")}
+                >
+                  <span className="badge bg-success">Delivered</span>
+                </Dropdown.Item>
+              </Dropdown.Menu>
+            </Dropdown>
 
             <Button
               variant="outline-success"
@@ -109,7 +116,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
             >
               🗑️
             </Button>
-        </div>
+          </div>
         );
       },
     },
@@ -122,8 +129,14 @@ function InvoiceTable({ invoices, fetchInvoices }) {
   const [pendingChanges, setPendingChanges] = useState({});
 
   useEffect(() => {
+    const interval = setInterval(() => {
+      fetchInvoices();
+    }, 10000); // every 10 seconds
+
     setFilteredData(invoices);
-  }, [invoices]);
+
+    return () => clearInterval(interval);
+  }, [fetchInvoices]);
 
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
@@ -164,20 +177,20 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       };
 
       const response = await axios.post(
-        'http://localhost:3000/packing-list/invoice-final',
+        "http://localhost:3000/packing-list/invoice-final",
         payload,
-        { responseType: 'blob' } // important for PDF
+        { responseType: "blob" } // important for PDF
       );
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
-      window.open(blobUrl, '_blank');
+      window.open(blobUrl, "_blank");
     } catch (err) {
-      console.error('Failed to generate PDF:', err);
+      console.error("Failed to generate PDF:", err);
       Swal.fire({
-        icon: 'error',
-        title: 'Print Failed',
-        text: 'Failed to generate PDF. See console for details.',
+        icon: "error",
+        title: "Print Failed",
+        text: "Failed to generate PDF. See console for details.",
       });
     }
   };
@@ -191,25 +204,25 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       const response = await axios.post(
         `http://localhost:3000/delivery-receipts/${type}`,
         selectedRow,
-        { responseType: 'blob' } // important for PDF
+        { responseType: "blob" } // important for PDF
       );
 
-      const blob = new Blob([response.data], { type: 'application/pdf' });
+      const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
-      window.open(blobUrl, '_blank');
+      window.open(blobUrl, "_blank");
     } catch (err) {
-      console.error('Failed to generate PDF:', err);
+      console.error("Failed to generate PDF:", err);
       Swal.fire({
-        icon: 'error',
-        title: 'Print Failed',
-        text: 'Failed to generate PDF. See console for details.',
+        icon: "error",
+        title: "Print Failed",
+        text: "Failed to generate PDF. See console for details.",
       });
     }
   };
 
   const handleStatusChange = (row, newStatus) => {
     // Just update local pending changes
-    setPendingChanges(prev => ({
+    setPendingChanges((prev) => ({
       ...prev,
       [row.invoiceID]: newStatus,
     }));
@@ -219,18 +232,24 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     const newStatus = pendingChanges[row.invoiceID];
     if (!newStatus) return;
 
-    axios.put(`http://localhost:3000/invoice/${row.invoiceID}/status`, { status: newStatus })
+    axios
+      .put(`http://localhost:3000/invoice/${row.invoiceID}/status`, {
+        status: newStatus,
+      })
       .then(() => {
-        const updatedData = filteredData.map(item =>
-          item.invoiceID === row.invoiceID ? { ...item, status: newStatus } : item
+        const updatedData = filteredData.map((item) =>
+          item.invoiceID === row.invoiceID
+            ? { ...item, status: newStatus }
+            : item
         );
         setFilteredData(updatedData);
-        setPendingChanges(prev => {
+        setPendingChanges((prev) => {
           const copy = { ...prev };
           delete copy[row.invoiceID];
           return copy;
         });
 
+        fetchInvoices();
         Swal.fire({
           icon: "success",
           title: "Status Updated",
@@ -239,7 +258,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           showConfirmButton: false,
         });
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Failed to update status:", err);
         Swal.fire({
           icon: "error",
@@ -263,8 +282,8 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           .delete(`http://localhost:3000/invoice/${row.invoiceID}`)
           .then((res) => {
             // Remove invoice from table
-            setFilteredData(prev =>
-              prev.filter(item => item.invoiceID !== row.invoiceID)
+            setFilteredData((prev) =>
+              prev.filter((item) => item.invoiceID !== row.invoiceID)
             );
 
             fetchInvoices();
@@ -277,7 +296,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               showConfirmButton: false,
             });
           })
-          .catch(err => {
+          .catch((err) => {
             console.error("Failed to delete invoice:", err);
             Swal.fire({
               icon: "error",
@@ -311,10 +330,18 @@ function InvoiceTable({ invoices, fetchInvoices }) {
             <div className="modal-content">
               <div className="modal-header d-flex flex-column align-items-start">
                 <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <p className="mb-2" style={{ color: "#05050599", fontSize: "12px" }}>
-                    Sales &gt; Invoice &gt; {selectedRow.invoiceId || selectedRow.orderId}
+                  <p
+                    className="mb-2"
+                    style={{ color: "#05050599", fontSize: "12px" }}
+                  >
+                    Sales &gt; Invoice &gt;{" "}
+                    {selectedRow.invoiceId || selectedRow.orderId}
                   </p>
-                  <button type="button" className="btn-close p-4" onClick={() => setShowRowModal(false)}></button>
+                  <button
+                    type="button"
+                    className="btn-close p-4"
+                    onClick={() => setShowRowModal(false)}
+                  ></button>
                 </div>
                 <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                   <h5 className="mb-0" style={{ color: "#0C1D61" }}>
@@ -325,7 +352,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                       type="button"
                       className="btn btn-sm"
                       style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handlePrintDR('a', selectedRow)}
+                      onClick={() => handlePrintDR("a", selectedRow)}
                     >
                       DR1
                     </button>
@@ -333,7 +360,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                       type="button"
                       className="btn btn-sm"
                       style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handlePrintDR('b', selectedRow)}
+                      onClick={() => handlePrintDR("b", selectedRow)}
                     >
                       DR2
                     </button>
@@ -350,30 +377,48 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               </div>
 
               <div className="modal-body">
-                <div className="rounded-3" style={{ maxHeight: "250px", overflowY: "auto" }}>
+                <div
+                  className="rounded-3"
+                  style={{ maxHeight: "250px", overflowY: "auto" }}
+                >
                   <ul className="list-unstyled">
-                    {(selectedRow.orderedItems || selectedRow.items || []).map((item, index) => (
-                      <li key={index}>
-                        <div className="d-flex justify-content-between align-items-start mb-2">
-                          <div className="d-flex align-items-center gap-3">
-                            <img
-                              src={defaultPic}
-                              alt="Product"
-                              style={{ width: "40px", height: "40px", objectFit: "cover", borderRadius: "6px" }}
-                            />
-                            <div className="d-flex flex-column">
-                              <span className="fw-semibold">{item.itemName}</span>
+                    {(selectedRow.orderedItems || selectedRow.items || []).map(
+                      (item, index) => (
+                        <li key={index}>
+                          <div className="d-flex justify-content-between align-items-start mb-2">
+                            <div className="d-flex align-items-center gap-3">
+                              <img
+                                src={defaultPic}
+                                alt="Product"
+                                style={{
+                                  width: "40px",
+                                  height: "40px",
+                                  objectFit: "cover",
+                                  borderRadius: "6px",
+                                }}
+                              />
+                              <div className="d-flex flex-column">
+                                <span className="fw-semibold">
+                                  {item.itemName}
+                                </span>
+                              </div>
+                            </div>
+                            <div className="text-end d-flex flex-column">
+                              <span className="fw-semibold">
+                                ₱
+                                {(item.price * item.quantity).toLocaleString(
+                                  undefined,
+                                  { minimumFractionDigits: 2 }
+                                )}
+                              </span>
+                              <small className="text-muted">
+                                Qty: {item.quantity}
+                              </small>
                             </div>
                           </div>
-                          <div className="text-end d-flex flex-column">
-                            <span className="fw-semibold">
-                              ₱{(item.price * item.quantity).toLocaleString(undefined, { minimumFractionDigits: 2 })}
-                            </span>
-                            <small className="text-muted">Qty: {item.quantity}</small>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
+                        </li>
+                      )
+                    )}
                   </ul>
                 </div>
 
@@ -381,21 +426,35 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                   <span className="h5 fw-semibold">Total</span>
                   <span className="fw-bold h5">
                     ₱
-                    {(selectedRow.totalPrice || (selectedRow.orderedItems || selectedRow.items || []).reduce(
-                      (sum, item) => sum + (item.price * item.quantity), 0
-                    )).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    {(
+                      selectedRow.totalPrice ||
+                      (
+                        selectedRow.orderedItems ||
+                        selectedRow.items ||
+                        []
+                      ).reduce(
+                        (sum, item) => sum + item.price * item.quantity,
+                        0
+                      )
+                    ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </span>
                 </div>
               </div>
 
               <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
                 <div>
-                  <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>{selectedRow.customerName}</p>
+                  <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
+                    {selectedRow.customerName}
+                  </p>
                   <p className="mb-0 small">{selectedRow.customerAddress}</p>
                   <p className="mb-0 small">{selectedRow.customerNumber}</p>
                 </div>
                 <p className="text-muted small mb-0">
-                  {new Date(selectedRow.date).toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" })}
+                  {new Date(selectedRow.date).toLocaleDateString("en-GB", {
+                    day: "2-digit",
+                    month: "long",
+                    year: "numeric",
+                  })}
                 </p>
               </div>
             </div>
@@ -403,17 +462,18 @@ function InvoiceTable({ invoices, fetchInvoices }) {
         </div>
       )}
 
-
-      <DataTable
-        columns={columns}
-        data={filteredData}
-        onRowClicked={handleRowClick}
-        pagination
-        highlightOnHover
-        fixedHeader
-        fixedHeaderScrollHeight="500px"
-        className="custom-data-table"
-      />
+      <div style={{ overflowX: "auto" }}>
+        <DataTable
+          columns={columns}
+          data={filteredData}
+          onRowClicked={handleRowClick}
+          pagination
+          highlightOnHover
+          fixedHeader
+          fixedHeaderScrollHeight="500px"
+          className="custom-data-table"
+        />
+      </div>
     </div>
   );
 }

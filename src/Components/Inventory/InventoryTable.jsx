@@ -19,7 +19,11 @@ const columns = [
   },
 ];
 
-function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = () => {} }) {
+function InventoryTable({
+  products = [],
+  onAddItem = () => {},
+  onRefreshItems = () => {},
+}) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -35,6 +39,14 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
   useEffect(() => {
     setFilteredData(Object.values(products));
   }, [products]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      onRefreshItems();
+    }, 10000); // refresh every 10s
+
+    return () => clearInterval(interval);
+  }, [onRefreshItems]);
 
   const handleAddItemClick = () => {
     setShowItemModal(true);
@@ -78,7 +90,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
         price2: 0,
         price3: 0,
         price4: 0,
-      }
+      },
     };
 
     onAddItem(newItem);
@@ -88,7 +100,6 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
     setItemName("");
     setBrand("");
     setOrigin("");
-  
 
     // Close modal and clear fields
     handleCloseItemModal();
@@ -181,7 +192,7 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
               + Add Item
             </button>
 
-             <label
+            <label
               htmlFor="fileUpload"
               className="btn"
               style={{
@@ -461,29 +472,29 @@ function InventoryTable({ products = [], onAddItem = () => {}, onRefreshItems = 
 
             <div className="modal-footer bg-light border-0 rounded-bottom">
               <button
-                  type="button"
-                  className="btn px-4 py-2 me-2"
-                  onClick={handleCloseItemModal}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    fontWeight: "500",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#c82333";
-                    e.target.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "#dc3545";
-                    e.target.style.transform = "translateY(0)";
-                  }}
-                >
-                  <i className="fas fa-times me-2"></i>
-                  Cancel
-                </button>
+                type="button"
+                className="btn px-4 py-2 me-2"
+                onClick={handleCloseItemModal}
+                style={{
+                  backgroundColor: "#dc3545",
+                  color: "white",
+                  border: "none",
+                  borderRadius: "0.5rem",
+                  fontWeight: "500",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.target.style.backgroundColor = "#c82333";
+                  e.target.style.transform = "translateY(-1px)";
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = "#dc3545";
+                  e.target.style.transform = "translateY(0)";
+                }}
+              >
+                <i className="fas fa-times me-2"></i>
+                Cancel
+              </button>
               <button
                 type="button"
                 className="btn px-4 py-2"
