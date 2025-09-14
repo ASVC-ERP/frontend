@@ -64,7 +64,8 @@ function OrdersTable() {
   const [serveData, setServeData] = useState([]);
 
 
-  useEffect(() => {
+  // Function to fetch orders
+  const fetchOrders = () => {
     axios.get("http://localhost:3000/orders")
       .then((res) => {
         setOrders(res.data);
@@ -73,6 +74,11 @@ function OrdersTable() {
       .catch((err) => {
         console.error("Failed to fetch orders:", err);
       });
+  };
+
+  // Initial fetch
+  useEffect(() => {
+    fetchOrders();
   }, []);
 
 // delivery receipt generation
@@ -297,8 +303,12 @@ function OrdersTable() {
       })),
     };
 
+    fetchOrders();
+    
     setServeData(payload);
     setShowServeModal(true);
+
+     
   };
 
   const updateServeQuantity = (index, field, value) => {

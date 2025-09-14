@@ -1,7 +1,6 @@
 import CostHistoryTab from "./CostHistoryTab";
 import SalesOrderHistoryTab from "./SalesOrderHistoryTab";
 import PhysicalCountTab from "./PhysicalCountTab";
-import PriceHistoryTab from "./PriceHistoryTab";
 
 import { useEffect, useState } from "react";
 
@@ -104,9 +103,6 @@ function Tabs({ item }) {
         </div>
         <div className="tab-pane fade" id="tab3" role="tabpanel">
           <PhysicalCountTab item={item}/>
-        </div>
-        <div className="tab-pane fade" id="tab4" role="tabpanel">
-          <PriceHistoryTab />
         </div>
       </div>
     </div>
