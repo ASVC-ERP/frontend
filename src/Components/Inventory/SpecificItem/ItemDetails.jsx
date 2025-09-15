@@ -17,9 +17,12 @@ function ItemDetails({ item, onUpdate }) {
     interNum: item.interNum || "",
     unit: item.unit || "",
     minStock: item.minStock || "",
-    category: item.category || "",
+    origin: item.origin || "",
     model: item.model || "",
     brand: item.brand || "",
+    price1: item.price?.price1 || "",
+    price2: item.price?.price2 || "",
+    price3: item.price?.price3 || "",
   });
 
   useEffect(() => {
@@ -30,7 +33,7 @@ function ItemDetails({ item, onUpdate }) {
       interNum: item.interNum || "",
       unit: item.unit || "",
       minStock: item.minStock || "",
-      category: item.category || "",
+      origin: item.origin || "",
       model: item.model || "",
       brand: item.brand || "",
     });
@@ -59,7 +62,7 @@ function ItemDetails({ item, onUpdate }) {
             interNum: formData.interNum,
             unit: formData.unit,
             model: formData.model,
-            category: formData.category,
+            origin: formData.origin,
           }),
         }
       );
@@ -189,7 +192,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm"
             id="itemName"
-            value={item.itemName}
+            value={formData.itemName}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -278,14 +281,14 @@ function ItemDetails({ item, onUpdate }) {
           />
         </div>
         <div className="col-4">
-          <label htmlFor="category" className="form-label h6">
-            Category:
+          <label htmlFor="origin" className="form-label h6">
+            Origin:
           </label>
           <input
             type="text"
             className="form-control form-control-sm"
-            id="category"
-            value={formData.category}
+            id="origin"
+            value={formData.origin}
             onChange={handleChange}
           />
         </div>

@@ -45,6 +45,7 @@ function CostHistoryTab({item}) {
     fetchData();
   }, [itemName]);
 
+
   // Define table columns
   const columns = [
     {
@@ -91,21 +92,21 @@ function CostHistoryTab({item}) {
     {
       id: 7,
       name: "Price 1",
-      selector: (row) => row.unitCost,
+      selector: (row) => row.price1,
       sortable: false,
       width: "75px",
     },
     {
       id: 8,
       name: "Price 2",
-      selector: (row) => row.unitCost,
+      selector: (row) => row.price2,
       sortable: false,
       width: "75px",
     },
     {
       id: 9,
       name: "Price 3",
-      selector: (row) => row.unitCost,
+      selector: (row) => row.price3,
       sortable: false,
       width: "75px",
     },

@@ -33,6 +33,7 @@ function SupplierInvoicesTable({ items }) {
   const [invoiceForm, setInvoiceForm] = useState({
     poNum: "",
     purchaseDate: "",
+    invoiceType: "Purchased",
     items: [
       {
         itemCode: "",
@@ -738,8 +739,8 @@ function SupplierInvoicesTable({ items }) {
                               (e.target.style.borderColor = "#e9ecef")
                             }
                           >
-                            <option value="Purchased">Purchasing</option>
-                            <option value="Returned">Returning</option>
+                            <option value="Purchased">Purchased</option>
+                            <option value="Returned">Returned</option>
                           </select>
                         </div>
 
@@ -758,7 +759,7 @@ function SupplierInvoicesTable({ items }) {
                             type="text"
                             id="currency"
                             className="form-control"
-                            value={invoiceForm.currency}
+                            value={supplier.currency}
                             onChange={(e) =>
                               setInvoiceForm({
                                 ...invoiceForm,

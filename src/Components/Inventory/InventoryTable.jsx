@@ -160,9 +160,9 @@ function InventoryTable({
 
   return (
     <div className="container-fluid">
-      <div className="my-3">
+      <div className="mb-3">
         <div
-          className="d-flex align-items-center justify-content-between mb-4"
+          className="d-flex align-items-center justify-content-between "
           style={{ gap: "10px" }}
         >
           {/* Search input field */}
@@ -220,7 +220,7 @@ function InventoryTable({
           pagination
           highlightOnHover
           fixedHeader
-          fixedHeaderScrollHeight="500px"
+          fixedHeaderScrollHeight="450px"
           onRowClicked={handleRowClick}
           className="custom-data-table"
         />

@@ -78,7 +78,7 @@ export default function Sidebar({ onLogout }) {
               }}
             >
               <IoReceipt className="me-3" size={30} />
-              <span className="sidebar-text">Invoice</span>
+              <span className="sidebar-text">Sales Invoice</span>
             </Link>
           </li>
 

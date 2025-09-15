@@ -205,7 +205,6 @@ function App() {
           interNum: item.interNum,
           unit: item.unit,
           model: item.model,
-          category: item.category,
         }));
         setItems(transformedItems);
       })
