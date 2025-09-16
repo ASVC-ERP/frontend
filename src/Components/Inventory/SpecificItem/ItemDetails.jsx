@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
 import axios from "axios";
+import Swal from "sweetalert2";
+import showAlert from "../../Swal";
 
 function ItemDetails({ item, onUpdate }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -69,14 +71,22 @@ function ItemDetails({ item, onUpdate }) {
       );
 
       if (response.ok) {
-        alert("Item updated successfully!");
+        Swal.fire({
+          text: "Item updated successfully!",
+          icon: "success",
+          confirmButtonColor: "#0C1D61",
+        });
 
         // 🔄 Immediately refresh data from backend
         if (onUpdate) {
           onUpdate(); // calls fetchItem
         }
       } else {
-        alert("Failed to update item.");
+        Swal.fire({
+          text: "Failed to update item.",
+          icon: "error",
+          confirmButtonColor: "#0C1D61",
+        });
       }
     } catch (error) {
       console.error("Error updating item:", error);
@@ -99,14 +109,22 @@ function ItemDetails({ item, onUpdate }) {
       );
 
       console.log("Stock adjusted successfully:", response.data);
-      alert("Stock updated successfully!");
+      Swal.fire({
+        text: "Stock updated successfully!",
+        icon: "success",
+        confirmButtonColor: "#0C1D61",
+      });
       setShowStockModal(false);
       if (onUpdate) {
         if (onUpdate) onUpdate({ ...item, stock: stockData.newCount });
       }
     } catch (err) {
       console.error("Stock adjustment error:", err);
-      alert("Error updating stock.");
+      Swal.fire({
+        text: "Error updating stock.",
+        icon: "error",
+        confirmButtonColor: "#0C1D61",
+      });
     }
   };
 
@@ -153,7 +171,7 @@ function ItemDetails({ item, onUpdate }) {
       );
 
       console.log("Price 4 updated successfully:", response.data);
-      alert("Price 4 updated successfully!");
+      showAlert("success", "Price 4 updated successfully!");
       handleCloseSpecialPriceModal();
       if (onUpdate)
         onUpdate({
@@ -162,7 +180,11 @@ function ItemDetails({ item, onUpdate }) {
         });
     } catch (err) {
       console.error("Price 4 update error:", err);
-      alert("Error updating Price 4.");
+      Swal.fire({
+        text: "Error updating Price 4.",
+        icon: "error",
+        confirmButtonColor: "#0C1D61",
+      });
     }
   };
 

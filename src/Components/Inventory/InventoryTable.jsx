@@ -65,13 +65,13 @@ function InventoryTable({
     setOrigin("");
     setMinimumStock("");
     setPartNum("");
-    setInterNum("");  
+    setInterNum("");
     setUnit("");
     setModel("");
   };
 
   const handleSubmitItem = () => {
-    if (!itemCode || !itemName || !brand || !origin) return;
+    if (!itemCode || !itemName) return;
 
     const trimmedItem = {
       itemCode: itemCode.trim(),
@@ -96,13 +96,18 @@ function InventoryTable({
       !trimmedItem.unit ||
       !trimmedItem.model
     ) {
-      alert("Please fill in all item details.");
+      Swal.fire({
+        text: "Please fill in all item details.",
+        icon: "warning",
+        confirmButtonColor: "#0C1D61",
+      });
       return;
     }
 
     const newItem = {
       ...trimmedItem,
       stock: 0,
+      cost: 0,
       price: {
         price1: 0,
         price2: 0,
