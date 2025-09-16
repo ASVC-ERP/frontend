@@ -32,6 +32,7 @@ function SupplierInvoicesTable({ items }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [invoiceForm, setInvoiceForm] = useState({
     poNum: "",
+    invoiceID: "",
     purchaseDate: "",
     invoiceType: "Purchased",
     items: [
@@ -139,6 +140,7 @@ function SupplierInvoicesTable({ items }) {
     try {
       const payload = {
         poNum: invoiceForm.poNum,
+        invoiceID: invoiceForm.invoiceID,
         purchaseDate: invoiceForm.purchaseDate,
         supplierID: supplierID,
         status: invoiceForm.invoiceType,
@@ -171,6 +173,7 @@ function SupplierInvoicesTable({ items }) {
 
       setInvoiceForm({
         poNum: "",
+        invoiceID: "",
         purchaseDate: "",
         invoiceType: "Purchased",
         items: [
@@ -266,30 +269,20 @@ function SupplierInvoicesTable({ items }) {
               className="form-control ps-5 border-2 rounded-3"
             />
           </div>
-
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            {/* Left: Edit Supplier Button */}
-            <button
-              className="btn button-edit-supplier"
-              onClick={() => {
-                setEditableSupplier({ ...supplier });
-                setShowEditModal(true);
-              }}
-            >
-              ✏️ Edit Supplier
-            </button>
-
-            <button
-              className="btn mb-3"
-              onClick={() => setShowCreateModal(true)}
-              style={{
-                backgroundColor: "#0C1D61",
-                color: "white",
-                whiteSpace: "nowrap",
-              }}
-            >
-              + Add Invoice
-            </button>
+          <div className="d-flex justify-content-between align-items-center mt-4">
+            <div className="ms-auto">
+              <button
+                className="btn"
+                onClick={() => setShowCreateModal(true)}
+                style={{
+                  backgroundColor: "#0C1D61",
+                  color: "white",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                + Add Invoice
+              </button>
+            </div>
           </div>
 
           <DataTable
@@ -658,6 +651,45 @@ function SupplierInvoicesTable({ items }) {
                               setInvoiceForm({
                                 ...invoiceForm,
                                 poNum: e.target.value,
+                              })
+                            }
+                            style={{
+                              border: "1px solid #e9ecef",
+                              borderRadius: "0.5rem",
+                              fontSize: "0.90rem",
+                              transition: "border-color 0.3s ease",
+                            }}
+                            onFocus={(e) =>
+                              (e.target.style.borderColor = "#0C1D61")
+                            }
+                            onBlur={(e) =>
+                              (e.target.style.borderColor = "#e9ecef")
+                            }
+                          />
+                        </div>
+
+                        {/* Invoice ID */}
+                        <div className="col-md-2">
+                          <label
+                            htmlFor="invoiceID"
+                            className="form-label fw-semibold text-muted small"
+                          >
+                            <i
+                              className="fas fa-file-invoice me-2"
+                              style={{ color: "#0C1D61" }}
+                            ></i>
+                            Invoice ID{" "}
+                          </label>
+                          <input
+                            type="text"
+                            id="invoiceID"
+                            className="form-control"
+                            placeholder="Enter invoice ID"
+                            value={invoiceForm.invoiceID}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                invoiceID: e.target.value,
                               })
                             }
                             style={{

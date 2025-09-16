@@ -8,15 +8,17 @@ import axios from "axios";
 
 function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const columns = [
-    { name: "Supplier Code", selector: (row) => row.id, sortable: true },
+    { name: "Supplier Code", selector: (row) => row.id, sortable: true, width: "150px" },
     { name: "Supplier Name", selector: (row) => row.name, sortable: true },
     {
-      name: "Supplier Currency",
+      name: "Currency",
       selector: (row) => row.currency,
       sortable: true,
+      width: "120px",
     },
+    { name: "Number", selector: (row) => row.number, sortable: false, width: "120px" },
     {
-      name: "Supplier Address",
+      name: "Address",
       selector: (row) => row.address,
       sortable: true,
     },
@@ -55,6 +57,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const [newName, setNewName] = useState("");
   const [newCurrency, setNewCurrency] = useState("");
   const [newAddress, setNewAddress] = useState("");
+  const [newNumber, setNewNumber] = useState("");
 
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -82,6 +85,8 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     setNewCode("");
     setNewName("");
     setNewAddress("");
+    setNewCurrency("");
+    setNewNumber("");
   };
 
   useEffect(() => {
@@ -151,12 +156,16 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       id: newCode,
       name: newName,
       address: newAddress,
+      currency: newCurrency,
+      number: newNumber, // Default value; can be updated later
     };
 
     onAddSupplier(newSupplier);
     setNewCode("");
     setNewName("");
     setNewAddress("");
+    setNewCurrency("");
+    setNewNumber("");
 
     onRefreshSupplier();
     // Close modal and clear fields
@@ -311,128 +320,175 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
               <form>
                 <div className="row g-3">
                   {/* Supplier Code */}
-                  <div className="col-md-3">
-                    <label
-                      htmlFor="supplierCode"
-                      className="form-label fw-semibold text-muted small"
-                    >
-                      <i
-                        className="fas fa-barcode me-2"
-                        style={{ color: "#0C1D61" }}
-                      ></i>
-                      Supplier Code
-                    </label>
-                    <input
-                      type="text"
-                      id="supplierCode"
-                      placeholder="Enter supplier code"
-                      value={newCode}
-                      onChange={(e) => setNewCode(e.target.value)}
-                      className="form-control"
-                      required
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.90rem",
-                        transition: "border-color 0.3s ease",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
+                  <div className="row">
+                    <div className="col-md-4">
+                      <label
+                        htmlFor="supplierCode"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-barcode me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Code
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierCode"
+                        placeholder="Enter supplier code"
+                        value={newCode}
+                        onChange={(e) => setNewCode(e.target.value)}
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
+
+                    {/* Supplier Name */}
+                    <div className="col-md-8">
+                      <label
+                        htmlFor="supplierName"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-building me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Name
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierName"
+                        placeholder="Enter supplier name"
+                        value={newName}
+                        onChange={(e) => setNewName(e.target.value)}
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
                   </div>
 
-                  {/* Supplier Name */}
-                  <div className="col-md-6">
-                    <label
-                      htmlFor="supplierName"
-                      className="form-label fw-semibold text-muted small"
-                    >
-                      <i
-                        className="fas fa-building me-2"
-                        style={{ color: "#0C1D61" }}
-                      ></i>
-                      Supplier Name
-                    </label>
-                    <input
-                      type="text"
-                      id="supplierName"
-                      placeholder="Enter supplier name"
-                      value={newName}
-                      onChange={(e) => setNewName(e.target.value)}
-                      className="form-control"
-                      required
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.90rem",
-                        transition: "border-color 0.3s ease",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
+                  <div className="row">
+                    {/* Supplier Currency */}
+                    <div className="col-md-4">
+                      <label
+                        htmlFor="supplierCurrency"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-dollar-sign me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Currency
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierCurrency"
+                        placeholder="Enter currency"
+                        value={newCurrency}
+                        onChange={(e) => setNewCurrency(e.target.value)}
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
+
+                    {/* Supplier Number */}
+                    <div className="col-md-8">
+                      <label
+                        htmlFor="supplierNumber"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-dollar-sign me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Number
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierNumber"
+                        placeholder="Enter number"
+                        value={newNumber}
+                        onChange={(e) => setNewNumber(e.target.value)}
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
                   </div>
 
-                  {/* Supplier Currency */}
-                  <div className="col-md-3">
-                    <label
-                      htmlFor="supplierCurrency"
-                      className="form-label fw-semibold text-muted small"
-                    >
-                      <i
-                        className="fas fa-dollar-sign me-2"
-                        style={{ color: "#0C1D61" }}
-                      ></i>
-                      Supplier Currency
-                    </label>
-                    <input
-                      type="text"
-                      id="supplierCurrency"
-                      placeholder="Enter currency"
-                      value={newCurrency}
-                      onChange={(e) => setNewCurrency(e.target.value)}
-                      className="form-control"
-                      required
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.90rem",
-                        transition: "border-color 0.3s ease",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
-                  </div>
-
-                  {/* Supplier Address */}
-                  <div className="col-12">
-                    <label
-                      htmlFor="supplierAddress"
-                      className="form-label fw-semibold text-muted small"
-                    >
-                      <i
-                        className="fas fa-map-marker-alt me-2"
-                        style={{ color: "#0C1D61" }}
-                      ></i>
-                      Supplier Address
-                    </label>
-                    <textarea
-                      id="supplierAddress"
-                      placeholder="Enter supplier address"
-                      value={newAddress}
-                      onChange={(e) => setNewAddress(e.target.value)}
-                      className="form-control"
-                      rows="3"
-                      required
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.90rem",
-                        resize: "vertical",
-                        transition: "border-color 0.3s ease",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
+                  <div className="row">
+                    {/* Supplier Address */}
+                    <div className="col-12">
+                      <label
+                        htmlFor="supplierAddress"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-map-marker-alt me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Address
+                      </label>
+                      <textarea
+                        id="supplierAddress"
+                        placeholder="Enter supplier address"
+                        value={newAddress}
+                        onChange={(e) => setNewAddress(e.target.value)}
+                        className="form-control"
+                        rows="3"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          resize: "vertical",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
                   </div>
                 </div>
               </form>
@@ -578,6 +634,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                     borderRadius: "50%",
                   }}
                 ></div>
+                
                 <div
                   className="position-absolute"
                   style={{
@@ -661,6 +718,82 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       />
                     </div>
 
+                    {/* Supplier Currency */}
+                    <div className="col-6">
+                      <label
+                        htmlFor="supplierCurrencyEdit"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-money-bill-wave me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Currency
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierCurrencyEdit"
+                        placeholder="Enter supplier currency (e.g. USD, PHP, EUR)"
+                        value={selectedInvoice.currency || ""}
+                        onChange={(e) =>
+                          setSelectedInvoice({
+                            ...selectedInvoice,
+                            currency: e.target.value,
+                          })
+                        }
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
+
+                    {/* Supplier Number */}
+                    <div className="col-6">
+                      <label
+                        htmlFor="supplierNumberEdit"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-money-bill-wave me-2"
+                          style={{ color: "#0C1D61" }}
+                        ></i>
+                        Supplier Number
+                      </label>
+                      <input
+                        type="text"
+                        id="supplierNumberEdit"
+                        placeholder="Enter supplier number "
+                        value={selectedInvoice.number || ""}
+                        onChange={(e) =>
+                          setSelectedInvoice({
+                            ...selectedInvoice,
+                            number: e.target.value,
+                          })
+                        }
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.90rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#0C1D61")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+                    </div>
+
                     {/* Supplier Address */}
                     <div className="col-12">
                       <label
@@ -700,43 +833,6 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       />
                     </div>
 
-                    {/* Supplier Currency */}
-                    <div className="col-12">
-                      <label
-                        htmlFor="supplierCurrencyEdit"
-                        className="form-label fw-semibold text-muted small"
-                      >
-                        <i
-                          className="fas fa-money-bill-wave me-2"
-                          style={{ color: "#0C1D61" }}
-                        ></i>
-                        Supplier Currency
-                      </label>
-                      <input
-                        type="text"
-                        id="supplierCurrencyEdit"
-                        placeholder="Enter supplier currency (e.g. USD, PHP, EUR)"
-                        value={selectedInvoice.currency || ""}
-                        onChange={(e) =>
-                          setSelectedInvoice({
-                            ...selectedInvoice,
-                            currency: e.target.value,
-                          })
-                        }
-                        className="form-control"
-                        required
-                        style={{
-                          border: "1px solid #e9ecef",
-                          borderRadius: "0.5rem",
-                          fontSize: "0.90rem",
-                          transition: "border-color 0.3s ease",
-                        }}
-                        onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
-                        }
-                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                      />
-                    </div>
                   </div>
                 </form>
 

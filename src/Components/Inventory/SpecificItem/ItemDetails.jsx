@@ -55,7 +55,8 @@ function ItemDetails({ item, onUpdate }) {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            itemName: item.itemName,
+            itemCode: item.itemCode,
+            itemName: formData.itemName,
             brand: formData.brand,
             minStock: formData.minStock,
             partNum: formData.partNum,
@@ -193,8 +194,7 @@ function ItemDetails({ item, onUpdate }) {
             className="form-control form-control-sm"
             id="itemName"
             value={formData.itemName}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
+            onChange={handleChange}
           />
         </div>
 
@@ -239,7 +239,7 @@ function ItemDetails({ item, onUpdate }) {
         </div>
 
         <div className="col-4">
-          <label htmlFor="model" className="form-label h6">
+          <label htmlFor="minStock" className="form-label h6">
             Minimum Stock:
           </label>
           <input

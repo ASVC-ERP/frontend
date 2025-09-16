@@ -249,6 +249,7 @@ function App() {
           name: supplier.name,
           address: supplier.address,
           currency: supplier.currency,
+          number: supplier.number,
         }));
         setSupplier(transformedSuppliers);
       })
