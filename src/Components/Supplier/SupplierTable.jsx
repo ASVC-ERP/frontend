@@ -96,7 +96,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   useEffect(() => {
     const interval = setInterval(() => {
       onRefreshSupplier();
-    }, 10000);
+    }, 120000);
 
     return () => clearInterval(interval);
   }, [onRefreshSupplier]);

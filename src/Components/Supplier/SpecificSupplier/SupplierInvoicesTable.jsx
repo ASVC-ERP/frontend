@@ -17,14 +17,6 @@ function SupplierInvoicesTable({ items }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [invoiceData, setInvoiceData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [searchResults, setSearchResults] = useState({});
-
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [editableSupplier, setEditableSupplier] = useState({
-    id: "",
-    name: "",
-    address: "",
-  });
 
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -108,33 +100,6 @@ function SupplierInvoicesTable({ items }) {
     setFilteredData(filtered);
   };
 
-  const handleUpdateSupplier = async () => {
-    try {
-      await axios.put(
-        `http://localhost:3000/suppliers/${editableSupplier.id}`,
-        {
-          name: editableSupplier.name,
-          address: editableSupplier.address,
-        }
-      );
-
-      Swal.fire({
-        icon: "success",
-        title: "Supplier Updated",
-        text: "Supplier details have been successfully updated.",
-        confirmButtonColor: "#0C1D61",
-      });
-
-      setShowEditModal(false);
-    } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Update Failed",
-        text: error.response?.data?.message || "Something went wrong.",
-        confirmButtonColor: "#0C1D61",
-      });
-    }
-  };
 
   const handleSubmitInvoice = async () => {
     try {
@@ -298,272 +263,6 @@ function SupplierInvoicesTable({ items }) {
               setShowModal(true);
             }}
           />
-
-          {showEditModal && (
-            <div
-              className="modal fade show d-block"
-              tabIndex="-1"
-              role="dialog"
-              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-            >
-              <div
-                className="modal-dialog modal-dialog-centered modal-lg w-50"
-                role="document"
-              >
-                <div className="modal-content shadow-lg border-0">
-                  {/* Header with gradient background */}
-                  <div
-                    className="modal-header text-white position-relative overflow-hidden"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
-                      borderRadius: "0.5rem 0.5rem 0 0",
-                    }}
-                  >
-                    <div className="d-flex align-items-center">
-                      <div>
-                        <h5 className="modal-title mb-0">Edit Supplier</h5>
-                        <small className="opacity-75">
-                          Modify supplier information
-                        </small>
-                      </div>
-                    </div>
-                    <button
-                      type="button"
-                      className="btn-close btn-close-white p-4"
-                      onClick={() => setShowEditModal(false)}
-                      aria-label="Close"
-                    ></button>
-
-                    {/* Decorative elements */}
-                    <div
-                      className="position-absolute"
-                      style={{
-                        top: "-50px",
-                        right: "-50px",
-                        width: "100px",
-                        height: "100px",
-                        background: "rgba(255, 255, 255, 0.1)",
-                        borderRadius: "50%",
-                      }}
-                    ></div>
-                    <div
-                      className="position-absolute"
-                      style={{
-                        bottom: "-30px",
-                        left: "-30px",
-                        width: "60px",
-                        height: "60px",
-                        background: "rgba(255, 255, 255, 0.05)",
-                        borderRadius: "50%",
-                      }}
-                    ></div>
-                  </div>
-
-                  <div className="modal-body p-4">
-                    <form>
-                      <div className="row g-3">
-                        {/* Supplier ID (Read-only) */}
-                        <div className="col-12">
-                          <label
-                            htmlFor="supplierId"
-                            className="form-label fw-semibold text-muted small"
-                          >
-                            <i
-                              className="fas fa-id-badge me-2"
-                              style={{ color: "#0C1D61" }}
-                            ></i>
-                            Supplier ID
-                          </label>
-                          <input
-                            type="text"
-                            id="supplierId"
-                            className="ms-1 ps-2"
-                            placeholder="Supplier ID"
-                            value={editableSupplier.id}
-                            disabled
-                            style={{
-                              backgroundColor: "#f8f9fa",
-                              border: "1px solid #e9ecef",
-                              borderRadius: "0.5rem",
-                              fontSize: "0.90rem",
-                              fontWeight: "500",
-                            }}
-                          />
-                        </div>
-
-                        {/* Supplier Name */}
-                        <div className="col-12">
-                          <label
-                            htmlFor="supplierNameEdit"
-                            className="form-label fw-semibold text-muted small"
-                          >
-                            <i
-                              className="fas fa-building me-2"
-                              style={{ color: "#0C1D61" }}
-                            ></i>
-                            Supplier Name
-                          </label>
-                          <input
-                            type="text"
-                            id="supplierNameEdit"
-                            placeholder="Enter supplier name"
-                            value={editableSupplier.name}
-                            onChange={(e) =>
-                              setEditableSupplier({
-                                ...editableSupplier,
-                                name: e.target.value,
-                              })
-                            }
-                            className="form-control"
-                            required
-                            style={{
-                              border: "1px solid #e9ecef",
-                              borderRadius: "0.5rem",
-                              fontSize: "0.90rem",
-                              transition: "border-color 0.3s ease",
-                            }}
-                            onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
-                            }
-                            onBlur={(e) =>
-                              (e.target.style.borderColor = "#e9ecef")
-                            }
-                          />
-                        </div>
-
-                        {/* Supplier Address */}
-                        <div className="col-12">
-                          <label
-                            htmlFor="supplierAddressEdit"
-                            className="form-label fw-semibold text-muted small"
-                          >
-                            <i
-                              className="fas fa-map-marker-alt me-2"
-                              style={{ color: "#0C1D61" }}
-                            ></i>
-                            Supplier Address{" "}
-                          </label>
-                          <textarea
-                            id="supplierAddressEdit"
-                            placeholder="Enter supplier address"
-                            value={editableSupplier.address}
-                            onChange={(e) =>
-                              setEditableSupplier({
-                                ...editableSupplier,
-                                address: e.target.value,
-                              })
-                            }
-                            className="form-control"
-                            rows="3"
-                            required
-                            style={{
-                              border: "1px solid #e9ecef",
-                              borderRadius: "0.5rem",
-                              fontSize: "0.90rem",
-                              resize: "vertical",
-                              transition: "border-color 0.3s ease",
-                            }}
-                            onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
-                            }
-                            onBlur={(e) =>
-                              (e.target.style.borderColor = "#e9ecef")
-                            }
-                          />
-                        </div>
-                      </div>
-                    </form>
-
-                    {/* Additional info card */}
-                    <div
-                      className="mt-4 p-3 rounded-3"
-                      style={{
-                        backgroundColor: "rgba(12, 29, 97, 0.05)",
-                        border: "1px solid rgba(12, 29, 97, 0.1)",
-                      }}
-                    >
-                      <div className="d-flex align-items-center">
-                        <i
-                          className="fas fa-info-circle me-2"
-                          style={{ color: "#0C1D61" }}
-                        ></i>
-                        <small className="text-muted">
-                          Changes will be saved immediately. Make sure all
-                          information is accurate before saving.
-                        </small>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="modal-footer bg-light border-0 rounded-bottom">
-                    <button
-                      type="button"
-                      className="btn px-4 py-2 me-2"
-                      onClick={() => setShowEditModal(false)}
-                      style={{
-                        backgroundColor: "#dc3545",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "0.5rem",
-                        fontWeight: "500",
-                        transition: "all 0.3s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.target.style.backgroundColor = "#c82333";
-                        e.target.style.transform = "translateY(-1px)";
-                      }}
-                      onMouseLeave={(e) => {
-                        e.target.style.backgroundColor = "#dc3545";
-                        e.target.style.transform = "translateY(0)";
-                      }}
-                    >
-                      <i className="fas fa-times me-2"></i>
-                      Cancel
-                    </button>
-                    <button
-                      type="button"
-                      className="btn px-4 py-2"
-                      onClick={handleUpdateSupplier}
-                      disabled={
-                        !editableSupplier.name || !editableSupplier.address
-                      }
-                      style={{
-                        backgroundColor:
-                          !editableSupplier.name || !editableSupplier.address
-                            ? "#6c757d"
-                            : "#0C1D61",
-                        color: "white",
-                        border: "none",
-                        borderRadius: "0.5rem",
-                        fontWeight: "500",
-                        transition: "all 0.3s ease",
-                        cursor:
-                          !editableSupplier.name || !editableSupplier.address
-                            ? "not-allowed"
-                            : "pointer",
-                      }}
-                      onMouseEnter={(e) => {
-                        if (editableSupplier.name && editableSupplier.address) {
-                          e.target.style.backgroundColor = "#1e3c72";
-                          e.target.style.transform = "translateY(-1px)";
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (editableSupplier.name && editableSupplier.address) {
-                          e.target.style.backgroundColor = "#0C1D61";
-                          e.target.style.transform = "translateY(0)";
-                        }
-                      }}
-                    >
-                      <i className="fas fa-save me-2"></i>
-                      Save Changes
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
 
           {showCreateModal && (
             <div
@@ -1222,7 +921,7 @@ function SupplierInvoicesTable({ items }) {
 
           {showModal && selectedInvoice && (
             <div
-              className="modal fade show d-block"
+              className="modal modal-lg fade show d-block"
               tabIndex="-1"
               role="dialog"
               style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
@@ -1264,16 +963,6 @@ function SupplierInvoicesTable({ items }) {
                             <div className="d-flex justify-content-between align-items-start mb-2">
                               {/* Item Info */}
                               <div className="d-flex align-items-center gap-3">
-                                <img
-                                  src="https://via.placeholder.com/40"
-                                  alt="Item"
-                                  style={{
-                                    width: "40px",
-                                    height: "40px",
-                                    objectFit: "cover",
-                                    borderRadius: "6px",
-                                  }}
-                                />
                                 <div className="d-flex flex-column">
                                   <span className="fw-semibold">
                                     {item.itemName}
@@ -1308,6 +997,7 @@ function SupplierInvoicesTable({ items }) {
                                 </small>
                               </div>
                             </div>
+                            <hr />
                           </li>
                         ))}
                       </ul>
