@@ -229,8 +229,16 @@ function SupplierInvoicesTable({ items }) {
     },
     {
       name: "Total Price",
-      selector: (row) =>
-        `₱${row.items.reduce((sum, item) => sum + (item.subTotal || 0), 0)}`,
+      selector: (row) => {
+        const total = row.items.reduce(
+          (sum, item) => sum + (item.subTotal || 0),
+          0
+        );
+        return `₱${total.toLocaleString("en-US", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        })}`;
+      },
       sortable: true,
     },
   ];
@@ -629,9 +637,9 @@ function SupplierInvoicesTable({ items }) {
                       {/* Invoice Header Information */}
                       <div className="row g-3 mb-4">
                         {/* Purchase Order Number */}
-                        <div className="col-md-4">
+                        <div className="col-md-2">
                           <label
-                            htmlFor="invoiceNumber"
+                            htmlFor="poNum"
                             className="form-label fw-semibold text-muted small"
                           >
                             <i
@@ -642,7 +650,7 @@ function SupplierInvoicesTable({ items }) {
                           </label>
                           <input
                             type="text"
-                            id="invoiceNumber"
+                            id="poNum"
                             className="form-control"
                             placeholder="Enter purchase order number"
                             value={invoiceForm.poNum}

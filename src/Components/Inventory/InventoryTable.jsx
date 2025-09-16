@@ -33,6 +33,10 @@ function InventoryTable({
   const [brand, setBrand] = useState("");
   const [origin, setOrigin] = useState("");
   const [minimumStock, setMinimumStock] = useState("");
+  const [partNum, setPartNum] = useState("");
+  const [interNum, setInterNum] = useState("");
+  const [unit, setUnit] = useState("");
+  const [model, setModel] = useState("");
 
   const [showItemModal, setShowItemModal] = useState(false);
 
@@ -43,7 +47,7 @@ function InventoryTable({
   useEffect(() => {
     const interval = setInterval(() => {
       onRefreshItems();
-    }, 10000); // refresh every 10s
+    }, 120000); // refresh every 2m
 
     return () => clearInterval(interval);
   }, [onRefreshItems]);
@@ -59,6 +63,11 @@ function InventoryTable({
     setItemName("");
     setBrand("");
     setOrigin("");
+    setMinimumStock("");
+    setPartNum("");
+    setInterNum("");  
+    setUnit("");
+    setModel("");
   };
 
   const handleSubmitItem = () => {
@@ -70,13 +79,22 @@ function InventoryTable({
       brand: brand.trim(),
       origin: origin.trim(),
       minStock: minimumStock || 0,
+      partNum: partNum.trim(),
+      interNum: interNum.trim(),
+      unit: unit.trim(),
+      model: model.trim(),
     };
 
     if (
       !trimmedItem.itemCode ||
       !trimmedItem.itemName ||
       !trimmedItem.brand ||
-      !trimmedItem.origin
+      !trimmedItem.origin ||
+      !trimmedItem.minStock ||
+      !trimmedItem.partNum ||
+      !trimmedItem.interNum ||
+      !trimmedItem.unit ||
+      !trimmedItem.model
     ) {
       alert("Please fill in all item details.");
       return;
@@ -93,6 +111,7 @@ function InventoryTable({
       },
     };
 
+    console.log("New Item:", newItem);
     onAddItem(newItem);
 
     // Reset inputs
@@ -100,6 +119,11 @@ function InventoryTable({
     setItemName("");
     setBrand("");
     setOrigin("");
+    setMinimumStock("");
+    setPartNum("");
+    setInterNum("");
+    setUnit("");
+    setModel("");
 
     // Close modal and clear fields
     handleCloseItemModal();
@@ -286,7 +310,7 @@ function InventoryTable({
             <div className="modal-body p-4">
               <form>
                 <div className="row g-3">
-                  {/* Item Code */}
+                  {/* Row 1 */}
                   <div className="col-md-3">
                     <label
                       htmlFor="itemCode"
@@ -317,7 +341,6 @@ function InventoryTable({
                     />
                   </div>
 
-                  {/* Item Name */}
                   <div className="col-md-9">
                     <label
                       htmlFor="itemName"
@@ -348,8 +371,96 @@ function InventoryTable({
                     />
                   </div>
 
-                  {/* Brand */}
+                  {/* Row 2 */}
                   <div className="col-md-4">
+                    <label
+                      htmlFor="partNum"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-cogs me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Part No.
+                    </label>
+                    <input
+                      type="text"
+                      id="partNum"
+                      placeholder="Enter part number"
+                      value={partNum}
+                      onChange={(e) => setPartNum(e.target.value)}
+                      className="form-control"
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.90rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  <div className="col-md-4">
+                    <label
+                      htmlFor="interNum"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-random me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Interchange No.
+                    </label>
+                    <input
+                      type="text"
+                      id="interNum"
+                      placeholder="Enter interchange number"
+                      value={interNum}
+                      onChange={(e) => setInterNum(e.target.value)}
+                      className="form-control"
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.90rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  <div className="col-md-4">
+                    <label
+                      htmlFor="model"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-car me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Model
+                    </label>
+                    <input
+                      type="text"
+                      id="model"
+                      placeholder="Enter model"
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                      className="form-control"
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.90rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Row 3 */}
+                  <div className="col-md-3">
                     <label
                       htmlFor="brand"
                       className="form-label fw-semibold text-muted small"
@@ -379,8 +490,7 @@ function InventoryTable({
                     />
                   </div>
 
-                  {/* Origin */}
-                  <div className="col-md-4">
+                  <div className="col-md-3">
                     <label
                       htmlFor="origin"
                       className="form-label fw-semibold text-muted small"
@@ -410,8 +520,7 @@ function InventoryTable({
                     />
                   </div>
 
-                  {/* Minimum Stock */}
-                  <div className="col-md-4">
+                  <div className="col-md-3">
                     <label
                       htmlFor="minimumStock"
                       className="form-label fw-semibold text-muted small"
@@ -441,33 +550,37 @@ function InventoryTable({
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
-                </div>
-              </form>
 
-              {/* Additional info card */}
-              <div
-                className="mt-4 p-3 rounded-3"
-                style={{
-                  backgroundColor: "rgba(12, 29, 97, 0.05)",
-                  border: "1px solid rgba(12, 29, 97, 0.1)",
-                }}
-              >
-                <div className="d-flex align-items-start">
-                  <i
-                    className="fas fa-info-circle me-2 mt-1"
-                    style={{ color: "#0C1D61" }}
-                  ></i>
-                  <div>
-                    <small className="text-muted d-block">
-                      Make sure the product code is unique in your inventory.
-                    </small>
-                    <small className="text-muted">
-                      The minimum stock level will help you track when to
-                      restock this item.
-                    </small>
+                  <div className="col-md-3">
+                    <label
+                      htmlFor="unit"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-balance-scale me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
+                      Unit
+                    </label>
+                    <input
+                      type="text"
+                      id="unit"
+                      placeholder="Enter unit"
+                      value={unit}
+                      onChange={(e) => setUnit(e.target.value)}
+                      className="form-control"
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.90rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
                   </div>
                 </div>
-              </div>
+              </form>
             </div>
 
             <div className="modal-footer bg-light border-0 rounded-bottom">

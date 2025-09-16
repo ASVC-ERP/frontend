@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import axios from "axios";
 
-function CostHistoryTab({item}) {
+function CostHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const itemName = item?.itemName || "";
@@ -29,9 +29,12 @@ function CostHistoryTab({item}) {
       }
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:3000/inventory/cost-history", {
-          params: { itemName },
-        });
+        const response = await axios.get(
+          "http://localhost:3000/inventory/cost-history",
+          {
+            params: { itemName },
+          }
+        );
         console.log("Cost History Data:", response.data);
         setData(response.data);
       } catch (error) {
@@ -45,76 +48,76 @@ function CostHistoryTab({item}) {
     fetchData();
   }, [itemName]);
 
-
   // Define table columns
   const columns = [
     {
       id: 1,
-      name: "Invoice #",
+      name: "PO #",
       selector: (row) => row.poNum,
       sortable: true,
     },
     {
       id: 2,
+      name: " Date",
+      selector: (row) => {
+        if (!row.purchaseDate) return "";
+        const date = new Date(row.purchaseDate);
+        return `${date.getMonth() + 1}/${date.getDate()}/${String(
+          date.getFullYear()
+        ).slice(-2)}`;
+      },
+      sortable: true,
+      
+    },
+    {
+      id: 3,
       name: "Invoice ID",
       selector: (row) => row.invoiceID,
       sortable: true,
     },
     {
-      id: 3,
+      id: 4,
       name: "Quantity",
       selector: (row) => row.quantity,
       sortable: true,
-      width: "100px",
-    },
-    {
-      id: 4,
-      name: "Currency",
-      selector: (row) => row.currency,
-      sortable: true,
-      width: "100px",
     },
     {
       id: 5,
+      name: "Currency",
+      selector: (row) => row.currency,
+      sortable: true,
+    },
+    {
+      id: 6,
       name: "Conversion Factor",
       selector: (row) => row.conversionFactor,
       sortable: true,
       cell: (row) => row.conversionFactor,
     },
     {
-      id: 6,
+      id: 7,
       name: "Cost",
       selector: (row) => row.unitCost,
       sortable: true,
-      width: "75px",
       cell: (row) => row.unitCost,
     },
     {
-      id: 7,
+      id: 8,
       name: "Price 1",
       selector: (row) => row.price1,
       sortable: false,
-      width: "75px",
-    },
-    {
-      id: 8,
-      name: "Price 2",
-      selector: (row) => row.price2,
-      sortable: false,
-      width: "75px",
     },
     {
       id: 9,
-      name: "Price 3",
-      selector: (row) => row.price3,
+      name: "Price 2",
+      selector: (row) => row.price2,
       sortable: false,
-      width: "75px",
     },
     {
       id: 10,
-      name: " Date",
-      selector: (row) => row.purchaseDate,
-      sortable: true,
+      name: "Price 3",
+      selector: (row) => row.price3,
+      sortable: false,
     },
   ];
 
