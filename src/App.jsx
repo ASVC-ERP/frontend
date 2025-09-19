@@ -286,44 +286,6 @@ function App() {
       });
   };
 
-  /*
-
-  useEffect(() => {
-    axios
-      .get("http://localhost:3000/suppliers")
-      .then((response) => {
-        setSupplier(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching suppliers:", error);
-      });
-  }, []);
-
-  const handleAddSupplier = (newSupplier) => {
-    console.log("📦 Submitting Supplier:", newItem);
-    axios
-      .post("http://localhost:3000/suppliers", newItem)
-      .then((response) => {
-        Swal.fire({
-          icon: "success",
-          title: "Added!",
-          text: "Item added successfully.",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        fetchItems();
-      })
-      .catch((err) => {
-        console.error("Error adding item:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to add item. Please try again.",
-        });
-      });
-  };
-  */
-
   //* CUSTOMER MODULE **//
   const [customers, setCustomers] = useState([]);
 

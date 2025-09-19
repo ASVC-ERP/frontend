@@ -1,23 +1,10 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom";
+import { FaTrash } from "react-icons/fa";
 import { IoIosSearch } from "react-icons/io";
 import Swal from "sweetalert2";
 import axios from "axios";
-
-// Define table columns
-const columns = [
-  { name: "Product Code", selector: (row) => row.itemCode, sortable: true },
-  { name: "Product Name", selector: (row) => row.itemName, sortable: true },
-  { name: "Brand", selector: (row) => row.brand, sortable: true },
-  { name: "Origin", selector: (row) => row.origin, sortable: true },
-  { name: "Stock", selector: (row) => row.stock, sortable: true },
-  {
-    name: "Cost per product",
-    selector: (row) => row.price?.price1 ?? 0,
-    sortable: true,
-  },
-];
 
 function InventoryTable({
   products = [],
@@ -31,14 +18,46 @@ function InventoryTable({
   const [itemCode, setItemCode] = useState("");
   const [itemName, setItemName] = useState("");
   const [brand, setBrand] = useState("");
-  const [origin, setOrigin] = useState("");
   const [minimumStock, setMinimumStock] = useState("");
   const [partNum, setPartNum] = useState("");
   const [interNum, setInterNum] = useState("");
   const [unit, setUnit] = useState("");
   const [model, setModel] = useState("");
+  const [origin, setOrigin] = useState("");
 
   const [showItemModal, setShowItemModal] = useState(false);
+
+  const columns = [
+    { name: "Product Code", selector: (row) => row.itemCode, sortable: true },
+    { name: "Product Name", selector: (row) => row.itemName, sortable: true },
+    { name: "Brand", selector: (row) => row.brand, sortable: true },
+    { name: "Origin", selector: (row) => row.origin, sortable: true },
+    { name: "Stock", selector: (row) => row.stock, sortable: true },
+    {
+      name: "Cost per product",
+      selector: (row) => row.price?.price1 ?? 0,
+      sortable: true,
+    },
+    {
+      name: "Actions",
+      cell: (row) => (
+        <div className="d-flex gap-2">
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => {
+              console.log("Row data:", row);
+              handleDeleteItem(row.itemCode);
+            }}
+          >
+            <FaTrash />
+          </button>
+        </div>
+      ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+    },
+  ];
 
   useEffect(() => {
     setFilteredData(Object.values(products));
@@ -145,6 +164,41 @@ function InventoryTable({
     );
 
     setFilteredData(filtered);
+  };
+
+  const handleDeleteItem = async (itemCode) => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "This item will be permanently deleted.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+      });
+
+      if (result.isConfirmed) {
+        await axios.delete(`http://localhost:3000/items/${itemCode}`);
+
+        Swal.fire({
+          title: "Deleted!",
+          text: "Item has been deleted successfully.",
+          icon: "success",
+          confirmButtonColor: "#0C1D61",
+        });
+
+        onRefreshItems();
+      }
+    } catch (error) {
+      console.error("Error deleting item:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Failed to delete item.",
+        icon: "error",
+        confirmButtonColor: "#0C1D61",
+      });
+    }
   };
 
   const handleRowClick = (row) => {
