@@ -100,7 +100,6 @@ function SupplierInvoicesTable({ items }) {
     setFilteredData(filtered);
   };
 
-
   const handleSubmitInvoice = async () => {
     try {
       const payload = {
@@ -224,18 +223,21 @@ function SupplierInvoicesTable({ items }) {
 
       <div className="row table-responsive mx-3">
         <div>
-          <div className="position-relative w-25 my-3">
-            <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-            <input
-              type="text"
-              placeholder="Search invoices"
-              value={searchTerm}
-              onChange={handleSearch}
-              className="form-control ps-5 border-2 rounded-3"
-            />
-          </div>
-          <div className="d-flex justify-content-between align-items-center mt-4">
-            <div className="ms-auto">
+          <div className="d-flex justify-content-between align-items-center mt-2">
+            {/* Search Box */}
+            <div className="position-relative w-25">
+              <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+              <input
+                type="text"
+                placeholder="Search invoices"
+                value={searchTerm}
+                onChange={handleSearch}
+                className="form-control ps-5 border-2 rounded-3"
+              />
+            </div>
+
+            {/* Add Invoice Button */}
+            <div>
               <button
                 className="btn"
                 onClick={() => setShowCreateModal(true)}
