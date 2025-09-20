@@ -33,6 +33,17 @@ function CreateOrder({
     setOrderItems([]); // Reset order items array
   }, []);
 
+  useEffect(() => {
+    setInfo({
+      customerName: "",
+      customerAddress: "",
+      customerNumber: "",
+      salesAgent: "",
+      discount: 0, // 👈 new field
+    });
+    setOrderItems([]); // Reset order items array
+  }, []);
+
   /*
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -135,6 +146,10 @@ function CreateOrder({
     }
   };
 
+  const handleDeleteItem = (index) => {
+    setOrderItems((prev) => prev.filter((_, i) => i !== index));
+  };
+
   // Handle the cancel action
   const handleCancel = () => {
     navigate("/"); // Navigate back to SalesOrder page
@@ -197,6 +212,7 @@ function CreateOrder({
                 onCalculateTotal={onCalculateTotal}
                 onCalculateTotalPrice={onCalculateTotalPrice}
                 onRemoveProduct={onRemoveProduct}
+                onDeleteItem={handleDeleteItem}
               />
             </div>
           </div>

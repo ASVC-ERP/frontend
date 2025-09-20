@@ -8,19 +8,29 @@ import Swal from "sweetalert2";
 function CustomerTable({ customers, onRefreshCustomers }) {
   const columns = [
     {
-      name: "Customer ID",
+      name: "ID",
       selector: (row) => row.customerID,
       sortable: true,
+      width: "100px",
     },
     {
-      name: "Customer Name",
+      name: "Name",
       selector: (row) => row.customerName,
       sortable: true,
+      wrap: true,
+      width: "200px",
     },
     {
-      name: "Contact Number",
+      name: "Number",
       selector: (row) => row.customerContact,
       sortable: true,
+      width: "150px",
+    },
+    {
+      name: "TIN",
+      selector: (row) => row.customerTIN || "N/A",
+      sortable: false,
+      width: "120px",
     },
     {
       name: "Address",
@@ -58,8 +68,9 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const [customerName, setCustomerName] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [customerTIN, setCustomerTIN] = useState("");
   const [editingCustomer, setEditingCustomer] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);  
 
   useEffect(() => {
     setFilteredData(customers);
@@ -93,6 +104,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerName,
         customerContact,
         customerAddress,
+        customerTIN
       };
 
       axios.post("http://localhost:3000/customers", newCustomer);
@@ -121,6 +133,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     setCustomerName(customer.customerName);
     setCustomerContact(customer.customerContact);
     setCustomerAddress(customer.customerAddress);
+    setCustomerTIN(customer.customerTIN || "");
     setShowEditModal(true);
   };
 
@@ -131,6 +144,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerName,
         customerContact,
         customerAddress,
+        customerTIN
       };
       await axios.put(
         `http://localhost:3000/customers/${editingCustomer.customerID}`,
@@ -390,10 +404,28 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
+                  {/* Customer TIN */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="editCustomerTIN"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i className="fas fa-id-card me-2" style={{ color: "#0C1D61" }}></i>
+                      Customer TIN
+                    </label>
+                    <input
+                      type="text"
+                      id="editCustomerTIN"
+                      placeholder="Enter TIN"
+                      value={customerTIN}
+                      onChange={(e) => setCustomerTIN(e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
                 </div>
               </form>
 
-              {/* Additional info card */}
+              {/* Additional info card
               <div
                 className="mt-4 p-3 rounded-3"
                 style={{
@@ -412,6 +444,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                   </small>
                 </div>
               </div>
+              */}
             </div>
 
             <div className="modal-footer bg-light border-0 rounded-bottom">
@@ -612,10 +645,28 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       rows="3"
                     />
                   </div>
+                  {/* Customer TIN */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="editCustomerTIN"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i className="fas fa-id-card me-2" style={{ color: "#0C1D61" }}></i>
+                      Customer TIN
+                    </label>
+                    <input
+                      type="text"
+                      id="editCustomerTIN"
+                      placeholder="Enter TIN"
+                      value={customerTIN}
+                      onChange={(e) => setCustomerTIN(e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
                 </div>
               </form>
 
-              {/* Info Card */}
+              {/* Info Card
               <div
                 className="mt-4 p-3 rounded-3"
                 style={{
@@ -634,6 +685,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                   </small>
                 </div>
               </div>
+              */}
             </div>
 
             <div className="modal-footer bg-light border-0 rounded-bottom">

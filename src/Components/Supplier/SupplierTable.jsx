@@ -9,14 +9,14 @@ import axios from "axios";
 function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const columns = [
     { name: "Supplier Code", selector: (row) => row.id, sortable: true, width: "150px" },
-    { name: "Supplier Name", selector: (row) => row.name, sortable: true },
+    { name: "Supplier Name", selector: (row) => row.name, sortable: true, wrap: true, width: "200px" },
     {
-      name: "Currency",
-      selector: (row) => row.currency,
+      name: "TIN",
+      selector: (row) => row.tin || "N/A",
       sortable: true,
-      width: "120px",
+      width: "123px",
     },
-    { name: "Number", selector: (row) => row.number, sortable: false, width: "120px" },
+    { name: "Number", selector: (row) => row.number, sortable: false, width: "150px" },
     {
       name: "Address",
       selector: (row) => row.address,
@@ -493,7 +493,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                 </div>
               </form>
 
-              {/* Additional info card */}
+              {/* Additional info card
               <div
                 className="mt-4 p-3 rounded-3"
                 style={{
@@ -511,6 +511,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                   </small>
                 </div>
               </div>
+              */}
             </div>
 
             <div className="modal-footer bg-light border-0 rounded-bottom">
@@ -836,7 +837,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                   </div>
                 </form>
 
-                {/* Additional info card */}
+                {/* Additional info card
                 <div
                   className="mt-4 p-3 rounded-3"
                   style={{
@@ -855,6 +856,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                     </small>
                   </div>
                 </div>
+                */}
               </div>
 
               <div className="modal-footer bg-light border-0 rounded-bottom">
