@@ -815,7 +815,7 @@ function SupplierInvoicesTable({ items }) {
                       </div>
                     </form>
 
-                    {/* Additional info card */}
+                    {/* Additional info card
                     <div
                       className="mt-4 p-3 rounded-3"
                       style={{
@@ -834,6 +834,7 @@ function SupplierInvoicesTable({ items }) {
                         </small>
                       </div>
                     </div>
+                    */}
                   </div>
 
                   <div className="modal-footer bg-light border-0 rounded-bottom">

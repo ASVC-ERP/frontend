@@ -19,6 +19,11 @@ function InfoForm({ info, setInfo }) {
     fetchCustomers();
   }, []);
 
+  // Sync query with info.customerName (pre-fill)
+  useEffect(() => {
+    setQuery(info.customerName || "");
+  }, [info.customerName]);
+
   // Filter suggestions based on query
   useEffect(() => {
     if (query.trim() === "") {
@@ -37,6 +42,7 @@ function InfoForm({ info, setInfo }) {
       customerName: customer.customerName,
       customerNumber: customer.customerContact,
       customerAddress: customer.customerAddress,
+      customerTIN: customer.customerTIN,
     });
     setQuery(customer.customerName);
     setSuggestions([]);
@@ -48,6 +54,7 @@ function InfoForm({ info, setInfo }) {
       ...prev,
       [id]: value,
     }));
+    if (id === "customerName") setQuery(value);
   };
 
   return (
@@ -61,9 +68,10 @@ function InfoForm({ info, setInfo }) {
         <input
           type="text"
           className="form-control form-control-sm"
+          id="customerName"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          onBlur={() => setTimeout(() => setSuggestions([]), 100)}
+          onChange={handleChange}
+          onBlur={() => setTimeout(() => setSuggestions([]), 150)}
           placeholder="Search customer..."
         />
         {suggestions.length > 0 && (
@@ -86,7 +94,7 @@ function InfoForm({ info, setInfo }) {
             {suggestions.map((c) => (
               <li
                 key={c.customerID}
-                onClick={() => handleSelectCustomer(c)}
+                onMouseDown={() => handleSelectCustomer(c)} // <- fix for autofill
                 style={{
                   padding: "8px",
                   cursor: "pointer",
@@ -116,7 +124,7 @@ function InfoForm({ info, setInfo }) {
       </div>
     </div>
 
-    {/* Address and Delivery */}
+    {/* Address and TIN */}
     <div className="row mx-5 mt-3 d-flex align-items-center">
       <div className="col-1">
         <label htmlFor="customerAddress" className="h6">
@@ -132,22 +140,19 @@ function InfoForm({ info, setInfo }) {
           onChange={handleChange}
         />
       </div>
-      <div className="col-2">
-        <label htmlFor="delivery" className="ms-5 h6">
-          Delivery Type:
+      <div className="col-1">
+        <label htmlFor="customerTIN" className="h6">
+          TIN: 
         </label>
       </div>
-      <div className="col-3">
-        <select
-          className="form-select"
-          aria-label="Default select example"
-          id="delivery"
-          value={info.delivery}
+      <div className="col-4">
+        <input
+          type="text"
+          className="form-control form-control-sm"
+          id="customerTIN"
+          value={info.customerTIN}
           onChange={handleChange}
-        >
-          <option value="1">Shipping</option>
-          <option value="2">Pick-up</option>
-        </select>
+        />
       </div>
     </div>
   </div>

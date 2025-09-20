@@ -7,13 +7,15 @@ import axios from "axios";
 
 // Define table columns
 const columns = [
-  { name: "Product Code", selector: (row) => row.itemCode, sortable: true },
-  { name: "Product Name", selector: (row) => row.itemName, sortable: true },
-  { name: "Brand", selector: (row) => row.brand, sortable: true },
-  { name: "Origin", selector: (row) => row.origin, sortable: true },
-  { name: "Stock", selector: (row) => row.stock, sortable: true },
+  { name: "Product Code", selector: (row) => row.itemCode, sortable: true, width: "160px" },
+  { name: "Product Name", selector: (row) => row.itemName, sortable: true, wrap: true, width: "250px" },
+  { name: "Brand", selector: (row) => row.brand, sortable: true, width: "100px" },
+  { name: "Part No.", selector: (row) => row.partNum, sortable: true, width: "120px" },
+  { name: "Model", selector: (row) => row.model, sortable: true, width: "120px" },
+  { name: "Origin", selector: (row) => row.origin, sortable: true, width: "120px" },
+  { name: "Stock", selector: (row) => row.stock, sortable: true, width: "100px" },
   {
-    name: "Cost per product",
+    name: "Unit Cost",
     selector: (row) => row.price?.price1 ?? 0,
     sortable: true,
   },
