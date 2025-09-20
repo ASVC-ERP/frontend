@@ -125,7 +125,9 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       await axios.put(`http://localhost:3000/suppliers/${selectedInvoice.id}`, {
         name: selectedInvoice.name,
         address: selectedInvoice.address,
+        number: selectedInvoice.number,
         currency: selectedInvoice.currency,
+        tin: selectedInvoice.tin,
       });
 
       Swal.fire({
