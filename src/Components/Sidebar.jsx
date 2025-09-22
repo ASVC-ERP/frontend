@@ -11,15 +11,7 @@ export default function Sidebar({ onLogout }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
   return (
-    <div
-      className="d-flex flex-column vh-100 position-sticky"
-      style={{
-        width: "200px",
-        overflow: "hidden",
-        backgroundColor: "#E8E7EC",
-        fontFamily: "'Outfit', sans-serif",
-      }}
-    >
+    <div className="d-flex flex-column vh-100 position-sticky">
       {/* Logo and Company Name */}
       <div className="d-flex flex-column align-items-center mb-3 px-3">
         <img
@@ -32,8 +24,7 @@ export default function Sidebar({ onLogout }) {
 
       {/* Navigation Links */}
       <div className="d-flex flex-column flex-grow-1">
-        <ul className="nav flex-column list-unstyled ms-4 mt-2">
-
+        <ul className="nav flex-column list-unstyled ms-2 mt-2">
           {/* Approval - Only show for Admin */}
           {user?.role === "admin" && (
             <li className="mt-2">
@@ -42,11 +33,11 @@ export default function Sidebar({ onLogout }) {
                 className="nav-link d-flex align-items-center"
                 style={{
                   color: "#0C1D61",
-                  fontSize: "1.2rem",
+                  fontSize: "1.1rem",
                   cursor: "pointer",
                 }}
               >
-                <PiListChecksFill className="me-3" size={30} />
+                <PiListChecksFill className="me-3" size={25} />
                 <span className="sidebar-text">Approval</span>
               </Link>
             </li>
@@ -58,11 +49,11 @@ export default function Sidebar({ onLogout }) {
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
-                fontSize: "1.2rem",
+                fontSize: "1.1rem",
                 cursor: "pointer",
               }}
             >
-              <FaCashRegister className="me-3" size={30} />
+              <FaCashRegister className="me-3" size={25} />
               <span className="sidebar-text">Order</span>
             </Link>
           </li>
@@ -73,11 +64,11 @@ export default function Sidebar({ onLogout }) {
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
-                fontSize: "1.2rem",
+                fontSize: "1.1rem",
                 cursor: "pointer",
               }}
             >
-              <IoReceipt className="me-3" size={30} />
+              <IoReceipt className="me-3" size={25} />
               <span className="sidebar-text">Sales Invoice</span>
             </Link>
           </li>
@@ -88,11 +79,11 @@ export default function Sidebar({ onLogout }) {
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
-                fontSize: "1.2rem",
+                fontSize: "1.1rem",
                 cursor: "pointer",
               }}
             >
-              <BsBoxSeamFill className="me-3" size={30} />
+              <BsBoxSeamFill className="me-3" size={25} />
               <span className="sidebar-text">Inventory</span>
             </Link>
           </li>
@@ -103,11 +94,11 @@ export default function Sidebar({ onLogout }) {
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
-                fontSize: "1.2rem",
+                fontSize: "1.1rem",
                 cursor: "pointer",
               }}
             >
-              <FaTruck className="me-3" size={30} />
+              <FaTruck className="me-3" size={25} />
               <span className="sidebar-text">Supplier</span>
             </Link>
           </li>
@@ -118,11 +109,11 @@ export default function Sidebar({ onLogout }) {
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#0C1D61",
-                fontSize: "1.2rem",
+                fontSize: "1.1rem",
                 cursor: "pointer",
               }}
             >
-              <FaUser className="me-3" size={30} />
+              <FaUser className="me-3" size={25} />
               <span className="sidebar-text">Customer</span>
             </Link>
           </li>
@@ -139,9 +130,9 @@ export default function Sidebar({ onLogout }) {
             aria-expanded="false"
             id="profileDropdown"
           >
-            <BsPersonCircle size={30} color="#0C1D61" />
+            <BsPersonCircle size={25} color="#0C1D61" />
             <p
-              className="h5 fw-bolder ms-3 sidebar-text mb-0"
+              className="h6 fw-bolder ms-3 sidebar-text mb-0"
               style={{ color: "#0C1D61" }}
             >
               Hi, {user.firstName} 兄!

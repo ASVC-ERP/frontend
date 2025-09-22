@@ -13,39 +13,49 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       name: "Invoice ID",
       selector: (row) => row.invoiceID,
       sortable: true,
-      maxWidth: "130px",
+      grow: 3,
+      minWidth: "140px",
     },
     {
       name: "Date",
       selector: (row) =>
-        new Date(row.date).toLocaleDateString("en-GB", {
+        new Date(row.date).toLocaleDateString("en-US", {
+          month: "2-digit",
           day: "2-digit",
-          month: "short",
-          year: "numeric",
+          year: "2-digit",
         }),
       sortable: true,
-      width: "120px",
+      grow: 0,
+      width: "100px",
     },
     {
       name: "Customer Name",
       selector: (row) => row.customerName,
       sortable: true,
+      grow: 3,
+      minWidth: "200px",
     },
     {
       name: "Customer Address",
       selector: (row) => row.customerAddress,
       sortable: true,
+      grow: 0,
+      minWidth: "180px",
+      maxWidth: "250px",
     },
     {
       name: "Customer Number",
       selector: (row) => row.customerNumber,
       sortable: true,
+      grow: 0,
+      width: "140px",
     },
     {
       name: "Sales Agent",
       selector: (row) => row.salesAgent,
       sortable: true,
-      width: "150px",
+      grow: 0,
+      width: "140px",
     },
     {
       name: "Status",
@@ -105,7 +115,6 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               <FaSave size={14} />
             </Button>
 
-            {/* Delete button */}
             <Button
               variant="outline-danger"
               size="sm"
@@ -121,6 +130,8 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           </div>
         );
       },
+      grow: 1,
+      minWidth: "150px",
     },
   ];
 
@@ -464,7 +475,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
         </div>
       )}
 
-      <div style={{ overflowX: "auto" }}>
+      <div>
         <DataTable
           columns={columns}
           data={filteredData}

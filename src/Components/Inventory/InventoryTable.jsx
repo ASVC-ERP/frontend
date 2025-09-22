@@ -8,13 +8,49 @@ import axios from "axios";
 
 // Define table columns
 const columns = [
-  { name: "Product Code", selector: (row) => row.itemCode, sortable: true, width: "160px" },
-  { name: "Product Name", selector: (row) => row.itemName, sortable: true, wrap: true, width: "250px" },
-  { name: "Brand", selector: (row) => row.brand, sortable: true, width: "100px" },
-  { name: "Part No.", selector: (row) => row.partNum, sortable: true, width: "120px" },
-  { name: "Model", selector: (row) => row.model, sortable: true, width: "120px" },
-  { name: "Origin", selector: (row) => row.origin, sortable: true, width: "120px" },
-  { name: "Stock", selector: (row) => row.stock, sortable: true, width: "100px" },
+  {
+    name: "Product Code",
+    selector: (row) => row.itemCode,
+    sortable: true,
+    width: "160px",
+  },
+  {
+    name: "Product Name",
+    selector: (row) => row.itemName,
+    sortable: true,
+    wrap: true,
+    width: "250px",
+  },
+  {
+    name: "Brand",
+    selector: (row) => row.brand,
+    sortable: true,
+    width: "100px",
+  },
+  {
+    name: "Part No.",
+    selector: (row) => row.partNum,
+    sortable: true,
+    width: "120px",
+  },
+  {
+    name: "Model",
+    selector: (row) => row.model,
+    sortable: true,
+    width: "120px",
+  },
+  {
+    name: "Origin",
+    selector: (row) => row.origin,
+    sortable: true,
+    width: "120px",
+  },
+  {
+    name: "Stock",
+    selector: (row) => row.stock,
+    sortable: true,
+    width: "100px",
+  },
   {
     name: "Unit Cost",
     selector: (row) => row.price?.price1 ?? 0,
@@ -44,15 +80,49 @@ function InventoryTable({
   const [showItemModal, setShowItemModal] = useState(false);
 
   const columns = [
-    { name: "Product Code", selector: (row) => row.itemCode, sortable: true },
-    { name: "Product Name", selector: (row) => row.itemName, sortable: true },
-    { name: "Brand", selector: (row) => row.brand, sortable: true },
-    { name: "Origin", selector: (row) => row.origin, sortable: true },
-    { name: "Stock", selector: (row) => row.stock, sortable: true },
     {
-      name: "Cost per product",
+      name: "Product Code",
+      selector: (row) => row.itemCode,
+      sortable: true,
+      grow: 2, // wider
+      minWidth: "150px",
+    },
+    {
+      name: "Product Name",
+      selector: (row) => row.itemName,
+      sortable: true,
+      grow: 3, // widest
+      minWidth: "200px",
+    },
+    {
+      name: "Brand",
+      selector: (row) => row.brand,
+      sortable: true,
+      grow: 0, // smaller
+      maxWidth: "120px",
+    },
+    {
+      name: "Origin",
+      selector: (row) => row.origin,
+      sortable: true,
+      grow: 0,
+      maxWidth: "100px",
+    },
+    {
+      name: "Stock",
+      selector: (row) => row.stock,
+      sortable: true,
+      grow: 0,
+      maxWidth: "80px",
+      center: true,
+    },
+    {
+      name: "Cost",
       selector: (row) => row.price?.price1 ?? 0,
       sortable: true,
+      grow: 0,
+      maxWidth: "100px",
+      right: true,
     },
     {
       name: "Actions",
@@ -72,6 +142,9 @@ function InventoryTable({
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
+      grow: 0,
+      maxWidth: "100px",
+      center: true,
     },
   ];
 

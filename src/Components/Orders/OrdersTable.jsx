@@ -8,23 +8,51 @@ import Swal from "sweetalert2";
 
 // Define table columns
 const columns = [
-  { name: "Order ID", selector: (row) => row.orderId, sortable: true },
-  { name: "Date", selector: (row) => row.date, sortable: true },
+  {
+    name: "Order ID",
+    selector: (row) => row.orderId,
+    sortable: true,
+    grow: 0,
+    minWidth: "140px",
+  },
+  {
+    name: "Date",
+    selector: (row) =>
+      new Date(row.date).toLocaleDateString("en-US", {
+        month: "numeric",
+        day: "numeric",
+        year: "2-digit",
+      }),
+    sortable: true,
+    grow: 0,
+    width: "100px", // compact
+  },
   {
     name: "Customer Name",
     selector: (row) => row.customerName,
     sortable: true,
+    grow: 3,
+    minWidth: "200px",
   },
   {
     name: "Customer Address",
     selector: (row) => row.customerAddress,
     sortable: true,
+    grow: 0,
+    minWidth: "250px",
   },
-  { name: "Sales Agent", selector: (row) => row.salesAgent, sortable: true },
+  {
+    name: "Sales Agent",
+    selector: (row) => row.salesAgent,
+    sortable: true,
+    grow: 0,
+    width: "150px",
+  },
   {
     name: "Status",
-    selector: (row) => row.status,
     sortable: true,
+    grow: 2,
+    minWidth: "150px",
     cell: (row) => (
       <span
         className={`badge ${

@@ -309,10 +309,9 @@ function App() {
         <div className="container-fluid vh-100 d-flex p-0">
           <div
             style={{
-              width: "200px",
+              width: "185px",
               backgroundColor: "#E8E7EC",
               fontFamily: "'Outfit', sans-serif",
-              overflow: "hidden",
             }}
             className="d-flex flex-column"
           >

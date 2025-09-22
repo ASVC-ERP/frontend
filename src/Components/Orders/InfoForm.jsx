@@ -140,12 +140,12 @@ function InfoForm({ info, setInfo }) {
           onChange={handleChange}
         />
       </div>
-      <div className="col-1">
-        <label htmlFor="customerTIN" className="h6">
+      <div className="col-2">
+        <label htmlFor="customerTIN" className="ms-5 h6">
           TIN: 
         </label>
       </div>
-      <div className="col-4">
+      <div className="col-3">
         <input
           type="text"
           className="form-control form-control-sm"

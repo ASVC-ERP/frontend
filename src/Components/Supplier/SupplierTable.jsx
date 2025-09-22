@@ -8,19 +8,42 @@ import axios from "axios";
 
 function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const columns = [
-    { name: "Supplier Code", selector: (row) => row.id, sortable: true, width: "150px" },
-    { name: "Supplier Name", selector: (row) => row.name, sortable: true, wrap: true, width: "200px" },
+    {
+      name: "Supplier Code",
+      selector: (row) => row.id,
+      sortable: true,
+      grow: 2, // prioritize width
+      minWidth: "150px",
+    },
+    {
+      name: "Supplier Name",
+      selector: (row) => row.name,
+      sortable: true,
+      wrap: true,
+      grow: 3, // most important, widest
+      minWidth: "220px",
+    },
     {
       name: "TIN",
       selector: (row) => row.tin || "N/A",
       sortable: true,
-      width: "123px",
+      grow: 0,
+      width: "120px",
     },
-    { name: "Number", selector: (row) => row.number, sortable: false, width: "150px" },
+    {
+      name: "Number",
+      selector: (row) => row.number,
+      sortable: false,
+      grow: 0,
+      width: "150px",
+    },
     {
       name: "Address",
       selector: (row) => row.address,
       sortable: true,
+      grow: 0,
+      minWidth: "200px",
+      maxWidth: "250px", // allow but limit width
     },
     {
       name: "Actions",
@@ -46,6 +69,8 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
+      grow: 0,
+      width: "120px",
     },
   ];
 
@@ -637,7 +662,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                     borderRadius: "50%",
                   }}
                 ></div>
-                
+
                 <div
                   className="position-absolute"
                   style={{
@@ -835,7 +860,6 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
                     </div>
-
                   </div>
                 </form>
 

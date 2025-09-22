@@ -44,30 +44,7 @@ function CreateOrder({
     setOrderItems([]); // Reset order items array
   }, []);
 
-  /*
-    const handleSubmit = (e) => {
-        e.preventDefault();
-
-        // const totalPrice = onCalculateTotalPrice();
-
-        const orderId = `ORD${(Math.floor(Math.random() * 1000)).toString().padStart(3, "0")}`;
-
-        const newOrder = {
-            orderId,
-            date: new Date().toISOString().split("T")[0],
-            ...info,
-            orderItems,
-            totalPrice: orderItems.reduce((sum, item) => sum + item.price[item.selectedMarkup] * item.quantity, 0),
-            status: "Pending"
-          };
-
-        console.log("Final Order Data:", newOrder);
-        // you can send it to the backend here
-
-        onAddOrder(newOrder); // will use orderId as key
-        navigate("/");
-    };
-    */
+ 
   const generateNextOrderId = async () => {
     try {
       // Fetch all orders from backend
@@ -171,36 +148,25 @@ function CreateOrder({
         </div>
 
         {/* Customer Info */}
-        <div className="row mt-3 px-3 px-md-4">
+        <div className="row px-3 px-md-4">
           <div className="col-12">
             <div
               className="border rounded-3 p-3 bg-light"
               style={{ backgroundColor: "#E8E7EC" }}
             >
-              <p
-                className="fw-bold fs-5 mb-3"
-                style={{ color: "#050505", fontFamily: "'Outfit', sans-serif" }}
-              >
-                Customer Info
-              </p>
               <InfoForm info={info} setInfo={setInfo} />
             </div>
           </div>
         </div>
 
         {/* Product Details */}
-        <div className="row mt-3 px-3 px-md-4">
+        <div className="row mt-3 px-2 px-md-4">
           <div className="col-12">
             <div
               className="border rounded-3 p-3 bg-light"
               style={{ backgroundColor: "#E8E7EC" }}
             >
-              <p
-                className="fw-bold fs-5 mb-3"
-                style={{ color: "#050505", fontFamily: "'Outfit', sans-serif" }}
-              >
-                Product Details
-              </p>
+
               <OrderForm
                 query={query}
                 suggestions={suggestions}

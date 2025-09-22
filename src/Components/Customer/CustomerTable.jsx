@@ -11,6 +11,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       name: "ID",
       selector: (row) => row.customerID,
       sortable: true,
+      grow: 0,
       width: "100px",
     },
     {
@@ -18,24 +19,30 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       selector: (row) => row.customerName,
       sortable: true,
       wrap: true,
-      width: "200px",
+      grow: 3, // make this wide
+      minWidth: "200px",
     },
     {
       name: "Number",
       selector: (row) => row.customerContact,
       sortable: true,
-      width: "150px",
+      grow: 2, // medium-wide
+      minWidth: "150px",
     },
     {
       name: "TIN",
       selector: (row) => row.customerTIN || "N/A",
       sortable: false,
-      width: "120px",
+      grow: 2, // medium-wide
+      minWidth: "140px",
     },
     {
       name: "Address",
       selector: (row) => row.customerAddress,
       sortable: true,
+      grow: 0,
+      minWidth: "200px",
+      maxWidth: "250px",
     },
     {
       name: "Actions",
@@ -58,6 +65,8 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
+      grow: 0,
+      width: "120px",
     },
   ];
 
@@ -70,7 +79,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const [customerAddress, setCustomerAddress] = useState("");
   const [customerTIN, setCustomerTIN] = useState("");
   const [editingCustomer, setEditingCustomer] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);  
+  const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
     setFilteredData(customers);
@@ -104,7 +113,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerName,
         customerContact,
         customerAddress,
-        customerTIN
+        customerTIN,
       };
 
       axios.post("http://localhost:3000/customers", newCustomer);
@@ -144,7 +153,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerName,
         customerContact,
         customerAddress,
-        customerTIN
+        customerTIN,
       };
       await axios.put(
         `http://localhost:3000/customers/${editingCustomer.customerID}`,
@@ -410,7 +419,10 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       htmlFor="editCustomerTIN"
                       className="form-label fw-semibold text-muted small"
                     >
-                      <i className="fas fa-id-card me-2" style={{ color: "#0C1D61" }}></i>
+                      <i
+                        className="fas fa-id-card me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
                       Customer TIN
                     </label>
                     <input
@@ -651,7 +663,10 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       htmlFor="editCustomerTIN"
                       className="form-label fw-semibold text-muted small"
                     >
-                      <i className="fas fa-id-card me-2" style={{ color: "#0C1D61" }}></i>
+                      <i
+                        className="fas fa-id-card me-2"
+                        style={{ color: "#0C1D61" }}
+                      ></i>
                       Customer TIN
                     </label>
                     <input

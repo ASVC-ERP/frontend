@@ -64,11 +64,11 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
         <div style={{ maxHeight: "250px", overflowY: "auto" }}>
           <table className="table transparent-table custom-border-table text-center fw-semibold">
             <thead
-              className="custom-header-color"
+              className="custom-header-color bg-light"
               style={{
                 position: "sticky",
                 top: 0,
-                backgroundColor: "",
+                backgroundColor: "#E8E7EC",
               }}
             >
               <tr>
@@ -86,16 +86,7 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                   {/* Product column */}
                   <td className="text-start">
                     <div className="d-flex align-items-center gap-3">
-                      <img
-                        src={defaultPic}
-                        alt="Product"
-                        style={{
-                          width: "40px",
-                          height: "40px",
-                          objectFit: "cover",
-                          borderRadius: "6px",
-                        }}
-                      />
+
                       <div className="d-flex flex-column">
                         <span className="fw-semibold">{item.itemName}</span>
                         <span
@@ -181,7 +172,7 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
 
       {/* Total Price */}
       <div className="row mt-3 me-5 text-end">
-        <p className="h4 fw-bold">
+        <p className="h5 fw-bold">
           Total: ₱
           {onCalculateTotalPrice().toLocaleString(undefined, {
             minimumFractionDigits: 2,
