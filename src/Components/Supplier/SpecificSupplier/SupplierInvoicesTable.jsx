@@ -78,7 +78,7 @@ function SupplierInvoicesTable({ items }) {
     if (!supplierID) return;
 
     axios
-      .get(`http://localhost:3000/suppliers/supplier-invoices/${supplierID}`)
+      .get(`/api/suppliers/supplier-invoices/${supplierID}`)
       .then((res) => {
         setInvoiceData(res.data);
         setFilteredData(res.data);
@@ -124,7 +124,7 @@ function SupplierInvoicesTable({ items }) {
       console.log("📤 Submitting invoice data:", payload);
 
       await axios.post(
-        "http://localhost:3000/suppliers/supplier-invoices",
+        "/api/suppliers/supplier-invoices",
         payload
       );
 
@@ -157,7 +157,7 @@ function SupplierInvoicesTable({ items }) {
       setShowCreateModal(false);
 
       const res = await axios.get(
-        `http://localhost:3000/suppliers/supplier-invoices/${supplierID}`
+        `/api/suppliers/supplier-invoices/${supplierID}`
       );
       setInvoiceData(res.data);
       setFilteredData(res.data);

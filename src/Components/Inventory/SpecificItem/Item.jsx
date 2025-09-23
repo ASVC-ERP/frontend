@@ -12,7 +12,7 @@ function Item({ onItemsUpdate }) {
   const fetchItem = useCallback(async () => {
     if (!item?.itemCode) return;
     try {
-      const response = await axios.get("http://localhost:3000/items");
+      const response = await axios.get("/api/items");
       const updatedItem = response.data.find(
         (i) => i.itemCode === item.itemCode
       );

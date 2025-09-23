@@ -18,7 +18,7 @@ function ApprovalTables() {
     setError(null);
     try {
       const response = await axios.get(
-        "http://localhost:3000/orders/sales-orders/by-status",
+        "/api/orders/sales-orders/by-status",
         {
           params: { status: activeTab },
         }
@@ -40,7 +40,7 @@ function ApprovalTables() {
   const handleApprove = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:3000/orders/serve-approved",
+        "/api/orders/serve-approved",
         {
           orderIds: selectedOrders,
         }
@@ -85,7 +85,7 @@ function ApprovalTables() {
 
   const handleReject = async () => {
     try {
-      await axios.post("http://localhost:3000/orders/reject", {
+      await axios.post("/api/orders/reject", {
         orderIds: selectedOrders,
       });
 

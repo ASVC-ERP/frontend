@@ -190,7 +190,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       };
 
       const response = await axios.post(
-        "http://localhost:3000/packing-list/invoice-final",
+        "/api/packing-list/invoice-final",
         payload,
         { responseType: "blob" } // important for PDF
       );
@@ -215,7 +215,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     try {
       // type should be 'a' or 'b'
       const response = await axios.post(
-        `http://localhost:3000/delivery-receipts/${type}`,
+        `/api/delivery-receipts/${type}`,
         selectedRow,
         { responseType: "blob" } // important for PDF
       );
@@ -246,7 +246,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     if (!newStatus) return;
 
     axios
-      .put(`http://localhost:3000/invoice/${row.invoiceID}/status`, {
+      .put(`/api/invoice/${row.invoiceID}/status`, {
         status: newStatus,
       })
       .then(() => {
@@ -292,7 +292,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`http://localhost:3000/invoice/${row.invoiceID}`)
+          .delete(`/api/invoice/${row.invoiceID}`)
           .then((res) => {
             // Remove invoice from table
             setFilteredData((prev) =>

@@ -59,7 +59,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/orders")
+      .get("/api/orders")
       .then((res) => {
         setOrders(res.data);
       })
@@ -172,7 +172,7 @@ function App() {
 
   const fetchInvoices = () => {
     axios
-      .get("http://localhost:3000/invoice")
+      .get("/api/invoice")
       .then((response) => {
         setInvoices(response.data);
       })
@@ -191,7 +191,7 @@ function App() {
 
   const fetchItems = () => {
     axios
-      .get("http://localhost:3000/items")
+      .get("/api/items")
       .then((response) => {
         const transformedItems = response.data.map((item) => ({
           itemCode: item.itemCode,
@@ -216,7 +216,7 @@ function App() {
   const handleAddItem = (newItem) => {
     console.log("📦 Submitting item:", newItem);
     axios
-      .post("http://localhost:3000/items", newItem)
+      .post("/api/items", newItem)
       .then((response) => {
         Swal.fire({
           icon: "success",
@@ -242,7 +242,7 @@ function App() {
 
   const fetchSupplier = () => {
     axios
-      .get("http://localhost:3000/suppliers")
+      .get("/api/suppliers")
       .then((response) => {
         const transformedSuppliers = response.data.map((supplier) => ({
           id: supplier.id,
@@ -265,7 +265,7 @@ function App() {
   const handleAddSupplier = (newSupplier) => {
     console.log("📦 Submitting supplier:", newSupplier);
     axios
-      .post("http://localhost:3000/suppliers", newSupplier)
+      .post("/api/suppliers", newSupplier)
       .then((response) => {
         Swal.fire({
           icon: "success",
@@ -291,14 +291,14 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/customers")
+      .get("/api/customers")
       .then((res) => setCustomers(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   const fetchCustomers = () => {
     axios
-      .get("http://localhost:3000/customers")
+      .get("/api/customers")
       .then((res) => setCustomers(res.data))
       .catch((err) => console.error(err));
 };

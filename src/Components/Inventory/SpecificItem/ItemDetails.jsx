@@ -52,7 +52,7 @@ function ItemDetails({ item, onUpdate }) {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `http://localhost:3000/inventory/update-inventory`,
+        `/api/inventory/update-inventory`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -97,7 +97,7 @@ function ItemDetails({ item, onUpdate }) {
     try {
       const PIC = user.firstName || "";
       const response = await axios.get(
-        "http://localhost:3000/inventory/adjust-stock",
+        "/api/inventory/adjust-stock",
         {
           params: {
             itemName: item.itemName,
@@ -161,7 +161,7 @@ function ItemDetails({ item, onUpdate }) {
 
     try {
       const response = await axios.get(
-        "http://localhost:3000/inventory/update-price",
+        "/api/inventory/update-price",
         {
           params: {
             itemName: item.itemName,

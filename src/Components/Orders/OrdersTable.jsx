@@ -95,7 +95,7 @@ function OrdersTable() {
   // Function to fetch orders
   const fetchOrders = () => {
     axios
-      .get("http://localhost:3000/orders")
+      .get("/api/orders")
       .then((res) => {
         setOrders(res.data);
         setFilteredData(res.data);
@@ -123,8 +123,8 @@ function OrdersTable() {
   /*
   const handleCreateDeliveryReceipt = (withInvoice) => {
     const url = withInvoice
-      ? "http://localhost:3000/delivery-receipts/invoice"
-      : "http://localhost:3000/delivery-receipts/delivery-receipts-no-invoice";
+      ? "/api/delivery-receipts/invoice"
+      : "/api/delivery-receipts/delivery-receipts-no-invoice";
 
     // Open PDF in new tab
     window.open(`${url}?orderId=${selectedRow.orderId}`, "_blank");
@@ -224,7 +224,7 @@ function OrdersTable() {
       console.log("Payload being sent:", payload);
 
       await axios.patch(
-        `http://localhost:3000/orders/${editableRow.orderId}`,
+        `/api/orders/${editableRow.orderId}`,
         payload
       );
 
@@ -273,7 +273,7 @@ function OrdersTable() {
 
     try {
       const res = await axios.get(
-        `http://localhost:3000/items?search=${value}`
+        `/api/items?search=${value}`
       );
 
       // Map prices into array for dropdown
@@ -331,7 +331,7 @@ function OrdersTable() {
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/packing-list/invoice",
+        "/api/packing-list/invoice",
         selectedRow,
         { responseType: "blob" } // important to handle PDF
       );
@@ -907,7 +907,7 @@ function OrdersTable() {
                       const user = JSON.parse(localStorage.getItem("user"));
                       const role = user?.role || "";
                       await axios.patch(
-                        `http://localhost:3000/orders/${selectedRow.orderId}/serve`,
+                        `/api/orders/${selectedRow.orderId}/serve`,
                         serveData,
                         {
                           params: { role },

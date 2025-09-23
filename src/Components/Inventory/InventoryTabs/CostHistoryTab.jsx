@@ -30,7 +30,7 @@ function CostHistoryTab({ item }) {
       setLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:3000/inventory/cost-history",
+          "/api/inventory/cost-history",
           {
             params: { itemName },
           }

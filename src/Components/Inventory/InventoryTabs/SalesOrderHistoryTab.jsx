@@ -31,7 +31,7 @@ function SalesOrderHistoryTab({item}) {
       }
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:3000/inventory/sales-order-history", {
+        const response = await axios.get("/api/inventory/sales-order-history", {
           params: { itemName },
         });
         console.log("Sales Order Data:", response.data);

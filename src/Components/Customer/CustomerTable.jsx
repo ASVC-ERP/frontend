@@ -116,7 +116,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerTIN,
       };
 
-      axios.post("http://localhost:3000/customers", newCustomer);
+      axios.post("/api/customers", newCustomer);
 
       Swal.fire({
         icon: "success",
@@ -156,7 +156,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerTIN,
       };
       await axios.put(
-        `http://localhost:3000/customers/${editingCustomer.customerID}`,
+        `/api/customers/${editingCustomer.customerID}`,
         updatedCustomer
       );
 
@@ -196,7 +196,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
   const handleDeleteCustomer = async (customerID) => {
     try {
-      await axios.delete(`http://localhost:3000/customers/${customerID}`);
+      await axios.delete(`/api/customers/${customerID}`);
       Swal.fire({
         icon: "success",
         title: "Deleted!",

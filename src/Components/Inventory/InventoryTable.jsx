@@ -268,7 +268,7 @@ function InventoryTable({
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`http://localhost:3000/items/${itemCode}`);
+        await axios.delete(`/api/items/${itemCode}`);
 
         Swal.fire({
           title: "Deleted!",
@@ -304,7 +304,7 @@ function InventoryTable({
 
     try {
       const response = await axios.post(
-        "http://localhost:3000/items/import",
+        "/api/items/import",
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

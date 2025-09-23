@@ -147,7 +147,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
 
   const handleUpdateSupplier = async () => {
     try {
-      await axios.put(`http://localhost:3000/suppliers/${selectedInvoice.id}`, {
+      await axios.put(`/api/suppliers/${selectedInvoice.id}`, {
         name: selectedInvoice.name,
         address: selectedInvoice.address,
         number: selectedInvoice.number,
@@ -213,7 +213,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     if (!result.isConfirmed) return;
 
     try {
-      await axios.delete(`http://localhost:3000/suppliers/${supplierID}`);
+      await axios.delete(`/api/suppliers/${supplierID}`);
 
       Swal.fire({
         icon: "success",

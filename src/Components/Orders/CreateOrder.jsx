@@ -48,7 +48,7 @@ function CreateOrder({
   const generateNextOrderId = async () => {
     try {
       // Fetch all orders from backend
-      const res = await fetch("http://localhost:3000/orders");
+      const res = await fetch("/api/orders");
       const orders = await res.json();
 
       if (!orders || orders.length === 0) {
@@ -99,7 +99,7 @@ function CreateOrder({
     console.log("JSON to be POSTed:\n", finalJson);
 
     try {
-      const response = await fetch("http://localhost:3000/orders", {
+      const response = await fetch("/api/orders", {
         // <-- your backend endpoint
         method: "POST",
         headers: { "Content-Type": "application/json" },

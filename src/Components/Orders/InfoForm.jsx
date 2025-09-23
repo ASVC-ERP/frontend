@@ -10,7 +10,7 @@ function InfoForm({ info, setInfo }) {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/customers");
+        const res = await axios.get("/api/customers");
         setCustomers(res.data);
       } catch (err) {
         console.error("Failed to fetch customers:", err);

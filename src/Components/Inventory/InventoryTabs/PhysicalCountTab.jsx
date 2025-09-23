@@ -29,7 +29,7 @@ function PhysicalCountTab({item}) {
       }
       setLoading(true);
       try {
-        const response = await axios.get("http://localhost:3000/inventory/physical-count", {
+        const response = await axios.get("/api/inventory/physical-count", {
           params: { itemName },
         });
         console.log("Physical Count Data:", response.data);
