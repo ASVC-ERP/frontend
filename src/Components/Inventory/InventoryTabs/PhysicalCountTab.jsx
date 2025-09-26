@@ -7,6 +7,8 @@ function PhysicalCountTab({item}) {
   const [loading, setLoading] = useState(true);
   const itemName = item?.itemName || "";
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const customStyles = {
     headCells: {
       style: {
@@ -29,7 +31,7 @@ function PhysicalCountTab({item}) {
       }
       setLoading(true);
       try {
-        const response = await axios.get("/api/inventory/physical-count", {
+        const response = await axios.get(`${API_URL}/inventory/physical-count`, {
           params: { itemName },
         });
         console.log("Physical Count Data:", response.data);

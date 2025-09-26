@@ -7,6 +7,8 @@ function CostHistoryTab({ item }) {
   const [loading, setLoading] = useState(true);
   const itemName = item?.itemName || "";
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const customStyles = {
     headCells: {
       style: {
@@ -30,7 +32,7 @@ function CostHistoryTab({ item }) {
       setLoading(true);
       try {
         const response = await axios.get(
-          "/api/inventory/cost-history",
+          `${API_URL}/inventory/cost-history`,
           {
             params: { itemName },
           }

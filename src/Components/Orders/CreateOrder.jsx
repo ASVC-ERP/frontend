@@ -21,6 +21,7 @@ function CreateOrder({
   onAddOrder,
 }) {
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     setInfo({
@@ -48,7 +49,7 @@ function CreateOrder({
   const generateNextOrderId = async () => {
     try {
       // Fetch all orders from backend
-      const res = await fetch("/api/orders");
+      const res = await fetch(`${API_URL}/orders`);
       const orders = await res.json();
 
       if (!orders || orders.length === 0) {
@@ -99,7 +100,7 @@ function CreateOrder({
     console.log("JSON to be POSTed:\n", finalJson);
 
     try {
-      const response = await fetch("/api/orders", {
+      const response = await fetch(`${API_URL}/orders`, {
         // <-- your backend endpoint
         method: "POST",
         headers: { "Content-Type": "application/json" },

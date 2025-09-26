@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
-import defaultPic from "../../assets/defaultPic.jpg";
+import defaultPic from "../../assets/ten.jpg";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -13,7 +13,7 @@ const columns = [
     selector: (row) => row.orderId,
     sortable: true,
     grow: 0,
-    minWidth: "140px",
+    minWidth: "130px",
   },
   {
     name: "Date",
@@ -25,7 +25,7 @@ const columns = [
       }),
     sortable: true,
     grow: 0,
-    width: "100px", // compact
+    minWidth: "100px",
   },
   {
     name: "Customer Name",
@@ -33,16 +33,18 @@ const columns = [
     sortable: true,
     grow: 3,
     minWidth: "200px",
+    wrap: true,
   },
   {
-    name: "Customer Address",
+    name: "Address",
     selector: (row) => row.customerAddress,
     sortable: true,
-    grow: 0,
+    grow: 3,
     minWidth: "250px",
+    wrap: true,
   },
   {
-    name: "Sales Agent",
+    name: "PIC",
     selector: (row) => row.salesAgent,
     sortable: true,
     grow: 0,
@@ -51,7 +53,7 @@ const columns = [
   {
     name: "Status",
     sortable: true,
-    grow: 2,
+    grow: 0,
     minWidth: "150px",
     cell: (row) => (
       <span
@@ -70,6 +72,8 @@ const columns = [
     ),
   },
 ];
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
 function OrdersTable() {
@@ -95,7 +99,7 @@ function OrdersTable() {
   // Function to fetch orders
   const fetchOrders = () => {
     axios
-      .get("/api/orders")
+      .get(`${API_URL}/orders`)
       .then((res) => {
         setOrders(res.data);
         setFilteredData(res.data);
@@ -123,8 +127,8 @@ function OrdersTable() {
   /*
   const handleCreateDeliveryReceipt = (withInvoice) => {
     const url = withInvoice
-      ? "/api/delivery-receipts/invoice"
-      : "/api/delivery-receipts/delivery-receipts-no-invoice";
+      ? `${API_URL}/delivery-receipts/invoice`
+      : `${API_URL}/delivery-receipts/delivery-receipts-no-invoice`;
 
     // Open PDF in new tab
     window.open(`${url}?orderId=${selectedRow.orderId}`, "_blank");
@@ -223,10 +227,7 @@ function OrdersTable() {
 
       console.log("Payload being sent:", payload);
 
-      await axios.patch(
-        `/api/orders/${editableRow.orderId}`,
-        payload
-      );
+      await axios.patch(`${API_URL}/orders/${editableRow.orderId}`, payload);
 
       setOrders((prev) =>
         prev.map((o) =>
@@ -272,9 +273,7 @@ function OrdersTable() {
     }
 
     try {
-      const res = await axios.get(
-        `/api/items?search=${value}`
-      );
+      const res = await axios.get(`${API_URL}/items?search=${value}`);
 
       // Map prices into array for dropdown
       const itemsWithPrices = res.data.map((item) => ({
@@ -331,7 +330,7 @@ function OrdersTable() {
 
     try {
       const response = await axios.post(
-        "/api/packing-list/invoice",
+        `${API_URL}/packing-list/invoice`,
         selectedRow,
         { responseType: "blob" } // important to handle PDF
       );
@@ -431,526 +430,677 @@ function OrdersTable() {
       />
 
       {showRowModal && selectedRow && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header d-flex flex-column align-items-start">
-                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <p
-                    className="mb-2"
-                    style={{ color: "#05050599", fontSize: "12px" }}
-                  >
-                    Sales &gt; Order &gt; {selectedRow.orderId}
-                  </p>
-                  <button
-                    type="button"
-                    className="btn-close p-4"
-                    onClick={() => setShowRowModal(false)}
-                  ></button>
-                </div>
-                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <h5 className="mb-0" style={{ color: "#0C1D61" }}>
-                    Order ID: {selectedRow.orderId}
-                  </h5>
-                  <div className="d-flex gap-2">
-                    {/*
+        <>
+          {/* Backdrop */}
+          <div className="modal-backdrop fade show"></div>
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+            <div className="modal-dialog modal-lg" role="document">
+              <div className="modal-content">
+                <div
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    borderRadius: "0.5rem 0.5rem 0 0",
+                    cursor: "move", // for draggable
+                  }}
+                >
+                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
+                      Sales &gt; Order &gt; {selectedRow.orderId}
+                    </p>
                     <button
                       type="button"
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={handleRequestInvoice}
-                    >
-                      Request Invoice
-                    </button>
-*/}
-                    {selectedRow?.status?.trim().toLowerCase() !== "served" && (
-                      <button
-                        type="button"
-                        className="btn btn-sm"
-                        style={{ backgroundColor: "#0C1D61", color: "white" }}
-                        onClick={() => {
-                          setShowRowModal(false);
-                          setShowEditModal(true);
-                        }}
-                      >
-                        Edit
-                      </button>
-                    )}
-                    {selectedRow?.status?.trim().toLowerCase() !== "served" && (
-                      <button
-                        type="button"
-                        className="btn btn-sm"
-                        style={{ backgroundColor: "#0C1D61", color: "white" }}
-                        onClick={() => handlePrint(true)}
-                      >
-                        Print
-                      </button>
-                    )}
-                    {selectedRow?.status?.trim().toLowerCase() !== "served" && (
-                      <button
-                        type="button"
-                        className="btn btn-sm"
-                        style={{ backgroundColor: "#0C1D61", color: "white" }}
-                        onClick={() => {
-                          setShowRowModal(false);
-                          handleServe(selectedRow);
-                        }}
-                      >
-                        Serve
-                      </button>
-                    )}
+                      className="btn-close btn-close-white p-4"
+                      onClick={() => setShowRowModal(false)}
+                    ></button>
+                  </div>
+
+                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    <h5 className="mb-0">Order ID: {selectedRow.orderId}</h5>
+                    <div className="d-flex gap-2">
+                      {selectedRow?.status?.trim().toLowerCase() !==
+                        "served" && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-light"
+                          style={{ color: "#0C1D61" }}
+                          onClick={() => {
+                            setShowRowModal(false);
+                            setShowEditModal(true);
+                          }}
+                        >
+                          Edit
+                        </button>
+                      )}
+                      {selectedRow?.status?.trim().toLowerCase() !==
+                        "served" && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-light"
+                          style={{ color: "#0C1D61" }}
+                          onClick={() => handlePrint(true)}
+                        >
+                          Print
+                        </button>
+                      )}
+                      {selectedRow?.status?.trim().toLowerCase() !==
+                        "served" && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-light"
+                          style={{ color: "#0C1D61" }}
+                          onClick={() => {
+                            setShowRowModal(false);
+                            handleServe(selectedRow);
+                          }}
+                        >
+                          Serve
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="modal-body">
-                <div
-                  className=" rounded-3"
-                  style={{ maxHeight: "250px", overflowY: "auto" }}
-                >
-                  <ul className="list-unstyled">
-                    {selectedRow.orderedItems.map((item, index) => (
-                      <li key={index}>
-                        <div className="d-flex justify-content-between align-items-start mb-2">
-                          {/* Image and Product Info */}
-                          <div className="d-flex align-items-center gap-3">
-                            <img
-                              src={defaultPic}
-                              alt="Product"
-                              style={{
-                                width: "40px",
-                                height: "40px",
-                                objectFit: "cover",
-                                borderRadius: "6px",
-                              }}
-                            />
-                            <div className="d-flex flex-column">
-                              <span className="fw-semibold">
-                                {item.itemName}
-                              </span>
+
+                <div className="modal-body">
+                  <div
+                    className=" rounded-3"
+                    style={{
+                      maxHeight: "250px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    <ul className="list-unstyled">
+                      {selectedRow.orderedItems.map((item, index) => (
+                        <>
+                          <li key={index}>
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              {/* Image and Product Info */}
+                              <div className="d-flex align-items-center justify-content-center gap-3">
+                                <span className="fw-semibold">
+                                  {item.itemName}
+                                </span>
+                              </div>
+
+                              {/* Price and Qty */}
+                              <div className="text-end d-flex flex-column">
+                                <span className="fw-semibold">
+                                  ₱
+                                  {(item.price * item.quantity).toLocaleString(
+                                    undefined,
+                                    {
+                                      minimumFractionDigits: 2,
+                                    }
+                                  )}
+                                </span>
+                                <small className="text-muted">
+                                  Qty: {item.quantity}
+                                </small>
+                              </div>
                             </div>
-                          </div>
+                          </li>
+                          <hr className="my-0 border-secondary" />
+                        </>
+                      ))}
+                    </ul>
+                  </div>
 
-                          {/* Price and Qty */}
-                          <div className="text-end d-flex flex-column">
-                            <span className="fw-semibold">
-                              ₱
-                              {(item.price * item.quantity).toLocaleString(
-                                undefined,
-                                {
-                                  minimumFractionDigits: 2,
-                                }
-                              )}
-                            </span>
-                            <small className="text-muted">
-                              Qty: {item.quantity}
-                            </small>
-                          </div>
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                  {/* Total Row */}
+                  <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
+                    <span className="h5 fw-semibold ">Total</span>
+                    <span className="fw-bold h5">
+                      ₱
+                      {selectedRow.totalPrice.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Total Row */}
-                <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
-                  <span className="h5 fw-semibold ">Total</span>
-                  <span className="fw-bold h5">
-                    ₱
-                    {selectedRow.totalPrice.toLocaleString(undefined, {
-                      minimumFractionDigits: 2,
+                {/* Modal Footer */}
+                <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
+                  <div>
+                    <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
+                      {selectedRow.customerName}
+                    </p>
+                    <p className="mb-0 small">{selectedRow.customerAddress}</p>
+                    <p className="mb-0 small">{selectedRow.customerNumber}</p>
+                  </div>
+                  <p className="text-muted small mb-0">
+                    {new Date(selectedRow.date).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
                     })}
-                  </span>
-                </div>
-              </div>
-
-              {/* Modal Footer */}
-              <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
-                <div>
-                  <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
-                    {selectedRow.customerName}
                   </p>
-                  <p className="mb-0 small">{selectedRow.customerAddress}</p>
-                  <p className="mb-0 small">{selectedRow.customerNumber}</p>
                 </div>
-                <p className="text-muted small mb-0">
-                  {new Date(selectedRow.date).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* REQUEST INVOICE MODAL */}
       {showRequestModal && selectedRow && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog" role="document">
-            <div className="modal-content">
-              <div className="modal-header d-flex flex-column align-items-start">
-                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <p
-                    className="mb-2"
-                    style={{ color: "#05050599", fontSize: "12px" }}
-                  >
-                    Sales &gt; Order &gt; {selectedRow.orderId}
+        <>
+          {/* Backdrop */}
+          <div className="modal-backdrop fade show"></div>
+
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+            <div className="modal-dialog" role="document">
+              <div className="modal-content">
+                <div className="modal-header d-flex flex-column align-items-start">
+                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    <p
+                      className="mb-2"
+                      style={{ color: "#05050599", fontSize: "12px" }}
+                    >
+                      Sales &gt; Order &gt; {selectedRow.orderId}
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-close p-4"
+                      onClick={() => setShowRequestModal(false)}
+                    ></button>
+                  </div>
+                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    <h5 className="mb-0" style={{ color: "#0C1D61" }}>
+                      Order ID: {selectedRow.orderId}
+                    </h5>
+                  </div>
+                </div>
+
+                {/* Modal Body */}
+                <div className="modal-body">
+                  <p className="h5">
+                    {" "}
+                    What type of document would you like to create?{" "}
                   </p>
-                  <button
-                    type="button"
-                    className="btn-close p-4"
-                    onClick={() => setShowRequestModal(false)}
-                  ></button>
-                </div>
-                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <h5 className="mb-0" style={{ color: "#0C1D61" }}>
-                    Order ID: {selectedRow.orderId}
-                  </h5>
-                </div>
-              </div>
 
-              {/* Modal Body */}
-              <div className="modal-body">
-                <p className="h5">
-                  {" "}
-                  What type of document would you like to create?{" "}
-                </p>
-
-                <div className="d-flex justify-content-center gap-3 mt-4 mb-3">
-                  <button
-                    className="btn"
-                    style={{ backgroundColor: "#0C1D61", color: "white" }}
-                    onClick={() => handleCreateDeliveryReceipt(true)}
-                  >
-                    Delivery Receipt with Invoice
-                  </button>
-                  <button
-                    className="btn"
-                    style={{ backgroundColor: "#0C1D61", color: "white" }}
-                    onClick={() => handleCreateDeliveryReceipt(false)}
-                  >
-                    Delivery Receipt
-                  </button>
+                  <div className="d-flex justify-content-center gap-3 mt-4 mb-3">
+                    <button
+                      className="btn"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      onClick={() => handleCreateDeliveryReceipt(true)}
+                    >
+                      Delivery Receipt with Invoice
+                    </button>
+                    <button
+                      className="btn"
+                      style={{ backgroundColor: "#0C1D61", color: "white" }}
+                      onClick={() => handleCreateDeliveryReceipt(false)}
+                    >
+                      Delivery Receipt
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              {/* Modal Footer */}
-              <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
-                <div>
-                  <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
-                    {selectedRow.customerName}
+                {/* Modal Footer */}
+                <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
+                  <div>
+                    <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
+                      {selectedRow.customerName}
+                    </p>
+                    <p className="mb-0 small">{selectedRow.customerAddress}</p>
+                    <p className="mb-0 small">{selectedRow.customerNumber}</p>
+                  </div>
+                  <p className="text-muted small mb-0">
+                    {new Date(selectedRow.date).toLocaleDateString("en-GB", {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    })}
                   </p>
-                  <p className="mb-0 small">{selectedRow.customerAddress}</p>
-                  <p className="mb-0 small">{selectedRow.customerNumber}</p>
                 </div>
-                <p className="text-muted small mb-0">
-                  {new Date(selectedRow.date).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* EDIT MODAL */}
       {showEditModal && selectedRow && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog modal-lg" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="mb-0">Edit Order {selectedRow.orderId}</h5>
-                <button
-                  type="button"
-                  className="btn-close p-4"
-                  onClick={() => setShowEditModal(false)}
-                ></button>
-              </div>
-
-              <div className="modal-body">
-                <h6 className="mb-0">Customer Details</h6>
-                <form>
-                  <div className="mb-2">
-                    <input
-                      type="text"
-                      name="customerName"
-                      value={editableRow.customerName}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
-                    <input
-                      type="text"
-                      name="customerAddress"
-                      value={editableRow.customerAddress}
-                      onChange={handleInputChange}
-                      className="form-control"
-                    />
+        <>
+          {/* Backdrop */}
+          <div className="modal-backdrop fade show"></div>
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+            <div className="modal-dialog modal-xl" role="document">
+              <div className="modal-content">
+                {/* Header */}
+                <div
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    borderRadius: "0.5rem 0.5rem 0 0",
+                    cursor: "move", // draggable handle
+                  }}
+                >
+                  <div className="w-100 d-flex justify-content-between align-items-center ">
+                    <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
+                      Sales &gt; Order &gt; {selectedRow.orderId}
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-close btn-close-white p-4"
+                      onClick={() => setShowEditModal(false)}
+                    ></button>
                   </div>
 
-                  <hr />
-                  <h6>Ordered Items</h6>
-                  {editableRow?.orderedItems.map((item, index) => (
-                    <div
-                      key={index}
-                      className="position-relative d-flex gap-2 mb-2 align-items-center"
-                    >
-                      <div className="flex-grow-1 position-relative">
+                  <div className="w-100 d-flex justify-content-between align-items-center ">
+                    <h5 className="mb-0">Edit Order {selectedRow.orderId}</h5>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="modal-body">
+                  <h6 className="mb-1">Customer Details</h6>
+                  <form>
+                    <div className="row mb-2">
+                      {/* Name */}
+                      <div className="col-md-6">
+                        <label htmlFor="customerName" className="form-label">
+                          Name
+                        </label>
                         <input
                           type="text"
-                          value={activeIndex === index ? query : item.itemName}
-                          onChange={(e) =>
-                            handleSearchChange(index, e.target.value)
-                          }
+                          id="customerName"
+                          name="customerName"
+                          value={editableRow.customerName}
+                          onChange={handleInputChange}
                           className="form-control"
-                          placeholder="Search item..."
+                          placeholder="Customer Name"
                         />
-
-                        {/* Suggestions dropdown */}
-                        {activeIndex === index && suggestions.length > 0 && (
-                          <ul
-                            style={{
-                              position: "absolute",
-                              top: "100%",
-                              left: 0,
-                              right: 0,
-                              backgroundColor: "#fff",
-                              border: "1px solid #ccc",
-                              listStyle: "none",
-                              margin: 0,
-                              padding: 0,
-                              zIndex: 1000,
-                              maxHeight: "200px",
-                              overflowY: "auto",
-                            }}
-                          >
-                            {suggestions.map((s, i) => (
-                              <li
-                                key={i}
-                                onClick={() => handleSelectSuggestion(index, s)}
-                                style={{
-                                  padding: "8px",
-                                  cursor: "pointer",
-                                  borderBottom: "1px solid #eee",
-                                }}
-                              >
-                                <strong>{s.itemName}</strong> <br />
-                                Stock: {s.stock}
-                              </li>
-                            ))}
-                          </ul>
-                        )}
                       </div>
 
-                      {/* Quantity */}
-                      <input
-                        type="number"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(index, "quantity", e.target.value)
-                        }
-                        className="form-control"
-                        style={{ width: "80px" }}
-                      />
-
-                      <select
-                        value={item.price || 0}
-                        onChange={(e) =>
-                          updateItem(index, "price", e.target.value)
-                        }
-                        className="form-select"
-                        style={{ width: "120px" }}
-                      >
-                        {item.availablePrices?.map((p, i) => (
-                          <option key={i} value={p}>
-                            ₱{p.toLocaleString()}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* Total for this item */}
-                      <div
-                        className="text-end fw-semibold"
-                        style={{ width: "100px" }}
-                      >
-                        ₱
-                        {(item.price * item.quantity).toLocaleString(
-                          undefined,
-                          { minimumFractionDigits: 2 }
-                        )}
+                      {/* Address */}
+                      <div className="col-md-6">
+                        <label htmlFor="customerAddress" className="form-label">
+                          Address
+                        </label>
+                        <input
+                          type="text"
+                          id="customerAddress"
+                          name="customerAddress"
+                          value={editableRow.customerAddress}
+                          onChange={handleInputChange}
+                          className="form-control"
+                          placeholder="Customer Address"
+                        />
                       </div>
-
+                    </div>
+                    <hr />
+                    <div className="d-flex justify-content-between align-items-center mb-2">
+                      <h6 className="mb-0">Ordered Items</h6>
                       <button
                         type="button"
-                        className="btn btn-sm btn-danger"
-                        onClick={() => removeItem(index)}
+                        className="btn btn-sm btn-success"
+                        onClick={addItem}
                       >
-                        Remove
+                        + Add Item
                       </button>
-                    </div>
-                  ))}
+                    </div>{" "}
+                    <div
+                      className="rounded-3"
+                      style={{ maxHeight: "250px", overflowY: "auto" }}
+                    >
+                      {editableRow?.orderedItems.map((item, index) => (
+                        <div
+                          key={index}
+                          className="position-relative d-flex gap-2 mb-2 align-items-center"
+                        >
+                          {/* Item Search */}
+                          <div className="flex-grow-1 position-relative">
+                            <input
+                              type="text"
+                              value={
+                                activeIndex === index ? query : item.itemName
+                              }
+                              onChange={(e) =>
+                                handleSearchChange(index, e.target.value)
+                              }
+                              className="form-control"
+                              placeholder="Search item..."
+                            />
 
-                  {/* Add Item Button */}
+                            {/* Suggestions dropdown */}
+                            {activeIndex === index &&
+                              suggestions.length > 0 && (
+                                <ul
+                                  style={{
+                                    position: "absolute",
+                                    top: "100%",
+                                    left: 0,
+                                    right: 0,
+                                    backgroundColor: "#fff",
+                                    border: "1px solid #ccc",
+                                    listStyle: "none",
+                                    margin: 0,
+                                    padding: 0,
+                                    zIndex: 1000,
+                                    maxHeight: "200px",
+                                    overflowY: "auto",
+                                  }}
+                                >
+                                  {suggestions.map((s, i) => (
+                                    <li
+                                      key={i}
+                                      onClick={() =>
+                                        handleSelectSuggestion(index, s)
+                                      }
+                                      style={{
+                                        padding: "8px",
+                                        cursor: "pointer",
+                                        borderBottom: "1px solid #eee",
+                                      }}
+                                    >
+                                      <strong>{s.itemName}</strong> <br />
+                                      Stock: {s.stock}
+                                    </li>
+                                  ))}
+                                </ul>
+                              )}
+                          </div>
+
+                          {/* Quantity */}
+                          <input
+                            type="number"
+                            value={item.quantity}
+                            onChange={(e) =>
+                              updateItem(index, "quantity", e.target.value)
+                            }
+                            className="form-control"
+                            style={{ width: "80px" }}
+                          />
+
+                          {/* Price options */}
+                          <select
+                            value={item.price || 0}
+                            onChange={(e) =>
+                              updateItem(index, "price", e.target.value)
+                            }
+                            className="form-select"
+                            style={{ width: "120px" }}
+                          >
+                            {item.availablePrices?.map((p, i) => (
+                              <option key={i} value={p}>
+                                ₱{p.toLocaleString()}
+                              </option>
+                            ))}
+                          </select>
+
+                          {/* Item total */}
+                          <div
+                            className="text-end fw-semibold"
+                            style={{ width: "100px" }}
+                          >
+                            ₱
+                            {(item.price * item.quantity).toLocaleString(
+                              undefined,
+                              {
+                                minimumFractionDigits: 2,
+                              }
+                            )}
+                          </div>
+
+                          {/* Remove */}
+                          <button
+                            type="button"
+                            className="btn btn-sm"
+                            style={{
+                              backgroundColor: "#B64345",
+                              color: "white",
+                            }}
+                            onClick={() => removeItem(index)}
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </form>
+                </div>
+
+                {/* Footer */}
+                <div className="modal-footer d-flex justify-content-between align-items-center">
                   <button
                     type="button"
-                    className="btn btn-sm btn-success mt-2"
-                    onClick={addItem}
+                    className="btn ms-auto"
+                    style={{ backgroundColor: "#B64345", color: "white" }}
+                    onClick={() => setShowEditModal(false)}
                   >
-                    + Add Item
+                    Cancel
                   </button>
-                </form>
-              </div>
-
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowEditModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={handleSave}
-                >
-                  Save Changes
-                </button>
+                  <button
+                    type="button"
+                    className="btn"
+                    style={{ backgroundColor: "#0C1D61", color: "white" }}
+                    onClick={handleSave}
+                  >
+                    Save Changes
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* SERVE MODAL */}
       {showServeModal && selectedRow && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog modal-lg" role="document">
-            <div className="modal-content">
-              <div className="modal-header">
-                <h5 className="mb-0">
-                  Serve Items for Order {selectedRow.orderId}
-                </h5>
-                <button
-                  type="button"
-                  className="btn-close p-4"
-                  onClick={() => setShowServeModal(false)}
-                ></button>
-              </div>
+        <>
+          {/* Backdrop */}
+          <div className="modal-backdrop fade show"></div>
 
-              <div className="modal-body">
-                {serveData.items.map((item, index) => (
-                  <div
-                    key={index}
-                    className="d-flex gap-2 align-items-center mb-2"
-                  >
-                    <div className="flex-grow-1">{item.itemName}</div>
-                    <div>
-                      <input
-                        type="number"
-                        min={0}
-                        max={item.quantityOrdered}
-                        value={item.quantityServed}
-                        onChange={(e) =>
-                          updateServeQuantity(
-                            index,
-                            "quantityServed",
-                            e.target.value
-                          )
-                        }
-                        className="form-control"
-                        placeholder="Served"
-                        style={{ width: "100px" }}
-                      />
-                    </div>
-                    <div>
-                      <input
-                        type="number"
-                        min={0}
-                        max={item.quantityOrdered}
-                        value={item.quantityUnserved}
-                        onChange={(e) =>
-                          updateServeQuantity(
-                            index,
-                            "quantityUnserved",
-                            e.target.value
-                          )
-                        }
-                        className="form-control"
-                        placeholder="Unserved"
-                        style={{ width: "100px" }}
-                      />
-                    </div>
-                    <div>Ordered: {item.quantityOrdered}</div>
-                  </div>
-                ))}
-              </div>
-
-              <div className="modal-footer">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowServeModal(false)}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="button"
-                  className="btn btn-primary"
-                  onClick={async () => {
-                    // send data to backend
-                    try {
-                      const user = JSON.parse(localStorage.getItem("user"));
-                      const role = user?.role || "";
-                      await axios.patch(
-                        `/api/orders/${selectedRow.orderId}/serve`,
-                        serveData,
-                        {
-                          params: { role },
-                        }
-                      );
-                      if (role.toLowerCase() === "admin") {
-                        Swal.fire({
-                          icon: "success",
-                          title: "Served",
-                          text: "Serve data submitted successfully",
-                          timer: 2000,
-                          showConfirmButton: false,
-                        });
-
-                        fetchOrders();
-                      } else {
-                        Swal.fire({
-                          icon: "success",
-                          title: "Requested",
-                          text: "Serve data Requested successfully",
-                          timer: 2000,
-                          showConfirmButton: false,
-                        });
-                        fetchOrders();
-                      }
-
-                      setShowServeModal(false);
-                    } catch (err) {
-                      console.error(err);
-                      Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: "Failed to submit serve data",
-                      });
-                    }
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+            <div className="modal-dialog modal-lg" role="document">
+              <div className="modal-content">
+                {/* Header */}
+                <div
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  style={{
+                    background:
+                      "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    borderRadius: "0.5rem 0.5rem 0 0",
                   }}
                 >
-                  Serve
-                </button>
+                  <div className="w-100 d-flex justify-content-between align-items-center">
+                    <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
+                      Kitchen &gt; Serve &gt; {selectedRow.orderId}
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-close btn-close-white p-4"
+                      onClick={() => setShowServeModal(false)}
+                    ></button>
+                  </div>
+
+                  <div className="w-100 d-flex justify-content-between align-items-center">
+                    <h5 className="mb-0">
+                      Serve Items for Order {selectedRow.orderId}
+                    </h5>
+                  </div>
+                </div>
+
+                {/* Body */}
+                <div className="modal-body">
+                  <h6 className="mb-3">Order Items</h6>
+
+                  {/* Header Labels */}
+                  <div className="d-flex gap-2 align-items-center mb-2 pb-2 border-bottom me-4">
+                    <div
+                      className="flex-grow-1 fw-semibold text-muted"
+                      style={{ fontSize: "14px" }}
+                    >
+                      Item Name
+                    </div>
+                    <div
+                      className="text-center fw-semibold text-muted"
+                      style={{ width: "100px", fontSize: "14px" }}
+                    >
+                      Served
+                    </div>
+                    <div
+                      className="text-center fw-semibold text-muted"
+                      style={{ width: "100px", fontSize: "14px" }}
+                    >
+                      Unserved
+                    </div>
+                    <div
+                      className="text-center fw-semibold text-muted"
+                      style={{ width: "80px", fontSize: "14px" }}
+                    >
+                      Ordered
+                    </div>
+                  </div>
+
+                  {/* Scrollable Items Container */}
+                  <div
+                    className="rounded-3"
+                    style={{
+                      maxHeight: "300px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    <ul className="list-unstyled">
+                      {serveData.items.map((item, index) => (
+                        <li
+                          key={index}
+                          className="d-flex flex-column"
+                          style={{ gap: "5px" }}
+                        >
+                          <div
+                            className="d-flex justify-content-between align-items-center"
+                            style={{ gap: "10px" }}
+                          >
+                            {/* Item Name */}
+                            <div className="flex-grow-1 d-flex align-items-center">
+                              <span className="fw-medium">{item.itemName}</span>
+                            </div>
+
+                            {/* Served */}
+                            <div className="d-flex align-items-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={item.quantityOrdered}
+                                value={item.quantityServed}
+                                onChange={(e) =>
+                                  updateServeQuantity(
+                                    index,
+                                    "quantityServed",
+                                    e.target.value
+                                  )
+                                }
+                                className="form-control text-center"
+                                placeholder="0"
+                                style={{ width: "100px" }}
+                              />
+                            </div>
+
+                            {/* Unserved */}
+                            <div className="d-flex align-items-center">
+                              <input
+                                type="number"
+                                min={0}
+                                max={item.quantityOrdered}
+                                value={item.quantityUnserved}
+                                onChange={(e) =>
+                                  updateServeQuantity(
+                                    index,
+                                    "quantityUnserved",
+                                    e.target.value
+                                  )
+                                }
+                                className="form-control text-center"
+                                placeholder="0"
+                                style={{ width: "100px" }}
+                              />
+                            </div>
+
+                            {/* Ordered */}
+                            <div
+                              className="d-flex align-items-center justify-content-center fw-semibold"
+                              style={{ width: "80px" }}
+                            >
+                              {item.quantityOrdered}
+                            </div>
+                          </div>
+
+                          {/* Divider line between items, hide for last item */}
+                          {index < serveData.items.length - 1 && (
+                            <hr className="my-1 border-secondary w-100" />
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Footer */}
+                <div className="modal-footer d-flex justify-content-between align-items-center">
+                  <button
+                    type="button"
+                    className="btn ms-auto"
+                    onClick={() => setShowServeModal(false)}
+                    style={{ backgroundColor: "#B64345", color: "white" }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    className="btn"
+                    style={{ backgroundColor: "#0C1D61", color: "white" }}
+                    onClick={async () => {
+                      try {
+                        const user = JSON.parse(localStorage.getItem("user"));
+                        const role = user?.role || "";
+                        await axios.patch(
+                          `${API_URL}/orders/${selectedRow.orderId}/serve`,
+                          serveData,
+                          {
+                            params: { role },
+                          }
+                        );
+                        if (role.toLowerCase() === "admin") {
+                          Swal.fire({
+                            icon: "success",
+                            title: "Served",
+                            text: "Serve data submitted successfully",
+                            timer: 2000,
+                            showConfirmButton: false,
+                          });
+
+                          fetchOrders();
+                        } else {
+                          Swal.fire({
+                            icon: "success",
+                            title: "Requested",
+                            text: "Serve data Requested successfully",
+                            timer: 2000,
+                            showConfirmButton: false,
+                          });
+                          fetchOrders();
+                        }
+
+                        setShowServeModal(false);
+                      } catch (err) {
+                        console.error(err);
+                        Swal.fire({
+                          icon: "error",
+                          title: "Error",
+                          text: "Failed to submit serve data",
+                        });
+                      }
+                    }}
+                  >
+                    Serve
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </div>
   );

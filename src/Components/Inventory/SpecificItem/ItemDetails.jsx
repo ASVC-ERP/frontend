@@ -6,11 +6,10 @@ import showAlert from "../../Swal";
 
 function ItemDetails({ item, onUpdate }) {
   const user = JSON.parse(localStorage.getItem("user"));
-  // Edit Stock
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState();
 
-  console.log("Item details:", item);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [formData, setFormData] = useState({
     itemCode: item.itemCode || "",
@@ -52,7 +51,7 @@ function ItemDetails({ item, onUpdate }) {
   const handleSave = async () => {
     try {
       const response = await fetch(
-        `/api/inventory/update-inventory`,
+        `${API_URL}/inventory/update-inventory`,
         {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
@@ -97,7 +96,7 @@ function ItemDetails({ item, onUpdate }) {
     try {
       const PIC = user.firstName || "";
       const response = await axios.get(
-        "/api/inventory/adjust-stock",
+        `${API_URL}/inventory/adjust-stock`,
         {
           params: {
             itemName: item.itemName,
@@ -161,7 +160,7 @@ function ItemDetails({ item, onUpdate }) {
 
     try {
       const response = await axios.get(
-        "/api/inventory/update-price",
+        `${API_URL}/inventory/update-price`,
         {
           params: {
             itemName: item.itemName,

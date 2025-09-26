@@ -9,12 +9,13 @@ function LoginPage({ onLoginSuccess }) {
   const [error, setError] = useState("");
 
   const navigate = useNavigate();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const response = await axios.post("/api/auth/login", {
+      const response = await axios.post(`${API_URL}/auth/login`, {
         username,
         password,
       });

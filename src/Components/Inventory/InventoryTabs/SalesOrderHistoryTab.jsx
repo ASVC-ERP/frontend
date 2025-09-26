@@ -5,10 +5,13 @@ import DataTable from "react-data-table-component";
 /*
 function SalesOrderHistoryTab({ itemName }) {
 */
-function SalesOrderHistoryTab({item}) {
+function SalesOrderHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const itemName = item?.itemName || "";
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const customStyles = {
     headCells: {
       style: {
@@ -21,7 +24,7 @@ function SalesOrderHistoryTab({item}) {
     },
   };
 
-    useEffect(() => {
+  useEffect(() => {
     console.log("Fetching Sales Order for item:", itemName);
     const fetchData = async () => {
       if (!itemName) {
@@ -31,9 +34,12 @@ function SalesOrderHistoryTab({item}) {
       }
       setLoading(true);
       try {
-        const response = await axios.get("/api/inventory/sales-order-history", {
-          params: { itemName },
-        });
+        const response = await axios.get(
+          `${API_URL}/inventory/sales-order-history`,
+          {
+            params: { itemName },
+          }
+        );
         console.log("Sales Order Data:", response.data);
         setData(response.data);
       } catch (error) {
@@ -48,14 +54,18 @@ function SalesOrderHistoryTab({item}) {
   }, [itemName]);
 
   const columns = [
-    { name: "Date", selector: row => row.date, sortable: true },
-    { name: "Order ID", selector: row => row.orderID, sortable: true },
-    { name: "Customer Name", selector: row => row.customerName, sortable: true },
-    { name: "Price", selector: row => row.price, sortable: true },
-    { name: "Quantity", selector: row => row.quantity, sortable: true },
-    { name: "Served", selector: row => row.served, sortable: true },
-    { name: "Unserved", selector: row => row.unserved, sortable: true },
-    { name: "Total Price", selector: row => row.totalPrice, sortable: true },
+    { name: "Date", selector: (row) => row.date, sortable: true },
+    { name: "Order ID", selector: (row) => row.orderID, sortable: true },
+    {
+      name: "Customer Name",
+      selector: (row) => row.customerName,
+      sortable: true,
+    },
+    { name: "Price", selector: (row) => row.price, sortable: true },
+    { name: "Quantity", selector: (row) => row.quantity, sortable: true },
+    { name: "Served", selector: (row) => row.served, sortable: true },
+    { name: "Unserved", selector: (row) => row.unserved, sortable: true },
+    { name: "Total Price", selector: (row) => row.totalPrice, sortable: true },
   ];
 
   return (
@@ -73,6 +83,6 @@ function SalesOrderHistoryTab({item}) {
       />
     </div>
   );
-};
+}
 
 export default SalesOrderHistoryTab;

@@ -13,8 +13,8 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       name: "Invoice ID",
       selector: (row) => row.invoiceID,
       sortable: true,
-      grow: 3,
-      minWidth: "140px",
+      grow: 1,
+      minWidth: "150px",
     },
     {
       name: "Date",
@@ -32,75 +32,42 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       name: "Customer Name",
       selector: (row) => row.customerName,
       sortable: true,
-      grow: 3,
+      grow: 1,
       minWidth: "200px",
+      wrap: true,
     },
+    // {
+    //   name: "Address",
+    //   selector: (row) => row.customerAddress,
+    //   sortable: true,
+    //   grow: 0,
+    //   minWidth: "180px",
+    //   maxWidth: "250px",
+    //   wrap: true,
+    // },
+    // {
+    //   name: "Number",
+    //   selector: (row) => row.customerNumber,
+    //   sortable: true,
+    //   grow: 0,
+    //   width: "140px",
+    // },
     {
-      name: "Customer Address",
-      selector: (row) => row.customerAddress,
-      sortable: true,
-      grow: 0,
-      minWidth: "180px",
-      maxWidth: "250px",
-    },
-    {
-      name: "Customer Number",
-      selector: (row) => row.customerNumber,
-      sortable: true,
-      grow: 0,
-      width: "140px",
-    },
-    {
-      name: "Sales Agent",
+      name: "PIC",
       selector: (row) => row.salesAgent,
       sortable: true,
       grow: 0,
       width: "140px",
     },
     {
-      name: "Status",
+      name: "Waybill Number",
       cell: (row) => {
-        const effectiveStatus = pendingChanges[row.invoiceID] ?? row.status;
-
         return (
           <div className="d-flex align-items-center gap-2">
-            <Dropdown onClick={(e) => e.stopPropagation()}>
-              <Dropdown.Toggle
-                size="sm"
-                variant="secondary"
-                className={`badge ${
-                  effectiveStatus === "Pending"
-                    ? "bg-secondary"
-                    : effectiveStatus === "Out For Delivery"
-                    ? "bg-warning text-dark"
-                    : effectiveStatus === "Delivered"
-                    ? "bg-success"
-                    : "bg-dark"
-                }`}
-              >
-                {effectiveStatus}
-              </Dropdown.Toggle>
-
-              <Dropdown.Menu container={document.body}>
-                <Dropdown.Item
-                  onClick={() => handleStatusChange(row, "Pending")}
-                >
-                  <span className="badge bg-secondary">Pending</span>
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => handleStatusChange(row, "Out For Delivery")}
-                >
-                  <span className="badge bg-warning text-dark">
-                    Out For Delivery
-                  </span>
-                </Dropdown.Item>
-                <Dropdown.Item
-                  onClick={() => handleStatusChange(row, "Delivered")}
-                >
-                  <span className="badge bg-success">Delivered</span>
-                </Dropdown.Item>
-              </Dropdown.Menu>
-            </Dropdown>
+            <input
+              type="text"
+              className="form-control border border-secondary"
+            />
 
             <Button
               variant="outline-success"
@@ -134,6 +101,8 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       minWidth: "150px",
     },
   ];
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -190,7 +159,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       };
 
       const response = await axios.post(
-        "/api/packing-list/invoice-final",
+        `${API_URL}/packing-list/invoice-final`,
         payload,
         { responseType: "blob" } // important for PDF
       );
@@ -215,7 +184,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     try {
       // type should be 'a' or 'b'
       const response = await axios.post(
-        `/api/delivery-receipts/${type}`,
+        `${API_URL}/delivery-receipts/${type}`,
         selectedRow,
         { responseType: "blob" } // important for PDF
       );
@@ -246,7 +215,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     if (!newStatus) return;
 
     axios
-      .put(`/api/invoice/${row.invoiceID}/status`, {
+      .put(`${API_URL}/invoice/${row.invoiceID}/status`, {
         status: newStatus,
       })
       .then(() => {
@@ -292,7 +261,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`/api/invoice/${row.invoiceID}`)
+          .delete(`${API_URL}/invoice/${row.invoiceID}`)
           .then((res) => {
             // Remove invoice from table
             setFilteredData((prev) =>
@@ -339,54 +308,91 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       {/* Row Modal */}
       {showRowModal && selectedRow && (
         <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-          <div className="modal-dialog" role="document">
+          <div className="modal-dialog modal-lg" role="document">
             <div className="modal-content">
-              <div className="modal-header d-flex flex-column align-items-start">
-                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <p
-                    className="mb-2"
-                    style={{ color: "#05050599", fontSize: "12px" }}
-                  >
-                    Sales &gt; Invoice &gt;{" "}
-                    {selectedRow.invoiceID || selectedRow.orderId}
-                  </p>
-                  <button
-                    type="button"
-                    className="btn-close p-4"
-                    onClick={() => setShowRowModal(false)}
-                  ></button>
-                </div>
-                <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                  <h5 className="mb-0" style={{ color: "#0C1D61" }}>
-                    Invoice ID: {selectedRow.invoiceId || selectedRow.orderId}
-                  </h5>
-                  <div className="d-flex gap-2">
+              <div
+                className="modal-header text-white position-relative overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                  borderRadius: "0.5rem 0.5rem 0 0",
+                  cursor: "move", // so it's clear this is draggable
+                }}
+              >
+                <div className="w-100 d-flex flex-column">
+                  {/* Breadcrumb + Close */}
+                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    <p className="mb-2 opacity-75 small">Sales &gt; Invoice</p>
                     <button
                       type="button"
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handlePrintDR("a", selectedRow)}
-                    >
-                      DR1
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handlePrintDR("b", selectedRow)}
-                    >
-                      DR2
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handlePrint(selectedRow)}
-                    >
-                      Print
-                    </button>
+                      className="btn-close btn-close-white p-4"
+                      onClick={() => setShowRowModal(false)}
+                    ></button>
+                  </div>
+
+                  {/* Invoice Title + Action Buttons */}
+                  <div className="w-100 d-flex justify-content-between align-items-center">
+                    <h5 className="mb-0">
+                      Invoice ID: {selectedRow.invoiceID || selectedRow.orderId}
+                    </h5>
+                    <div className="d-flex gap-2">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light"
+                        style={{
+                          color: "#0C1D61",
+                        }}
+                        onClick={() => handlePrintDR("a", selectedRow)}
+                      >
+                        DR1
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light"
+                        style={{
+                          color: "#0C1D61",
+                        }}
+                        onClick={() => handlePrintDR("b", selectedRow)}
+                      >
+                        DR2
+                      </button>
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-light"
+                        style={{
+                          color: "#0C1D61",
+                        }}
+                        onClick={() => handlePrint(selectedRow)}
+                      >
+                        Print
+                      </button>
+                    </div>
                   </div>
                 </div>
+
+                {/* Decorative circles */}
+                <div
+                  className="position-absolute"
+                  style={{
+                    top: "-50px",
+                    right: "-50px",
+                    width: "100px",
+                    height: "100px",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+                <div
+                  className="position-absolute"
+                  style={{
+                    bottom: "-30px",
+                    left: "-30px",
+                    width: "60px",
+                    height: "60px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
               </div>
 
               <div className="modal-body">
@@ -398,30 +404,23 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                     {(selectedRow.orderedItems || selectedRow.items || []).map(
                       (item, index) => (
                         <li key={index}>
-                          <div className="d-flex justify-content-between align-items-start mb-2">
+                          <div className="d-flex justify-content-between align-items-center mb-2">
+                            {/* Item Name */}
                             <div className="d-flex align-items-center gap-3">
-                              <img
-                                src={defaultPic}
-                                alt="Product"
-                                style={{
-                                  width: "40px",
-                                  height: "40px",
-                                  objectFit: "cover",
-                                  borderRadius: "6px",
-                                }}
-                              />
-                              <div className="d-flex flex-column">
-                                <span className="fw-semibold">
-                                  {item.itemName}
-                                </span>
-                              </div>
+                              <span className="fw-semibold">
+                                {item.itemName}
+                              </span>
                             </div>
-                            <div className="text-end d-flex flex-column">
+
+                            {/* Price and Quantity */}
+                            <div className="d-flex flex-column justify-content-center text-end">
                               <span className="fw-semibold">
                                 ₱
                                 {(item.price * item.quantity).toLocaleString(
                                   undefined,
-                                  { minimumFractionDigits: 2 }
+                                  {
+                                    minimumFractionDigits: 2,
+                                  }
                                 )}
                               </span>
                               <small className="text-muted">
@@ -429,6 +428,15 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                               </small>
                             </div>
                           </div>
+
+                          {/* Divider */}
+                          {index <
+                            (
+                              selectedRow.orderedItems ||
+                              selectedRow.items ||
+                              []
+                            ).length -
+                              1 && <hr className="my-0 border-secondary" />}
                         </li>
                       )
                     )}

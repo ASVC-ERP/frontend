@@ -33,6 +33,8 @@ import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
 
 function App() {
+  const API_URL = import.meta.env.VITE_API_URL;
+  
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -59,7 +61,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("/api/orders")
+      .get(`${API_URL}/orders`)
       .then((res) => {
         setOrders(res.data);
       })
@@ -172,7 +174,7 @@ function App() {
 
   const fetchInvoices = () => {
     axios
-      .get("/api/invoice")
+      .get(`${API_URL}/invoice`)
       .then((response) => {
         setInvoices(response.data);
       })
@@ -191,7 +193,7 @@ function App() {
 
   const fetchItems = () => {
     axios
-      .get("/api/items")
+      .get(`${API_URL}/items`)
       .then((response) => {
         const transformedItems = response.data.map((item) => ({
           itemCode: item.itemCode,
@@ -216,7 +218,7 @@ function App() {
   const handleAddItem = (newItem) => {
     console.log("📦 Submitting item:", newItem);
     axios
-      .post("/api/items", newItem)
+      .post(`${API_URL}/items`, newItem)
       .then((response) => {
         Swal.fire({
           icon: "success",
@@ -242,7 +244,7 @@ function App() {
 
   const fetchSupplier = () => {
     axios
-      .get("/api/suppliers")
+      .get(`${API_URL}/suppliers`)
       .then((response) => {
         const transformedSuppliers = response.data.map((supplier) => ({
           id: supplier.id,
@@ -265,7 +267,7 @@ function App() {
   const handleAddSupplier = (newSupplier) => {
     console.log("📦 Submitting supplier:", newSupplier);
     axios
-      .post("/api/suppliers", newSupplier)
+      .post(`${API_URL}/suppliers`, newSupplier)
       .then((response) => {
         Swal.fire({
           icon: "success",
@@ -291,14 +293,14 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("/api/customers")
+      .get(`${API_URL}/customers`)
       .then((res) => setCustomers(res.data))
       .catch((err) => console.error(err));
   }, []);
 
   const fetchCustomers = () => {
     axios
-      .get("/api/customers")
+      .get(`${API_URL}/customers`)
       .then((res) => setCustomers(res.data))
       .catch((err) => console.error(err));
 };

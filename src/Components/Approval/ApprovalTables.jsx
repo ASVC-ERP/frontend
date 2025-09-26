@@ -13,16 +13,15 @@ function ApprovalTables() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(
-        "/api/orders/sales-orders/by-status",
-        {
-          params: { status: activeTab },
-        }
-      );
+      const response = await axios.get(`${API_URL}/orders/sales-orders/by-status`, {
+        params: { status: activeTab },
+      });
       setData(response.data);
     } catch (err) {
       setError("Failed to fetch orders. Please try again later.");
@@ -39,12 +38,9 @@ function ApprovalTables() {
 
   const handleApprove = async () => {
     try {
-      const response = await axios.post(
-        "/api/orders/serve-approved",
-        {
-          orderIds: selectedOrders,
-        }
-      );
+      const response = await axios.post(`${API_URL}/orders/serve-approved`, {
+        orderIds: selectedOrders,
+      });
 
       Swal.fire({
         icon: "success",
@@ -85,7 +81,7 @@ function ApprovalTables() {
 
   const handleReject = async () => {
     try {
-      await axios.post("/api/orders/reject", {
+      await axios.post(`${API_URL}/orders/reject`, {
         orderIds: selectedOrders,
       });
 
@@ -131,21 +127,43 @@ function ApprovalTables() {
           />
         ) : null,
       ignoreRowClick: true,
-      width: "60px",
+      width: "60px", // fixed small
     },
-    { name: "Order ID", selector: (row) => row.orderID, sortable: true },
-    { name: "Date", selector: (row) => row.date, sortable: true },
+    {
+      name: "Order ID",
+      selector: (row) => row.orderID,
+      sortable: true,
+      width: "120px",
+    },
+    {
+      name: "Date",
+      selector: (row) =>
+        row.date ? new Date(row.date).toLocaleDateString("en-US") : "",
+      sortable: true,
+      width: "120px",
+    },
     {
       name: "Customer Name",
       selector: (row) => row.customerName,
       sortable: true,
+      wrap: true,
+      minWidth: "200px",
+      grow: 3, 
     },
     {
-      name: "Customer Address",
+      name: "Address",
       selector: (row) => row.customerAddress,
       sortable: true,
+      grow: 4,
+      wrap: true,
+      minWidth: "200px",
     },
-    { name: "Sales Agent", selector: (row) => row.salesAgent, sortable: true },
+    {
+      name: "PIC",
+      selector: (row) => row.salesAgent,
+      sortable: true,
+      width: "120px",
+    },
     {
       name: "Status",
       cell: (row) => (
@@ -163,6 +181,7 @@ function ApprovalTables() {
           {row.status}
         </span>
       ),
+      width: "120px", // consistent badge size
     },
   ];
 

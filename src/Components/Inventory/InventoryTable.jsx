@@ -6,58 +6,6 @@ import { IoIosSearch } from "react-icons/io";
 import Swal from "sweetalert2";
 import axios from "axios";
 
-// Define table columns
-const columns = [
-  {
-    name: "Product Code",
-    selector: (row) => row.itemCode,
-    sortable: true,
-    width: "160px",
-  },
-  {
-    name: "Product Name",
-    selector: (row) => row.itemName,
-    sortable: true,
-    wrap: true,
-    width: "250px",
-  },
-  {
-    name: "Brand",
-    selector: (row) => row.brand,
-    sortable: true,
-    width: "100px",
-  },
-  {
-    name: "Part No.",
-    selector: (row) => row.partNum,
-    sortable: true,
-    width: "120px",
-  },
-  {
-    name: "Model",
-    selector: (row) => row.model,
-    sortable: true,
-    width: "120px",
-  },
-  {
-    name: "Origin",
-    selector: (row) => row.origin,
-    sortable: true,
-    width: "120px",
-  },
-  {
-    name: "Stock",
-    selector: (row) => row.stock,
-    sortable: true,
-    width: "100px",
-  },
-  {
-    name: "Unit Cost",
-    selector: (row) => row.price?.price1 ?? 0,
-    sortable: true,
-  },
-];
-
 function InventoryTable({
   products = [],
   onAddItem = () => {},
@@ -79,40 +27,42 @@ function InventoryTable({
 
   const [showItemModal, setShowItemModal] = useState(false);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const columns = [
     {
       name: "Product Code",
       selector: (row) => row.itemCode,
       sortable: true,
-      grow: 2, // wider
+      grow: 2,
       minWidth: "150px",
     },
     {
       name: "Product Name",
       selector: (row) => row.itemName,
       sortable: true,
-      grow: 3, // widest
+      grow: 3,
       minWidth: "200px",
+      wrap: true,
     },
     {
       name: "Brand",
       selector: (row) => row.brand,
       sortable: true,
-      grow: 0, // smaller
+      grow: 1, // smaller
       maxWidth: "120px",
     },
     {
       name: "Origin",
       selector: (row) => row.origin,
       sortable: true,
-      grow: 0,
-      maxWidth: "100px",
+      grow: 1,
     },
     {
       name: "Stock",
       selector: (row) => row.stock,
       sortable: true,
-      grow: 0,
+      grow: 1,
       maxWidth: "80px",
       center: true,
     },
@@ -120,7 +70,7 @@ function InventoryTable({
       name: "Cost",
       selector: (row) => row.price?.price1 ?? 0,
       sortable: true,
-      grow: 0,
+      grow: 1,
       maxWidth: "100px",
       right: true,
     },
@@ -268,7 +218,7 @@ function InventoryTable({
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`/api/items/${itemCode}`);
+        await axios.delete(`${API_URL}/items/${itemCode}`);
 
         Swal.fire({
           title: "Deleted!",
@@ -304,7 +254,7 @@ function InventoryTable({
 
     try {
       const response = await axios.post(
-        "/api/items/import",
+        `${API_URL}/items/import`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

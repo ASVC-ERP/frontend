@@ -4,6 +4,7 @@ import { IoIosSearch } from "react-icons/io";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import Swal from "sweetalert2";
+import Draggable from "react-draggable";
 
 function CustomerTable({ customers, onRefreshCustomers }) {
   const columns = [
@@ -19,30 +20,30 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       selector: (row) => row.customerName,
       sortable: true,
       wrap: true,
-      grow: 3, // make this wide
+      grow: 3,
       minWidth: "200px",
     },
     {
       name: "Number",
       selector: (row) => row.customerContact,
       sortable: true,
-      grow: 2, // medium-wide
+      grow: 0,
       minWidth: "150px",
     },
     {
       name: "TIN",
       selector: (row) => row.customerTIN || "N/A",
       sortable: false,
-      grow: 2, // medium-wide
+      grow: 2,
       minWidth: "140px",
     },
     {
       name: "Address",
       selector: (row) => row.customerAddress,
       sortable: true,
-      grow: 0,
+      grow: 3,
       minWidth: "200px",
-      maxWidth: "250px",
+      wrap: true,
     },
     {
       name: "Actions",
@@ -69,6 +70,8 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       width: "120px",
     },
   ];
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
@@ -116,7 +119,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerTIN,
       };
 
-      axios.post("/api/customers", newCustomer);
+      axios.post(`${API_URL}/customers`, newCustomer);
 
       Swal.fire({
         icon: "success",
@@ -156,7 +159,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerTIN,
       };
       await axios.put(
-        `/api/customers/${editingCustomer.customerID}`,
+        `${API_URL}/customers/${editingCustomer.customerID}`,
         updatedCustomer
       );
 
@@ -196,7 +199,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
   const handleDeleteCustomer = async (customerID) => {
     try {
-      await axios.delete(`/api/customers/${customerID}`);
+      await axios.delete(`${API_URL}/customers/${customerID}`);
       Swal.fire({
         icon: "success",
         title: "Deleted!",
@@ -267,7 +270,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         style={{ display: showCustomerModal ? "block" : "none" }}
         aria-hidden={!showCustomerModal}
       >
-        <div className="modal-dialog modal-dialog-centered modal-lg w-50">
+        <div className="modal-dialog modal-dialog-centered modal-lg">
           <div className="modal-content shadow-lg border-0">
             {/* Header with gradient background */}
             <div

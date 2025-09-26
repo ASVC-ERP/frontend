@@ -12,23 +12,16 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       name: "Supplier Code",
       selector: (row) => row.id,
       sortable: true,
-      grow: 2, // prioritize width
-      minWidth: "150px",
+      grow: 1,
+      minWidth: "180px",
     },
     {
       name: "Supplier Name",
       selector: (row) => row.name,
       sortable: true,
       wrap: true,
-      grow: 3, // most important, widest
-      minWidth: "220px",
-    },
-    {
-      name: "TIN",
-      selector: (row) => row.tin || "N/A",
-      sortable: true,
-      grow: 0,
-      width: "120px",
+      grow: 2,
+      minWidth: "200px",
     },
     {
       name: "Number",
@@ -41,9 +34,9 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       name: "Address",
       selector: (row) => row.address,
       sortable: true,
-      grow: 0,
+      grow: 3,
       minWidth: "200px",
-      maxWidth: "250px", // allow but limit width
+      wrap: true,
     },
     {
       name: "Actions",
@@ -73,6 +66,8 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       width: "120px",
     },
   ];
+
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -147,7 +142,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
 
   const handleUpdateSupplier = async () => {
     try {
-      await axios.put(`/api/suppliers/${selectedInvoice.id}`, {
+      await axios.put(`${API_URL}/suppliers/${selectedInvoice.id}`, {
         name: selectedInvoice.name,
         address: selectedInvoice.address,
         number: selectedInvoice.number,
@@ -213,7 +208,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     if (!result.isConfirmed) return;
 
     try {
-      await axios.delete(`/api/suppliers/${supplierID}`);
+      await axios.delete(`${API_URL}/suppliers/${supplierID}`);
 
       Swal.fire({
         icon: "success",

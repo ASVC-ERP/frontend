@@ -9,10 +9,12 @@ function Item({ onItemsUpdate }) {
   const { row: initialItem } = location.state || {};
   const [item, setItem] = useState(initialItem);
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const fetchItem = useCallback(async () => {
     if (!item?.itemCode) return;
     try {
-      const response = await axios.get("/api/items");
+      const response = await axios.get(`${API_URL}/items`);
       const updatedItem = response.data.find(
         (i) => i.itemCode === item.itemCode
       );

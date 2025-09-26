@@ -16,7 +16,7 @@ function SalesInvoice({ invoices, onfetchInvoices }) {
       </div>
 
       {/* Table Section */}
-      <div className="row mt-3">
+      <div className="row">
         <div className="col-12">
           <div className="table-responsive table-responsive-sm">
             <InvoiceTable invoices={invoices} fetchInvoices={onfetchInvoices} />

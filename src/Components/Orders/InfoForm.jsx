@@ -5,12 +5,13 @@ function InfoForm({ info, setInfo }) {
   const [customers, setCustomers] = useState([]);
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Fetch customer list
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get("/api/customers");
+        const res = await axios.get(`${API_URL}/customers`);
         setCustomers(res.data);
       } catch (err) {
         console.error("Failed to fetch customers:", err);
