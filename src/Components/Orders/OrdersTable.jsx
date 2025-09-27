@@ -200,6 +200,8 @@ function OrdersTable({ orders, setOrders }) {
           itemName: it.itemName,
           quantity: Number(it.quantity) || 0,
           price: it.price || 0,
+          unit: it.unit,
+          itemCode: it.itemCode,
         })),
         totalPrice: editableRow.totalPrice || 0,
       };
@@ -278,6 +280,7 @@ function OrdersTable({ orders, setOrders }) {
       updatedItems[index] = {
         ...updatedItems[index],
         itemName: item.itemName,
+        itemCode: item.itemCode,
         stock: item.stock,
         quantity: 1,
         availablePrices: [
@@ -306,6 +309,8 @@ function OrdersTable({ orders, setOrders }) {
 */
   const handlePrint = async () => {
     if (!selectedRow) return;
+
+    console.log('selectedRow: ', selectedRow);
 
     try {
       const response = await axios.post(
@@ -336,13 +341,16 @@ function OrdersTable({ orders, setOrders }) {
       customerName: row.customerName,
       customerAddress: row.customerAddress,
       customerNumber: row.customerNumber,
+      customerTIN: row.customerTIN || '',   // <-- added
       salesAgent: row.salesAgent,
       items: row.orderedItems.map((item) => ({
         itemName: item.itemName,
         price: item.price,
         quantityOrdered: item.quantity,
-        quantityServed: 0, // initially 0
-        quantityUnserved: item.quantity,
+        quantityServed: item.quantity,
+        quantityUnserved: 0,
+        unit: item.unit || '',
+        itemCode: item.itemCode || '',
       })),
     };
 
@@ -954,6 +962,8 @@ function OrdersTable({ orders, setOrders }) {
                     style={{ backgroundColor: "#0C1D61", color: "white" }}
                     onClick={async () => {
                       try {
+                        console.log("Serve button clicked"); // <--- log immediately on click
+                        console.log("serveData being sent:", serveData); // <--- log payload
                         const user = JSON.parse(localStorage.getItem("user"));
                         const role = user?.role || "";
                         await axios.patch(
