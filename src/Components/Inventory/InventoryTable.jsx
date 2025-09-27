@@ -21,7 +21,7 @@ function InventoryTable({
   const [minimumStock, setMinimumStock] = useState("");
   const [partNum, setPartNum] = useState("");
   const [interNum, setInterNum] = useState("");
-  const [unit, setUnit] = useState("");
+  const [unit, setUnit] = useState("Pc");
   const [model, setModel] = useState("");
   const [origin, setOrigin] = useState("");
 
@@ -185,7 +185,7 @@ function InventoryTable({
     setMinimumStock("");
     setPartNum("");
     setInterNum("");
-    setUnit("");
+    setUnit("Pc");
     setModel("");
 
     // Close modal and clear fields
