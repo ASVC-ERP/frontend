@@ -309,7 +309,7 @@ function OrdersTable({ orders, setOrders }) {
 
     try {
       const response = await axios.post(
-        `${API_URL}/packing-list/invoice`,
+        `${API_URL}/list/sales-order`,
         selectedRow,
         { responseType: "blob" } // important to handle PDF
       );

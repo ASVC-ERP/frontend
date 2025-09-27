@@ -59,6 +59,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       grow: 0,
       width: "140px",
     },
+/*
     {
       name: "Waybill Number",
       cell: (row) => {
@@ -100,6 +101,55 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       grow: 1,
       minWidth: "150px",
     },
+*/
+    {
+      name: "Waybill Number",
+      cell: (row) => {
+        return (
+          <div className="d-flex align-items-center gap-2">
+            <input
+              type="text"
+              className="form-control border border-secondary"
+              value={pendingChanges[row.invoiceID] ?? row.waybillNumber ?? ""}
+              onChange={(e) =>
+                setPendingChanges((prev) => ({
+                  ...prev,
+                  [row.invoiceID]: e.target.value,
+                }))
+              }
+            />
+
+            <Button
+              variant="outline-success"
+              size="sm"
+              className="p-1 d-flex align-items-center justify-content-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSave(row);
+              }}
+              title="Save"
+            >
+              <FaSave size={14} />
+            </Button>
+
+            <Button
+              variant="outline-danger"
+              size="sm"
+              className="p-1 d-flex align-items-center justify-content-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(row);
+              }}
+              title="Delete"
+            >
+              🗑️
+            </Button>
+          </div>
+        );
+      },
+      grow: 1,
+      minWidth: "150px",
+    }
   ];
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -159,7 +209,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       };
 
       const response = await axios.post(
-        `${API_URL}/packing-list/invoice-final`,
+        `${API_URL}/list/packing-list`,
         payload,
         { responseType: "blob" } // important for PDF
       );
@@ -210,12 +260,13 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     }));
   };
 
+/*
   const handleSave = (row) => {
     const newStatus = pendingChanges[row.invoiceID];
     if (!newStatus) return;
 
     axios
-      .put(`${API_URL}/invoice/${row.invoiceID}/status`, {
+      .put(`${API_URL}/invoice/${row.invoiceID}/waybill`, {
         status: newStatus,
       })
       .then(() => {
@@ -249,6 +300,50 @@ function InvoiceTable({ invoices, fetchInvoices }) {
         });
       });
   };
+*/
+
+  const handleSave = (row) => {
+    const newWaybill = pendingChanges[row.invoiceID];
+    if (!newWaybill) return;
+
+    axios
+      .put(`${API_URL}/invoice/${row.invoiceID}/waybill`, {
+        waybillNumber: newWaybill,
+      })
+      .then(() => {
+        const updatedData = filteredData.map((item) =>
+          item.invoiceID === row.invoiceID
+            ? { ...item, waybillNumber: newWaybill }
+            : item
+        );
+        setFilteredData(updatedData);
+
+        setPendingChanges((prev) => {
+          const copy = { ...prev };
+          delete copy[row.invoiceID];
+          return copy;
+        });
+
+        fetchInvoices();
+
+        Swal.fire({
+          icon: "success",
+          title: "Waybill Updated",
+          text: `Invoice ${row.invoiceID} updated to waybill ${newWaybill}`,
+          timer: 1500,
+          showConfirmButton: false,
+        });
+      })
+      .catch((err) => {
+        console.error("Failed to update waybill:", err);
+        Swal.fire({
+          icon: "error",
+          title: "Update Failed",
+          text: "Could not update waybill number.",
+        });
+      });
+  };
+
 
   const handleDelete = (row) => {
     Swal.fire({
@@ -344,7 +439,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                         }}
                         onClick={() => handlePrintDR("a", selectedRow)}
                       >
-                        DR1
+                        DR with SI
                       </button>
                       <button
                         type="button"
@@ -354,7 +449,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                         }}
                         onClick={() => handlePrintDR("b", selectedRow)}
                       >
-                        DR2
+                        DR without SI
                       </button>
                       <button
                         type="button"
@@ -364,7 +459,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                         }}
                         onClick={() => handlePrint(selectedRow)}
                       >
-                        Print
+                        Packing List
                       </button>
                     </div>
                   </div>

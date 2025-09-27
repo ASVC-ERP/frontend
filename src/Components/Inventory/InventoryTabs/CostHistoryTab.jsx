@@ -6,6 +6,7 @@ function CostHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const itemName = item?.itemName || "";
+  const itemCode = item?.itemCode || "";
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,9 +23,9 @@ function CostHistoryTab({ item }) {
   };
 
   useEffect(() => {
-    console.log("Fetching cost history for item:", itemName);
+    console.log("Fetching cost history for item:", itemCode);
     const fetchData = async () => {
-      if (!itemName) {
+      if (!itemCode) {
         setData([]);
         setLoading(false);
         return;
@@ -34,7 +35,7 @@ function CostHistoryTab({ item }) {
         const response = await axios.get(
           `${API_URL}/inventory/cost-history`,
           {
-            params: { itemName },
+            params: { itemCode },
           }
         );
         console.log("Cost History Data:", response.data);
@@ -48,7 +49,7 @@ function CostHistoryTab({ item }) {
     };
 
     fetchData();
-  }, [itemName]);
+  }, [itemCode]);
 
   // Define table columns
   const columns = [
