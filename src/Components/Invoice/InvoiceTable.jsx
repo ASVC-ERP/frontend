@@ -198,6 +198,8 @@ function InvoiceTable({ invoices, fetchInvoices }) {
   const handlePrint = async () => {
     if (!selectedRow) return;
 
+    console.log('selectedRow: ', selectedRow);
+
     try {
       // Prepare payload
       const payload = {
@@ -205,6 +207,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
         date: selectedRow.date,
         customerName: selectedRow.customerName,
         customerAddress: selectedRow.customerAddress,
+        customerTIN: selectedRow.customerTIN,
         items: selectedRow.items, // send items array as-is
       };
 

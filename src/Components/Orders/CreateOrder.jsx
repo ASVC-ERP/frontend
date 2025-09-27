@@ -85,6 +85,8 @@ function CreateOrder({
         itemName: item.itemName,
         quantity: item.quantity,
         price: item.price?.[item.selectedMarkup], // Use selected price
+        unit: item.unit, // <-- add this
+        itemCode: item.itemCode,
       })),
       totalPrice: orderItems.reduce(
         (sum, item) => sum + item.price?.[item.selectedMarkup] * item.quantity,
