@@ -34,7 +34,7 @@ import Unauthorized from "./Pages/Unauthorized.jsx";
 
 function App() {
   const API_URL = import.meta.env.VITE_API_URL;
-  
+
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -217,6 +217,17 @@ function App() {
 
   const handleAddItem = (newItem) => {
     console.log("📦 Submitting item:", newItem);
+
+    Swal.fire({
+      title: "Adding Item",
+      text: "Please wait while we add the new item...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     axios
       .post(`${API_URL}/items`, newItem)
       .then((response) => {
@@ -260,12 +271,23 @@ function App() {
       });
   };
 
-    useEffect(() => {
+  useEffect(() => {
     fetchSupplier();
   }, []);
 
   const handleAddSupplier = (newSupplier) => {
     console.log("📦 Submitting supplier:", newSupplier);
+
+    Swal.fire({
+      title: "Adding Supplier",
+      text: "Please wait while we add a new supplier...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     axios
       .post(`${API_URL}/suppliers`, newSupplier)
       .then((response) => {
@@ -303,7 +325,7 @@ function App() {
       .get(`${API_URL}/customers`)
       .then((res) => setCustomers(res.data))
       .catch((err) => console.error(err));
-};
+  };
 
   return (
     <Router>
@@ -334,7 +356,12 @@ function App() {
 
               <Route
                 path="/"
-                element={<SalesOrder orders={Object.values(orders)} />}
+                element={
+                  <SalesOrder
+                    orders={Object.values(orders)}
+                    setOrders={setOrders}
+                  />
+                }
               />
               <Route
                 path="/create-order"
@@ -357,7 +384,15 @@ function App() {
                   />
                 }
               />
-              <Route path="/invoice" element={<SalesInvoice invoices={invoices} onfetchInvoices={fetchInvoices} />} />
+              <Route
+                path="/invoice"
+                element={
+                  <SalesInvoice
+                    invoices={invoices}
+                    onfetchInvoices={fetchInvoices}
+                  />
+                }
+              />
 
               <Route
                 path="/inventory/item"
@@ -365,7 +400,13 @@ function App() {
               />
               <Route
                 path="/inventory"
-                element={<Inventory items={items} onAddItem={handleAddItem} onRefreshItems={fetchItems}/>}
+                element={
+                  <Inventory
+                    items={items}
+                    onAddItem={handleAddItem}
+                    onRefreshItems={fetchItems}
+                  />
+                }
               />
               <Route
                 path="/supplier"
@@ -379,11 +420,16 @@ function App() {
               />
               <Route
                 path="/supplier/invoices"
-                element={<SupplierInvoicesTable items={items}/>}
+                element={<SupplierInvoicesTable items={items} />}
               />
               <Route
                 path="/customer"
-                element={<Customer customers={customers} onRefreshCustomers={fetchCustomers} />}
+                element={
+                  <Customer
+                    customers={customers}
+                    onRefreshCustomers={fetchCustomers}
+                  />
+                }
               />
             </Routes>
           </div>

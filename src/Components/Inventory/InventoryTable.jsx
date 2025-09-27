@@ -253,11 +253,9 @@ function InventoryTable({
     formData.append("file", file);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/items/import`,
-        formData,
-        { headers: { "Content-Type": "multipart/form-data" } }
-      );
+      const response = await axios.post(`${API_URL}/items/import`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
       Swal.fire({
         icon: "success",
@@ -660,13 +658,11 @@ function InventoryTable({
                       ></i>
                       Unit
                     </label>
-                    <input
-                      type="text"
+                    <select
                       id="unit"
-                      placeholder="Enter unit"
                       value={unit}
                       onChange={(e) => setUnit(e.target.value)}
-                      className="form-control"
+                      className="form-select"
                       style={{
                         border: "1px solid #e9ecef",
                         borderRadius: "0.5rem",
@@ -675,7 +671,13 @@ function InventoryTable({
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
+                    >
+                      <option value="Pc">Pc</option>
+                      <option value="Pcs">Pcs</option>
+                      <option value="Set">Set</option>
+                      <option value="Bundle">Bundle</option>
+                      <option value="Roll">Roll</option>
+                    </select>
                   </div>
                 </div>
               </form>

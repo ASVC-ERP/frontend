@@ -119,6 +119,16 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerTIN,
       };
 
+      Swal.fire({
+        title: "Adding Customer",
+        text: "Please wait while we add a new customer...",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       axios.post(`${API_URL}/customers`, newCustomer);
 
       Swal.fire({

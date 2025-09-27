@@ -124,6 +124,17 @@ function SupplierInvoicesTable({ items }) {
 
       console.log("📤 Submitting invoice data:", payload);
 
+      // Show loading Swal
+      Swal.fire({
+        title: "Submitting Invoice",
+        text: "Please wait while we process your invoice...",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       await axios.post(`${API_URL}/suppliers/supplier-invoices`, payload);
 
       Swal.fire({
@@ -344,7 +355,7 @@ function SupplierInvoicesTable({ items }) {
                             type="text"
                             id="poNum"
                             className="form-control"
-                            placeholder="Enter purchase order number"
+                            placeholder="Enter PO number"
                             value={invoiceForm.poNum}
                             onChange={(e) =>
                               setInvoiceForm({
@@ -377,13 +388,13 @@ function SupplierInvoicesTable({ items }) {
                               className="fas fa-file-invoice me-2"
                               style={{ color: "#0C1D61" }}
                             ></i>
-                            Invoice ID{" "}
+                            Invoice Number{" "}
                           </label>
                           <input
                             type="text"
                             id="invoiceID"
                             className="form-control"
-                            placeholder="Enter invoice ID"
+                            placeholder="Enter invoice number"
                             value={invoiceForm.invoiceID}
                             onChange={(e) =>
                               setInvoiceForm({
@@ -691,10 +702,8 @@ function SupplierInvoicesTable({ items }) {
                                 />
                               </div>
                               <div className="col-2">
-                                <input
-                                  type="text"
-                                  placeholder="Unit"
-                                  className="form-control form-control-sm"
+                                <select
+                                  className="form-select form-select-sm"
                                   value={item.unit}
                                   onChange={(e) => {
                                     const updated = [...invoiceForm.items];
@@ -709,7 +718,13 @@ function SupplierInvoicesTable({ items }) {
                                     borderRadius: "0.375rem",
                                     fontSize: "0.875rem",
                                   }}
-                                />
+                                >
+                                  <option value="Pc">Pc</option>
+                                  <option value="Pcs">Pcs</option>
+                                  <option value="Set">Set</option>
+                                  <option value="Bundle">Bundle</option>
+                                  <option value="Roll">Roll</option>
+                                </select>
                               </div>
                               <div className="col-1">
                                 <input

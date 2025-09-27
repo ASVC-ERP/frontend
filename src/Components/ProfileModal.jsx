@@ -10,11 +10,11 @@ const ProfileModal = ({ user }) => {
       <div className="modal-dialog modal-dialog-centered modal-lg w-50">
         <div className="modal-content shadow-lg border-0">
           {/* Header with gradient background */}
-          <div 
+          <div
             className="modal-header text-white position-relative overflow-hidden"
             style={{
-              background: 'linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)',
-              borderRadius: '0.5rem 0.5rem 0 0'
+              background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+              borderRadius: "0.5rem 0.5rem 0 0",
             }}
           >
             <div className="d-flex align-items-center">
@@ -31,28 +31,28 @@ const ProfileModal = ({ user }) => {
               data-bs-dismiss="modal"
               aria-label="Close"
             ></button>
-            
+
             {/* Decorative elements */}
-            <div 
+            <div
               className="position-absolute"
               style={{
-                top: '-50px',
-                right: '-50px',
-                width: '100px',
-                height: '100px',
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '50%'
+                top: "-50px",
+                right: "-50px",
+                width: "100px",
+                height: "100px",
+                background: "rgba(255, 255, 255, 0.1)",
+                borderRadius: "50%",
               }}
             ></div>
-            <div 
+            <div
               className="position-absolute"
               style={{
-                bottom: '-30px',
-                left: '-30px',
-                width: '60px',
-                height: '60px',
-                background: 'rgba(255, 255, 255, 0.05)',
-                borderRadius: '50%'
+                bottom: "-30px",
+                left: "-30px",
+                width: "60px",
+                height: "60px",
+                background: "rgba(255, 255, 255, 0.05)",
+                borderRadius: "50%",
               }}
             ></div>
           </div>
@@ -62,19 +62,22 @@ const ProfileModal = ({ user }) => {
               {/* User ID */}
               <div className="col-md-6">
                 <label className="form-label fw-semibold text-muted small">
-                  <i className="fas fa-id-badge me-2" style={{ color: '#0C1D61' }}></i>
+                  <i
+                    className="fas fa-id-badge me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
                   User ID
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  value={user?.id || ''}
+                  value={user?.id || ""}
                   readOnly
                   style={{
-                    backgroundColor: '#f8f9fa',
-                    border: '1px solid #e9ecef',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem'
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.95rem",
                   }}
                 />
               </div>
@@ -82,19 +85,22 @@ const ProfileModal = ({ user }) => {
               {/* Username */}
               <div className="col-md-6">
                 <label className="form-label fw-semibold text-muted small">
-                  <i className="fas fa-at me-2" style={{ color: '#0C1D61' }}></i>
+                  <i
+                    className="fas fa-at me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
                   Username
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  value={user?.username || ''}
+                  value={user?.username || ""}
                   readOnly
                   style={{
-                    backgroundColor: '#f8f9fa',
-                    border: '1px solid #e9ecef',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem'
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.95rem",
                   }}
                 />
               </div>
@@ -102,19 +108,22 @@ const ProfileModal = ({ user }) => {
               {/* First Name */}
               <div className="col-md-6">
                 <label className="form-label fw-semibold text-muted small">
-                  <i className="fas fa-user me-2" style={{ color: '#0C1D61' }}></i>
+                  <i
+                    className="fas fa-user me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
                   First Name
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  value={user?.firstName || ''}
+                  value={user?.firstName || ""}
                   readOnly
                   style={{
-                    backgroundColor: '#f8f9fa',
-                    border: '1px solid #e9ecef',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem'
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.95rem",
                   }}
                 />
               </div>
@@ -122,19 +131,22 @@ const ProfileModal = ({ user }) => {
               {/* Last Name */}
               <div className="col-md-6">
                 <label className="form-label fw-semibold text-muted small">
-                  <i className="fas fa-user me-2" style={{ color: '#0C1D61' }}></i>
+                  <i
+                    className="fas fa-user me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
                   Last Name
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  value={user?.lastName || ''}
+                  value={user?.lastName || ""}
                   readOnly
                   style={{
-                    backgroundColor: '#f8f9fa',
-                    border: '1px solid #e9ecef',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem'
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.95rem",
                   }}
                 />
               </div>
@@ -142,36 +154,47 @@ const ProfileModal = ({ user }) => {
               {/* Position */}
               <div className="col-12">
                 <label className="form-label fw-semibold text-muted small">
-                  <i className="fas fa-briefcase me-2" style={{ color: '#0C1D61' }}></i>
+                  <i
+                    className="fas fa-briefcase me-2"
+                    style={{ color: "#0C1D61" }}
+                  ></i>
                   Position
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  value={user?.position || 'Clerk'}
+                  value={
+                    user?.role
+                      ? user.role.charAt(0).toUpperCase() + user.role.slice(1)
+                      : "Agent"
+                  }
                   readOnly
                   style={{
-                    backgroundColor: '#f8f9fa',
-                    border: '1px solid #e9ecef',
-                    borderRadius: '0.5rem',
-                    fontSize: '0.95rem'
+                    backgroundColor: "#f8f9fa",
+                    border: "1px solid #e9ecef",
+                    borderRadius: "0.5rem",
+                    fontSize: "0.95rem",
                   }}
                 />
               </div>
             </div>
 
             {/* Additional info card */}
-            <div 
+            <div
               className="mt-4 p-3 rounded-3"
               style={{
-                backgroundColor: 'rgba(12, 29, 97, 0.05)',
-                border: '1px solid rgba(12, 29, 97, 0.1)'
+                backgroundColor: "rgba(12, 29, 97, 0.05)",
+                border: "1px solid rgba(12, 29, 97, 0.1)",
               }}
             >
               <div className="d-flex align-items-center">
-                <i className="fas fa-info-circle me-2" style={{ color: '#0C1D61' }}></i>
+                <i
+                  className="fas fa-info-circle me-2"
+                  style={{ color: "#0C1D61" }}
+                ></i>
                 <small className="text-muted">
-                  Profile information is read-only. Contact your administrator for any changes.
+                  Profile information is read-only. Contact your administrator
+                  for any changes.
                 </small>
               </div>
             </div>
@@ -183,20 +206,20 @@ const ProfileModal = ({ user }) => {
               className="btn px-4 py-2"
               data-bs-dismiss="modal"
               style={{
-                backgroundColor: '#0C1D61',
-                color: 'white',
-                border: 'none',
-                borderRadius: '0.5rem',
-                fontWeight: '500',
-                transition: 'all 0.3s ease'
+                backgroundColor: "#0C1D61",
+                color: "white",
+                border: "none",
+                borderRadius: "0.5rem",
+                fontWeight: "500",
+                transition: "all 0.3s ease",
               }}
               onMouseEnter={(e) => {
-                e.target.style.backgroundColor = '#1e3c72';
-                e.target.style.transform = 'translateY(-1px)';
+                e.target.style.backgroundColor = "#1e3c72";
+                e.target.style.transform = "translateY(-1px)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = '#0C1D61';
-                e.target.style.transform = 'translateY(0)';
+                e.target.style.backgroundColor = "#0C1D61";
+                e.target.style.transform = "translateY(0)";
               }}
             >
               <i className="fas fa-times me-2"></i>

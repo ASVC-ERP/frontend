@@ -76,16 +76,14 @@ const columns = [
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
-function OrdersTable() {
-  const [orders, setOrders] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+function OrdersTable({ orders, setOrders }) {
+  const [filteredData, setFilteredData] = useState(orders);
   const [searchTerm, setSearchTerm] = useState("");
 
   const [selectedRow, setSelectedRow] = useState(null);
   const [editableRow, setEditableRow] = useState(null);
 
   const [showRowModal, setShowRowModal] = useState(false);
-  const [showRequestModal, setShowRequestModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
 
@@ -109,11 +107,6 @@ function OrdersTable() {
       });
   };
 
-  // Initial fetch
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   // Auto-refresh orders every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
@@ -122,20 +115,6 @@ function OrdersTable() {
 
     return () => clearInterval(interval);
   }, []);
-
-  // delivery receipt generation
-  /*
-  const handleCreateDeliveryReceipt = (withInvoice) => {
-    const url = withInvoice
-      ? `${API_URL}/delivery-receipts/invoice`
-      : `${API_URL}/delivery-receipts/delivery-receipts-no-invoice`;
-
-    // Open PDF in new tab
-    window.open(`${url}?orderId=${selectedRow.orderId}`, "_blank");
-
-    setShowRequestModal(false);
-  };
-*/
 
   // Handle search input change
   const handleSearch = (event) => {
@@ -554,84 +533,6 @@ function OrdersTable() {
                         minimumFractionDigits: 2,
                       })}
                     </span>
-                  </div>
-                </div>
-
-                {/* Modal Footer */}
-                <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
-                  <div>
-                    <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
-                      {selectedRow.customerName}
-                    </p>
-                    <p className="mb-0 small">{selectedRow.customerAddress}</p>
-                    <p className="mb-0 small">{selectedRow.customerNumber}</p>
-                  </div>
-                  <p className="text-muted small mb-0">
-                    {new Date(selectedRow.date).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* REQUEST INVOICE MODAL */}
-      {showRequestModal && selectedRow && (
-        <>
-          {/* Backdrop */}
-          <div className="modal-backdrop fade show"></div>
-
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-            <div className="modal-dialog" role="document">
-              <div className="modal-content">
-                <div className="modal-header d-flex flex-column align-items-start">
-                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                    <p
-                      className="mb-2"
-                      style={{ color: "#05050599", fontSize: "12px" }}
-                    >
-                      Sales &gt; Order &gt; {selectedRow.orderId}
-                    </p>
-                    <button
-                      type="button"
-                      className="btn-close p-4"
-                      onClick={() => setShowRequestModal(false)}
-                    ></button>
-                  </div>
-                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="mb-0" style={{ color: "#0C1D61" }}>
-                      Order ID: {selectedRow.orderId}
-                    </h5>
-                  </div>
-                </div>
-
-                {/* Modal Body */}
-                <div className="modal-body">
-                  <p className="h5">
-                    {" "}
-                    What type of document would you like to create?{" "}
-                  </p>
-
-                  <div className="d-flex justify-content-center gap-3 mt-4 mb-3">
-                    <button
-                      className="btn"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handleCreateDeliveryReceipt(true)}
-                    >
-                      Delivery Receipt with Invoice
-                    </button>
-                    <button
-                      className="btn"
-                      style={{ backgroundColor: "#0C1D61", color: "white" }}
-                      onClick={() => handleCreateDeliveryReceipt(false)}
-                    >
-                      Delivery Receipt
-                    </button>
                   </div>
                 </div>
 

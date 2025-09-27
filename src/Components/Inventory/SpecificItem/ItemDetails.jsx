@@ -50,24 +50,21 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(
-        `${API_URL}/inventory/update-inventory`,
-        {
-          method: "PATCH",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            itemCode: item.itemCode,
-            itemName: formData.itemName,
-            brand: formData.brand,
-            minStock: formData.minStock,
-            partNum: formData.partNum,
-            interNum: formData.interNum,
-            unit: formData.unit,
-            model: formData.model,
-            origin: formData.origin,
-          }),
-        }
-      );
+      const response = await fetch(`${API_URL}/inventory/update-inventory`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          itemCode: item.itemCode,
+          itemName: formData.itemName,
+          brand: formData.brand,
+          minStock: formData.minStock,
+          partNum: formData.partNum,
+          interNum: formData.interNum,
+          unit: formData.unit,
+          model: formData.model,
+          origin: formData.origin,
+        }),
+      });
 
       if (response.ok) {
         Swal.fire({
@@ -95,17 +92,14 @@ function ItemDetails({ item, onUpdate }) {
   const handleStockUpdate = async () => {
     try {
       const PIC = user.firstName || "";
-      const response = await axios.get(
-        `${API_URL}/inventory/adjust-stock`,
-        {
-          params: {
-            itemName: item.itemName,
-            PIC: PIC,
-            stock: stockData.newCount,
-            remarks: stockData.remarks,
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/inventory/adjust-stock`, {
+        params: {
+          itemName: item.itemName,
+          PIC: PIC,
+          stock: stockData.newCount,
+          remarks: stockData.remarks,
+        },
+      });
 
       console.log("Stock adjusted successfully:", response.data);
       Swal.fire({
@@ -159,15 +153,12 @@ function ItemDetails({ item, onUpdate }) {
     if (!newSpecialPrice) return;
 
     try {
-      const response = await axios.get(
-        `${API_URL}/inventory/update-price`,
-        {
-          params: {
-            itemName: item.itemName,
-            price: newSpecialPrice,
-          },
-        }
-      );
+      const response = await axios.get(`${API_URL}/inventory/update-price`, {
+        params: {
+          itemName: item.itemName,
+          price: newSpecialPrice,
+        },
+      });
 
       console.log("Price 4 updated successfully:", response.data);
       showAlert("success", "Price 4 updated successfully!");
@@ -367,12 +358,14 @@ function ItemDetails({ item, onUpdate }) {
               style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
-            <FaEdit
-              onClick={() => handleEditSpecialPriceClick(item.price?.price4)}
-              style={{ cursor: "pointer", margin: "0px 15px" }}
-              color="#0C1D61"
-              size={30}
-            />
+            {user?.role === "admin" && (
+              <FaEdit
+                onClick={() => handleEditSpecialPriceClick(item.price?.price4)}
+                style={{ cursor: "pointer", margin: "0px 15px" }}
+                color="#0C1D61"
+                size={30}
+              />
+            )}
           </div>
         </div>
       </div>
