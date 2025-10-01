@@ -124,7 +124,7 @@ function InventoryTable({
     setMinimumStock("");
     setPartNum("");
     setInterNum("");
-    setUnit("");
+    setUnit("Pc");
     setModel("");
   };
 
