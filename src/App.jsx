@@ -291,6 +291,7 @@ function App() {
     axios
       .post(`${API_URL}/suppliers`, newSupplier)
       .then((response) => {
+        Swal.close();
         Swal.fire({
           icon: "success",
           title: "Supplier added!",

@@ -131,6 +131,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
       axios.post(`${API_URL}/customers`, newCustomer);
 
+      Swal.close();
       Swal.fire({
         icon: "success",
         title: "Customer Added",
