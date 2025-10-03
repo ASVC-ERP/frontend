@@ -13,6 +13,7 @@ function CreateOrder({
   onSelectProduct,
   onPriceChange,
   onUpdateOrderItem,
+  onCalculateDiscount,
   onCalculateTotal,
   onCalculateTotalPrice,
   onRemoveProduct,
@@ -176,6 +177,7 @@ function CreateOrder({
                 onSelectProduct={onSelectProduct}
                 onPriceChange={onPriceChange}
                 onUpdateOrderItem={onUpdateOrderItem}
+                onCalculateDiscount={onCalculateDiscount}
                 onCalculateTotal={onCalculateTotal}
                 onCalculateTotalPrice={onCalculateTotalPrice}
                 onRemoveProduct={onRemoveProduct}

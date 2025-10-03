@@ -495,10 +495,33 @@ function OrdersTable({ orders, setOrders }) {
                           <li key={index}>
                             <div className="d-flex justify-content-between align-items-center mb-2">
                               {/* Image and Product Info */}
-                              <div className="d-flex align-items-center justify-content-center gap-3">
+                              <div className="d-flex flex-column">
                                 <span className="fw-semibold">
                                   {item.itemName}
                                 </span>
+
+                                <small className="text-muted">
+                                  Unit Price: ₱
+                                  {item.price.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </small>
+
+                                {item.discPercent > 0 && (
+                                  <small className="text-danger">
+                                    Discount: {item.discPercent}% ( ₱
+                                    {(
+                                      (parseFloat(
+                                        item.price?.[item.selectedMarkup]
+                                      ) || 0) *
+                                      (parseInt(item.quantity) || 0) *
+                                      (item.discPercent / 100)
+                                    ).toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                    })}
+                                    )
+                                  </small>
+                                )}
                               </div>
 
                               {/* Price and Qty */}
