@@ -107,11 +107,15 @@ function OrdersTable({ orders, setOrders }) {
       });
   };
 
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
   // Auto-refresh orders every 10 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       fetchOrders();
-    }, 10000); // adjust interval as needed (ms)
+    }, 120000); // adjust interval as needed (ms)
 
     return () => clearInterval(interval);
   }, []);
