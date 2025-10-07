@@ -279,72 +279,69 @@ function InventoryTable({
   };
 
   return (
-    <div className="container-fluid">
-      <div className="mb-3">
-        <div
-          className="d-flex align-items-center justify-content-between "
-          style={{ gap: "10px" }}
-        >
-          {/* Search input field */}
-          <div className="position-relative w-25 my-0">
-            <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-            <input
-              type="text"
-              placeholder="Search inventory"
-              value={searchTerm}
-              onChange={handleSearch}
-              className="form-control ps-5 border-2 rounded-3"
-            />
-          </div>
-
-          {/* Add + Import Buttons beside each other */}
-          <div style={{ display: "flex", gap: "8px" }}>
-            <button
-              type="button"
-              className="btn"
-              style={{
-                backgroundColor: "#0C1D61",
-                color: "white",
-                whiteSpace: "nowrap",
-              }}
-              onClick={handleAddItemClick}
-            >
-              + Add Item
-            </button>
-
-            <label
-              htmlFor="fileUpload"
-              className="btn"
-              style={{
-                backgroundColor: "#198754",
-                color: "white",
-                cursor: "pointer",
-                marginLeft: "10px",
-              }}
-            >
-              📂 Import
-            </label>
-            <input
-              type="file"
-              id="fileUpload"
-              accept=".xlsx"
-              style={{ display: "none" }}
-              onChange={handleFileUpload}
-            />
-          </div>
+    <div>
+      <div className="d-flex align-items-center justify-content-between "
+      >
+        {/* Search input field */}
+        <div className="position-relative w-25 my-3">
+          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+          <input
+            type="text"
+            placeholder="Search inventory"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="form-control ps-5 border-2 rounded-3"
+          />
         </div>
 
-        <DataTable
-          columns={columns}
-          data={filteredData}
-          pagination
-          highlightOnHover
-          fixedHeader
-          fixedHeaderScrollHeight="450px"
-          onRowClicked={handleRowClick}
-          className="custom-data-table"
-        />
+        {/* Add + Import Buttons beside each other */}
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            type="button"
+            className="btn"
+            style={{
+              backgroundColor: "#0C1D61",
+              color: "white",
+              whiteSpace: "nowrap",
+            }}
+            onClick={handleAddItemClick}
+          >
+            + Add Item
+          </button>
+
+          <label
+            htmlFor="fileUpload"
+            className="btn"
+            style={{
+              backgroundColor: "#198754",
+              color: "white",
+              cursor: "pointer",
+              marginLeft: "10px",
+            }}
+          >
+            📂 Import
+          </label>
+          <input
+            type="file"
+            id="fileUpload"
+            accept=".xlsx"
+            style={{ display: "none" }}
+            onChange={handleFileUpload}
+          />
+        </div>
       </div>
+
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        pagination
+        paginationPerPage={20}
+        highlightOnHover
+        fixedHeader
+        fixedHeaderScrollHeight="450px"
+        onRowClicked={handleRowClick}
+        className="custom-data-table"
+      />
 
       {/* Add Item Modal */}
       <div

@@ -3,12 +3,12 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 
 /*
-function SalesOrderHistoryTab({ itemName }) {
+function SalesOrderHistoryTab({ itemCode }) {
 */
 function SalesOrderHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemName = item?.itemName || "";
+  const itemCode = item?.itemCode || "";
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -25,9 +25,8 @@ function SalesOrderHistoryTab({ item }) {
   };
 
   useEffect(() => {
-    console.log("Fetching Sales Order for item:", itemName);
     const fetchData = async () => {
-      if (!itemName) {
+      if (!itemCode) {
         setData([]);
         setLoading(false);
         return;
@@ -37,7 +36,7 @@ function SalesOrderHistoryTab({ item }) {
         const response = await axios.get(
           `${API_URL}/inventory/sales-order-history`,
           {
-            params: { itemName },
+            params: { itemCode },
           }
         );
         console.log("Sales Order Data:", response.data);
@@ -51,7 +50,7 @@ function SalesOrderHistoryTab({ item }) {
     };
 
     fetchData();
-  }, [itemName]);
+  }, [itemCode]);
 
   const columns = [
     { name: "Date", selector: (row) => row.date, sortable: true },

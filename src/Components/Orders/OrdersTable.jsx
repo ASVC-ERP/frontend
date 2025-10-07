@@ -405,9 +405,10 @@ function OrdersTable({ orders, setOrders }) {
         columns={columns}
         data={filteredData}
         pagination
+        paginationPerPage={20}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="500px"
+        fixedHeaderScrollHeight="450px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
       />

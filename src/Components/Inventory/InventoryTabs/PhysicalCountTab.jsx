@@ -5,7 +5,7 @@ import axios from "axios";
 function PhysicalCountTab({item}) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemName = item?.itemName || "";
+  const itemCode = item?.itemCode || "";
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -22,9 +22,8 @@ function PhysicalCountTab({item}) {
   };
 
     useEffect(() => {
-    console.log("Fetching physical count for item:", itemName);
     const fetchData = async () => {
-      if (!itemName) {
+      if (!itemCode) {
         setData([]);
         setLoading(false);
         return;
@@ -32,7 +31,7 @@ function PhysicalCountTab({item}) {
       setLoading(true);
       try {
         const response = await axios.get(`${API_URL}/inventory/physical-count`, {
-          params: { itemName },
+          params: { itemCode },
         });
         console.log("Physical Count Data:", response.data);
         setData(response.data);
@@ -45,7 +44,7 @@ function PhysicalCountTab({item}) {
     };
 
     fetchData();
-  }, [itemName]);
+  }, [itemCode]);
 
   // Define table columns
   const columns = [

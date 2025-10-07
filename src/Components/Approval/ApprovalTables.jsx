@@ -19,9 +19,12 @@ function ApprovalTables() {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${API_URL}/orders/sales-orders/by-status`, {
-        params: { status: activeTab },
-      });
+      const response = await axios.get(
+        `${API_URL}/orders/sales-orders/by-status`,
+        {
+          params: { status: activeTab },
+        }
+      );
       setData(response.data);
     } catch (err) {
       setError("Failed to fetch orders. Please try again later.");
@@ -148,7 +151,7 @@ function ApprovalTables() {
       sortable: true,
       wrap: true,
       minWidth: "200px",
-      grow: 3, 
+      grow: 3,
     },
     {
       name: "Address",
@@ -250,6 +253,7 @@ function ApprovalTables() {
         data={filteredData}
         className="custom-data-table"
         pagination
+        paginationPerPage={20}
         noHeader
         highlightOnHover
         responsive
