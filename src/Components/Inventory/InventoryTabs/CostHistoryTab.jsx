@@ -109,7 +109,7 @@ function CostHistoryTab({ item }) {
       grow: 1,
       cell: (row) =>
         row.unitCost
-          ? `₱${parseFloat(row.unitCost).toLocaleString(undefined, {
+          ? `${parseFloat(row.unitCost).toLocaleString(undefined, {
               minimumFractionDigits: 2,
             })}`
           : "",
