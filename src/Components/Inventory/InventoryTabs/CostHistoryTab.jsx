@@ -5,7 +5,6 @@ import axios from "axios";
 function CostHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemName = item?.itemName || "";
   const itemCode = item?.itemCode || "";
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -16,14 +15,11 @@ function CostHistoryTab({ item }) {
         fontSize: "0.875rem",
         fontWeight: "600",
         color: "#0C1D61",
-        paddingLeft: "8px",
-        paddingRight: "8px",
       },
     },
   };
 
   useEffect(() => {
-    console.log("Fetching cost history for item:", itemCode);
     const fetchData = async () => {
       if (!itemCode) {
         setData([]);
@@ -32,12 +28,9 @@ function CostHistoryTab({ item }) {
       }
       setLoading(true);
       try {
-        const response = await axios.get(
-          `${API_URL}/inventory/cost-history`,
-          {
-            params: { itemCode },
-          }
-        );
+        const response = await axios.get(`${API_URL}/inventory/cost-history`, {
+          params: { itemCode },
+        });
         console.log("Cost History Data:", response.data);
         setData(response.data);
       } catch (error) {
@@ -58,10 +51,12 @@ function CostHistoryTab({ item }) {
       name: "PO #",
       selector: (row) => row.poNum,
       sortable: true,
+      grow: 0.8,
+      wrap: true,
     },
     {
       id: 2,
-      name: " Date",
+      name: "Date",
       selector: (row) => {
         if (!row.purchaseDate) return "";
         const date = new Date(row.purchaseDate);
@@ -70,57 +65,62 @@ function CostHistoryTab({ item }) {
         ).slice(-2)}`;
       },
       sortable: true,
-      
+      grow: 0.8,
+      wrap: true,
     },
     {
       id: 3,
       name: "Invoice ID",
       selector: (row) => row.invoiceID,
       sortable: true,
+      grow: 1,
+      wrap: true,
     },
     {
       id: 4,
       name: "Quantity",
       selector: (row) => row.quantity,
       sortable: true,
+      grow: 0.8,
+      wrap: true,
     },
     {
       id: 5,
       name: "Currency",
       selector: (row) => row.currency,
       sortable: true,
+      grow: 0.8,
+      wrap: true,
     },
     {
       id: 6,
       name: "Conversion Factor",
       selector: (row) => row.conversionFactor,
       sortable: true,
-      cell: (row) => row.conversionFactor,
+      wrap: true,
+      grow: 1.2,
     },
     {
       id: 7,
       name: "Cost",
       selector: (row) => row.unitCost,
       sortable: true,
-      cell: (row) => row.unitCost,
+      wrap: true,
+      grow: 1,
+      cell: (row) =>
+        row.unitCost
+          ? `${parseFloat(row.unitCost).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+            })}`
+          : "",
     },
     {
       id: 8,
-      name: "Price 1",
-      selector: (row) => row.price1,
+      name: "Supplier",
+      selector: (row) => row.supplierName,
       sortable: false,
-    },
-    {
-      id: 9,
-      name: "Price 2",
-      selector: (row) => row.price2,
-      sortable: false,
-    },
-    {
-      id: 10,
-      name: "Price 3",
-      selector: (row) => row.price3,
-      sortable: false,
+      wrap: true,
+      grow: 2,
     },
   ];
 

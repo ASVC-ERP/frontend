@@ -1,11 +1,21 @@
-import React from 'react';
+import React from "react";
 import { IoIosSearch } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
-import defaultPic from "../../assets/defaultPic.jpg"
+import defaultPic from "../../assets/defaultPic.jpg";
 
-function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProduct, onPriceChange, onUpdateOrderItem, onCalculateTotal, onCalculateTotalPrice, onDeleteItem}) {
-   
-
+function OrderForm({
+  query,
+  suggestions,
+  orderItems,
+  onSearchChange,
+  onSelectProduct,
+  onPriceChange,
+  onCalculateDiscount,
+  onUpdateOrderItem,
+  onCalculateTotal,
+  onCalculateTotalPrice,
+  onDeleteItem,
+}) {
   return (
     <div>
       {/* Search Input */}
@@ -69,14 +79,26 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                 position: "sticky",
                 top: 0,
                 backgroundColor: "#E8E7EC",
+                zIndex: 2,
               }}
             >
               <tr>
                 <th className="text-start col-3">Product</th>
-                <th className="col-2">Price</th>
-                <th className="col-1"></th>
-                <th className="col-1">Quantity</th>
-                <th className="col-1">Total</th>
+                <th className="col-2" title="Choose unit price">
+                  Price
+                </th>
+                <th className="col-1" title="Enter number of units">
+                  Quantity
+                </th>
+                <th className="col-2" title="Discount percentage">
+                  Discount %
+                </th>
+                <th className="col-2" title="Calculated peso discount">
+                  Discount Amount
+                </th>
+                <th className="col-1" title="Final total after discount">
+                  Total
+                </th>
                 <th className="col-1"></th>
               </tr>
             </thead>
@@ -86,7 +108,6 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                   {/* Product column */}
                   <td className="text-start">
                     <div className="d-flex align-items-center gap-3">
-
                       <div className="d-flex flex-column">
                         <span className="fw-semibold">{item.itemName}</span>
                         <span
@@ -110,7 +131,7 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                   {/* Price */}
                   <td>
                     <select
-                      className="form-select mx-auto d-block w-50"
+                      className="form-select mx-auto d-block w-75"
                       value={item.selectedMarkup}
                       onChange={(e) => onPriceChange(idx, e.target.value)}
                     >
@@ -121,12 +142,12 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                     </select>
                   </td>
 
-                  <td style={{ color: "#ACACAC" }}>X</td>
+                  {/* <td style={{ color: "#ACACAC" }}>X</td> */}
 
                   {/* Quantity */}
-                  <td className="col-1">
+                  <td>
                     <input
-                      type="number"
+                      type="text"
                       value={item.quantity}
                       min="1"
                       max={item.stock}
@@ -140,13 +161,46 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                       className="form-control mx-auto d-block w-75 text-center"
                     />
                   </td>
+
+                  {/* <td className="fw-bold" style={{ color: "#ACACAC" }}>–</td> */}
+
+                  {/* Discount Percentage */}
+                  <td>
+                    <div className="input-group mx-auto w-75">
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={item.discPercent}
+                        onChange={(e) =>
+                          onUpdateOrderItem(
+                            idx,
+                            "discPercent",
+                            parseInt(e.target.value) || 0
+                          )
+                        }
+                        className="form-control text-center"
+                      />
+                      <span className="input-group-text">%</span>
+                    </div>
+                  </td>
+                  {/* Discount Amount */}
+                  <td>
+                    <input
+                      type="text"
+                      value={onCalculateDiscount(item).toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                      className="form-control mx-auto d-block w-75 text-center"
+                      readOnly
+                    />
+                  </td>
+
                   {/* Total */}
                   <td>
                     <span>₱</span>
                     <span>
-                      {(
-                        onCalculateTotal(item) - (item.discount || 0)
-                      ).toLocaleString(undefined, {
+                      {onCalculateTotal(item).toLocaleString(undefined, {
                         minimumFractionDigits: 2,
                       })}
                     </span>
@@ -165,7 +219,6 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
                 </tr>
               ))}
             </tbody>
-
           </table>
         </div>
       </div>
@@ -183,4 +236,4 @@ function OrderForm({query, suggestions, orderItems, onSearchChange, onSelectProd
   );
 }
 
-export default OrderForm
+export default OrderForm;

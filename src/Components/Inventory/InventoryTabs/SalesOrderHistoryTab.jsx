@@ -3,12 +3,11 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 
 /*
-function SalesOrderHistoryTab({ itemName }) {
+function SalesOrderHistoryTab({ itemCode }) {
 */
 function SalesOrderHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemName = item?.itemName || "";
   const itemCode = item?.itemCode || "";
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -26,7 +25,6 @@ function SalesOrderHistoryTab({ item }) {
   };
 
   useEffect(() => {
-    console.log("Fetching Sales Order for item:", itemCode);
     const fetchData = async () => {
       if (!itemCode) {
         setData([]);

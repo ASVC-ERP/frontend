@@ -43,8 +43,8 @@ function SupplierInvoicesTable({ items }) {
   const inputRefs = useRef([]);
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const [queries, setQueries] = useState({}); // per item input text
-  const [suggestions, setSuggestions] = useState({}); // per item suggestions
+  const [queries, setQueries] = useState({});
+  const [suggestions, setSuggestions] = useState({});
 
   const handleSearchChange = (index, value) => {
     setQueries((prev) => ({ ...prev, [index]: value }));
@@ -65,12 +65,18 @@ function SupplierInvoicesTable({ items }) {
   const handleSelectSuggestion = (index, suggestion) => {
     const updated = [...invoiceForm.items];
     updated[index] = {
-      ...updated[index], // create new object
+      ...updated[index],
       itemName: suggestion.itemName,
       itemCode: suggestion.itemCode,
+      unit: suggestion.unit || "pc",
     };
-    setInvoiceForm({ ...invoiceForm, items: updated });
 
+    setInvoiceForm((prev) => ({
+      ...prev,
+      items: updated,
+    }));
+
+    // Update input field display and hide suggestion list
     setQueries((prev) => ({ ...prev, [index]: suggestion.itemName }));
     setSuggestions((prev) => ({ ...prev, [index]: [] }));
   };
@@ -702,12 +708,16 @@ function SupplierInvoicesTable({ items }) {
                                 />
                               </div>
                               <div className="col-2">
-                                <select
-                                  className="form-select form-select-sm"
-                                  value={item.unit}
+                                <input
+                                  type="text"
+                                  className="form-control form-control-sm"
+                                  value={item.unit ?? ""}
                                   onChange={(e) => {
                                     const updated = [...invoiceForm.items];
-                                    updated[index].unit = e.target.value;
+                                    updated[index] = {
+                                      ...updated[index],
+                                      unit: e.target.value,
+                                    };
                                     setInvoiceForm({
                                       ...invoiceForm,
                                       items: updated,
@@ -718,13 +728,7 @@ function SupplierInvoicesTable({ items }) {
                                     borderRadius: "0.375rem",
                                     fontSize: "0.875rem",
                                   }}
-                                >
-                                  <option value="Pc">Pc</option>
-                                  <option value="Pcs">Pcs</option>
-                                  <option value="Set">Set</option>
-                                  <option value="Bundle">Bundle</option>
-                                  <option value="Roll">Roll</option>
-                                </select>
+                                />
                               </div>
                               <div className="col-1">
                                 <input
@@ -766,20 +770,31 @@ function SupplierInvoicesTable({ items }) {
                                 <button
                                   type="button"
                                   className="btn btn-sm"
+                                  style={{ color: "#B64345" }}
                                   onClick={() => {
                                     const updated = invoiceForm.items.filter(
                                       (_, i) => i !== index
                                     );
-                                    setInvoiceForm({
-                                      ...invoiceForm,
+                                    setInvoiceForm((prev) => ({
+                                      ...prev,
                                       items: updated,
+                                    }));
+
+                                    // 🧹 Also clear related query/suggestion for that index
+                                    setQueries((prev) => {
+                                      const newQueries = { ...prev };
+                                      delete newQueries[index];
+                                      return newQueries;
+                                    });
+
+                                    setSuggestions((prev) => {
+                                      const newSuggestions = { ...prev };
+                                      delete newSuggestions[index];
+                                      return newSuggestions;
                                     });
                                   }}
                                 >
-                                  <FaTrashAlt
-                                    style={{ color: "#B64345" }}
-                                    size={18}
-                                  />
+                                  <FaTrashAlt size={16} />
                                 </button>
                               </div>
                             </div>
@@ -829,27 +844,6 @@ function SupplierInvoicesTable({ items }) {
                         </div>
                       </div>
                     </form>
-
-                    {/* Additional info card
-                    <div
-                      className="mt-4 p-3 rounded-3"
-                      style={{
-                        backgroundColor: "rgba(12, 29, 97, 0.05)",
-                        border: "1px solid rgba(12, 29, 97, 0.1)",
-                      }}
-                    >
-                      <div className="d-flex align-items-center">
-                        <i
-                          className="fas fa-info-circle me-2"
-                          style={{ color: "#0C1D61" }}
-                        ></i>
-                        <small className="text-muted">
-                          Make sure to add at least one item before submitting
-                          the invoice.
-                        </small>
-                      </div>
-                    </div>
-                    */}
                   </div>
 
                   <div className="modal-footer bg-light border-0 rounded-bottom">

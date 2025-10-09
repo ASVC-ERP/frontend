@@ -141,20 +141,29 @@ function App() {
     setOrderItems(updatedItems);
   };
 
+  const calculateDiscount = (item) => {
+    const unitPrice = parseFloat(item.price?.[item.selectedMarkup]) || 0;
+    const quantity = parseInt(item.quantity) || 0;
+    const subtotal = unitPrice * quantity;
+
+    return (subtotal * (parseFloat(item.discPercent) || 0)) / 100;
+  };
+
   const calculateTotal = (item) => {
-    const unitPrice = item.price?.[item.selectedMarkup];
-    return unitPrice * item.quantity;
+    const unitPrice = parseFloat(item.price?.[item.selectedMarkup]) || 0;
+    const quantity = parseInt(item.quantity) || 0;
+    const discount = calculateDiscount(item);
+
+    return unitPrice * quantity - discount;
   };
 
   const calculateTotalPrice = () => {
     return orderItems.reduce((total, item) => {
-      const selectedPrice = item.price?.[item.selectedMarkup]; // <-- access inside price
-      const quantity = item.quantity;
+      const unitPrice = parseFloat(item.price?.[item.selectedMarkup]) || 0;
+      const quantity = parseInt(item.quantity) || 0;
+      const discount = calculateDiscount(item);
 
-      const validSelectedPrice = parseFloat(selectedPrice) || 0;
-      const validQuantity = parseInt(quantity) || 0;
-
-      return total + validSelectedPrice * validQuantity;
+      return total + unitPrice * quantity - discount;
     }, 0);
   };
 
@@ -231,6 +240,7 @@ function App() {
     axios
       .post(`${API_URL}/items`, newItem)
       .then((response) => {
+        Swal.close();
         Swal.fire({
           icon: "success",
           title: "Added!",
@@ -241,12 +251,19 @@ function App() {
         fetchItems();
       })
       .catch((err) => {
-        console.error("Error adding item:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to add item. Please try again.",
-        });
+        if (err.response?.status === 409) {
+          Swal.fire({
+            icon: "error",
+            title: "Duplicate Item",
+            text: err.response.data.message,
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Something went wrong. Please try again later.",
+          });
+        }
       });
   };
 
@@ -291,22 +308,52 @@ function App() {
     axios
       .post(`${API_URL}/suppliers`, newSupplier)
       .then((response) => {
+        Swal.close();
         Swal.fire({
           icon: "success",
           title: "Supplier added!",
-          text: "Supplier added successfully.",
+          text: response.data.message || "Supplier added successfully.",
           timer: 2000,
           showConfirmButton: false,
         });
-        fetchSupplier(); // refetch updated data
+        fetchSupplier();
       })
       .catch((err) => {
         console.error("Error adding supplier:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to add supplier. Please try again.",
-        });
+
+        if (err.response) {
+          // Backend responded with an error
+          if (err.response.status === 409) {
+            Swal.fire({
+              icon: "error",
+              title: "Duplicate Supplier",
+              text:
+                err.response.data.message || "This supplier already exists.",
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Error",
+              text:
+                err.response.data.message ||
+                "Something went wrong. Please try again later.",
+            });
+          }
+        } else if (err.request) {
+          // Request was made but no response (network/server down)
+          Swal.fire({
+            icon: "error",
+            title: "Network Error",
+            text: "Unable to reach the server. Please check your connection.",
+          });
+        } else {
+          // Something else (e.g., code error)
+          Swal.fire({
+            icon: "error",
+            title: "Unexpected Error",
+            text: err.message,
+          });
+        }
       });
   };
 
@@ -375,6 +422,7 @@ function App() {
                     onSelectProduct={handleSelectProduct}
                     onPriceChange={handlePriceChange}
                     onUpdateOrderItem={updateOrderItem}
+                    onCalculateDiscount={calculateDiscount}
                     onCalculateTotal={calculateTotal}
                     onCalculateTotalPrice={calculateTotalPrice}
                     onRemoveProduct={handleRemoveProduct}

@@ -131,6 +131,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
       axios.post(`${API_URL}/customers`, newCustomer);
 
+      Swal.close();
       Swal.fire({
         icon: "success",
         title: "Customer Added",
@@ -229,49 +230,47 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   };
 
   return (
-    <div className="container-fluid">
-      <div className="my-3">
-        <div
-          className="d-flex align-items-center justify-content-between mb-4"
-          style={{ gap: "10px" }}
-        >
-          {/* Search input field */}
-          <div className="position-relative w-25 my-0">
-            <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-            <input
-              type="text"
-              placeholder="Search inventory"
-              value={searchTerm}
-              onChange={handleSearch}
-              className="form-control ps-5 border-2 rounded-3"
-            />
-          </div>
-
-          {/* Add Customer button */}
-          <button
-            type="button"
-            className="btn"
-            style={{
-              backgroundColor: "#0C1D61",
-              color: "white",
-              whiteSpace: "nowrap",
-            }}
-            onClick={handleAddCustomerClick}
-          >
-            + Add Customer
-          </button>
+    <div>
+      <div
+        className="d-flex align-items-center justify-content-between mb-2"
+      >
+        {/* Search input field */}
+        <div className="position-relative w-25 my-3">
+          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+          <input
+            type="text"
+            placeholder="Search inventory"
+            value={searchTerm}
+            onChange={handleSearch}
+            className="form-control ps-5 border-2 rounded-3"
+          />
         </div>
 
-        <DataTable
-          columns={columns}
-          data={filteredData}
-          pagination
-          highlightOnHover
-          fixedHeader
-          fixedHeaderScrollHeight="500px"
-          className="custom-data-table"
-        />
+        {/* Add Customer button */}
+        <button
+          type="button"
+          className="btn"
+          style={{
+            backgroundColor: "#0C1D61",
+            color: "white",
+            whiteSpace: "nowrap",
+          }}
+          onClick={handleAddCustomerClick}
+        >
+          + Add Customer
+        </button>
       </div>
+
+      <DataTable
+        columns={columns}
+        data={filteredData}
+        pagination
+        paginationPerPage={20}
+        highlightOnHover
+        fixedHeader
+        fixedHeaderScrollHeight="450px"
+        className="custom-data-table"
+      />
 
       {/* Add Customer Modal */}
       <div

@@ -587,9 +587,10 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           data={filteredData}
           onRowClicked={handleRowClick}
           pagination
+          paginationPerPage={20}
           highlightOnHover
           fixedHeader
-          fixedHeaderScrollHeight="500px"
+          fixedHeaderScrollHeight="450px"
           className="custom-data-table"
         />
       </div>
