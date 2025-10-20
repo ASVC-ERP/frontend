@@ -25,8 +25,8 @@ function Tabs({ item }) {
             role="tab"
             onClick={() => setActiveTab("tab1")}
             style={{
-              backgroundColor: activeTab === "tab1" ? "#0C1D61" : "#ffffff",
-              color: activeTab === "tab1" ? "white" : "#0C1D61",
+              backgroundColor: activeTab === "tab1" ? "#1E5A84" : "#ffffff",
+              color: activeTab === "tab1" ? "white" : "#1E5A84",
               border: activeTab === "tab1" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}
@@ -44,8 +44,8 @@ function Tabs({ item }) {
             role="tab"
             onClick={() => setActiveTab("tab2")}
             style={{
-              backgroundColor: activeTab === "tab2" ? "#0C1D61" : "#ffffff",
-              color: activeTab === "tab2" ? "white" : "#0C1D61",
+              backgroundColor: activeTab === "tab2" ? "#1E5A84" : "#ffffff",
+              color: activeTab === "tab2" ? "white" : "#1E5A84",
               border: activeTab === "tab2" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}
@@ -63,8 +63,8 @@ function Tabs({ item }) {
             role="tab"
             onClick={() => setActiveTab("tab3")}
             style={{
-              backgroundColor: activeTab === "tab3" ? "#0C1D61" : "#ffffff",
-              color: activeTab === "tab3" ? "white" : "#0C1D61",
+              backgroundColor: activeTab === "tab3" ? "#1E5A84" : "#ffffff",
+              color: activeTab === "tab3" ? "white" : "#1E5A84",
               border: activeTab === "tab3" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}
@@ -82,8 +82,8 @@ function Tabs({ item }) {
             role="tab"
             onClick={() => setActiveTab("tab4")}
             style={{
-              backgroundColor: activeTab === "tab4" ? "#0C1D61" : "#ffffff",
-              color: activeTab === "tab4" ? "white" : "#0C1D61",
+              backgroundColor: activeTab === "tab4" ? "#1E5A84" : "#ffffff",
+              color: activeTab === "tab4" ? "white" : "#1E5A84",
               border: activeTab === "tab4" ? "" : "1px solid #c9c9c9ad",
               whiteSpace: "nowrap",
             }}

@@ -154,7 +154,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
         icon: "success",
         title: "Supplier Updated",
         text: "Supplier details have been successfully updated.",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
 
       onRefreshSupplier();
@@ -165,7 +165,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
         icon: "error",
         title: "Update Failed",
         text: error.response?.data?.message || "Something went wrong.",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
     }
   };
@@ -251,7 +251,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
           type="button"
           className="btn"
           style={{
-            backgroundColor: "#0C1D61",
+            backgroundColor: "#1E5A84",
             color: "white",
             whiteSpace: "nowrap",
           }}
@@ -287,7 +287,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
             <div
               className="modal-header text-white position-relative overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
               }}
             >
@@ -343,7 +343,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-barcode me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Code
                       </label>
@@ -362,7 +362,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -376,7 +376,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-building me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Name
                       </label>
@@ -395,7 +395,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -411,7 +411,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-dollar-sign me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Currency
                       </label>
@@ -430,7 +430,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -444,7 +444,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-dollar-sign me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Number
                       </label>
@@ -463,7 +463,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -479,7 +479,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-map-marker-alt me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Address
                       </label>
@@ -499,7 +499,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -519,7 +519,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                 <div className="d-flex align-items-center">
                   <i
                     className="fas fa-info-circle me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   <small className="text-muted">
                     Please ensure all information is accurate before submitting.
@@ -561,7 +561,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                 disabled={!newCode || !newName || !newAddress}
                 style={{
                   backgroundColor:
-                    !newCode || !newName || !newAddress ? "#6c757d" : "#0C1D61",
+                    !newCode || !newName || !newAddress ? "#6c757d" : "#1E5A84",
                   color: "white",
                   border: "none",
                   borderRadius: "0.5rem",
@@ -580,7 +580,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                 }}
                 onMouseLeave={(e) => {
                   if (!(!newCode || !newName || !newAddress)) {
-                    e.target.style.backgroundColor = "#0C1D61";
+                    e.target.style.backgroundColor = "#1E5A84";
                     e.target.style.transform = "translateY(0)";
                   }
                 }}
@@ -619,7 +619,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                 className="modal-header text-white position-relative overflow-hidden"
                 style={{
                   background:
-                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                   borderRadius: "0.5rem 0.5rem 0 0",
                 }}
               >
@@ -675,7 +675,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-id-badge me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier ID
                       </label>
@@ -704,7 +704,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-building me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Name
                       </label>
@@ -728,7 +728,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -742,7 +742,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-money-bill-wave me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Currency
                       </label>
@@ -766,7 +766,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -780,7 +780,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-money-bill-wave me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Number
                       </label>
@@ -804,7 +804,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -818,7 +818,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       >
                         <i
                           className="fas fa-map-marker-alt me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Supplier Address{" "}
                       </label>
@@ -843,7 +843,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                           transition: "border-color 0.3s ease",
                         }}
                         onFocus={(e) =>
-                          (e.target.style.borderColor = "#0C1D61")
+                          (e.target.style.borderColor = "#1E5A84")
                         }
                         onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                       />
@@ -862,7 +862,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                   <div className="d-flex align-items-center">
                     <i
                       className="fas fa-info-circle me-2"
-                      style={{ color: "#0C1D61" }}
+                      style={{ color: "#1E5A84" }}
                     ></i>
                     <small className="text-muted">
                       Changes will be saved immediately. Make sure all
@@ -913,7 +913,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       !selectedInvoice.address ||
                       !selectedInvoice.currency
                         ? "#6c757d"
-                        : "#0C1D61",
+                        : "#1E5A84",
                     color: "white",
                     border: "none",
                     borderRadius: "0.5rem",
@@ -942,7 +942,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
                       selectedInvoice.address &&
                       selectedInvoice.currency
                     ) {
-                      e.target.style.backgroundColor = "#0C1D61";
+                      e.target.style.backgroundColor = "#1E5A84";
                       e.target.style.transform = "translateY(0)";
                     }
                   }}

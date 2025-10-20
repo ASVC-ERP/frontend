@@ -412,7 +412,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                 className="modal-header text-white position-relative overflow-hidden"
                 style={{
                   background:
-                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                   borderRadius: "0.5rem 0.5rem 0 0",
                   cursor: "move", // so it's clear this is draggable
                 }}
@@ -438,7 +438,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                         type="button"
                         className="btn btn-sm btn-light"
                         style={{
-                          color: "#0C1D61",
+                          color: "#1E5A84",
                         }}
                         onClick={() => handlePrintDR("a", selectedRow)}
                       >
@@ -448,7 +448,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                         type="button"
                         className="btn btn-sm btn-light"
                         style={{
-                          color: "#0C1D61",
+                          color: "#1E5A84",
                         }}
                         onClick={() => handlePrintDR("b", selectedRow)}
                       >
@@ -458,7 +458,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                         type="button"
                         className="btn btn-sm btn-light"
                         style={{
-                          color: "#0C1D61",
+                          color: "#1E5A84",
                         }}
                         onClick={() => handlePrint(selectedRow)}
                       >
@@ -562,7 +562,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
 
               <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
                 <div>
-                  <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
+                  <p className="fw-bold mb-1" style={{ color: "#1E5A84" }}>
                     {selectedRow.customerName}
                   </p>
                   <p className="mb-0 small">{selectedRow.customerAddress}</p>

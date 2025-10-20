@@ -17,11 +17,11 @@
 
 .custom-border-table td,
 .custom-border-table th {
-  border-color: #ACACAC; 
+  border-color: #62686c; 
 }
 
 .custom-header-color th {
-  color: #ACACAC;
+  color: #62686c;
 }
 
 .suggestion-dropdown {
@@ -50,13 +50,13 @@
 }
 
 .button-edit-supplier {
-  color: #0C1D61;
-  border: 2px solid #0C1D61;
+  color: #1E5A84;
+  border: 2px solid #1E5A84;
   white-space: nowrap;
 }
 
 .button-edit-supplier:hover {
-  background-color: #0C1D61;
+  background-color: #1E5A84;
   color: white;
 }
 

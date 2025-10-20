@@ -14,7 +14,7 @@ function PhysicalCountTab({item}) {
       style: {
         fontSize: "0.875rem",
         fontWeight: "600",
-        color: "#0C1D61",
+        color: "#1E5A84",
         paddingLeft: "8px",
         paddingRight: "8px",
       },

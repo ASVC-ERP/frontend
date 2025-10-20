@@ -198,6 +198,8 @@ function OrdersTable({ orders, setOrders }) {
         customerName: editableRow.customerName,
         customerAddress: editableRow.customerAddress,
         customerNumber: editableRow.customerNumber,
+        customerTIN: editableRow.customerTIN,
+        approvalStatus: editableRow.approvalStatus,
         status: editableRow.status,
         salesAgent: editableRow.salesAgent,
         orderedItems: (editableRow.orderedItems || []).map((it) => ({
@@ -383,6 +385,39 @@ function OrdersTable({ orders, setOrders }) {
     });
   };
 
+  const handleApprove = async (row) => {
+    try {
+      const payload = {
+        id: [row.orderId], // wrap in array to match backend
+      };
+
+      console.log("[handleApprove] Sending payload to backend:", JSON.stringify(payload, null, 2));
+
+      const response = await axios.post(`${API_URL}/orders/serve-approved`, payload);
+
+      console.log("[handleApprove] Backend response:", response.data);
+
+      Swal.fire({
+        icon: "success",
+        title: "Approved!",
+        text: "Selected orders have been approved successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setSelectedOrders([]);
+      fetchOrders();
+    } catch (error) {
+      console.error("[handleApprove] Error approving orders:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to approve orders. Please try again.",
+      });
+    }
+  };
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center">
@@ -402,7 +437,7 @@ function OrdersTable({ orders, setOrders }) {
           <button
             type="button"
             className="btn me-5"
-            style={{ backgroundColor: "#0C1D61", color: "white" }}
+            style={{ backgroundColor: "#246c9d", color: "white" }}
           >
             + Add Order
           </button>
@@ -426,20 +461,30 @@ function OrdersTable({ orders, setOrders }) {
           {/* Backdrop */}
           <div className="modal-backdrop fade show"></div>
           <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-            <div className="modal-dialog modal-lg" role="document">
-              <div className="modal-content">
+            <div
+              className="modal-dialog modal-xl modal-dialog-centered"
+              role="document"
+              style={{ height: "90vh", maxHeight: "90vh" }}
+            >
+              <div
+                className="modal-content"
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
                 <div
                   className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
                   style={{
-                    background:
-                      "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    background: "#246c9d 100%",
                     borderRadius: "0.5rem 0.5rem 0 0",
                     cursor: "move", // for draggable
                   }}
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                    <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
-                      Sales &gt; Order &gt; {selectedRow.orderId}
+                    <p className="mb-2 opacity-75" style={{ fontSize: "20px" }}>
+                      {selectedRow.orderId}
                     </p>
                     <button
                       type="button"
@@ -449,14 +494,18 @@ function OrdersTable({ orders, setOrders }) {
                   </div>
 
                   <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    {/*
                     <h5 className="mb-0">Order ID: {selectedRow.orderId}</h5>
+                    */}
+                    <h5 className="mb-0">Customer: {selectedRow.customerName}</h5>
+                      
                     <div className="d-flex gap-2">
                       {selectedRow?.status?.trim().toLowerCase() !==
                         "served" && (
                         <button
                           type="button"
                           className="btn btn-sm btn-light"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#246c9d" }}
                           onClick={() => {
                             setShowRowModal(false);
                             setShowEditModal(true);
@@ -470,7 +519,7 @@ function OrdersTable({ orders, setOrders }) {
                         <button
                           type="button"
                           className="btn btn-sm btn-light"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#246c9d" }}
                           onClick={() => handlePrint(true)}
                         >
                           Print
@@ -481,7 +530,7 @@ function OrdersTable({ orders, setOrders }) {
                         <button
                           type="button"
                           className="btn btn-sm btn-light"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#246c9d" }}
                           onClick={() => {
                             setShowRowModal(false);
                             handleServe(selectedRow);
@@ -498,7 +547,7 @@ function OrdersTable({ orders, setOrders }) {
                   <div
                     className=" rounded-3"
                     style={{
-                      maxHeight: "250px",
+                      maxHeight: "430px",
                       overflowY: "auto",
                     }}
                   >
@@ -514,11 +563,13 @@ function OrdersTable({ orders, setOrders }) {
                                 </span>
 
                                 <small className="text-muted">
-                                  Unit Price: ₱
+                                  Price: ₱
                                   {item.price.toLocaleString(undefined, {
                                     minimumFractionDigits: 2,
-                                  })}
-                                </small>
+                                  })}{" "}
+                                  | Qty: {item.quantity}
+                                </small> 
+                                
 
                                 {item.discPercent > 0 && (
                                   <small className="text-danger">
@@ -537,7 +588,7 @@ function OrdersTable({ orders, setOrders }) {
                                 )}
                               </div>
 
-                              {/* Price and Qty */}
+                              {/* Price */}
                               <div className="text-end d-flex flex-column">
                                 <span className="fw-semibold">
                                   ₱
@@ -548,9 +599,6 @@ function OrdersTable({ orders, setOrders }) {
                                     }
                                   )}
                                 </span>
-                                <small className="text-muted">
-                                  Qty: {item.quantity}
-                                </small>
                               </div>
                             </div>
                           </li>
@@ -573,9 +621,10 @@ function OrdersTable({ orders, setOrders }) {
                 </div>
 
                 {/* Modal Footer */}
+                {/*
                 <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
                   <div>
-                    <p className="fw-bold mb-1" style={{ color: "#0C1D61" }}>
+                    <p className="fw-bold mb-1" style={{ color: "#246c9d" }}>
                       {selectedRow.customerName}
                     </p>
                     <p className="mb-0 small">{selectedRow.customerAddress}</p>
@@ -589,6 +638,29 @@ function OrdersTable({ orders, setOrders }) {
                     })}
                   </p>
                 </div>
+                
+                <div
+                  className="modal-footer d-flex justify-content-end"
+                  style={{
+                    borderTop: "1px solid #dee2e6",
+                    backgroundColor: "#f8f9fa",
+                  }}
+                >
+                  {selectedRow?.status?.trim().toLowerCase() !== "served" && (
+                    <button
+                      type="button"
+                      className="btn btn-primary"
+                      style={{
+                        backgroundColor: "#0CA678",
+                        border: "none"
+                      }}
+                      onClick={() => handleApprove(selectedRow)} // optional function
+                    >
+                      Approve
+                    </button>
+                  )}
+                </div>
+                */}
               </div>
             </div>
           </div>
@@ -608,7 +680,7 @@ function OrdersTable({ orders, setOrders }) {
                   className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
                   style={{
                     background:
-                      "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                      "linear-gradient(135deg, #246c9d 0%, #1e3c72 100%)",
                     borderRadius: "0.5rem 0.5rem 0 0",
                     cursor: "move", // draggable handle
                   }}
@@ -811,7 +883,7 @@ function OrdersTable({ orders, setOrders }) {
                   <button
                     type="button"
                     className="btn"
-                    style={{ backgroundColor: "#0C1D61", color: "white" }}
+                    style={{ backgroundColor: "#246c9d", color: "white" }}
                     onClick={handleSave}
                   >
                     Save Changes
@@ -837,7 +909,7 @@ function OrdersTable({ orders, setOrders }) {
                   className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
                   style={{
                     background:
-                      "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                      "linear-gradient(135deg, #246c9d 0%, #1e3c72 100%)",
                     borderRadius: "0.5rem 0.5rem 0 0",
                   }}
                 >
@@ -987,7 +1059,7 @@ function OrdersTable({ orders, setOrders }) {
                   <button
                     type="button"
                     className="btn"
-                    style={{ backgroundColor: "#0C1D61", color: "white" }}
+                    style={{ backgroundColor: "#246c9d", color: "white" }}
                     onClick={async () => {
                       try {
                         console.log("Serve button clicked"); // <--- log immediately on click

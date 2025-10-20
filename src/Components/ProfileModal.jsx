@@ -13,7 +13,7 @@ const ProfileModal = ({ user }) => {
           <div
             className="modal-header text-white position-relative overflow-hidden"
             style={{
-              background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+              background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
               borderRadius: "0.5rem 0.5rem 0 0",
             }}
           >
@@ -64,7 +64,7 @@ const ProfileModal = ({ user }) => {
                 <label className="form-label fw-semibold text-muted small">
                   <i
                     className="fas fa-id-badge me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   User ID
                 </label>
@@ -87,7 +87,7 @@ const ProfileModal = ({ user }) => {
                 <label className="form-label fw-semibold text-muted small">
                   <i
                     className="fas fa-at me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   Username
                 </label>
@@ -110,7 +110,7 @@ const ProfileModal = ({ user }) => {
                 <label className="form-label fw-semibold text-muted small">
                   <i
                     className="fas fa-user me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   First Name
                 </label>
@@ -133,7 +133,7 @@ const ProfileModal = ({ user }) => {
                 <label className="form-label fw-semibold text-muted small">
                   <i
                     className="fas fa-user me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   Last Name
                 </label>
@@ -156,7 +156,7 @@ const ProfileModal = ({ user }) => {
                 <label className="form-label fw-semibold text-muted small">
                   <i
                     className="fas fa-briefcase me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   Position
                 </label>
@@ -190,7 +190,7 @@ const ProfileModal = ({ user }) => {
               <div className="d-flex align-items-center">
                 <i
                   className="fas fa-info-circle me-2"
-                  style={{ color: "#0C1D61" }}
+                  style={{ color: "#1E5A84" }}
                 ></i>
                 <small className="text-muted">
                   Profile information is read-only. Contact your administrator
@@ -206,7 +206,7 @@ const ProfileModal = ({ user }) => {
               className="btn px-4 py-2"
               data-bs-dismiss="modal"
               style={{
-                backgroundColor: "#0C1D61",
+                backgroundColor: "#1E5A84",
                 color: "white",
                 border: "none",
                 borderRadius: "0.5rem",
@@ -218,7 +218,7 @@ const ProfileModal = ({ user }) => {
                 e.target.style.transform = "translateY(-1px)";
               }}
               onMouseLeave={(e) => {
-                e.target.style.backgroundColor = "#0C1D61";
+                e.target.style.backgroundColor = "#1E5A84";
                 e.target.style.transform = "translateY(0)";
               }}
             >

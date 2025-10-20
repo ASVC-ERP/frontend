@@ -71,7 +71,7 @@ function OrderForm({
 
       {/* Order Table */}
       <div className="row justify-content-between mx-2 mt-3">
-        <div style={{ maxHeight: "250px", overflowY: "auto" }}>
+        <div style={{ maxHeight: "310px", overflowY: "auto" }}>
           <table className="table transparent-table custom-border-table text-center fw-semibold">
             <thead
               className="custom-header-color bg-light"
@@ -130,19 +130,22 @@ function OrderForm({
 
                   {/* Price */}
                   <td>
-                    <select
-                      className="form-select mx-auto d-block w-75"
-                      value={item.selectedMarkup}
+                    <input
+                      type="text"
+                      list={`price-options-${idx}`}
+                      className="form-control mx-auto d-block w-75 text-center"
+                      value={item.customPrice || ""}
                       onChange={(e) => onPriceChange(idx, e.target.value)}
-                    >
-                      <option value="price1">₱{item.price?.price1}</option>
-                      <option value="price2">₱{item.price?.price2}</option>
-                      <option value="price3">₱{item.price?.price3}</option>
-                      <option value="price4">₱{item.price?.price4}</option>
-                    </select>
+                      placeholder="Enter price or select..."
+                      style={{ appearance: "textfield" }}
+                    />
+                    <datalist id={`price-options-${idx}`}>
+                      <option value={item.price?.price1}>₱{item.price?.price1}</option>
+                      <option value={item.price?.price2}>₱{item.price?.price2}</option>
+                      <option value={item.price?.price3}>₱{item.price?.price3}</option>
+                      <option value={item.price?.price4}>₱{item.price?.price4}</option>
+                    </datalist>
                   </td>
-
-                  {/* <td style={{ color: "#ACACAC" }}>X</td> */}
 
                   {/* Quantity */}
                   <td>

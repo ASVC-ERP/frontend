@@ -8,7 +8,7 @@ function Approval({ supplier }) {
         <div className="col-12">
           <p
             className="fw-bold fs-4 fs-md-2 mb-2"
-            style={{ color: "#0C1D61", fontFamily: "'Outfit', sans-serif" }}
+            style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
           >
             Approvals
           </p>

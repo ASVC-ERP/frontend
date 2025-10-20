@@ -70,7 +70,7 @@ function ItemDetails({ item, onUpdate }) {
         Swal.fire({
           text: "Item updated successfully!",
           icon: "success",
-          confirmButtonColor: "#0C1D61",
+          confirmButtonColor: "#1E5A84",
         });
 
         // 🔄 Immediately refresh data from backend
@@ -81,7 +81,7 @@ function ItemDetails({ item, onUpdate }) {
         Swal.fire({
           text: "Failed to update item.",
           icon: "error",
-          confirmButtonColor: "#0C1D61",
+          confirmButtonColor: "#1E5A84",
         });
       }
     } catch (error) {
@@ -105,7 +105,7 @@ function ItemDetails({ item, onUpdate }) {
       Swal.fire({
         text: "Stock updated successfully!",
         icon: "success",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
       setShowStockModal(false);
       if (onUpdate) {
@@ -116,7 +116,7 @@ function ItemDetails({ item, onUpdate }) {
       Swal.fire({
         text: "Error updating stock.",
         icon: "error",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
     }
   };
@@ -173,7 +173,7 @@ function ItemDetails({ item, onUpdate }) {
       Swal.fire({
         text: "Error updating Price 4.",
         icon: "error",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
     }
   };
@@ -244,7 +244,7 @@ function ItemDetails({ item, onUpdate }) {
             <FaEdit
               onClick={handleEditStockClick}
               style={{ cursor: "pointer", margin: "0px 15px" }}
-              color="#0C1D61"
+              color="#1E5A84"
               size={30}
             />
           </div>
@@ -362,7 +362,7 @@ function ItemDetails({ item, onUpdate }) {
               <FaEdit
                 onClick={() => handleEditSpecialPriceClick(item.price?.price4)}
                 style={{ cursor: "pointer", margin: "0px 15px" }}
-                color="#0C1D61"
+                color="#1E5A84"
                 size={30}
               />
             )}
@@ -431,7 +431,7 @@ function ItemDetails({ item, onUpdate }) {
                 className="modal-header text-white position-relative overflow-hidden"
                 style={{
                   background:
-                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                   borderRadius: "0.5rem 0.5rem 0 0",
                 }}
               >
@@ -482,7 +482,7 @@ function ItemDetails({ item, onUpdate }) {
                     <label className="form-label fw-semibold text-muted small">
                       <i
                         className="fas fa-boxes me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Current Stock Count
                     </label>
@@ -507,7 +507,7 @@ function ItemDetails({ item, onUpdate }) {
                     <label className="form-label fw-semibold text-muted small">
                       <i
                         className="fas fa-edit me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       New Stock Count
                     </label>
@@ -525,7 +525,7 @@ function ItemDetails({ item, onUpdate }) {
                         fontSize: "0.95rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -535,7 +535,7 @@ function ItemDetails({ item, onUpdate }) {
                     <label className="form-label fw-semibold text-muted small">
                       <i
                         className="fas fa-comment-alt me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Reason for Stock Change{" "}
                     </label>
@@ -554,7 +554,7 @@ function ItemDetails({ item, onUpdate }) {
                         resize: "vertical",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -630,7 +630,7 @@ function ItemDetails({ item, onUpdate }) {
                   <div className="d-flex align-items-center">
                     <i
                       className="fas fa-info-circle me-2"
-                      style={{ color: "#0C1D61" }}
+                      style={{ color: "#1E5A84" }}
                     ></i>
                     <small className="text-muted">
                       Stock updates will be logged with timestamp and user
@@ -674,7 +674,7 @@ function ItemDetails({ item, onUpdate }) {
                     backgroundColor:
                       !stockData.newCount || !stockData.remarks
                         ? "#6c757d"
-                        : "#0C1D61",
+                        : "#1E5A84",
                     color: "white",
                     border: "none",
                     borderRadius: "0.5rem",
@@ -693,7 +693,7 @@ function ItemDetails({ item, onUpdate }) {
                   }}
                   onMouseLeave={(e) => {
                     if (stockData.newCount && stockData.remarks) {
-                      e.target.style.backgroundColor = "#0C1D61";
+                      e.target.style.backgroundColor = "#1E5A84";
                       e.target.style.transform = "translateY(0)";
                     }
                   }}
@@ -725,7 +725,7 @@ function ItemDetails({ item, onUpdate }) {
                 className="modal-header text-white position-relative overflow-hidden"
                 style={{
                   background:
-                    "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                   borderRadius: "0.5rem 0.5rem 0 0",
                 }}
               >
@@ -777,7 +777,7 @@ function ItemDetails({ item, onUpdate }) {
                       <label className="form-label fw-semibold text-muted small">
                         <i
                           className="fas fa-tag me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         Current Price 4
                       </label>
@@ -814,7 +814,7 @@ function ItemDetails({ item, onUpdate }) {
                       >
                         <i
                           className="fas fa-star me-2"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         ></i>
                         New Price 4
                       </label>
@@ -839,7 +839,7 @@ function ItemDetails({ item, onUpdate }) {
                             transition: "border-color 0.3s ease",
                           }}
                           onFocus={(e) =>
-                            (e.target.style.borderColor = "#0C1D61")
+                            (e.target.style.borderColor = "#1E5A84")
                           }
                           onBlur={(e) =>
                             (e.target.style.borderColor = "#e9ecef")
@@ -921,7 +921,7 @@ function ItemDetails({ item, onUpdate }) {
                   <div className="d-flex align-items-center">
                     <i
                       className="fas fa-info-circle me-2"
-                      style={{ color: "#0C1D61" }}
+                      style={{ color: "#1E5A84" }}
                     ></i>
                     <small className="text-muted">
                       Changes will be applied immediately. Make sure the new
@@ -962,7 +962,7 @@ function ItemDetails({ item, onUpdate }) {
                   onClick={handleSubmitSpecialPrice}
                   disabled={!newSpecialPrice}
                   style={{
-                    backgroundColor: !newSpecialPrice ? "#6c757d" : "#0C1D61",
+                    backgroundColor: !newSpecialPrice ? "#6c757d" : "#1E5A84",
                     color: "white",
                     border: "none",
                     borderRadius: "0.5rem",
@@ -978,7 +978,7 @@ function ItemDetails({ item, onUpdate }) {
                   }}
                   onMouseLeave={(e) => {
                     if (newSpecialPrice) {
-                      e.target.style.backgroundColor = "#0C1D61";
+                      e.target.style.backgroundColor = "#1E5A84";
                       e.target.style.transform = "translateY(0)";
                     }
                   }}

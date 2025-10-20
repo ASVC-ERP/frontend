@@ -147,7 +147,7 @@ function SupplierInvoicesTable({ items }) {
         icon: "success",
         title: "Invoice Submitted",
         text: "The supplier invoice has been added successfully!",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
 
       setInvoiceForm({
@@ -184,14 +184,14 @@ function SupplierInvoicesTable({ items }) {
           icon: "error",
           title: "Invoice Error",
           text: err.response.data.message,
-          confirmButtonColor: "#0C1D61",
+          confirmButtonColor: "#1E5A84",
         });
       } else {
         Swal.fire({
           icon: "error",
           title: "Error",
           text: "Failed to submit invoice. Please try again.",
-          confirmButtonColor: "#0C1D61",
+          confirmButtonColor: "#1E5A84",
         });
       }
     }
@@ -230,7 +230,7 @@ function SupplierInvoicesTable({ items }) {
       <div className="d-flex justify-content-between align-items-center">
         <p
           className="h1 fw-bold mb-0 ms-3"
-          style={{ color: "#0C1D61", fontFamily: "'Outfit', sans-serif" }}
+          style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
         >
           {supplierName} Invoices
         </p>
@@ -257,7 +257,7 @@ function SupplierInvoicesTable({ items }) {
                 className="btn"
                 onClick={() => setShowCreateModal(true)}
                 style={{
-                  backgroundColor: "#0C1D61",
+                  backgroundColor: "#1E5A84",
                   color: "white",
                   whiteSpace: "nowrap",
                 }}
@@ -298,7 +298,7 @@ function SupplierInvoicesTable({ items }) {
                     className="modal-header text-white position-relative overflow-hidden"
                     style={{
                       background:
-                        "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                        "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                       borderRadius: "0.5rem 0.5rem 0 0",
                     }}
                   >
@@ -353,7 +353,7 @@ function SupplierInvoicesTable({ items }) {
                           >
                             <i
                               className="fas fa-file-invoice me-2"
-                              style={{ color: "#0C1D61" }}
+                              style={{ color: "#1E5A84" }}
                             ></i>
                             Purchase Order Number{" "}
                           </label>
@@ -376,7 +376,7 @@ function SupplierInvoicesTable({ items }) {
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
+                              (e.target.style.borderColor = "#1E5A84")
                             }
                             onBlur={(e) =>
                               (e.target.style.borderColor = "#e9ecef")
@@ -392,7 +392,7 @@ function SupplierInvoicesTable({ items }) {
                           >
                             <i
                               className="fas fa-file-invoice me-2"
-                              style={{ color: "#0C1D61" }}
+                              style={{ color: "#1E5A84" }}
                             ></i>
                             Invoice Number{" "}
                           </label>
@@ -415,7 +415,7 @@ function SupplierInvoicesTable({ items }) {
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
+                              (e.target.style.borderColor = "#1E5A84")
                             }
                             onBlur={(e) =>
                               (e.target.style.borderColor = "#e9ecef")
@@ -431,7 +431,7 @@ function SupplierInvoicesTable({ items }) {
                           >
                             <i
                               className="fas fa-calendar-alt me-2"
-                              style={{ color: "#0C1D61" }}
+                              style={{ color: "#1E5A84" }}
                             ></i>
                             Purchase Date
                           </label>
@@ -453,7 +453,7 @@ function SupplierInvoicesTable({ items }) {
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
+                              (e.target.style.borderColor = "#1E5A84")
                             }
                             onBlur={(e) =>
                               (e.target.style.borderColor = "#e9ecef")
@@ -468,7 +468,7 @@ function SupplierInvoicesTable({ items }) {
                           >
                             <i
                               className="fas fa-exchange-alt me-2"
-                              style={{ color: "#0C1D61" }}
+                              style={{ color: "#1E5A84" }}
                             ></i>
                             Type
                           </label>
@@ -489,7 +489,7 @@ function SupplierInvoicesTable({ items }) {
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
+                              (e.target.style.borderColor = "#1E5A84")
                             }
                             onBlur={(e) =>
                               (e.target.style.borderColor = "#e9ecef")
@@ -507,7 +507,7 @@ function SupplierInvoicesTable({ items }) {
                           >
                             <i
                               className="fas fa-dollar-sign me-2"
-                              style={{ color: "#0C1D61" }}
+                              style={{ color: "#1E5A84" }}
                             ></i>
                             Currency
                           </label>
@@ -529,7 +529,7 @@ function SupplierInvoicesTable({ items }) {
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
+                              (e.target.style.borderColor = "#1E5A84")
                             }
                             onBlur={(e) =>
                               (e.target.style.borderColor = "#e9ecef")
@@ -545,7 +545,7 @@ function SupplierInvoicesTable({ items }) {
                           >
                             <i
                               className="fas fa-dollar-sign me-2"
-                              style={{ color: "#0C1D61" }}
+                              style={{ color: "#1E5A84" }}
                             ></i>
                             Conversion Factor
                           </label>
@@ -567,7 +567,7 @@ function SupplierInvoicesTable({ items }) {
                               transition: "border-color 0.3s ease",
                             }}
                             onFocus={(e) =>
-                              (e.target.style.borderColor = "#0C1D61")
+                              (e.target.style.borderColor = "#1E5A84")
                             }
                             onBlur={(e) =>
                               (e.target.style.borderColor = "#e9ecef")
@@ -581,7 +581,7 @@ function SupplierInvoicesTable({ items }) {
                         <div className="d-flex align-items-center justify-content-between mb-3">
                           <h6
                             className="mb-0 fw-semibold"
-                            style={{ color: "#0C1D61" }}
+                            style={{ color: "#1E5A84" }}
                           >
                             <i className="fas fa-list me-2"></i>
                             Invoice Items
@@ -817,14 +817,14 @@ function SupplierInvoicesTable({ items }) {
                               <div className="d-flex justify-content-between align-items-center">
                                 <span
                                   className="fw-semibold"
-                                  style={{ color: "#0C1D61" }}
+                                  style={{ color: "#1E5A84" }}
                                 >
                                   <i className="fas fa-calculator me-2"></i>
                                   Total Price:
                                 </span>
                                 <span
                                   className="fw-bold fs-4"
-                                  style={{ color: "#0C1D61" }}
+                                  style={{ color: "#1E5A84" }}
                                 >
                                   ₱
                                   {invoiceForm.items
@@ -886,7 +886,7 @@ function SupplierInvoicesTable({ items }) {
                           !invoiceForm.purchaseDate ||
                           invoiceForm.items.length === 0
                             ? "#6c757d"
-                            : "#0C1D61",
+                            : "#1E5A84",
                         color: "white",
                         border: "none",
                         borderRadius: "0.5rem",
@@ -915,7 +915,7 @@ function SupplierInvoicesTable({ items }) {
                           invoiceForm.purchaseDate &&
                           invoiceForm.items.length > 0
                         ) {
-                          e.target.style.backgroundColor = "#0C1D61";
+                          e.target.style.backgroundColor = "#1E5A84";
                           e.target.style.transform = "translateY(0)";
                         }
                       }}
@@ -949,7 +949,7 @@ function SupplierInvoicesTable({ items }) {
                       className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
                       style={{
                         background:
-                          "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                          "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                         borderRadius: "0.5rem 0.5rem 0 0",
                       }}
                     >
@@ -982,7 +982,7 @@ function SupplierInvoicesTable({ items }) {
                       <div
                         className="rounded-3"
                         style={{
-                          maxHeight: "250px",
+                          maxHeight: "400px",
                           overflowY: "auto",
                         }}
                       >
@@ -1055,7 +1055,7 @@ function SupplierInvoicesTable({ items }) {
                       <div>
                         <p
                           className="fw-bold mb-1"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         >
                           {supplierName}
                         </p>
@@ -1067,7 +1067,7 @@ function SupplierInvoicesTable({ items }) {
                         <p className="text-muted small mb-0">Purchase Date</p>
                         <p
                           className="fw-semibold mb-0"
-                          style={{ color: "#0C1D61" }}
+                          style={{ color: "#1E5A84" }}
                         >
                           {new Date(
                             selectedInvoice.purchaseDate

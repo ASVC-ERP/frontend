@@ -12,7 +12,7 @@ export default function showAlert(type, message) {
     Swal.fire({
       text: message,
       icon: type, // "error", "warning", "info", "question"
-      confirmButtonColor: "#0C1D61",
+      confirmButtonColor: "#1E5A84",
     });
   }
 }

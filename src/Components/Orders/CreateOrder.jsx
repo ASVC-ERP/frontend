@@ -144,7 +144,7 @@ function CreateOrder({
           <div className="col-12">
             <p
               className="fw-bold fs-4 fs-md-2 mb-2"
-              style={{ color: "#0C1D61", fontFamily: "'Outfit', sans-serif" }}
+              style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
             >
               Create Order
             </p>
@@ -203,7 +203,7 @@ function CreateOrder({
             <button
               type="submit"
               className="btn"
-              style={{ backgroundColor: "#0C1D61", color: "white" }}
+              style={{ backgroundColor: "#1E5A84", color: "white" }}
               disabled={onCalculateTotalPrice() === 0}
             >
               Submit

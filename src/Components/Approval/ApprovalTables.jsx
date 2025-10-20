@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import { Check, X } from "lucide-react";
 import { IoIosSearch } from "react-icons/io";
@@ -12,8 +12,25 @@ function ApprovalTables() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const API_URL = import.meta.env.VITE_API_URL;
+
+  const handleRowClick = async (row) => {
+    try {
+      const response = await axios.get(`${API_URL}/orders/${row.orderID}`);
+      setSelectedOrder(response.data);
+      setShowModal(true);
+    } catch (error) {
+      console.error("Error fetching order details:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Failed to fetch order details",
+        text: "Please try again later.",
+      });
+    }
+  };
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -84,9 +101,12 @@ function ApprovalTables() {
 
   const handleReject = async () => {
     try {
+      console.log("Reject payload:", { orderIds: selectedOrders });
+
       await axios.post(`${API_URL}/orders/reject`, {
         orderIds: selectedOrders,
       });
+
 
       Swal.fire({
         icon: "success",
@@ -260,7 +280,127 @@ function ApprovalTables() {
         fixedHeader
         fixedHeaderScrollHeight="400px"
         progressPending={loading}
+        onRowClicked={handleRowClick}
       />
+
+      {showModal && selectedOrder && (
+        <>
+          {/* Backdrop */}
+          <div className="modal-backdrop fade show"></div>
+          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+            <div
+              className="modal-dialog modal-xl modal-dialog-centered"
+              role="document"
+              style={{ height: "90vh", maxHeight: "90vh" }}
+            >
+              <div
+                className="modal-content"
+                style={{
+                  height: "100%",
+                  display: "flex",
+                  flexDirection: "column",
+                }}
+              >
+                {/* HEADER */}
+                <div
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  style={{
+                    background: "#246c9d",
+                    borderRadius: "0.5rem 0.5rem 0 0",
+                    cursor: "move",
+                  }}
+                >
+                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    <p className="mb-2 opacity-75" style={{ fontSize: "20px" }}>
+                      {selectedOrder.orderId}
+                    </p>
+                    <button
+                      type="button"
+                      className="btn-close btn-close-white p-4"
+                      onClick={() => setShowModal(false)}
+                    ></button>
+                  </div>
+
+                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
+                    <h5 className="mb-0">Customer: {selectedOrder.customerName}</h5>
+                  </div>
+                </div>
+
+                {/* BODY */}
+                <div className="modal-body">
+                  <div
+                    className="rounded-3"
+                    style={{
+                      maxHeight: "430px",
+                      overflowY: "auto",
+                    }}
+                  >
+                    <ul className="list-unstyled">
+                      {selectedOrder.orderedItems?.map((item, index) => (
+                        <React.Fragment key={index}>
+                          <li>
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              {/* Product Info */}
+                              <div className="d-flex flex-column">
+                                <span className="fw-semibold">{item.itemName}</span>
+
+                                <small className="text-muted">
+                                  Unit Price: ₱
+                                  {item.price.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}{" "}
+                                  | Qty: {item.quantity}
+                                </small>
+
+                                {item.discPercent > 0 && (
+                                  <small className="text-danger">
+                                    Discount: {item.discPercent}% ( ₱
+                                    {(
+                                      (parseFloat(item.price) || 0) *
+                                      (parseInt(item.quantity) || 0) *
+                                      (item.discPercent / 100)
+                                    ).toLocaleString(undefined, {
+                                      minimumFractionDigits: 2,
+                                    })}
+                                    )
+                                  </small>
+                                )}
+                              </div>
+
+                              {/* Price */}
+                              <div className="text-end d-flex flex-column">
+                                <span className="fw-semibold">
+                                  ₱
+                                  {(item.price * item.quantity).toLocaleString(
+                                    undefined,
+                                    { minimumFractionDigits: 2 }
+                                  )}
+                                </span>
+                              </div>
+                            </div>
+                          </li>
+                          <hr className="my-0 border-secondary" />
+                        </React.Fragment>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* TOTAL */}
+                  <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
+                    <span className="h5 fw-semibold ">Total</span>
+                    <span className="fw-bold h5">
+                      ₱
+                      {selectedOrder.totalPrice?.toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 }

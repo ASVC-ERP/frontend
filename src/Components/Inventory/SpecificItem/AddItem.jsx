@@ -50,7 +50,7 @@ function AddItem({ onAddItem }) {
           <div className="d-flex justify-content-between align-items-center">
             <p
               className="h1 fw-bold mb-0 ms-3"
-              style={{ color: "#0C1D61", fontFamily: "'Outfit', sans-serif" }}
+              style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
             >
               Add Item
             </p>
@@ -190,7 +190,7 @@ function AddItem({ onAddItem }) {
             <button
               type="submit"
               className="btn me-5"
-              style={{ backgroundColor: "#0C1D61", color: "white" }}
+              style={{ backgroundColor: "#1E5A84", color: "white" }}
               disabled=""
             >
               Submit

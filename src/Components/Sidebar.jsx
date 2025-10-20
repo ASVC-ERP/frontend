@@ -32,7 +32,7 @@ export default function Sidebar({ onLogout }) {
                 to="/approval"
                 className="nav-link d-flex align-items-center"
                 style={{
-                  color: "#0C1D61",
+                  color: "#1E5A84",
                   fontSize: "1.1rem",
                   cursor: "pointer",
                 }}
@@ -48,7 +48,7 @@ export default function Sidebar({ onLogout }) {
               to="/"
               className="nav-link d-flex align-items-center"
               style={{
-                color: "#0C1D61",
+                color: "#1E5A84",
                 fontSize: "1.1rem",
                 cursor: "pointer",
               }}
@@ -63,7 +63,7 @@ export default function Sidebar({ onLogout }) {
               to="/invoice"
               className="nav-link d-flex align-items-center"
               style={{
-                color: "#0C1D61",
+                color: "#1E5A84",
                 fontSize: "1.1rem",
                 cursor: "pointer",
               }}
@@ -78,7 +78,7 @@ export default function Sidebar({ onLogout }) {
               to="/inventory"
               className="nav-link d-flex align-items-center"
               style={{
-                color: "#0C1D61",
+                color: "#1E5A84",
                 fontSize: "1.1rem",
                 cursor: "pointer",
               }}
@@ -93,7 +93,7 @@ export default function Sidebar({ onLogout }) {
               to="/supplier"
               className="nav-link d-flex align-items-center"
               style={{
-                color: "#0C1D61",
+                color: "#1E5A84",
                 fontSize: "1.1rem",
                 cursor: "pointer",
               }}
@@ -108,7 +108,7 @@ export default function Sidebar({ onLogout }) {
               to="/customer"
               className="nav-link d-flex align-items-center"
               style={{
-                color: "#0C1D61",
+                color: "#1E5A84",
                 fontSize: "1.1rem",
                 cursor: "pointer",
               }}
@@ -130,10 +130,10 @@ export default function Sidebar({ onLogout }) {
             aria-expanded="false"
             id="profileDropdown"
           >
-            <BsPersonCircle size={25} color="#0C1D61" />
+            <BsPersonCircle size={25} color="#1E5A84" />
             <p
               className="h6 fw-bolder ms-3 sidebar-text mb-0"
-              style={{ color: "#0C1D61" }}
+              style={{ color: "#1E5A84" }}
             >
               Hi, {user.firstName} 兄!
             </p>

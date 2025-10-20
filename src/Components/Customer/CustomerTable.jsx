@@ -251,7 +251,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
           type="button"
           className="btn"
           style={{
-            backgroundColor: "#0C1D61",
+            backgroundColor: "#1E5A84",
             color: "white",
             whiteSpace: "nowrap",
           }}
@@ -285,7 +285,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
             <div
               className="modal-header text-white position-relative overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
               }}
             >
@@ -340,7 +340,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-user-tie me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Customer Name
                     </label>
@@ -358,7 +358,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                         fontSize: "0.95rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -371,7 +371,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-user me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Contact Number
                     </label>
@@ -389,7 +389,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                         fontSize: "0.95rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -402,7 +402,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-map-marker-alt me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Customer Address
                     </label>
@@ -421,7 +421,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                         resize: "vertical",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -433,7 +433,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-id-card me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Customer TIN
                     </label>
@@ -460,7 +460,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                 <div className="d-flex align-items-center">
                   <i
                     className="fas fa-info-circle me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   <small className="text-muted">
                     Customer information will be used for invoicing and
@@ -505,7 +505,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                   backgroundColor:
                     !customerName || !customerContact || !customerAddress
                       ? "#6c757d"
-                      : "#0C1D61",
+                      : "#1E5A84",
                   color: "white",
                   border: "none",
                   borderRadius: "0.5rem",
@@ -524,7 +524,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                 }}
                 onMouseLeave={(e) => {
                   if (customerName && customerContact && customerAddress) {
-                    e.target.style.backgroundColor = "#0C1D61";
+                    e.target.style.backgroundColor = "#1E5A84";
                     e.target.style.transform = "translateY(0)";
                   }
                 }}
@@ -558,7 +558,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
             <div
               className="modal-header text-white position-relative overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
               }}
             >
@@ -612,7 +612,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-user-tie me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Customer Name
                     </label>
@@ -634,7 +634,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-user me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Contact Number
                     </label>
@@ -656,7 +656,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-map-marker-alt me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Customer Address
                     </label>
@@ -677,7 +677,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     >
                       <i
                         className="fas fa-id-card me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Customer TIN
                     </label>
@@ -704,7 +704,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                 <div className="d-flex align-items-center">
                   <i
                     className="fas fa-info-circle me-2"
-                    style={{ color: "#0C1D61" }}
+                    style={{ color: "#1E5A84" }}
                   ></i>
                   <small className="text-muted">
                     Customer information will be used for invoicing and
@@ -734,7 +734,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                   backgroundColor:
                     !customerName || !customerContact || !customerAddress
                       ? "#6c757d"
-                      : "#0C1D61",
+                      : "#1E5A84",
                   color: "white",
                 }}
               >

@@ -37,7 +37,7 @@ function LoginPage({ onLoginSuccess }) {
   return (
     <div
       className="d-flex vh-100 justify-content-center align-items-center"
-      style={{ backgroundColor: "#0C1D61" }}
+      style={{ backgroundColor: "#1E5A84" }}
     >
       <form
         onSubmit={handleLogin}
@@ -53,7 +53,7 @@ function LoginPage({ onLoginSuccess }) {
         <div className="mb-3">
           <label
             className="form-label fw-semibold"
-            style={{ color: "#0C1D61" }}
+            style={{ color: "#1E5A84" }}
           >
             Username
           </label>
@@ -68,7 +68,7 @@ function LoginPage({ onLoginSuccess }) {
         <div className="mb-3">
           <label
             className="form-label fw-semibold"
-            style={{ color: "#0C1D61" }}
+            style={{ color: "#1E5A84" }}
           >
             Password
           </label>
@@ -86,7 +86,7 @@ function LoginPage({ onLoginSuccess }) {
         <button
           type="submit"
           className="btn w-100 text-white"
-          style={{ backgroundColor: "#0C1D61" }}
+          style={{ backgroundColor: "#1E5A84" }}
         >
           LOGIN
         </button>

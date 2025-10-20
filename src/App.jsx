@@ -99,6 +99,20 @@ function App() {
   };
 
   const handleSelectProduct = (items) => {
+
+    if (orderItems.length >= 10) {
+      Swal.fire({
+        icon: "warning",
+        iconColor: "#950606",
+        title: "Item Limit Reached",
+        text: "You can only add up to 10 products per order.",
+        confirmButtonColor: "#1E5A84",
+      });
+      setQuery("");
+      setSuggestions([]);
+      return;
+    }
+
     const alreadyInOrder = orderItems.some(
       (item) => item.itemName === items.itemName
     );
@@ -106,10 +120,10 @@ function App() {
     if (alreadyInOrder) {
       Swal.fire({
         icon: "warning",
-        iconColor: "#0C1D61",
+        iconColor: "#1E5A84",
         title: "Duplicate Product",
         text: `${items.itemName} is already in the order list.`,
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
 
       setQuery("");
@@ -224,7 +238,7 @@ function App() {
       });
   };
 
-  const handleAddItem = (newItem) => {
+  const handleAddItem = async (newItem) => {
     console.log("📦 Submitting item:", newItem);
 
     Swal.fire({
@@ -237,34 +251,38 @@ function App() {
       },
     });
 
-    axios
-      .post(`${API_URL}/items`, newItem)
-      .then((response) => {
-        Swal.close();
-        Swal.fire({
-          icon: "success",
-          title: "Added!",
-          text: "Item added successfully.",
-          timer: 2000,
-          showConfirmButton: false,
-        });
-        fetchItems();
-      })
-      .catch((err) => {
-        if (err.response?.status === 409) {
-          Swal.fire({
-            icon: "error",
-            title: "Duplicate Item",
-            text: err.response.data.message,
-          });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Something went wrong. Please try again later.",
-          });
-        }
+    try {
+      const response = await axios.post(`${API_URL}/items`, newItem);
+      Swal.close();
+      Swal.fire({
+        icon: "success",
+        title: "Added!",
+        text: "Item added successfully.",
+        timer: 2000,
+        showConfirmButton: false,
       });
+
+      fetchItems(); // refresh list
+      return true; // ✅ success
+    } catch (err) {
+      Swal.close();
+
+      if (err.response?.status === 409) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Item",
+          text: err.response.data.message,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Something went wrong. Please try again later.",
+        });
+      }
+
+      return false; // ❌ failed
+    }
   };
 
   //** SUPPLIER MODULE **//

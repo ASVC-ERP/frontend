@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DataTable from "react-data-table-component";
 import { Link, useNavigate } from "react-router-dom";
 import { FaTrash } from "react-icons/fa";
@@ -24,6 +24,7 @@ function InventoryTable({
   const [unit, setUnit] = useState("Pc");
   const [model, setModel] = useState("");
   const [origin, setOrigin] = useState("");
+  const [isDuplicate, setIsDuplicate] = useState(false);
 
   const [showItemModal, setShowItemModal] = useState(false);
 
@@ -110,6 +111,27 @@ function InventoryTable({
     return () => clearInterval(interval);
   }, [onRefreshItems]);
 
+  useEffect(() => {
+    const checkDuplicate = async () => {
+      if (!itemCode.trim()) {
+        setIsDuplicate(false);
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:3000/items/check-code?itemCode=${encodeURIComponent(itemCode)}`
+        );
+        setIsDuplicate(response.data.exists);
+      } catch (error) {
+        console.error("Error checking item code:", error);
+      }
+    };
+
+    const delay = setTimeout(checkDuplicate, 400);
+    return () => clearTimeout(delay);
+  }, [itemCode]);
+
   const handleAddItemClick = () => {
     setShowItemModal(true);
   };
@@ -128,7 +150,7 @@ function InventoryTable({
     setModel("");
   };
 
-  const handleSubmitItem = () => {
+  const handleSubmitItem = async () => {
     if (!itemCode || !itemName) return;
 
     const trimmedItem = {
@@ -157,7 +179,7 @@ function InventoryTable({
       Swal.fire({
         text: "Please fill in all item details.",
         icon: "warning",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
       return;
     }
@@ -174,22 +196,40 @@ function InventoryTable({
       },
     };
 
-    console.log("New Item:", newItem);
-    onAddItem(newItem);
+    try {
+      console.log("New Item:", newItem);
+      const success = await onAddItem(newItem);
+      console.log("onAddItem returned:", success);
 
-    // Reset inputs
-    setItemCode("");
-    setItemName("");
-    setBrand("");
-    setOrigin("");
-    setMinimumStock("");
-    setPartNum("");
-    setInterNum("");
-    setUnit("Pc");
-    setModel("");
+      if (success) {
+        // Reset inputs only if added successfully
+        setItemCode("");
+        setItemName("");
+        setBrand("");
+        setOrigin("");
+        setMinimumStock("");
+        setPartNum("");
+        setInterNum("");
+        setUnit("Pc");
+        setModel("");
 
-    // Close modal and clear fields
-    handleCloseItemModal();
+        // ✅ Close modal
+        handleCloseItemModal();
+      } else {
+        Swal.fire({
+          text: "Failed to add item. Item code already exist.",
+          icon: "error",
+          confirmButtonColor: "#1E5A84",
+        });
+      }
+    } catch (error) {
+      console.error("Error adding item:", error);
+      Swal.fire({
+        text: "An error occurred while adding the item.",
+        icon: "error",
+        confirmButtonColor: "#1E5A84",
+      });
+    }
   };
 
   const handleSearch = (event) => {
@@ -224,7 +264,7 @@ function InventoryTable({
           title: "Deleted!",
           text: "Item has been deleted successfully.",
           icon: "success",
-          confirmButtonColor: "#0C1D61",
+          confirmButtonColor: "#1E5A84",
         });
 
         onRefreshItems();
@@ -235,7 +275,7 @@ function InventoryTable({
         title: "Error!",
         text: error.response?.data?.message || "Failed to delete item.",
         icon: "error",
-        confirmButtonColor: "#0C1D61",
+        confirmButtonColor: "#1E5A84",
       });
     }
   };
@@ -300,7 +340,7 @@ function InventoryTable({
             type="button"
             className="btn"
             style={{
-              backgroundColor: "#0C1D61",
+              backgroundColor: "#1E5A84",
               color: "white",
               whiteSpace: "nowrap",
             }}
@@ -356,7 +396,7 @@ function InventoryTable({
             <div
               className="modal-header text-white position-relative overflow-hidden"
               style={{
-                background: "linear-gradient(135deg, #0C1D61 0%, #1e3c72 100%)",
+                background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
               }}
             >
@@ -411,7 +451,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-qrcode me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Product Code
                     </label>
@@ -429,9 +469,15 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
+
+                    {isDuplicate && (
+                      <small className="text-danger mt-1 d-block">
+                        ⚠️ This product code already exists in the inventory.
+                      </small>
+                    )}
                   </div>
 
                   <div className="col-md-9">
@@ -441,7 +487,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-box me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Product Name
                     </label>
@@ -459,7 +505,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -472,7 +518,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-cogs me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Part No.
                     </label>
@@ -489,7 +535,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -501,7 +547,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-random me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Interchange No.
                     </label>
@@ -518,7 +564,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -530,7 +576,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-car me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Model
                     </label>
@@ -547,7 +593,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -560,7 +606,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-tag me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Brand
                     </label>
@@ -578,7 +624,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -590,7 +636,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-globe me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Origin
                     </label>
@@ -608,7 +654,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -620,7 +666,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-exclamation-triangle me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Minimum Stock
                     </label>
@@ -639,7 +685,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
@@ -651,7 +697,7 @@ function InventoryTable({
                     >
                       <i
                         className="fas fa-balance-scale me-2"
-                        style={{ color: "#0C1D61" }}
+                        style={{ color: "#1E5A84" }}
                       ></i>
                       Unit
                     </label>
@@ -666,7 +712,7 @@ function InventoryTable({
                         fontSize: "0.90rem",
                         transition: "border-color 0.3s ease",
                       }}
-                      onFocus={(e) => (e.target.style.borderColor = "#0C1D61")}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     >
                       <option value="Pc">Pc</option>
@@ -716,7 +762,7 @@ function InventoryTable({
                   backgroundColor:
                     !itemCode || !itemName || !brand || !origin || !minimumStock
                       ? "#6c757d"
-                      : "#0C1D61",
+                      : "#1E5A84",
                   color: "white",
                   border: "none",
                   borderRadius: "0.5rem",
@@ -751,7 +797,7 @@ function InventoryTable({
                       !minimumStock
                     )
                   ) {
-                    e.target.style.backgroundColor = "#0C1D61";
+                    e.target.style.backgroundColor = "#1E5A84";
                     e.target.style.transform = "translateY(0)";
                   }
                 }}
