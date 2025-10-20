@@ -99,7 +99,6 @@ function App() {
   };
 
   const handleSelectProduct = (items) => {
-
     if (orderItems.length >= 10) {
       Swal.fire({
         icon: "warning",
@@ -143,11 +142,35 @@ function App() {
     setSuggestions([]);
   };
 
-  const handlePriceChange = (index, newMarkup) => {
+  const handlePriceChange = (index, newMarkup, isCustom = false) => {
     const updatedItems = [...orderItems];
-    updatedItems[index].selectedMarkup = newMarkup;
+
+    if (isCustom) {
+      // When user types a custom price
+      updatedItems[index].customPrice = newMarkup;
+    } else {
+      // When user picks from dropdown
+      updatedItems[index].selectedMarkup = newMarkup;
+      updatedItems[index].customPriceEnabled = false;
+    }
+
     setOrderItems(updatedItems);
   };
+
+  const handleEnableCustomPrice = (index) => {
+    const updatedItems = [...orderItems];
+    updatedItems[index].customPriceEnabled = true;
+    updatedItems[index].customPrice = "";
+    setOrderItems(updatedItems);
+  };
+
+  const handleDisableCustomPrice = (index) => {
+  const updated = [...orderItems];
+  updated[index].customPriceEnabled = false;
+  updated[index].customPrice = "";
+  setOrderItems(updated);
+};
+
 
   const updateOrderItem = (index, key, value) => {
     const updatedItems = [...orderItems];
@@ -155,31 +178,30 @@ function App() {
     setOrderItems(updatedItems);
   };
 
-  const calculateDiscount = (item) => {
-    const unitPrice = parseFloat(item.price?.[item.selectedMarkup]) || 0;
+const calculateTotal = (item) => {
+  // Use custom price if enabled, otherwise the selected dropdown price
+  const unitPrice = item.customPriceEnabled
+    ? parseFloat(item.customPrice) || 0
+    : parseFloat(item.price?.[item.selectedMarkup]) || 0;
+
+  const quantity = parseInt(item.quantity) || 0;
+
+  return unitPrice * quantity;
+};
+
+
+const calculateTotalPrice = () => {
+  return orderItems.reduce((total, item) => {
+    const unitPrice = item.customPriceEnabled
+      ? parseFloat(item.customPrice) || 0
+      : parseFloat(item.price?.[item.selectedMarkup]) || 0;
+
     const quantity = parseInt(item.quantity) || 0;
-    const subtotal = unitPrice * quantity;
 
-    return (subtotal * (parseFloat(item.discPercent) || 0)) / 100;
-  };
+    return total + unitPrice * quantity;
+  }, 0);
+};
 
-  const calculateTotal = (item) => {
-    const unitPrice = parseFloat(item.price?.[item.selectedMarkup]) || 0;
-    const quantity = parseInt(item.quantity) || 0;
-    const discount = calculateDiscount(item);
-
-    return unitPrice * quantity - discount;
-  };
-
-  const calculateTotalPrice = () => {
-    return orderItems.reduce((total, item) => {
-      const unitPrice = parseFloat(item.price?.[item.selectedMarkup]) || 0;
-      const quantity = parseInt(item.quantity) || 0;
-      const discount = calculateDiscount(item);
-
-      return total + unitPrice * quantity - discount;
-    }, 0);
-  };
 
   const handleRemoveProduct = (indexToRemove) => {
     const updatedItems = orderItems.filter(
@@ -439,8 +461,9 @@ function App() {
                     onSearchChange={handleSearchChange}
                     onSelectProduct={handleSelectProduct}
                     onPriceChange={handlePriceChange}
+                    onEnableCustomPrice={handleEnableCustomPrice}
+                    onDisableCustomPrice={handleDisableCustomPrice}
                     onUpdateOrderItem={updateOrderItem}
-                    onCalculateDiscount={calculateDiscount}
                     onCalculateTotal={calculateTotal}
                     onCalculateTotalPrice={calculateTotalPrice}
                     onRemoveProduct={handleRemoveProduct}

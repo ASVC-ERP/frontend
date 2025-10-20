@@ -107,7 +107,6 @@ function ApprovalTables() {
         orderIds: selectedOrders,
       });
 
-
       Swal.fire({
         icon: "success",
         title: "Rejected!",
@@ -130,25 +129,23 @@ function ApprovalTables() {
 
   const columns = [
     {
-      name:
-        activeTab === "Pending" ? (
-          <input
-            type="checkbox"
-            onChange={(e) => handleSelectAll(e.target.checked)}
-            checked={
-              data.length > 0 &&
-              data.every((row) => selectedOrders.includes(row.orderID))
-            }
-          />
-        ) : null,
-      cell: (row) =>
-        activeTab === "Pending" ? (
-          <input
-            type="checkbox"
-            checked={selectedOrders.includes(row.orderID)}
-            onChange={() => handleSelectRow(row)}
-          />
-        ) : null,
+      name: (
+        <input
+          type="checkbox"
+          onChange={(e) => handleSelectAll(e.target.checked)}
+          checked={
+            data.length > 0 &&
+            data.every((row) => selectedOrders.includes(row.orderID))
+          }
+        />
+      ),
+      cell: (row) => (
+        <input
+          type="checkbox"
+          checked={selectedOrders.includes(row.orderID)}
+          onChange={() => handleSelectRow(row)}
+        />
+      ),
       ignoreRowClick: true,
       width: "60px", // fixed small
     },
@@ -210,62 +207,41 @@ function ApprovalTables() {
 
   return (
     <div>
-      {/* Tabs */}
-      <div className="nav nav-tabs my-3">
-        {["Pending", "Approved", "Rejected"].map((tab) => (
-          <button
-            key={tab}
-            className={`nav-link ${activeTab === tab ? "active" : ""}`}
-            onClick={() => {
-              setActiveTab(tab);
-              setSearchTerm("");
-              setSelectedOrders([]);
-            }}
-            style={{
-              backgroundColor: activeTab === tab ? "#0C1D61" : "#ffffff",
-              color: activeTab === tab ? "white" : "#0C1D61",
-              border: activeTab === tab ? "" : "1px solid #c9c9c9ad",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
-
-      {/* Search */}
-      <div className="mb-3 position-relative w-25">
-        <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-        <input
-          type="text"
-          placeholder="Search"
-          className="form-control ps-5"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
-
-      {/* Action Buttons (only on Pending) */}
-      {activeTab === "Pending" && (
-        <div className="d-flex gap-2 mb-3">
-          <button
-            onClick={handleApprove}
-            className="btn btn-success"
-            disabled={selectedOrders.length === 0}
-          >
-            <Check size={16} /> Approve
-          </button>
-          <button
-            onClick={handleReject}
-            className="btn btn-danger"
-            disabled={selectedOrders.length === 0}
-          >
-            <X size={16} /> Reject
-          </button>
+      <div className="d-flex justify-content-between align-items-center">
+        {/* Search */}
+        <div className=" position-relative w-25 my-3">
+          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
+          <input
+            type="text" 
+            placeholder="Search approvals"
+            className="form-control ps-5 border-2 rounded-3"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
         </div>
-      )}
 
-      {error && <div className="alert alert-danger">{error}</div>}
+        {/* Action Buttons (only on Pending) */}
+        {activeTab === "Pending" && (
+          <div className="d-flex gap-2 mb-3">
+            <button
+              onClick={handleApprove}
+              className="btn btn-success"
+              disabled={selectedOrders.length === 0}
+            >
+              <Check size={16} /> Approve
+            </button>
+            <button
+              onClick={handleReject}
+              className="btn btn-danger"
+              disabled={selectedOrders.length === 0}
+            >
+              <X size={16} /> Reject
+            </button>
+          </div>
+        )}
+
+        {error && <div className="alert alert-danger">{error}</div>}
+      </div>
 
       {/* Table */}
       <DataTable
@@ -322,7 +298,9 @@ function ApprovalTables() {
                   </div>
 
                   <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                    <h5 className="mb-0">Customer: {selectedOrder.customerName}</h5>
+                    <h5 className="mb-0">
+                      Customer: {selectedOrder.customerName}
+                    </h5>
                   </div>
                 </div>
 
@@ -342,7 +320,9 @@ function ApprovalTables() {
                             <div className="d-flex justify-content-between align-items-center mb-2">
                               {/* Product Info */}
                               <div className="d-flex flex-column">
-                                <span className="fw-semibold">{item.itemName}</span>
+                                <span className="fw-semibold">
+                                  {item.itemName}
+                                </span>
 
                                 <small className="text-muted">
                                   Unit Price: ₱

@@ -12,8 +12,9 @@ function CreateOrder({
   onSearchChange,
   onSelectProduct,
   onPriceChange,
+  onEnableCustomPrice,
+  onDisableCustomPrice,
   onUpdateOrderItem,
-  onCalculateDiscount,
   onCalculateTotal,
   onCalculateTotalPrice,
   onRemoveProduct,
@@ -46,7 +47,6 @@ function CreateOrder({
     setOrderItems([]); // Reset order items array
   }, []);
 
- 
   const generateNextOrderId = async () => {
     try {
       // Fetch all orders from backend
@@ -170,7 +170,6 @@ function CreateOrder({
               className="border rounded-3 p-3 bg-light"
               style={{ backgroundColor: "#E8E7EC" }}
             >
-
               <OrderForm
                 query={query}
                 suggestions={suggestions}
@@ -178,8 +177,9 @@ function CreateOrder({
                 onSearchChange={onSearchChange}
                 onSelectProduct={onSelectProduct}
                 onPriceChange={onPriceChange}
+                onEnableCustomPrice={onEnableCustomPrice}
+                onDisableCustomPrice={onDisableCustomPrice}
                 onUpdateOrderItem={onUpdateOrderItem}
-                onCalculateDiscount={onCalculateDiscount}
                 onCalculateTotal={onCalculateTotal}
                 onCalculateTotalPrice={onCalculateTotalPrice}
                 onRemoveProduct={onRemoveProduct}

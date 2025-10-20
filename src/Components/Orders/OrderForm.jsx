@@ -1,7 +1,7 @@
 import React from "react";
 import { IoIosSearch } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
-import defaultPic from "../../assets/defaultPic.jpg";
+import { IoChevronDown } from "react-icons/io5";
 
 function OrderForm({
   query,
@@ -10,7 +10,8 @@ function OrderForm({
   onSearchChange,
   onSelectProduct,
   onPriceChange,
-  onCalculateDiscount,
+  onEnableCustomPrice,
+  onDisableCustomPrice,
   onUpdateOrderItem,
   onCalculateTotal,
   onCalculateTotalPrice,
@@ -83,20 +84,14 @@ function OrderForm({
               }}
             >
               <tr>
-                <th className="text-start col-3">Product</th>
-                <th className="col-2" title="Choose unit price">
+                <th className="text-start col-4">Product</th>
+                <th className="col-3" title="Choose unit price">
                   Price
                 </th>
                 <th className="col-1" title="Enter number of units">
                   Quantity
                 </th>
-                <th className="col-2" title="Discount percentage">
-                  Discount %
-                </th>
-                <th className="col-2" title="Calculated peso discount">
-                  Discount Amount
-                </th>
-                <th className="col-1" title="Final total after discount">
+                <th className="col-2" title="Final total after discount">
                   Total
                 </th>
                 <th className="col-1"></th>
@@ -130,16 +125,47 @@ function OrderForm({
 
                   {/* Price */}
                   <td>
-                    <select
-                      className="form-select mx-auto d-block w-50"
-                      value={item.selectedMarkup}
-                      onChange={(e) => onPriceChange(idx, e.target.value)}
-                    >
-                      <option value="price1">₱{item.price?.price1}</option>
-                      <option value="price2">₱{item.price?.price2}</option>
-                      <option value="price3">₱{item.price?.price3}</option>
-                      <option value="price4">₱{item.price?.price4}</option>
-                    </select>
+                    {item.customPriceEnabled ? (
+                      <div className="input-group w-50 mx-auto">
+                        <input
+                          type="number"
+                          className="form-control text-center w-50"
+                          value={item.customPrice || ""}
+                          onChange={(e) =>
+                            onPriceChange(idx, e.target.value, true)
+                          }
+                          placeholder="Enter price"
+                          style={{ fontSize: "14px" }}
+                        />
+                        <button
+                          type="button"
+                          className="btn border-top border-bottom border-end border-0 bg-white"
+                          title="Back to list"
+                          onClick={() => onDisableCustomPrice(idx)}
+                        >
+                         <IoChevronDown />
+                        </button>
+                      </div>
+                    ) : (
+                      <select
+                        className="form-select mx-auto d-block w-50"
+                        value={item.selectedMarkup}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          if (value === "custom") {
+                            onEnableCustomPrice(idx);
+                          } else {
+                            onPriceChange(idx, value);
+                          }
+                        }}
+                      >
+                        <option value="price1">₱{item.price?.price1}</option>
+                        <option value="price2">₱{item.price?.price2}</option>
+                        <option value="price3">₱{item.price?.price3}</option>
+                        <option value="price4">₱{item.price?.price4}</option>
+                        <option value="custom">Custom...</option>
+                      </select>
+                    )}
                   </td>
 
                   {/* Quantity */}
@@ -157,40 +183,6 @@ function OrderForm({
                         )
                       }
                       className="form-control mx-auto d-block w-75 text-center"
-                    />
-                  </td>
-
-                  {/* <td className="fw-bold" style={{ color: "#ACACAC" }}>–</td> */}
-
-                  {/* Discount Percentage */}
-                  <td>
-                    <div className="input-group mx-auto w-75">
-                      <input
-                        type="number"
-                        min="0"
-                        max="100"
-                        value={item.discPercent}
-                        onChange={(e) =>
-                          onUpdateOrderItem(
-                            idx,
-                            "discPercent",
-                            parseInt(e.target.value) || 0
-                          )
-                        }
-                        className="form-control text-center"
-                      />
-                      <span className="input-group-text">%</span>
-                    </div>
-                  </td>
-                  {/* Discount Amount */}
-                  <td>
-                    <input
-                      type="text"
-                      value={onCalculateDiscount(item).toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                      })}
-                      className="form-control mx-auto d-block w-75 text-center"
-                      readOnly
                     />
                   </td>
 

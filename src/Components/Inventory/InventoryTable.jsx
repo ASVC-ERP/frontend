@@ -120,7 +120,9 @@ function InventoryTable({
 
       try {
         const response = await axios.get(
-          `http://localhost:3000/items/check-code?itemCode=${encodeURIComponent(itemCode)}`
+          `http://localhost:3000/items/check-code?itemCode=${encodeURIComponent(
+            itemCode
+          )}`
         );
         setIsDuplicate(response.data.exists);
       } catch (error) {
@@ -320,8 +322,7 @@ function InventoryTable({
 
   return (
     <div>
-      <div className="d-flex align-items-center justify-content-between "
-      >
+      <div className="d-flex align-items-center justify-content-between ">
         {/* Search input field */}
         <div className="position-relative w-25 my-3">
           <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
@@ -444,38 +445,91 @@ function InventoryTable({
               <form>
                 <div className="row g-3">
                   {/* Row 1 */}
-                  <div className="col-md-3">
+                  <div className="col-md-3 position-relative">
                     <label
                       htmlFor="itemCode"
-                      className="form-label fw-semibold text-muted small"
+                      className="form-label fw-semibold text-muted small d-flex align-items-center gap-2"
                     >
                       <i
-                        className="fas fa-qrcode me-2"
+                        className="fas fa-qrcode"
                         style={{ color: "#1E5A84" }}
                       ></i>
                       Product Code
                     </label>
-                    <input
-                      type="text"
-                      id="itemCode"
-                      placeholder="Enter product code"
-                      value={itemCode}
-                      onChange={(e) => setItemCode(e.target.value)}
-                      className="form-control"
-                      required
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.90rem",
-                        transition: "border-color 0.3s ease",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
+
+                    <div className="position-relative">
+                      <input
+                        type="text"
+                        id="itemCode"
+                        placeholder="Enter code..."
+                        value={itemCode}
+                        onChange={(e) => setItemCode(e.target.value)}
+                        className="form-control"
+                        required
+                        style={{
+                          border: "1px solid #e9ecef",
+                          borderRadius: "0.5rem",
+                          fontSize: "0.85rem",
+                          paddingRight: "2rem",
+                          transition: "border-color 0.3s ease",
+                        }}
+                        onFocus={(e) =>
+                          (e.target.style.borderColor = "#1E5A84")
+                        }
+                        onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                      />
+
+                      {/* Dropdown Icon inside Input */}
+                      <i
+                        className="fas fa-chevron-down position-absolute"
+                        style={{
+                          right: "0.75rem",
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          color: "#adb5bd",
+                          fontSize: "0.8rem",
+                          pointerEvents: "none",
+                        }}
+                      />
+                    </div>
+
+                    {/* Read-only Suggestions */}
+                    {itemCode && (
+                      <div
+                        className="position-absolute bg-white border rounded shadow-sm mt-1"
+                        style={{
+                          zIndex: 1051,
+                          maxHeight: "150px",
+                          overflowY: "auto",
+                          width: "100%",
+                        }}
+                      >
+                        {Object.values(products)
+                          .filter((p) =>
+                            p.itemCode
+                              .toLowerCase()
+                              .includes(itemCode.toLowerCase())
+                          )
+                          .slice(0, 5)
+                          .map((p) => (
+                            <div
+                              key={p.itemCode}
+                              className="px-3 py-2 text-secondary"
+                              style={{
+                                fontSize: "0.85rem",
+                                userSelect: "none",
+                                background: "white",
+                              }}
+                            >
+                              {p.itemCode}
+                            </div>
+                          ))}
+                      </div>
+                    )}
 
                     {isDuplicate && (
                       <small className="text-danger mt-1 d-block">
-                        ⚠️ This product code already exists in the inventory.
+                        ⚠️ This code already exists.
                       </small>
                     )}
                   </div>
