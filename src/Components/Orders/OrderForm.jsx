@@ -130,21 +130,16 @@ function OrderForm({
 
                   {/* Price */}
                   <td>
-                    <input
-                      type="text"
-                      list={`price-options-${idx}`}
-                      className="form-control mx-auto d-block w-75 text-center"
-                      value={item.customPrice || ""}
+                    <select
+                      className="form-select mx-auto d-block w-50"
+                      value={item.selectedMarkup}
                       onChange={(e) => onPriceChange(idx, e.target.value)}
-                      placeholder="Enter price or select..."
-                      style={{ appearance: "textfield" }}
-                    />
-                    <datalist id={`price-options-${idx}`}>
-                      <option value={item.price?.price1}>₱{item.price?.price1}</option>
-                      <option value={item.price?.price2}>₱{item.price?.price2}</option>
-                      <option value={item.price?.price3}>₱{item.price?.price3}</option>
-                      <option value={item.price?.price4}>₱{item.price?.price4}</option>
-                    </datalist>
+                    >
+                      <option value="price1">₱{item.price?.price1}</option>
+                      <option value="price2">₱{item.price?.price2}</option>
+                      <option value="price3">₱{item.price?.price3}</option>
+                      <option value="price4">₱{item.price?.price4}</option>
+                    </select>
                   </td>
 
                   {/* Quantity */}
