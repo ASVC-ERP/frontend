@@ -1,8 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
-import defaultPic from "../../assets/ten.jpg";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -94,16 +93,29 @@ function OrdersTable({ orders, setOrders }) {
   const [showServeModal, setShowServeModal] = useState(false);
   const [serveData, setServeData] = useState([]);
 
+  const inputRefs = useRef([]);
+
   // Function to fetch orders
   const fetchOrders = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+
+    const endpoint =
+      user.role === "agent"
+        ? `${API_URL}/orders?agent=${encodeURIComponent(user.firstName + " "+user.lastName)}`
+        : `${API_URL}/orders`;
+
+        console.log("Fetching orders from endpoint:", endpoint);
+        console.log("User role:", user.role);
+
     axios
-      .get(`${API_URL}/orders`)
+      .get(endpoint)
       .then((res) => {
         setOrders(res.data);
         setFilteredData(res.data);
+        console.log(`✅ Fetched ${res.data.length} orders (${user.role})`);
       })
       .catch((err) => {
-        console.error("Failed to fetch orders:", err);
+        console.error("❌ Failed to fetch orders:", err);
       });
   };
 
@@ -132,6 +144,56 @@ function OrdersTable({ orders, setOrders }) {
     );
 
     setFilteredData(filtered);
+  };
+
+  const handleEdit = async (row) => {
+    setShowRowModal(false);
+
+    try {
+      // Fetch latest inventory once
+      const res = await axios.get(`${API_URL}/items`);
+      const inventory = res.data.map((item) => {
+        const prices = [
+          item.price?.price1,
+          item.price?.price2,
+          item.price?.price3,
+          item.price?.price4,
+        ].filter((p) => p != null && !isNaN(p));
+
+        console.log("💰 Extracted Prices for", item.itemName, ":", prices);
+
+        return { ...item, prices };
+      });
+
+      // Match each ordered item to inventory
+      const updatedOrderedItems = row.orderedItems.map((ordered) => {
+        const match = inventory.find(
+          (inv) =>
+            inv.itemName.trim().toLowerCase() ===
+            ordered.itemName.trim().toLowerCase()
+        );
+
+        console.log("🛒 Ordered Item:", ordered.itemName);
+        if (match) {
+          console.log("✅ Match Found →", match.itemName);
+          console.log("💰 Available Prices:", match.prices);
+        } else {
+          console.warn("⚠️ No Match Found in Inventory for:", ordered.itemName);
+        }
+
+        return {
+          ...ordered,
+          price: Number(ordered.price) || 0,
+          availablePrices: match ? match.prices : [],
+        };
+      });
+
+      setEditableRow({ ...row, orderedItems: updatedOrderedItems });
+      setSelectedRow(row);
+      setShowEditModal(true);
+    } catch (err) {
+      console.error("Error loading prices:", err);
+    }
   };
 
   const handleRowClick = (row) => {
@@ -296,6 +358,7 @@ function OrdersTable({ orders, setOrders }) {
           priceObj.price4,
         ].filter((p) => p != null),
         price: priceObj.price1,
+        unit: item.unit,
       };
       console.log("Updated items:", updatedItems);
       return { ...prev, orderedItems: updatedItems };
@@ -316,7 +379,7 @@ function OrdersTable({ orders, setOrders }) {
   const handlePrint = async () => {
     if (!selectedRow) return;
 
-    console.log('selectedRow: ', selectedRow);
+    console.log("selectedRow: ", selectedRow);
 
     try {
       const response = await axios.post(
@@ -347,7 +410,7 @@ function OrdersTable({ orders, setOrders }) {
       customerName: row.customerName,
       customerAddress: row.customerAddress,
       customerNumber: row.customerNumber,
-      customerTIN: row.customerTIN || '',   // <-- added
+      customerTIN: row.customerTIN || "", // <-- added
       salesAgent: row.salesAgent,
       items: row.orderedItems.map((item) => ({
         itemName: item.itemName,
@@ -355,8 +418,8 @@ function OrdersTable({ orders, setOrders }) {
         quantityOrdered: item.quantity,
         quantityServed: item.quantity,
         quantityUnserved: 0,
-        unit: item.unit || '',
-        itemCode: item.itemCode || '',
+        unit: item.unit || "",
+        itemCode: item.itemCode || "",
       })),
     };
 
@@ -391,9 +454,15 @@ function OrdersTable({ orders, setOrders }) {
         id: [row.orderId], // wrap in array to match backend
       };
 
-      console.log("[handleApprove] Sending payload to backend:", JSON.stringify(payload, null, 2));
+      console.log(
+        "[handleApprove] Sending payload to backend:",
+        JSON.stringify(payload, null, 2)
+      );
 
-      const response = await axios.post(`${API_URL}/orders/serve-approved`, payload);
+      const response = await axios.post(
+        `${API_URL}/orders/serve-approved`,
+        payload
+      );
 
       console.log("[handleApprove] Backend response:", response.data);
 
@@ -464,7 +533,7 @@ function OrdersTable({ orders, setOrders }) {
             <div
               className="modal-dialog modal-xl modal-dialog-centered"
               role="document"
-              style={{ height: "90vh", maxHeight: "90vh" }}
+              style={{ maxHeight: "90vh" }}
             >
               <div
                 className="modal-content"
@@ -497,8 +566,10 @@ function OrdersTable({ orders, setOrders }) {
                     {/*
                     <h5 className="mb-0">Order ID: {selectedRow.orderId}</h5>
                     */}
-                    <h5 className="mb-0">Customer: {selectedRow.customerName}</h5>
-                      
+                    <h5 className="mb-0">
+                      Customer: {selectedRow.customerName}
+                    </h5>
+
                     <div className="d-flex gap-2">
                       {selectedRow?.status?.trim().toLowerCase() !==
                         "served" && (
@@ -506,10 +577,7 @@ function OrdersTable({ orders, setOrders }) {
                           type="button"
                           className="btn btn-sm btn-light"
                           style={{ color: "#246c9d" }}
-                          onClick={() => {
-                            setShowRowModal(false);
-                            setShowEditModal(true);
-                          }}
+                          onClick={() => handleEdit(selectedRow)}
                         >
                           Edit
                         </button>
@@ -547,7 +615,7 @@ function OrdersTable({ orders, setOrders }) {
                   <div
                     className=" rounded-3"
                     style={{
-                      maxHeight: "430px",
+                      maxHeight: "400px",
                       overflowY: "auto",
                     }}
                   >
@@ -568,8 +636,7 @@ function OrdersTable({ orders, setOrders }) {
                                     minimumFractionDigits: 2,
                                   })}{" "}
                                   | Qty: {item.quantity}
-                                </small> 
-                                
+                                </small>
 
                                 {item.discPercent > 0 && (
                                   <small className="text-danger">
@@ -761,6 +828,7 @@ function OrdersTable({ orders, setOrders }) {
                           {/* Item Search */}
                           <div className="flex-grow-1 position-relative">
                             <input
+                              ref={(el) => (inputRefs.current[index] = el)}
                               type="text"
                               value={
                                 activeIndex === index ? query : item.itemName
@@ -772,23 +840,31 @@ function OrdersTable({ orders, setOrders }) {
                               placeholder="Search item..."
                             />
 
-                            {/* Suggestions dropdown */}
                             {activeIndex === index &&
                               suggestions.length > 0 && (
                                 <ul
                                   style={{
-                                    position: "absolute",
-                                    top: "100%",
-                                    left: 0,
-                                    right: 0,
+                                    position: "fixed", // makes it float above all content
+                                    top:
+                                      inputRefs.current[
+                                        index
+                                      ]?.getBoundingClientRect().bottom +
+                                      window.scrollY,
+                                    left: inputRefs.current[
+                                      index
+                                    ]?.getBoundingClientRect().left,
+                                    width:
+                                      inputRefs.current[index]?.offsetWidth,
                                     backgroundColor: "#fff",
                                     border: "1px solid #ccc",
+                                    borderRadius: "0.25rem",
                                     listStyle: "none",
                                     margin: 0,
                                     padding: 0,
-                                    zIndex: 1000,
+                                    zIndex: 2000,
                                     maxHeight: "200px",
                                     overflowY: "auto",
+                                    boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                                   }}
                                 >
                                   {suggestions.map((s, i) => (
@@ -801,10 +877,21 @@ function OrdersTable({ orders, setOrders }) {
                                         padding: "8px",
                                         cursor: "pointer",
                                         borderBottom: "1px solid #eee",
+                                        background: "white",
                                       }}
+                                      onMouseEnter={(e) =>
+                                        (e.currentTarget.style.background =
+                                          "#f8f9fa")
+                                      }
+                                      onMouseLeave={(e) =>
+                                        (e.currentTarget.style.background =
+                                          "white")
+                                      }
                                     >
                                       <strong>{s.itemName}</strong> <br />
-                                      Stock: {s.stock}
+                                      <small className="text-muted">
+                                        Stock: {s.stock}
+                                      </small>
                                     </li>
                                   ))}
                                 </ul>
@@ -824,16 +911,16 @@ function OrdersTable({ orders, setOrders }) {
 
                           {/* Price options */}
                           <select
-                            value={item.price || 0}
+                            value={Number(item.price) || 0}
                             onChange={(e) =>
-                              updateItem(index, "price", e.target.value)
+                              updateItem(index, "price", Number(e.target.value))
                             }
                             className="form-select"
                             style={{ width: "120px" }}
                           >
                             {item.availablePrices?.map((p, i) => (
                               <option key={i} value={p}>
-                                ₱{p.toLocaleString()}
+                                ₱{Number(p).toLocaleString()}
                               </option>
                             ))}
                           </select>
