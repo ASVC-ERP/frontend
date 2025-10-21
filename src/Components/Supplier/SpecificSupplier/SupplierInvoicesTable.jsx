@@ -589,20 +589,31 @@ function SupplierInvoicesTable({ items }) {
                           <button
                             type="button"
                             className="btn btn-sm"
-                            onClick={() =>
-                              setInvoiceForm({
-                                ...invoiceForm,
-                                items: [
-                                  ...invoiceForm.items,
-                                  {
-                                    itemCode: "",
-                                    quantity: null,
-                                    unit: "",
-                                    unitCost: null,
-                                    subTotal: null,
-                                  },
-                                ],
-                              })
+                            onClick={() => {
+                              if (invoiceForm.items.length >= 10) {
+                                  Swal.fire({
+                                    icon: "warning",
+                                    title: "Item Limit Reached",
+                                    text: "You can only add up to 10 items per invoice.",
+                                    confirmButtonColor: "#1E5A84",
+                                  });
+                                  return; // stop here
+                                }
+
+                                setInvoiceForm({
+                                  ...invoiceForm,
+                                  items: [
+                                    ...invoiceForm.items,
+                                    {
+                                      itemCode: "",
+                                      quantity: null,
+                                      unit: "",
+                                      unitCost: null,
+                                      subTotal: null,
+                                    },
+                                  ],
+                                })
+                              }
                             }
                             style={{
                               backgroundColor: "#28a745",

@@ -99,12 +99,12 @@ function App() {
   };
 
   const handleSelectProduct = (items) => {
-    if (orderItems.length >= 10) {
+    if (orderItems.length >= 16) {
       Swal.fire({
         icon: "warning",
         iconColor: "#950606",
         title: "Item Limit Reached",
-        text: "You can only add up to 10 products per order.",
+        text: "You can only add up to 16 products per order.",
         confirmButtonColor: "#1E5A84",
       });
       setQuery("");
