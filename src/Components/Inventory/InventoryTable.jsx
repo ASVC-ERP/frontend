@@ -68,7 +68,7 @@ function InventoryTable({
       center: true,
     },
     {
-      name: "Cost",
+      name: "Price",
       selector: (row) => row.price?.price1 ?? 0,
       sortable: true,
       grow: 1,

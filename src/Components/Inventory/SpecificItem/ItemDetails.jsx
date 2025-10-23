@@ -11,6 +11,8 @@ function ItemDetails({ item, onUpdate }) {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const isAdmin = user?.role === "admin";
+
   const [formData, setFormData] = useState({
     itemCode: item.itemCode || "",
     itemName: item.itemName || "",
@@ -188,7 +190,7 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="pid"
             value={item.itemCode}
             style={{ backgroundColor: "#e9ecef" }}
@@ -203,10 +205,14 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="itemName"
             value={formData.itemName}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
 
@@ -216,7 +222,7 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="gPrice"
             value={item.price?.price1}
             style={{ backgroundColor: "#e9ecef" }}
@@ -235,7 +241,7 @@ function ItemDetails({ item, onUpdate }) {
           <div className="d-flex align-items-center">
             <input
               type="text"
-              className="form-control form-control-sm me-2"
+              className="form-control form-control-sm me-2 border-dark border-opacity-25"
               id="Stock"
               value={item.stock}
               style={{ backgroundColor: "#e9ecef" }}
@@ -256,10 +262,14 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="minStock"
             value={formData.minStock}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
 
@@ -269,7 +279,7 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="aPrice"
             value={item.price?.price2}
             style={{ backgroundColor: "#e9ecef" }}
@@ -286,10 +296,14 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="partNum"
             value={formData.partNum}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
         <div className="col-4">
@@ -298,10 +312,14 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="origin"
             value={formData.origin}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
         <div className="col-4">
@@ -310,7 +328,7 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="bPrice"
             value={item.price?.price3}
             style={{ backgroundColor: "#e9ecef" }}
@@ -327,10 +345,14 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="interNum"
             value={formData.interNum}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
         <div className="col-4">
@@ -339,10 +361,14 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="brand"
             value={formData.brand}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
         <div className="col-4">
@@ -352,7 +378,7 @@ function ItemDetails({ item, onUpdate }) {
           <div className="d-flex align-items-center">
             <input
               type="text"
-              className="form-control form-control-sm me-2"
+              className="form-control form-control-sm me-2 border-dark border-opacity-25"
               id="sPrice"
               value={item.price?.price4}
               style={{ backgroundColor: "#e9ecef" }}
@@ -378,10 +404,14 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="unit"
             value={formData.unit}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
 
@@ -391,26 +421,32 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm"
+            className="form-control form-control-sm border-dark border-opacity-25"
             id="model"
             value={formData.model}
             onChange={handleChange}
+            readOnly={!isAdmin}
+            style={{
+              backgroundColor: !isAdmin ? "#e9ecef" : "white",
+            }}
           />
         </div>
 
         <div className="col-auto d-flex align-items-end ms-auto mt-4">
-          <button
-            type="button"
-            className="btn"
-            style={{
-              backgroundColor: "#198754", // Bootstrap green
-              color: "white",
-              whiteSpace: "nowrap",
-            }}
-            onClick={handleSave}
-          >
-            Save
-          </button>
+          {isAdmin && (
+            <button
+              type="button"
+              className="btn"
+              style={{
+                backgroundColor: "#198754",
+                color: "white",
+                whiteSpace: "nowrap",
+              }}
+              onClick={handleSave}
+            >
+              Save
+            </button>
+          )}
         </div>
       </div>
 

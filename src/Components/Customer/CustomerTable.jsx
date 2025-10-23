@@ -97,6 +97,10 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   }, [onRefreshCustomers]);
 
   const handleAddCustomerClick = () => {
+    setCustomerName("");
+    setCustomerContact("");
+    setCustomerAddress("");
+    setCustomerTIN("");
     setShowCustomerModal(true);
   };
 
@@ -107,10 +111,12 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     setCustomerName("");
     setCustomerContact("");
     setCustomerAddress("");
+    setCustomerTIN("");
   };
 
-  const handleSubmitCustomer = (e) => {
+  const handleSubmitCustomer = async (e) => {
     e.preventDefault();
+
     try {
       const newCustomer = {
         customerName,
@@ -129,19 +135,25 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         },
       });
 
-      axios.post(`${API_URL}/customers`, newCustomer);
+      // Wait for the POST request to finish
+      await axios.post(`${API_URL}/customers`, newCustomer);
 
+      // Close the loading Swal before showing success
       Swal.close();
+
       Swal.fire({
         icon: "success",
         title: "Customer Added",
         text: "The customer has been added successfully!",
-        confirmButtonColor: "#3085d6",
+        showConfirmButton: false,
+        timer: 1000,
       });
 
       onRefreshCustomers();
       handleCloseCustomerModal();
     } catch (error) {
+      Swal.close(); // close the loader if an error occurs
+
       Swal.fire({
         icon: "error",
         title: "Failed",
@@ -165,7 +177,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     try {
       const updatedCustomer = {
         customerName,
-        customerContact,
+        customerContact: `'${customerContact}`,
         customerAddress,
         customerTIN,
       };
@@ -178,7 +190,8 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         icon: "success",
         title: "Customer Updated",
         text: "Customer details updated successfully!",
-        confirmButtonColor: "#3085d6",
+        showConfirmButton: false,
+        timer: 1000,
       });
 
       onRefreshCustomers();
@@ -210,16 +223,43 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
   const handleDeleteCustomer = async (customerID) => {
     try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: `This will permanently delete customer ${customerID}.`,
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#3085d6",
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "Cancel",
+      });
+
+      if (!result.isConfirmed) return; // Stop if user cancels
+
+      Swal.fire({
+        title: "Deleting...",
+        text: "Please wait while we delete the customer.",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       await axios.delete(`${API_URL}/customers/${customerID}`);
+
+      Swal.close();
       Swal.fire({
         icon: "success",
         title: "Deleted!",
-        text: `Customer ${customerID} deleted successfully`,
+        text: `Customer ${customerID} deleted successfully.`,
         timer: 2000,
         showConfirmButton: false,
       });
+
       onRefreshCustomers(); // Refresh customer list
     } catch (err) {
+      Swal.close();
       console.error(err);
       Swal.fire({
         icon: "error",
@@ -231,9 +271,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
   return (
     <div>
-      <div
-        className="d-flex align-items-center justify-content-between mb-2"
-      >
+      <div className="d-flex align-items-center justify-content-between mb-2">
         {/* Search input field */}
         <div className="position-relative w-25 my-3">
           <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
@@ -428,7 +466,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                   {/* Customer TIN */}
                   <div className="col-12">
                     <label
-                      htmlFor="editCustomerTIN"
+                      htmlFor="CustomerTIN"
                       className="form-label fw-semibold text-muted small"
                     >
                       <i
@@ -439,7 +477,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     </label>
                     <input
                       type="text"
-                      id="editCustomerTIN"
+                      id="CustomerTIN"
                       placeholder="Enter TIN"
                       value={customerTIN}
                       onChange={(e) => setCustomerTIN(e.target.value)}

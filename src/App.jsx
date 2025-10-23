@@ -240,6 +240,7 @@ const calculateTotalPrice = () => {
     axios
       .get(`${API_URL}/items`)
       .then((response) => {
+        console.log("Fetched items:", response.data);
         const transformedItems = response.data.map((item) => ({
           itemCode: item.itemCode,
           itemName: item.itemName,
