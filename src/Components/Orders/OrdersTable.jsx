@@ -101,11 +101,13 @@ function OrdersTable({ orders, setOrders }) {
 
     const endpoint =
       user.role === "agent"
-        ? `${API_URL}/orders?agent=${encodeURIComponent(user.firstName + " "+user.lastName)}`
+        ? `${API_URL}/orders?agent=${encodeURIComponent(
+            user.firstName + " " + user.lastName
+          )}`
         : `${API_URL}/orders`;
 
-        console.log("Fetching orders from endpoint:", endpoint);
-        console.log("User role:", user.role);
+    console.log("Fetching orders from endpoint:", endpoint);
+    console.log("User role:", user.role);
 
     axios
       .get(endpoint)
@@ -254,6 +256,13 @@ function OrdersTable({ orders, setOrders }) {
 
   const handleSave = async () => {
     try {
+      // 🔹 Recalculate total price from ordered items
+      const recalculatedTotal = (editableRow.orderedItems || []).reduce(
+        (sum, item) =>
+          sum + (Number(item.price) || 0) * (Number(item.quantity) || 0),
+        0
+      );
+
       const payload = {
         orderId: editableRow.orderId,
         date: editableRow.date,
@@ -271,7 +280,7 @@ function OrdersTable({ orders, setOrders }) {
           unit: it.unit,
           itemCode: it.itemCode,
         })),
-        totalPrice: editableRow.totalPrice || 0,
+        totalPrice: recalculatedTotal,
       };
 
       console.log("Payload being sent:", payload);
@@ -280,15 +289,16 @@ function OrdersTable({ orders, setOrders }) {
 
       setOrders((prev) =>
         prev.map((o) =>
-          o.orderId === editableRow.orderId ? { ...editableRow } : o
+          o.orderId === editableRow.orderId ? { ...payload } : o
         )
       );
       setFilteredData((prev) =>
         prev.map((o) =>
-          o.orderId === editableRow.orderId ? { ...editableRow } : o
+          o.orderId === editableRow.orderId ? { ...payload } : o
         )
       );
-      setSelectedRow({ ...editableRow });
+      setSelectedRow({ ...payload });
+      setEditableRow({ ...payload });
       setIsEditing(false);
 
       Swal.fire({
@@ -299,8 +309,12 @@ function OrdersTable({ orders, setOrders }) {
         showConfirmButton: false,
       });
 
-      fetchOrders();
+      await fetchOrders();
       setShowEditModal(false);
+
+      // ✅ Reopen the updated row after fetching data
+      const updatedRow = { ...payload };
+      handleRowClick(updatedRow);
     } catch (err) {
       console.error("Failed to update order:", err);
       Swal.fire({
@@ -955,6 +969,30 @@ function OrdersTable({ orders, setOrders }) {
                       ))}
                     </div>
                   </form>
+                </div>
+
+                {/* ✅ Total Section */}
+                <div
+                  className="d-flex justify-content-between align-items-center px-4 py-3 border-top mt-3"
+                  style={{
+                    backgroundColor: "#f8f9fa",
+                  }}
+                >
+                  <span className="fw-semibold fs-5">Total</span>
+                  <span className="fw-bold fs-5">
+                    ₱
+                    {editableRow?.orderedItems
+                      ?.reduce(
+                        (sum, item) =>
+                          sum +
+                          (Number(item.price) || 0) *
+                            (Number(item.quantity) || 0),
+                        0
+                      )
+                      .toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                      })}
+                  </span>
                 </div>
 
                 {/* Footer */}
