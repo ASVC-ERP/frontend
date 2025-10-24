@@ -59,7 +59,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       grow: 0,
       width: "140px",
     },
-/*
+    /*
     {
       name: "Waybill Number",
       cell: (row) => {
@@ -149,7 +149,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       },
       grow: 1,
       minWidth: "150px",
-    }
+    },
   ];
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -161,14 +161,29 @@ function InvoiceTable({ invoices, fetchInvoices }) {
   const [pendingChanges, setPendingChanges] = useState({});
 
   useEffect(() => {
+    // ✅ Re-apply search whenever invoices or searchTerm change
+    if (searchTerm.trim() !== "") {
+      const filtered = invoices.filter((row) =>
+        Object.values(row).some((field) =>
+          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(invoices);
+    }
+  }, [invoices, searchTerm]);
+
+  // 🕒 Auto-refresh invoices every 10s (paused when searching)
+  useEffect(() => {
+    if (searchTerm.trim() !== "") return; // ⛔ skip refresh if searching
+
     const interval = setInterval(() => {
       fetchInvoices();
-    }, 10000); // every 10 seconds
-
-    setFilteredData(invoices);
+    }, 30000);
 
     return () => clearInterval(interval);
-  }, [fetchInvoices]);
+  }, [fetchInvoices, searchTerm]);
 
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
@@ -198,7 +213,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
   const handlePrint = async () => {
     if (!selectedRow) return;
 
-    console.log('selectedRow: ', selectedRow);
+    console.log("selectedRow: ", selectedRow);
 
     try {
       // Prepare payload
@@ -263,7 +278,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     }));
   };
 
-/*
+  /*
   const handleSave = (row) => {
     const newStatus = pendingChanges[row.invoiceID];
     if (!newStatus) return;
@@ -346,7 +361,6 @@ function InvoiceTable({ invoices, fetchInvoices }) {
         });
       });
   };
-
 
   const handleDelete = (row) => {
     Swal.fire({

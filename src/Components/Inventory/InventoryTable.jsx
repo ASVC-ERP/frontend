@@ -100,16 +100,43 @@ function InventoryTable({
   ];
 
   useEffect(() => {
-    setFilteredData(Object.values(products));
-  }, [products]);
+    // ✅ When products change, re-apply search if active
+    if (searchTerm.trim() !== "") {
+      const filtered = Object.values(products).filter((row) =>
+        Object.values(row).some((field) =>
+          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(Object.values(products));
+    }
+  }, [products, searchTerm]);
 
+  // 🕒 Auto-refresh only when not searching
   useEffect(() => {
+    if (searchTerm.trim() !== "") return; // ⛔ Pause refresh if searching
+
     const interval = setInterval(() => {
       onRefreshItems();
-    }, 120000); // refresh every 2m
+    }, 120000); 
 
     return () => clearInterval(interval);
-  }, [onRefreshItems]);
+  }, [onRefreshItems, searchTerm]);
+
+  // 🔍 Handle search input change
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = Object.values(products).filter((row) =>
+      Object.values(row).some((field) =>
+        field?.toString().toLowerCase().includes(value)
+      )
+    );
+
+    setFilteredData(filtered);
+  };
 
   useEffect(() => {
     const checkDuplicate = async () => {
@@ -232,19 +259,6 @@ function InventoryTable({
         confirmButtonColor: "#1E5A84",
       });
     }
-  };
-
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    const filtered = Object.values(products).filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
-    );
-
-    setFilteredData(filtered);
   };
 
   const handleDeleteItem = async (itemCode) => {

@@ -4,11 +4,39 @@ import { IoReceipt } from "react-icons/io5";
 import { FaTruck, FaUser } from "react-icons/fa";
 import { PiListChecksFill } from "react-icons/pi";
 
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
 
 export default function Sidebar({ onLogout }) {
   const user = JSON.parse(localStorage.getItem("user"));
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    const fetchPendingOrders = async () => {
+      try {
+        const response = await axios.get(
+          `${API_URL}/orders/sales-orders/by-status`,
+          { params: { status: "pending" } }
+        );
+        setPendingCount(response.data.length || 0);
+      } catch (error) {
+        console.error("Error fetching pending orders:", error);
+        setPendingCount(0);
+      }
+    };
+
+    fetchPendingOrders();
+
+    // Optionally refresh every minute
+    const interval = setInterval(fetchPendingOrders, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="d-flex flex-column vh-100 position-sticky">
@@ -27,18 +55,38 @@ export default function Sidebar({ onLogout }) {
         <ul className="nav flex-column list-unstyled ms-2 mt-2">
           {/* Approval - Only show for Admin */}
           {user?.role === "admin" && (
-            <li className="mt-2">
+            <li className="mt-2 position-relative">
               <Link
                 to="/approval"
-                className="nav-link d-flex align-items-center"
+                className="nav-link d-flex align-items-center justify-content-between"
                 style={{
                   color: "#1E5A84",
                   fontSize: "1.1rem",
                   cursor: "pointer",
                 }}
               >
-                <PiListChecksFill className="me-3" size={25} />
-                <span className="sidebar-text">Approval</span>
+                <div className="d-flex align-items-center">
+                  <PiListChecksFill className="me-3" size={25} />
+                  <span className="sidebar-text">Approval</span>
+                </div>
+
+                {/* ✅ Notification Badge */}
+                {pendingCount > 0 && (
+                  <span
+                    className="badge bg-danger ms-2"
+                    style={{
+                      borderRadius: "50%",
+                      fontSize: "0.75rem",
+                      minWidth: "20px",
+                      height: "20px",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {pendingCount}
+                  </span>
+                )}
               </Link>
             </li>
           )}

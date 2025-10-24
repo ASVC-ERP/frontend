@@ -110,16 +110,29 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   };
 
   useEffect(() => {
-    setFilteredData(supplier);
-  }, [supplier]);
+    // ✅ Re-apply search whenever supplier data or searchTerm changes
+    if (searchTerm.trim() !== "") {
+      const filtered = supplier.filter((row) =>
+        Object.values(row).some((field) =>
+          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(supplier);
+    }
+  }, [supplier, searchTerm]);
 
+  // 🕒 Auto-refresh every 2 minutes, paused while searching
   useEffect(() => {
+    if (searchTerm.trim() !== "") return; // ⛔ skip refresh if searching
+
     const interval = setInterval(() => {
       onRefreshSupplier();
     }, 120000);
 
     return () => clearInterval(interval);
-  }, [onRefreshSupplier]);
+  }, [onRefreshSupplier, searchTerm]);
 
   // Handle search input change
   const handleSearch = (event) => {

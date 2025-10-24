@@ -32,17 +32,30 @@ function ApprovalTables() {
     }
   };
 
+  // Fetch pending orders
   const fetchOrders = async () => {
     setLoading(true);
     setError(null);
     try {
       const response = await axios.get(
         `${API_URL}/orders/sales-orders/by-status`,
-        {
-          params: { status: activeTab },
-        }
+        { params: { status: "Pending" } }
       );
+
+      // Save raw data
       setData(response.data);
+
+      // Re-apply search filter if active
+      if (searchTerm.trim() !== "") {
+        const filtered = response.data.filter((row) =>
+          Object.values(row).some((field) =>
+            field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        );
+        setData(filtered);
+      } else {
+        setData(response.data);
+      }
     } catch (err) {
       setError("Failed to fetch orders. Please try again later.");
       console.error("Error fetching orders:", err);
@@ -52,15 +65,34 @@ function ApprovalTables() {
     }
   };
 
+  // Auto-refresh every 5 seconds (paused while searching)
   useEffect(() => {
-    fetchOrders();
-  }, [activeTab]);
+    if (searchTerm.trim() !== "") return; // ⛔ Pause refresh while searching
+
+    const interval = setInterval(() => {
+      fetchOrders();
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [searchTerm]);
 
   const handleApprove = async () => {
     try {
+      Swal.fire({
+        title: "Approving orders...",
+        text: "Please wait while we process your request.",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
       const response = await axios.post(`${API_URL}/orders/serve-approved`, {
         orderIds: selectedOrders,
       });
+
+      Swal.close();
 
       Swal.fire({
         icon: "success",
@@ -74,6 +106,8 @@ function ApprovalTables() {
       fetchOrders();
     } catch (error) {
       console.error("Error approving orders:", error);
+
+      Swal.close();
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -100,12 +134,23 @@ function ApprovalTables() {
   };
 
   const handleReject = async () => {
+    Swal.fire({
+      title: "Rejecting orders...",
+      text: "Please wait while we process your request.",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     try {
       console.log("Reject payload:", { orderIds: selectedOrders });
 
       await axios.post(`${API_URL}/orders/reject`, {
         orderIds: selectedOrders,
       });
+      Swal.close();
 
       Swal.fire({
         icon: "success",
@@ -119,6 +164,7 @@ function ApprovalTables() {
       fetchOrders(); // refresh after reject
     } catch (error) {
       console.error("Error rejecting orders:", error);
+      Swal.close();
       Swal.fire({
         icon: "error",
         title: "Error",
@@ -212,7 +258,7 @@ function ApprovalTables() {
         <div className=" position-relative w-25 my-3">
           <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
           <input
-            type="text" 
+            type="text"
             placeholder="Search approvals"
             className="form-control ps-5 border-2 rounded-3"
             value={searchTerm}
@@ -267,7 +313,7 @@ function ApprovalTables() {
             <div
               className="modal-dialog modal-xl modal-dialog-centered"
               role="document"
-              style={{ height: "90vh", maxHeight: "90vh" }}
+              style={{ maxHeight: "90vh" }}
             >
               <div
                 className="modal-content"

@@ -106,40 +106,50 @@ function OrdersTable({ orders, setOrders }) {
           )}`
         : `${API_URL}/orders`;
 
-    console.log("Fetching orders from endpoint:", endpoint);
-    console.log("User role:", user.role);
-
     axios
       .get(endpoint)
       .then((res) => {
         setOrders(res.data);
-        setFilteredData(res.data);
-        console.log(`✅ Fetched ${res.data.length} orders (${user.role})`);
+
+        // ✅ Preserve search filter if user is currently searching
+        if (searchTerm.trim() !== "") {
+          const filtered = res.data.filter((row) =>
+            Object.values(row).some((field) =>
+              field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+            )
+          );
+          setFilteredData(filtered);
+        } else {
+          setFilteredData(res.data);
+        }
       })
       .catch((err) => {
         console.error("❌ Failed to fetch orders:", err);
       });
   };
 
+  // Initial fetch
   useEffect(() => {
     fetchOrders();
   }, []);
 
-  // Auto-refresh orders every 10 seconds
+  // Auto-refresh orders every 5 seconds
   useEffect(() => {
+    if (searchTerm.trim() !== "") return; 
+
     const interval = setInterval(() => {
       fetchOrders();
-    }, 120000); // adjust interval as needed (ms)
+    }, 30000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [searchTerm]); 
 
   // Handle search input change
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
 
-    const filtered = Object.values(orders).filter((row) =>
+    const filtered = orders.filter((row) =>
       Object.values(row).some((field) =>
         field?.toString().toLowerCase().includes(value)
       )

@@ -85,16 +85,43 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const [showEditModal, setShowEditModal] = useState(false);
 
   useEffect(() => {
-    setFilteredData(customers);
-  }, [customers]);
+    // ✅ When customers change, re-apply search if active
+    if (searchTerm.trim() !== "") {
+      const filtered = customers.filter((row) =>
+        Object.values(row).some((field) =>
+          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      );
+      setFilteredData(filtered);
+    } else {
+      setFilteredData(customers);
+    }
+  }, [customers, searchTerm]);
 
+  // 🕒 Auto-refresh only when not searching
   useEffect(() => {
+    if (searchTerm.trim() !== "") return; // ⛔ Pause refresh if searching
+
     const interval = setInterval(() => {
       onRefreshCustomers();
-    }, 10000); // every 10s
+    }, 120000); 
 
     return () => clearInterval(interval);
-  }, [onRefreshCustomers]);
+  }, [onRefreshCustomers, searchTerm]);
+
+  // 🔍 Handle search input change
+  const handleSearch = (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+
+    const filtered = customers.filter((row) =>
+      Object.values(row).some((field) =>
+        field?.toString().toLowerCase().includes(value)
+      )
+    );
+
+    setFilteredData(filtered);
+  };
 
   const handleAddCustomerClick = () => {
     setCustomerName("");
@@ -205,20 +232,6 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       });
     }
     setShowEditModal(false);
-  };
-
-  // Handle search input change
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    const filtered = Object.values(customers).filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
-    );
-
-    setFilteredData(filtered);
   };
 
   const handleDeleteCustomer = async (customerID) => {
