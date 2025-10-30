@@ -274,7 +274,7 @@ function InventoryTable({
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${API_URL}/items/${itemCode}`);
+        await axios.delete(`${API_URL}/items/${encodeURIComponent(itemCode)}`);
 
         Swal.fire({
           title: "Deleted!",
