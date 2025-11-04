@@ -44,6 +44,7 @@ function InfoForm({ info, setInfo }) {
       customerNumber: customer.customerContact,
       customerAddress: customer.customerAddress,
       customerTIN: customer.customerTIN,
+      customerTerms: customer.customerTerms,
     });
     setQuery(customer.customerName);
     setSuggestions([]);
@@ -59,106 +60,126 @@ function InfoForm({ info, setInfo }) {
   };
 
   return (
-  <div>
-    {/* Customer Name / Dropdown */}
-    <div className="row mx-5 d-flex align-items-center">
-      <div className="col-1">
-        <label className="h6">Customer: </label>
-      </div>
-      <div className="col-6 position-relative">
-        <input
-          type="text"
-          className="form-control form-control-sm"
-          id="customerName"
-          value={query}
-          onChange={handleChange}
-          onBlur={() => setTimeout(() => setSuggestions([]), 150)}
-          placeholder="Search customer..."
-        />
-        {suggestions.length > 0 && (
-          <ul
-            style={{
-              position: "absolute",
-              top: "38px",
-              left: 0,
-              right: 0,
-              backgroundColor: "#fff",
-              border: "1px solid #ccc",
-              listStyleType: "none",
-              margin: 0,
-              padding: 0,
-              maxHeight: "150px",
-              overflowY: "auto",
-              zIndex: 1000,
-            }}
-          >
-            {suggestions.map((c) => (
-              <li
-                key={c.customerID}
-                onMouseDown={() => handleSelectCustomer(c)} // <- fix for autofill
-                style={{
-                  padding: "8px",
-                  cursor: "pointer",
-                  borderBottom: "1px solid #eee",
-                }}
-              >
-                {c.customerName} - {c.customerContact}
-              </li>
-            ))}
-          </ul>
-        )}
+    <div>
+      {/* Customer Name / Dropdown */}
+      <div className="row mx-5 d-flex align-items-center">
+        <div className="col-1">
+          <label className="h6">Customer: </label>
+        </div>
+        <div className="col-6 position-relative">
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="customerName"
+            value={query}
+            onChange={handleChange}
+            onBlur={() => setTimeout(() => setSuggestions([]), 150)}
+            placeholder="Search customer..."
+          />
+          {suggestions.length > 0 && (
+            <ul
+              style={{
+                position: "absolute",
+                top: "38px",
+                left: 0,
+                right: 0,
+                backgroundColor: "#fff",
+                border: "1px solid #ccc",
+                listStyleType: "none",
+                margin: 0,
+                padding: 0,
+                maxHeight: "150px",
+                overflowY: "auto",
+                zIndex: 1000,
+              }}
+            >
+              {suggestions.map((c) => (
+                <li
+                  key={c.customerID}
+                  onMouseDown={() => handleSelectCustomer(c)}
+                  style={{
+                    padding: "8px",
+                    cursor: "pointer",
+                    borderBottom: "1px solid #eee",
+                  }}
+                >
+                  {c.customerName} - {c.customerContact}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="col-2">
+          <label htmlFor="customerNumber" className="ms-5 h6">
+            Contact No:
+          </label>
+        </div>
+        <div className="col-3">
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="customerNumber"
+            value={info.customerNumber}
+            onChange={handleChange}
+          />
+        </div>
       </div>
 
-      <div className="col-2">
-        <label htmlFor="customerNumber" className="ms-5 h6">
-          Contact No:
-        </label>
-      </div>
-      <div className="col-3">
-        <input
-          type="text"
-          className="form-control form-control-sm"
-          id="customerNumber"
-          value={info.customerNumber}
-          onChange={handleChange}
-        />
+      {/* Address, TIN, and Terms */}
+      <div className="row mx-5 mt-3 d-flex align-items-center">
+        {/* Address */}
+        <div className="col-1">
+          <label htmlFor="customerAddress" className="h6">
+            Address:
+          </label>
+        </div>
+        <div className="col-6">
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="customerAddress"
+            value={info.customerAddress}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* TIN */}
+        <div className="col-2">
+          <label htmlFor="customerTIN" className="h6 ms-5">
+            TIN:
+          </label>
+        </div>
+        <div className="col-3">
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="customerTIN"
+            value={info.customerTIN}
+            onChange={handleChange}
+          />
+        </div>
+
+        {/* Terms */}
+        {/* <div className="col-1">
+          <label htmlFor="customerTerms" className="h6 ms-2">
+            Terms:
+          </label>
+        </div>
+        
+        <div className="col-3">
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="customerTerms"
+            value={info.customerTerms}
+            onChange={handleChange}
+          />
+        </div> */}
+
       </div>
     </div>
-
-    {/* Address and TIN */}
-    <div className="row mx-5 mt-3 d-flex align-items-center">
-      <div className="col-1">
-        <label htmlFor="customerAddress" className="h6">
-          Address:
-        </label>
-      </div>
-      <div className="col-6">
-        <input
-          type="text"
-          className="form-control form-control-sm"
-          id="customerAddress"
-          value={info.customerAddress}
-          onChange={handleChange}
-        />
-      </div>
-      <div className="col-2">
-        <label htmlFor="customerTIN" className="ms-5 h6">
-          TIN: 
-        </label>
-      </div>
-      <div className="col-3">
-        <input
-          type="text"
-          className="form-control form-control-sm"
-          id="customerTIN"
-          value={info.customerTIN}
-          onChange={handleChange}
-        />
-      </div>
-    </div>
-  </div>
-);
-
+  );
 }
 
 export default InfoForm;

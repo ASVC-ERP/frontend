@@ -38,6 +38,13 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       minWidth: "140px",
     },
     {
+      name: "Terms",
+      selector: (row) => row.customerTerms || "N/A",
+      sortable: false,
+      grow: 1,
+      minWidth: "100px",
+    },
+    {
       name: "Address",
       selector: (row) => row.customerAddress,
       sortable: true,
@@ -81,6 +88,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [customerTIN, setCustomerTIN] = useState("");
+  const [customerTerms, setCustomerTerms] = useState("");
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
@@ -104,7 +112,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
     const interval = setInterval(() => {
       onRefreshCustomers();
-    }, 120000); 
+    }, 120000);
 
     return () => clearInterval(interval);
   }, [onRefreshCustomers, searchTerm]);
@@ -128,6 +136,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     setCustomerContact("");
     setCustomerAddress("");
     setCustomerTIN("");
+    setCustomerTerms("");
     setShowCustomerModal(true);
   };
 
@@ -139,6 +148,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     setCustomerContact("");
     setCustomerAddress("");
     setCustomerTIN("");
+    setCustomerTerms("");
   };
 
   const handleSubmitCustomer = async (e) => {
@@ -150,6 +160,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerContact,
         customerAddress,
         customerTIN,
+        customerTerms,
       };
 
       Swal.fire({
@@ -196,6 +207,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     setCustomerContact(customer.customerContact);
     setCustomerAddress(customer.customerAddress);
     setCustomerTIN(customer.customerTIN || "");
+    setCustomerTerms(customer.customerTerms || "");
     setShowEditModal(true);
   };
 
@@ -207,6 +219,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         customerContact: `'${customerContact}`,
         customerAddress,
         customerTIN,
+        customerTerms,
       };
       await axios.put(
         `${API_URL}/customers/${editingCustomer.customerID}`,
@@ -414,8 +427,8 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     />
                   </div>
 
-                  {/* Contact Name */}
-                  <div className="col-12">
+                  {/* Contact Number & Customer TIN Side by Side */}
+                  <div className="col-md-6 col-12">
                     <label
                       htmlFor="contactName"
                       className="form-label fw-semibold text-muted small"
@@ -445,6 +458,61 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     />
                   </div>
 
+                  <div className="col-md-6 col-12">
+                    <label
+                      htmlFor="CustomerTIN"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-id-card me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Customer TIN
+                    </label>
+                    <input
+                      type="text"
+                      id="CustomerTIN"
+                      placeholder="Enter TIN"
+                      value={customerTIN}
+                      onChange={(e) => setCustomerTIN(e.target.value)}
+                      className="form-control"
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Customer Terms */}
+                  <div className="col-12">
+                    <label
+                      htmlFor="CustomerTerms"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-id-card me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Customer Terms
+                    </label>
+                    <input
+                      type="text"
+                      id="CustomerTerms"
+                      placeholder="Enter terms"
+                      value={customerTerms}
+                      onChange={(e) => setCustomerTerms(e.target.value)}
+                      className="form-control"
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                      }}
+                    />
+                  </div>
+
                   {/* Customer Address */}
                   <div className="col-12">
                     <label
@@ -470,56 +538,13 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                         borderRadius: "0.5rem",
                         fontSize: "0.95rem",
                         resize: "vertical",
-                        transition: "border-color 0.3s ease",
                       }}
                       onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
                       onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
-                  {/* Customer TIN */}
-                  <div className="col-12">
-                    <label
-                      htmlFor="CustomerTIN"
-                      className="form-label fw-semibold text-muted small"
-                    >
-                      <i
-                        className="fas fa-id-card me-2"
-                        style={{ color: "#1E5A84" }}
-                      ></i>
-                      Customer TIN
-                    </label>
-                    <input
-                      type="text"
-                      id="CustomerTIN"
-                      placeholder="Enter TIN"
-                      value={customerTIN}
-                      onChange={(e) => setCustomerTIN(e.target.value)}
-                      className="form-control"
-                    />
-                  </div>
                 </div>
               </form>
-
-              {/* Additional info card
-              <div
-                className="mt-4 p-3 rounded-3"
-                style={{
-                  backgroundColor: "rgba(12, 29, 97, 0.05)",
-                  border: "1px solid rgba(12, 29, 97, 0.1)",
-                }}
-              >
-                <div className="d-flex align-items-center">
-                  <i
-                    className="fas fa-info-circle me-2"
-                    style={{ color: "#1E5A84" }}
-                  ></i>
-                  <small className="text-muted">
-                    Customer information will be used for invoicing and
-                    communication.
-                  </small>
-                </div>
-              </div>
-              */}
             </div>
 
             <div className="modal-footer bg-light border-0 rounded-bottom">
@@ -657,10 +682,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                 <div className="row g-3">
                   {/* Customer Name */}
                   <div className="col-12">
-                    <label
-                      htmlFor="editCustomerName"
-                      className="form-label fw-semibold text-muted small"
-                    >
+                    <label className="form-label fw-semibold text-muted small">
                       <i
                         className="fas fa-user-tie me-2"
                         style={{ color: "#1E5A84" }}
@@ -669,7 +691,6 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     </label>
                     <input
                       type="text"
-                      id="editCustomerName"
                       placeholder="Enter customer/company name"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
@@ -677,21 +698,17 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     />
                   </div>
 
-                  {/* Contact Number */}
-                  <div className="col-12">
-                    <label
-                      htmlFor="editCustomerContact"
-                      className="form-label fw-semibold text-muted small"
-                    >
+                  {/* Contact & TIN Side by Side */}
+                  <div className="col-md-6">
+                    <label className="form-label fw-semibold text-muted small">
                       <i
-                        className="fas fa-user me-2"
+                        className="fas fa-phone me-2"
                         style={{ color: "#1E5A84" }}
                       ></i>
                       Contact Number
                     </label>
                     <input
                       type="text"
-                      id="editCustomerContact"
                       placeholder="Enter contact number"
                       value={customerContact}
                       onChange={(e) => setCustomerContact(e.target.value)}
@@ -699,33 +716,8 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     />
                   </div>
 
-                  {/* Customer Address */}
-                  <div className="col-12">
-                    <label
-                      htmlFor="editCustomerAddress"
-                      className="form-label fw-semibold text-muted small"
-                    >
-                      <i
-                        className="fas fa-map-marker-alt me-2"
-                        style={{ color: "#1E5A84" }}
-                      ></i>
-                      Customer Address
-                    </label>
-                    <textarea
-                      id="editCustomerAddress"
-                      placeholder="Enter complete customer address"
-                      value={customerAddress}
-                      onChange={(e) => setCustomerAddress(e.target.value)}
-                      className="form-control"
-                      rows="3"
-                    />
-                  </div>
-                  {/* Customer TIN */}
-                  <div className="col-12">
-                    <label
-                      htmlFor="editCustomerTIN"
-                      className="form-label fw-semibold text-muted small"
-                    >
+                  <div className="col-md-6">
+                    <label className="form-label fw-semibold text-muted small">
                       <i
                         className="fas fa-id-card me-2"
                         style={{ color: "#1E5A84" }}
@@ -734,36 +726,50 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                     </label>
                     <input
                       type="text"
-                      id="editCustomerTIN"
                       placeholder="Enter TIN"
                       value={customerTIN}
                       onChange={(e) => setCustomerTIN(e.target.value)}
                       className="form-control"
                     />
                   </div>
+
+                  {/* Customer Terms */}
+                  <div className="col-12">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-file-signature me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Customer Terms
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter terms"
+                      value={customerTerms}
+                      onChange={(e) => setCustomerTerms(e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
+
+                  {/* Customer Address */}
+                  <div className="col-12">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-map-marker-alt me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Customer Address
+                    </label>
+                    <textarea
+                      placeholder="Enter complete customer address"
+                      value={customerAddress}
+                      onChange={(e) => setCustomerAddress(e.target.value)}
+                      className="form-control"
+                      rows="3"
+                    />
+                  </div>
                 </div>
               </form>
-
-              {/* Info Card
-              <div
-                className="mt-4 p-3 rounded-3"
-                style={{
-                  backgroundColor: "rgba(12, 29, 97, 0.05)",
-                  border: "1px solid rgba(12, 29, 97, 0.1)",
-                }}
-              >
-                <div className="d-flex align-items-center">
-                  <i
-                    className="fas fa-info-circle me-2"
-                    style={{ color: "#1E5A84" }}
-                  ></i>
-                  <small className="text-muted">
-                    Customer information will be used for invoicing and
-                    communication.
-                  </small>
-                </div>
-              </div>
-              */}
             </div>
 
             <div className="modal-footer bg-light border-0 rounded-bottom">

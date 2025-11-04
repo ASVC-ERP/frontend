@@ -135,14 +135,27 @@ function OrdersTable({ orders, setOrders }) {
 
   // Auto-refresh orders every 5 seconds
   useEffect(() => {
-    if (searchTerm.trim() !== "") return; 
+    if (searchTerm.trim() !== "") return;
 
     const interval = setInterval(() => {
       fetchOrders();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [searchTerm]); 
+  }, [searchTerm]);
+
+  const fetchStocksForItems = async (itemCodes) => {
+    try {
+      const response = await axios.get(`${API_URL}/items/check-stocks`, {
+        params: { itemCodes: itemCodes.join(",") },
+      });
+
+      return response.data.stocks;
+    } catch (err) {
+      console.error("Error fetching stocks:", err);
+      return {};
+    }
+  };
 
   // Handle search input change
   const handleSearch = (event) => {
@@ -425,16 +438,16 @@ function OrdersTable({ orders, setOrders }) {
     }
   };
 
-  const handleServe = (row) => {
+  const handleServe = async (row) => {
     setSelectedRow(row);
 
-    // Prepare the object exactly matching ServeOrderDto
+    // Step 1: Build payload as you already do
     const payload = {
       date: row.date,
       customerName: row.customerName,
       customerAddress: row.customerAddress,
       customerNumber: row.customerNumber,
-      customerTIN: row.customerTIN || "", // <-- added
+      customerTIN: row.customerTIN || "",
       salesAgent: row.salesAgent,
       items: row.orderedItems.map((item) => ({
         itemName: item.itemName,
@@ -447,8 +460,33 @@ function OrdersTable({ orders, setOrders }) {
       })),
     };
 
-    fetchOrders();
+    try {
+      // Step 2: Get item codes
+      const itemCodes = payload.items.map((i) => i.itemCode).filter(Boolean);
 
+      // Step 3: Fetch stock from backend
+      const response = await axios.get(`${API_URL}/items/check-stocks`, {
+        params: { itemCodes: itemCodes.join(",") },
+      });
+
+      const stocks = response.data.stocks || {};
+
+      // Step 4: Merge stock into items
+      payload.items = payload.items.map((item) => ({
+        ...item,
+        stock: stocks[item.itemCode] ?? 0,
+      }));
+    } catch (error) {
+      console.error("Error fetching stock:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Stock Error",
+        text: "Unable to fetch item stocks.",
+      });
+    }
+
+    // Step 5: Continue your existing logic
+    fetchOrders();
     setServeData(payload);
     setShowServeModal(true);
   };
@@ -1037,7 +1075,10 @@ function OrdersTable({ orders, setOrders }) {
           <div className="modal-backdrop fade show"></div>
 
           <div className="modal fade show d-block" tabIndex="-1" role="dialog">
-            <div className="modal-dialog modal-lg" role="document">
+            <div
+              className="modal-dialog modal-lg modal-dialog-centered"
+              role="document"
+            >
               <div className="modal-content">
                 {/* Header */}
                 <div
@@ -1118,8 +1159,22 @@ function OrdersTable({ orders, setOrders }) {
                             style={{ gap: "10px" }}
                           >
                             {/* Item Name */}
-                            <div className="flex-grow-1 d-flex align-items-center">
+                            <div className="flex-grow-1 d-flex flex-column">
                               <span className="fw-medium">{item.itemName}</span>
+                              <small
+                                style={{
+                                  fontSize: "14px",
+                                  fontWeight: "700",
+                                  color:
+                                    item.stock < 5
+                                      ? "#B64345"
+                                      : item.stock >= 5 && item.stock < 20
+                                      ? "#F8B13D"
+                                      : "#ACACAC",
+                                }}
+                              >
+                                In stock: {item.stock}
+                              </small>
                             </div>
 
                             {/* Served */}
@@ -1197,38 +1252,57 @@ function OrdersTable({ orders, setOrders }) {
                     style={{ backgroundColor: "#246c9d", color: "white" }}
                     onClick={async () => {
                       try {
-                        console.log("Serve button clicked"); // <--- log immediately on click
-                        console.log("serveData being sent:", serveData); // <--- log payload
-                        const user = JSON.parse(localStorage.getItem("user"));
-                        const role = user?.role || "";
-                        await axios.patch(
-                          `${API_URL}/orders/${selectedRow.orderId}/serve`,
-                          serveData,
-                          {
-                            params: { role },
-                          }
-                        );
-                        if (role.toLowerCase() === "admin") {
-                          Swal.fire({
-                            icon: "success",
-                            title: "Served",
-                            text: "Serve data submitted successfully",
-                            timer: 2000,
-                            showConfirmButton: false,
-                          });
+                        // ✅ Validate stock before submit
+                        for (const item of serveData.items) {
+                          const served = Number(item.quantityServed) || 0;
+                          const stock = Number(item.stock) || 0;
 
-                          fetchOrders();
-                        } else {
-                          Swal.fire({
-                            icon: "success",
-                            title: "Requested",
-                            text: "Serve data Requested successfully",
-                            timer: 2000,
-                            showConfirmButton: false,
-                          });
-                          fetchOrders();
+                          if (served > stock) {
+                            Swal.fire({
+                              icon: "error",
+                              title: "Insufficient Stock",
+                              html: `Item <b>${item.itemName}</b> only has <b>${stock}</b> in stock. You tried to serve <b>${served}</b>.`,
+                            });
+                            return; // Stop submit
+                          }
                         }
 
+                        // ✅ If validation passed, continue serving
+                        console.log("Serve button clicked");
+                        console.log("serveData being sent:", serveData);
+
+                        const user = JSON.parse(localStorage.getItem("user"));
+                        const role = user?.role || "";
+
+                        const cleanPayload = {
+                          ...serveData,
+                          items: serveData.items.map(
+                            ({ stock, ...rest }) => rest
+                          ),
+                        };
+
+                        await axios.patch(
+                          `${API_URL}/orders/${selectedRow.orderId}/serve`,
+                          cleanPayload,
+                          { params: { role } }
+                        );
+
+
+                        Swal.fire({
+                          icon: "success",
+                          title:
+                            role.toLowerCase() === "admin"
+                              ? "Served"
+                              : "Requested",
+                          text:
+                            role.toLowerCase() === "admin"
+                              ? "Serve data submitted successfully"
+                              : "Serve data requested successfully",
+                          timer: 2000,
+                          showConfirmButton: false,
+                        });
+
+                        fetchOrders();
                         setShowServeModal(false);
                       } catch (err) {
                         console.error(err);
