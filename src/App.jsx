@@ -89,8 +89,10 @@ function App() {
     const value = e.target.value;
     setQuery(value);
     if (value.length > 0) {
-      const filtered = items.filter((p) =>
-        p.itemName.toLowerCase().includes(value.toLowerCase())
+      const filtered = items.filter(
+        (p) =>
+          p.itemName.toLowerCase().includes(value.toLowerCase()) ||
+          p.itemCode.toLowerCase().includes(value.toLowerCase())
       );
       setSuggestions(filtered);
     } else {
@@ -165,12 +167,11 @@ function App() {
   };
 
   const handleDisableCustomPrice = (index) => {
-  const updated = [...orderItems];
-  updated[index].customPriceEnabled = false;
-  updated[index].customPrice = "";
-  setOrderItems(updated);
-};
-
+    const updated = [...orderItems];
+    updated[index].customPriceEnabled = false;
+    updated[index].customPrice = "";
+    setOrderItems(updated);
+  };
 
   const updateOrderItem = (index, key, value) => {
     const updatedItems = [...orderItems];
@@ -178,30 +179,28 @@ function App() {
     setOrderItems(updatedItems);
   };
 
-const calculateTotal = (item) => {
-  // Use custom price if enabled, otherwise the selected dropdown price
-  const unitPrice = item.customPriceEnabled
-    ? parseFloat(item.customPrice) || 0
-    : parseFloat(item.price?.[item.selectedMarkup]) || 0;
-
-  const quantity = parseInt(item.quantity) || 0;
-
-  return unitPrice * quantity;
-};
-
-
-const calculateTotalPrice = () => {
-  return orderItems.reduce((total, item) => {
+  const calculateTotal = (item) => {
+    // Use custom price if enabled, otherwise the selected dropdown price
     const unitPrice = item.customPriceEnabled
       ? parseFloat(item.customPrice) || 0
       : parseFloat(item.price?.[item.selectedMarkup]) || 0;
 
     const quantity = parseInt(item.quantity) || 0;
 
-    return total + unitPrice * quantity;
-  }, 0);
-};
+    return unitPrice * quantity;
+  };
 
+  const calculateTotalPrice = () => {
+    return orderItems.reduce((total, item) => {
+      const unitPrice = item.customPriceEnabled
+        ? parseFloat(item.customPrice) || 0
+        : parseFloat(item.price?.[item.selectedMarkup]) || 0;
+
+      const quantity = parseInt(item.quantity) || 0;
+
+      return total + unitPrice * quantity;
+    }, 0);
+  };
 
   const handleRemoveProduct = (indexToRemove) => {
     const updatedItems = orderItems.filter(
