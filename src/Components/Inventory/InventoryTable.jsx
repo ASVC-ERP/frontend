@@ -100,6 +100,14 @@ function InventoryTable({
   ];
 
   useEffect(() => {
+    // 🔄 Load cached search term on mount
+    const cachedSearch = localStorage.getItem("searchTerm");
+    if (cachedSearch) {
+      setSearchTerm(cachedSearch);
+    }
+  }, []);
+
+  useEffect(() => {
     // ✅ When products change, re-apply search if active
     if (searchTerm.trim() !== "") {
       const filtered = Object.values(products).filter((row) =>
@@ -128,6 +136,7 @@ function InventoryTable({
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
+    localStorage.setItem("searchTerm", value);
 
     const filtered = Object.values(products).filter((row) =>
       Object.values(row).some((field) =>
