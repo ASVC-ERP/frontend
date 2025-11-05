@@ -44,7 +44,7 @@ function InfoForm({ info, setInfo }) {
       customerNumber: customer.customerContact,
       customerAddress: customer.customerAddress,
       customerTIN: customer.customerTIN,
-      customerTerms: customer.customerTerms,
+      //customerTerms: customer.customerTerms,
     });
     setQuery(customer.customerName);
     setSuggestions([]);
