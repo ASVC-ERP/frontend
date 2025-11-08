@@ -53,7 +53,9 @@ export default function Sidebar({ onLogout }) {
       {/* Navigation Links */}
       <div className="d-flex flex-column flex-grow-1">
         <ul className="nav flex-column list-unstyled ms-2 mt-2">
+
           {/* Approval - Only show for Admin */}
+        {/*
           {user?.role === "admin" && (
             <li className="mt-2 position-relative">
               <Link
@@ -70,14 +72,14 @@ export default function Sidebar({ onLogout }) {
                   <span className="sidebar-text">Approval</span>
                 </div>
 
-                {/* ✅ Notification Badge */}
+                {/ ✅ Notification Badge /}
                 {pendingCount > 0 && (
                   <span
                     className="badge bg-danger ms-2"
                     style={{
                       borderRadius: "50%",
                       fontSize: "0.75rem",
-                      minWidth: "20px",
+                      width: "20px",
                       height: "20px",
                       display: "flex",
                       alignItems: "center",
@@ -90,6 +92,7 @@ export default function Sidebar({ onLogout }) {
               </Link>
             </li>
           )}
+        */}
 
           <li className="mt-2">
             <Link

@@ -5,6 +5,9 @@ import { IoIosSearch } from "react-icons/io";
 import axios from "axios";
 import Swal from "sweetalert2";
 
+const userApprove = JSON.parse(localStorage.getItem("user"));
+const roleApprove = userApprove?.role || "";
+
 // Define table columns
 const columns = [
   {
@@ -221,19 +224,40 @@ function OrdersTable({ orders, setOrders }) {
     }
   };
 
-  const handleRowClick = (row) => {
+    const handleRowClick = async (row) => {
     console.log("Row clicked:", row);
-    setSelectedRow(row);
 
-    setEditableRow({
-      ...row,
-      orderedItems: Array.isArray(row.orderedItems)
-        ? [...row.orderedItems]
-        : [],
-    });
+    try {
+      // Fetch served data for this order
+      const res = await fetch(`${API_URL}/orders/served-items/${row.orderId}`);
+      const servedData = await res.json();
+      console.log("Fetched served orders:", servedData);
 
-    setIsEditing(false);
-    setShowRowModal(true);
+      // Inject quantityServed directly into orderedItems
+      const mergedItems = row.orderedItems.map((item) => {
+        const servedItem = servedData.find(
+          (s) => s.itemName === item.itemName
+        );
+
+        // If found, assign quantityServed
+        return {
+          ...item,
+          quantityServed: servedItem
+            ? parseInt(servedItem.quantityServed)
+            : 0,
+        };
+      });
+
+      console.log("Merged Ordered Items with quantityServed:", mergedItems);
+
+      // Update state with merged items
+      setSelectedRow({ ...row, orderedItems: mergedItems });
+      setEditableRow({ ...row, orderedItems: mergedItems });
+      setIsEditing(false);
+      setShowRowModal(true);
+    } catch (err) {
+      console.error("Error fetching served orders:", err);
+    }
   };
 
   // Handle top-level inputs (customerName, status, etc.)
@@ -512,8 +536,55 @@ function OrdersTable({ orders, setOrders }) {
 
   const handleApprove = async (row) => {
     try {
+      Swal.fire({
+        title: "Approving order...",
+        text: "Please wait while we check stock and process your request.",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
+
+      // -------------------------------
+      // 0) Validate stock availability
+      // -------------------------------
+      const itemCodes = row.orderedItems.map((item) => item.itemCode);
+      const stockResponse = await axios.get(`${API_URL}/items/check-stocks`, {
+        params: { itemCodes: itemCodes.join(",") },
+      });
+
+      const stocks = stockResponse.data.stocks || {};
+      console.log("[handleApprove] Current stock levels:", stocks);
+      
+      const insufficientItems = row.orderedItems.filter((item) => {
+        const currentStock = Number(stocks[item.itemCode]) || 0;
+        return currentStock < item.quantityServed;
+      });
+
+      if (insufficientItems.length > 0) {
+        const message = insufficientItems
+          .map(
+            (item) =>
+              `<b>${item.itemName}</b> (Req: ${item.quantityServed}, Stock: ${
+                stocks[item.itemCode] || 0
+              })`
+          )
+          .join("\n");
+
+        Swal.fire({
+          icon: "warning",
+          title: "Insufficient Stock",
+          html: message,
+        });
+        return;
+      }
+
+      // -------------------------------
+      // 1) Proceed to Approve
+      // -------------------------------
       const payload = {
-        id: [row.orderId], // wrap in array to match backend
+        orderIds: [row.orderId],
       };
 
       console.log(
@@ -531,12 +602,11 @@ function OrdersTable({ orders, setOrders }) {
       Swal.fire({
         icon: "success",
         title: "Approved!",
-        text: "Selected orders have been approved successfully.",
+        text: "Order has been approved successfully.",
         timer: 2000,
         showConfirmButton: false,
       });
 
-      setSelectedOrders([]);
       fetchOrders();
     } catch (error) {
       console.error("[handleApprove] Error approving orders:", error);
@@ -545,6 +615,45 @@ function OrdersTable({ orders, setOrders }) {
         icon: "error",
         title: "Error",
         text: "Failed to approve orders. Please try again.",
+      });
+    }
+  };
+
+  const handleReject = async (row) => {
+    Swal.fire({
+      title: "Rejecting orders...",
+      text: "Please wait while we process your request.",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      console.log("Reject payload:", { orderIds: row.orderId });
+
+      await axios.post(`${API_URL}/orders/reject`, {
+        orderIds: [row.orderId],
+      });
+      Swal.close();
+
+      Swal.fire({
+        icon: "success",
+        title: "Rejected!",
+        text: "Selected orders have been rejected successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      fetchOrders(); // refresh after reject
+    } catch (error) {
+      console.error("Error rejecting orders:", error);
+      Swal.close();
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "Failed to reject orders. Please try again.",
       });
     }
   };
@@ -633,8 +742,8 @@ function OrdersTable({ orders, setOrders }) {
                     </h5>
 
                     <div className="d-flex gap-2">
-                      {selectedRow?.status?.trim().toLowerCase() !==
-                        "served" && (
+                      {selectedRow?.status?.trim().toLowerCase() ===
+                        "pending" && (
                         <button
                           type="button"
                           className="btn btn-sm btn-light"
@@ -652,23 +761,63 @@ function OrdersTable({ orders, setOrders }) {
                           style={{ color: "#246c9d" }}
                           onClick={() => handlePrint(true)}
                         >
-                          Print
+                          Print Preview
                         </button>
                       )}
-                      {selectedRow?.status?.trim().toLowerCase() !==
-                        "served" && (
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-light"
-                          style={{ color: "#246c9d" }}
-                          onClick={() => {
-                            setShowRowModal(false);
-                            handleServe(selectedRow);
-                          }}
-                        >
-                          Serve
-                        </button>
+                      {selectedRow && (
+                        <>
+                          {selectedRow.status?.trim().toLowerCase() === "pending" && (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-light"
+                              style={{ color: "#246c9d" }}
+                              onClick={() => {
+                                setShowRowModal(false);
+                                handleServe(selectedRow);
+                              }}
+                            >
+                              Serve
+                            </button>
+                          )}
+                          {roleApprove.toLowerCase() === "admin" && 
+                            selectedRow.status?.trim().toLowerCase() === "for request" && (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-light"
+                              style={{ 
+                                backgroundColor: "#28a745",
+                                color: "white",
+                                border: "none",
+                               }}
+                              onClick={() => {
+                                setShowRowModal(false);
+                                handleApprove(selectedRow);
+                              }}
+                            >
+                              Approve
+                            </button>
+                          )}
+                          {roleApprove.toLowerCase() === "admin" && 
+                            selectedRow.status?.trim().toLowerCase() === "for request" && (
+                            <button
+                              type="button"
+                              className="btn btn-sm btn-light"
+                              style={{ 
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                border: "none",
+                               }}
+                              onClick={() => {
+                                setShowRowModal(false);
+                                handleReject(selectedRow);
+                              }}
+                            >
+                              Reject
+                            </button>
+                          )}
+                        </>
                       )}
+
                     </div>
                   </div>
                 </div>
@@ -698,6 +847,17 @@ function OrdersTable({ orders, setOrders }) {
                                     minimumFractionDigits: 2,
                                   })}{" "}
                                   | Qty: {item.quantity}
+                                  {selectedRow.status === "For Request" && (
+                                    <>
+                                      {" "}
+                                      (<span className="text-success">
+                                        Served: {item.quantityServed ?? 0}
+                                      </span> |{" "}
+                                      <span className="text-danger">
+                                        Unserved: {(item.quantity ?? 0) - (item.quantityServed ?? 0)}
+                                      </span>)
+                                    </>
+                                  )}
                                 </small>
 
                                 {item.discPercent > 0 && (
@@ -766,28 +926,6 @@ function OrdersTable({ orders, setOrders }) {
                       year: "numeric",
                     })}
                   </p>
-                </div>
-                
-                <div
-                  className="modal-footer d-flex justify-content-end"
-                  style={{
-                    borderTop: "1px solid #dee2e6",
-                    backgroundColor: "#f8f9fa",
-                  }}
-                >
-                  {selectedRow?.status?.trim().toLowerCase() !== "served" && (
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      style={{
-                        backgroundColor: "#0CA678",
-                        border: "none"
-                      }}
-                      onClick={() => handleApprove(selectedRow)} // optional function
-                    >
-                      Approve
-                    </button>
-                  )}
                 </div>
                 */}
               </div>
@@ -1091,7 +1229,7 @@ function OrdersTable({ orders, setOrders }) {
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
-                      Kitchen &gt; Serve &gt; {selectedRow.orderId}
+                      Order &gt; Serve &gt; {selectedRow.orderId}
                     </p>
                     <button
                       type="button"

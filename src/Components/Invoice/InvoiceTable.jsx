@@ -198,12 +198,56 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     setFilteredData(filtered);
   };
 
-  const handleRowClick = (row) => {
+  const handleRowClick = async (row) => {
     setSelectedRow({
       ...row,
       items: Array.isArray(row.items) ? [...row.items] : [],
     });
-    setShowRowModal(true);
+
+    const invoiceID = row.invoiceID;
+    const orderId = invoiceID.split("-")[1]; // Extract "ORD049"
+    console.log("Extracted orderId:", orderId);
+
+    try {
+      const response = await axios.get(
+        `${API_URL}/inventory/sales-order-history/get-order-id`,
+        { params: { orderId } }
+      );
+
+      const history = response.data;
+      console.log("Sales Order Data History:", history);
+
+      // 🧩 Merge served/unserved into the selectedRow items
+      const updatedItems = row.items.map((item) => {
+        const match = history.find(
+          (h) =>
+          h.itemName?.trim().toLowerCase() ===
+          item.itemName?.trim().toLowerCase()
+        );
+        return {
+          ...item,
+          served: match ? Number(match.served || 0) : 0,
+          unserved: match ? Number(match.unserved || 0) : 0,
+        };
+      });
+
+      console.log("Updated Items:", updatedItems);
+
+      // Optionally compute totals
+      const servedQty = updatedItems.reduce((sum, i) => sum + i.served, 0);
+      const unservedQty = updatedItems.reduce((sum, i) => sum + i.unserved, 0);
+
+      setSelectedRow((prev) => ({
+        ...prev,
+        items: updatedItems,
+        servedQty,
+        unservedQty,
+      }));
+    } catch (error) {
+      console.error("Error fetching Sales Order:", error);
+    } finally {
+      setShowRowModal(true);
+    }
   };
 
   const getInvoiceTotal = (items) => {
@@ -537,6 +581,13 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                               </span>
                               <small className="text-muted">
                                 Qty: {item.quantity}
+                                {" "}
+                                (<span className="text-success">
+                                  Served: {item.served ?? 0}
+                                </span> |{" "}
+                                <span className="text-danger">
+                                  Unserved: {item.unserved ?? 0}
+                                </span>)
                               </small>
                             </div>
                           </div>
