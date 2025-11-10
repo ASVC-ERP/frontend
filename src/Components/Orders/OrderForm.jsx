@@ -149,7 +149,7 @@ function OrderForm({
                     ) : (
                       <select
                         className="form-select mx-auto d-block w-50"
-                        value={item.selectedMarkup}
+                        value={item.customPriceEnabled ? "custom" : item.selectedMarkup}
                         onChange={(e) => {
                           const value = e.target.value;
                           if (value === "custom") {

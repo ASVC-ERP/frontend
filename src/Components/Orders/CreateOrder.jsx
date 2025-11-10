@@ -85,12 +85,19 @@ function CreateOrder({
       orderedItems: orderItems.map((item) => ({
         itemName: item.itemName,
         quantity: item.quantity,
-        price: item.price?.[item.selectedMarkup], // Use selected price
+        price: item.customPriceEnabled
+          ? Number(item.customPrice)
+          : item.price?.[item.selectedMarkup],
         unit: item.unit, // <-- add this
         itemCode: item.itemCode,
       })),
       totalPrice: orderItems.reduce(
-        (sum, item) => sum + item.price?.[item.selectedMarkup] * item.quantity,
+        (sum, item) =>
+          sum +
+          (item.customPriceEnabled
+            ? Number(item.customPrice):
+            item.price?.[item.selectedMarkup]) *
+            item.quantity,
         0
       ),
       status: "Pending",

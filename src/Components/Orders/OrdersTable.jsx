@@ -1322,13 +1322,18 @@ function OrdersTable({ orders, setOrders }) {
                                 min={0}
                                 max={item.quantityOrdered}
                                 value={item.quantityServed}
-                                onChange={(e) =>
-                                  updateServeQuantity(
-                                    index,
-                                    "quantityServed",
-                                    e.target.value
-                                  )
-                                }
+                                onChange={(e) => {
+                                  const raw = e.target.value;
+                                  if (raw === '') {
+                                    updateServeQuantity(index, "quantityServed", '');
+                                    return;
+                                  }
+
+                                  const parsed = Number(raw);
+                                  if (Number.isNaN(parsed)) return;
+                                  const clamped = Math.max(0, Math.min(parsed, item.quantityOrdered));
+                                  updateServeQuantity(index, "quantityServed", clamped);
+                                }}
                                 className="form-control text-center"
                                 placeholder="0"
                                 style={{ width: "100px" }}
@@ -1342,13 +1347,18 @@ function OrdersTable({ orders, setOrders }) {
                                 min={0}
                                 max={item.quantityOrdered}
                                 value={item.quantityUnserved}
-                                onChange={(e) =>
-                                  updateServeQuantity(
-                                    index,
-                                    "quantityUnserved",
-                                    e.target.value
-                                  )
-                                }
+                                onChange={(e) =>{
+                                  const raw = e.target.value;
+                                  if (raw === '') {
+                                    updateServeQuantity(index, "quantityServed", '');
+                                    return;
+                                  }
+
+                                  const parsed = Number(raw);
+                                  if (Number.isNaN(parsed)) return;
+                                  const clamped = Math.max(0, Math.min(parsed, item.quantityOrdered));
+                                  updateServeQuantity(index, "quantityServed", clamped);
+                                }}
                                 className="form-control text-center"
                                 placeholder="0"
                                 style={{ width: "100px" }}
