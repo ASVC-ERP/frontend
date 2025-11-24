@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Button } from "react-bootstrap";
 import { IoIosSearch } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
 import axios from "axios";
@@ -9,77 +10,98 @@ import Swal from "sweetalert2";
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
 
-// Define table columns
-const columns = [
-  {
-    name: "Order ID",
-    selector: (row) => row.orderId,
-    sortable: true,
-    grow: 0,
-    minWidth: "130px",
-  },
-  {
-    name: "Date",
-    selector: (row) =>
-      new Date(row.date).toLocaleDateString("en-US", {
-        month: "numeric",
-        day: "numeric",
-        year: "2-digit",
-      }),
-    sortable: true,
-    grow: 0,
-    minWidth: "100px",
-  },
-  {
-    name: "Customer Name",
-    selector: (row) => row.customerName,
-    sortable: true,
-    grow: 3,
-    minWidth: "200px",
-    wrap: true,
-  },
-  {
-    name: "Address",
-    selector: (row) => row.customerAddress,
-    sortable: true,
-    grow: 3,
-    minWidth: "250px",
-    wrap: true,
-  },
-  {
-    name: "PIC",
-    selector: (row) => row.salesAgent,
-    sortable: true,
-    grow: 0,
-    width: "150px",
-  },
-  {
-    name: "Status",
-    sortable: true,
-    grow: 0,
-    minWidth: "150px",
-    cell: (row) => (
-      <span
-        className={`badge ${
-          row.status === "Served"
-            ? "bg-success"
-            : row.status === "Pending"
-            ? "bg-warning text-dark"
-            : row.status === "Dropped"
-            ? "bg-danger"
-            : "bg-secondary"
-        }`}
-      >
-        {row.status}
-      </span>
-    ),
-  },
-];
-
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
 function OrdersTable({ orders, setOrders }) {
+
+  // Define table columns
+  const columns = [
+    {
+      name: "Order ID",
+      selector: (row) => row.orderId,
+      sortable: true,
+      grow: 0,
+      minWidth: "130px",
+    },
+    {
+      name: "Date",
+      selector: (row) =>
+        new Date(row.date).toLocaleDateString("en-US", {
+          month: "numeric",
+          day: "numeric",
+          year: "2-digit",
+        }),
+      sortable: true,
+      grow: 0,
+      minWidth: "100px",
+    },
+    {
+      name: "Customer Name",
+      selector: (row) => row.customerName,
+      sortable: true,
+      grow: 3,
+      minWidth: "200px",
+      wrap: true,
+    },
+    {
+      name: "Address",
+      selector: (row) => row.customerAddress,
+      sortable: true,
+      grow: 3,
+      minWidth: "250px",
+      wrap: true,
+    },
+    {
+      name: "PIC",
+      selector: (row) => row.salesAgent,
+      sortable: true,
+      grow: 0,
+      width: "150px",
+    },
+    {
+      name: "Status",
+      sortable: true,
+      grow: 0,
+      minWidth: "100px",
+      cell: (row) => (
+        <span
+          className={`badge ${
+            row.status === "Served"
+              ? "bg-success"
+              : row.status === "Pending"
+              ? "bg-warning text-dark"
+              : row.status === "Dropped"
+              ? "bg-danger"
+              : "bg-secondary"
+          }`}
+        >
+          {row.status}
+        </span>
+      ),
+    },
+    {
+      name: "Actions",
+      grow: 0,
+      width: "50px",
+      center: true,
+      cell: (row) => (
+        <Button
+          variant="outline-danger"
+          size="sm"
+          className="p-1 d-flex align-items-center justify-content-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDelete(row);
+          }}
+          title="Delete"
+        >
+          🗑️
+        </Button>
+      ),
+    },
+  ];
+
   const [filteredData, setFilteredData] = useState(orders);
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -396,6 +418,50 @@ const updateItem = (index, field, value) => {
       setShowEditModal(false);
     }
   };
+
+  const handleDelete = (row) => {
+    Swal.fire({
+      icon: "warning",
+      title: "Delete Order",
+      text: `Are you sure you want to delete order ${row.orderId}?`,
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axios
+          .delete(`${API_URL}/orders/${row.orderId}`)
+          .then((res) => {
+            // Remove from table UI
+            setOrders((prev) =>
+              prev.filter((item) => item.orderId !== row.orderId)
+            );
+
+            // If you use a fetchOrders() function
+            if (typeof fetchOrders === "function") {
+              fetchOrders();
+            }
+
+            Swal.fire({
+              icon: "success",
+              title: "Deleted!",
+              text: `Order ${row.orderId} has been deleted successfully.`,
+              timer: 1500,
+              showConfirmButton: false,
+            });
+          })
+          .catch((err) => {
+            console.error("Failed to delete order:", err);
+            Swal.fire({
+              icon: "error",
+              title: "Delete Failed",
+              text: "Could not delete order. Check console for details.",
+            });
+          });
+      }
+    });
+  };
+
 
   const handleSearchChange = async (index, value) => {
     setQuery(value);
