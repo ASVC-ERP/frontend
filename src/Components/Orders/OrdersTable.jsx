@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { IoIosSearch } from "react-icons/io";
+import { IoChevronDown } from "react-icons/io5";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -224,7 +225,7 @@ function OrdersTable({ orders, setOrders }) {
     }
   };
 
-    const handleRowClick = async (row) => {
+  const handleRowClick = async (row) => {
     console.log("Row clicked:", row);
 
     try {
@@ -235,16 +236,12 @@ function OrdersTable({ orders, setOrders }) {
 
       // Inject quantityServed directly into orderedItems
       const mergedItems = row.orderedItems.map((item) => {
-        const servedItem = servedData.find(
-          (s) => s.itemName === item.itemName
-        );
+        const servedItem = servedData.find((s) => s.itemName === item.itemName);
 
         // If found, assign quantityServed
         return {
           ...item,
-          quantityServed: servedItem
-            ? parseInt(servedItem.quantityServed)
-            : 0,
+          quantityServed: servedItem ? parseInt(servedItem.quantityServed) : 0,
         };
       });
 
@@ -288,25 +285,48 @@ function OrdersTable({ orders, setOrders }) {
   };
 
   // Update item field
-  const updateItem = (index, field, value) => {
-    setEditableRow((prev) => {
-      const items = [...prev.orderedItems];
+const updateItem = (index, field, value) => {
+  setEditableRow((prev) => {
+    const items = [...prev.orderedItems];
+    let updatedItem = { ...items[index] };
 
-      if (field === "quantity" || field === "price") {
-        items[index] = { ...items[index], [field]: Number(value) };
+    // Numeric fields
+    const numericFields = ["quantity", "price", "customPrice"];
+
+    if (numericFields.includes(field)) {
+      updatedItem[field] = Number(value);
+    } else {
+      updatedItem[field] = value;
+    }
+
+    // Special handling for price mode switch
+    if (field === "customPriceEnabled") {
+      if (value === true) {
+        // Switching to custom price mode
+        updatedItem.customPrice = "";
       } else {
-        items[index] = { ...items[index], [field]: value };
+        // Switching back to preset price mode
+        updatedItem.price = Number(updatedItem.price) || 0;
       }
-      return { ...prev, orderedItems: items };
-    });
-  };
+    }
+
+    items[index] = updatedItem;
+    return { ...prev, orderedItems: items };
+  });
+};
+
 
   const handleSave = async () => {
     try {
       // 🔹 Recalculate total price from ordered items
       const recalculatedTotal = (editableRow.orderedItems || []).reduce(
-        (sum, item) =>
-          sum + (Number(item.price) || 0) * (Number(item.quantity) || 0),
+        (sum, item) => {
+          const finalPrice = item.customPriceEnabled
+            ? Number(item.customPrice) || 0
+            : Number(item.price) || 0;
+
+          return sum + finalPrice * (Number(item.quantity) || 0);
+        },
         0
       );
 
@@ -320,13 +340,17 @@ function OrdersTable({ orders, setOrders }) {
         approvalStatus: editableRow.approvalStatus,
         status: editableRow.status,
         salesAgent: editableRow.salesAgent,
+
         orderedItems: (editableRow.orderedItems || []).map((it) => ({
           itemName: it.itemName,
           quantity: Number(it.quantity) || 0,
-          price: it.price || 0,
+          price: it.customPriceEnabled
+            ? Number(it.customPrice) || 0
+            : Number(it.price) || 0,
           unit: it.unit,
-          itemCode: it.itemCode,
+          itemCode: it.itemCode
         })),
+
         totalPrice: recalculatedTotal,
       };
 
@@ -556,7 +580,7 @@ function OrdersTable({ orders, setOrders }) {
 
       const stocks = stockResponse.data.stocks || {};
       console.log("[handleApprove] Current stock levels:", stocks);
-      
+
       const insufficientItems = row.orderedItems.filter((item) => {
         const currentStock = Number(stocks[item.itemCode]) || 0;
         return currentStock < item.quantityServed;
@@ -766,7 +790,8 @@ function OrdersTable({ orders, setOrders }) {
                       )}
                       {selectedRow && (
                         <>
-                          {selectedRow.status?.trim().toLowerCase() === "pending" && (
+                          {selectedRow.status?.trim().toLowerCase() ===
+                            "pending" && (
                             <button
                               type="button"
                               className="btn btn-sm btn-light"
@@ -779,45 +804,46 @@ function OrdersTable({ orders, setOrders }) {
                               Serve
                             </button>
                           )}
-                          {roleApprove.toLowerCase() === "admin" && 
-                            selectedRow.status?.trim().toLowerCase() === "for request" && (
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-light"
-                              style={{ 
-                                backgroundColor: "#28a745",
-                                color: "white",
-                                border: "none",
-                               }}
-                              onClick={() => {
-                                setShowRowModal(false);
-                                handleApprove(selectedRow);
-                              }}
-                            >
-                              Approve
-                            </button>
-                          )}
-                          {roleApprove.toLowerCase() === "admin" && 
-                            selectedRow.status?.trim().toLowerCase() === "for request" && (
-                            <button
-                              type="button"
-                              className="btn btn-sm btn-light"
-                              style={{ 
-                                backgroundColor: "#dc3545",
-                                color: "white",
-                                border: "none",
-                               }}
-                              onClick={() => {
-                                setShowRowModal(false);
-                                handleReject(selectedRow);
-                              }}
-                            >
-                              Reject
-                            </button>
-                          )}
+                          {roleApprove.toLowerCase() === "admin" &&
+                            selectedRow.status?.trim().toLowerCase() ===
+                              "for request" && (
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-light"
+                                style={{
+                                  backgroundColor: "#28a745",
+                                  color: "white",
+                                  border: "none",
+                                }}
+                                onClick={() => {
+                                  setShowRowModal(false);
+                                  handleApprove(selectedRow);
+                                }}
+                              >
+                                Approve
+                              </button>
+                            )}
+                          {roleApprove.toLowerCase() === "admin" &&
+                            selectedRow.status?.trim().toLowerCase() ===
+                              "for request" && (
+                              <button
+                                type="button"
+                                className="btn btn-sm btn-light"
+                                style={{
+                                  backgroundColor: "#dc3545",
+                                  color: "white",
+                                  border: "none",
+                                }}
+                                onClick={() => {
+                                  setShowRowModal(false);
+                                  handleReject(selectedRow);
+                                }}
+                              >
+                                Reject
+                              </button>
+                            )}
                         </>
                       )}
-
                     </div>
                   </div>
                 </div>
@@ -850,12 +876,17 @@ function OrdersTable({ orders, setOrders }) {
                                   {selectedRow.status === "For Request" && (
                                     <>
                                       {" "}
-                                      (<span className="text-success">
+                                      (
+                                      <span className="text-success">
                                         Served: {item.quantityServed ?? 0}
-                                      </span> |{" "}
+                                      </span>{" "}
+                                      |{" "}
                                       <span className="text-danger">
-                                        Unserved: {(item.quantity ?? 0) - (item.quantityServed ?? 0)}
-                                      </span>)
+                                        Unserved:{" "}
+                                        {(item.quantity ?? 0) -
+                                          (item.quantityServed ?? 0)}
+                                      </span>
+                                      )
                                     </>
                                   )}
                                 </small>
@@ -1015,7 +1046,7 @@ function OrdersTable({ orders, setOrders }) {
                       >
                         + Add Item
                       </button>
-                    </div>{" "}
+                    </div>
                     <div
                       className="rounded-3"
                       style={{ maxHeight: "250px", overflowY: "auto" }}
@@ -1110,33 +1141,86 @@ function OrdersTable({ orders, setOrders }) {
                           />
 
                           {/* Price options */}
-                          <select
-                            value={Number(item.price) || 0}
-                            onChange={(e) =>
-                              updateItem(index, "price", Number(e.target.value))
-                            }
-                            className="form-select"
-                            style={{ width: "120px" }}
-                          >
-                            {item.availablePrices?.map((p, i) => (
-                              <option key={i} value={p}>
-                                ₱{Number(p).toLocaleString()}
-                              </option>
-                            ))}
-                          </select>
+                          {item.customPriceEnabled ? (
+                            <div
+                              className="input-group"
+                              style={{ width: "120px" }}
+                            >
+                              <input
+                                type="number"
+                                className="form-control text-center"
+                                value={item.customPrice || ""}
+                                onChange={(e) =>
+                                  updateItem(
+                                    index,
+                                    "customPrice",
+                                    Number(e.target.value)
+                                  )
+                                }
+                                placeholder="Enter price"
+                                style={{ fontSize: "14px" }}
+                              />
+
+                              <button
+                                type="button"
+                                className="btn border-top border-bottom border-end border-0 bg-white"
+                                title="Back to list"
+                                onClick={() => {
+                                  updateItem(
+                                    index,
+                                    "customPriceEnabled",
+                                    false
+                                  );
+                                  updateItem(index, "customPrice", "");
+                                }}
+                              >
+                                <IoChevronDown />
+                              </button>
+                            </div>
+                          ) : (
+                            <select
+                              className="form-select"
+                              style={{ width: "120px" }}
+                              value={
+                                item.customPriceEnabled
+                                  ? "custom"
+                                  : item.price ?? ""
+                              }
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                if (val === "custom") {
+                                  updateItem(index, "customPriceEnabled", true);
+                                  updateItem(index, "customPrice", "");
+                                } else {
+                                  updateItem(index, "price", Number(val));
+                                }
+                              }}
+                            >
+                              {item.availablePrices?.map((p, i) => (
+                                <option key={i} value={p}>
+                                  ₱{Number(p).toLocaleString()}
+                                </option>
+                              ))}
+                              <option value="custom">Custom...</option>
+                            </select>
+                          )}
 
                           {/* Item total */}
                           <div
                             className="text-end fw-semibold"
                             style={{ width: "100px" }}
                           >
-                            ₱
-                            {(item.price * item.quantity).toLocaleString(
-                              undefined,
-                              {
+                            {(() => {
+                              const finalPrice = item.customPriceEnabled
+                                ? Number(item.customPrice)
+                                : Number(item.price);
+
+                              return `₱${(
+                                finalPrice * item.quantity
+                              ).toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
-                              }
-                            )}
+                              })}`;
+                            })()}
                           </div>
 
                           {/* Remove */}
@@ -1166,18 +1250,15 @@ function OrdersTable({ orders, setOrders }) {
                 >
                   <span className="fw-semibold fs-5">Total</span>
                   <span className="fw-bold fs-5">
-                    ₱
                     {editableRow?.orderedItems
-                      ?.reduce(
-                        (sum, item) =>
-                          sum +
-                          (Number(item.price) || 0) *
-                            (Number(item.quantity) || 0),
-                        0
-                      )
-                      .toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                      })}
+                      ?.reduce((sum, item) => {
+                        const finalPrice = item.customPriceEnabled
+                          ? Number(item.customPrice)
+                          : Number(item.price);
+
+                        return sum + finalPrice * (Number(item.quantity) || 0);
+                      }, 0)
+                      .toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </span>
                 </div>
 
@@ -1324,15 +1405,26 @@ function OrdersTable({ orders, setOrders }) {
                                 value={item.quantityServed}
                                 onChange={(e) => {
                                   const raw = e.target.value;
-                                  if (raw === '') {
-                                    updateServeQuantity(index, "quantityServed", '');
+                                  if (raw === "") {
+                                    updateServeQuantity(
+                                      index,
+                                      "quantityServed",
+                                      ""
+                                    );
                                     return;
                                   }
 
                                   const parsed = Number(raw);
                                   if (Number.isNaN(parsed)) return;
-                                  const clamped = Math.max(0, Math.min(parsed, item.quantityOrdered));
-                                  updateServeQuantity(index, "quantityServed", clamped);
+                                  const clamped = Math.max(
+                                    0,
+                                    Math.min(parsed, item.quantityOrdered)
+                                  );
+                                  updateServeQuantity(
+                                    index,
+                                    "quantityServed",
+                                    clamped
+                                  );
                                 }}
                                 className="form-control text-center"
                                 placeholder="0"
@@ -1347,17 +1439,28 @@ function OrdersTable({ orders, setOrders }) {
                                 min={0}
                                 max={item.quantityOrdered}
                                 value={item.quantityUnserved}
-                                onChange={(e) =>{
+                                onChange={(e) => {
                                   const raw = e.target.value;
-                                  if (raw === '') {
-                                    updateServeQuantity(index, "quantityServed", '');
+                                  if (raw === "") {
+                                    updateServeQuantity(
+                                      index,
+                                      "quantityServed",
+                                      ""
+                                    );
                                     return;
                                   }
 
                                   const parsed = Number(raw);
                                   if (Number.isNaN(parsed)) return;
-                                  const clamped = Math.max(0, Math.min(parsed, item.quantityOrdered));
-                                  updateServeQuantity(index, "quantityServed", clamped);
+                                  const clamped = Math.max(
+                                    0,
+                                    Math.min(parsed, item.quantityOrdered)
+                                  );
+                                  updateServeQuantity(
+                                    index,
+                                    "quantityServed",
+                                    clamped
+                                  );
                                 }}
                                 className="form-control text-center"
                                 placeholder="0"
@@ -1434,7 +1537,6 @@ function OrdersTable({ orders, setOrders }) {
                           cleanPayload,
                           { params: { role } }
                         );
-
 
                         Swal.fire({
                           icon: "success",
