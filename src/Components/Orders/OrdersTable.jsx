@@ -14,7 +14,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
 function OrdersTable({ orders, setOrders }) {
-
   // Define table columns
   const columns = [
     {
@@ -61,6 +60,7 @@ function OrdersTable({ orders, setOrders }) {
     },
     {
       name: "Status",
+      selector: (row) => row.status, // <-- this enables sorting
       sortable: true,
       grow: 0,
       minWidth: "100px",
@@ -116,10 +116,17 @@ function OrdersTable({ orders, setOrders }) {
   const [suggestions, setSuggestions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
 
+  const [customers, setCustomers] = useState([]);
+  const [customerQuery, setCustomerQuery] = useState("");
+  const [customerSuggestions, setCustomerSuggestions] = useState([]);
+
   const [showServeModal, setShowServeModal] = useState(false);
   const [serveData, setServeData] = useState([]);
 
   const inputRefs = useRef([]);
+
+  const MAX_ITEMS = 16;
+  const [itemLimitWarning, setItemLimitWarning] = useState(false);
 
   // Function to fetch orders
   const fetchOrders = () => {
@@ -169,6 +176,53 @@ function OrdersTable({ orders, setOrders }) {
 
     return () => clearInterval(interval);
   }, [searchTerm]);
+
+  // Fetch customer list
+  useEffect(() => {
+    const fetchCustomers = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/customers`);
+        setCustomers(res.data);
+      } catch (err) {
+        console.error("Failed to fetch customers:", err);
+      }
+    };
+    fetchCustomers();
+  }, []);
+
+  useEffect(() => {
+    if (!customerQuery.trim()) {
+      setCustomerSuggestions([]);
+      return;
+    }
+
+    const filtered = customers.filter((c) =>
+      c.customerName.toLowerCase().includes(customerQuery.toLowerCase())
+    );
+
+    setCustomerSuggestions(filtered);
+  }, [customerQuery, customers]);
+
+  const handleCustomerNameChange = (e) => {
+    const value = e.target.value;
+
+    setCustomerQuery(value);
+    setEditableRow((prev) => ({
+      ...prev,
+      customerName: value,
+    }));
+  };
+
+  const handleSelectCustomer = (customer) => {
+    setCustomerQuery(customer.customerName);
+    setCustomerSuggestions([]);
+
+    setEditableRow((prev) => ({
+      ...prev,
+      customerName: customer.customerName,
+      customerAddress: customer.customerAddress,
+    }));
+  };
 
   const fetchStocksForItems = async (itemCodes) => {
     try {
@@ -224,18 +278,14 @@ function OrdersTable({ orders, setOrders }) {
             ordered.itemName.trim().toLowerCase()
         );
 
-        console.log("🛒 Ordered Item:", ordered.itemName);
-        if (match) {
-          console.log("✅ Match Found →", match.itemName);
-          console.log("💰 Available Prices:", match.prices);
-        } else {
-          console.warn("⚠️ No Match Found in Inventory for:", ordered.itemName);
-        }
+        const isCustom = !match?.prices.includes(Number(ordered.price));
 
         return {
           ...ordered,
-          price: Number(ordered.price) || 0,
           availablePrices: match ? match.prices : [],
+          customPriceEnabled: isCustom, // mark as custom if not in price list
+          customPrice: isCustom ? Number(ordered.price) : null, // store custom price
+          price: isCustom ? null : Number(ordered.price), // store selected normal price
         };
       });
 
@@ -288,55 +338,72 @@ function OrdersTable({ orders, setOrders }) {
   // Add a new item row
   const addItem = () => {
     setEditableRow((prev) => {
+      const currentCount = prev.orderedItems?.length || 0;
+
+      if (currentCount === MAX_ITEMS - 1) {
+        // going from 15 → 16
+        setItemLimitWarning(true);
+      }
+
+      if (currentCount >= MAX_ITEMS) {
+        return prev; // hard stop
+      }
+
       const newItems = [
         ...(prev.orderedItems || []),
         { itemName: "", quantity: 1 },
       ];
-      setActiveIndex(newItems.length - 1); // focus last added item
+
+      setActiveIndex(newItems.length - 1);
       return { ...prev, orderedItems: newItems };
     });
+
     setQuery("");
   };
 
   // Remove an item by index
   const removeItem = (index) => {
-    setEditableRow((prev) => ({
-      ...prev,
-      orderedItems: prev.orderedItems.filter((_, i) => i !== index),
-    }));
+    setEditableRow((prev) => {
+      const newItems = prev.orderedItems.filter((_, i) => i !== index);
+
+      if (newItems.length < MAX_ITEMS) {
+        setItemLimitWarning(false);
+      }
+
+      return { ...prev, orderedItems: newItems };
+    });
   };
 
   // Update item field
-const updateItem = (index, field, value) => {
-  setEditableRow((prev) => {
-    const items = [...prev.orderedItems];
-    let updatedItem = { ...items[index] };
+  const updateItem = (index, field, value) => {
+    setEditableRow((prev) => {
+      const items = [...prev.orderedItems];
+      let updatedItem = { ...items[index] };
 
-    // Numeric fields
-    const numericFields = ["quantity", "price", "customPrice"];
+      // Numeric fields
+      const numericFields = ["quantity", "price", "customPrice"];
 
-    if (numericFields.includes(field)) {
-      updatedItem[field] = Number(value);
-    } else {
-      updatedItem[field] = value;
-    }
-
-    // Special handling for price mode switch
-    if (field === "customPriceEnabled") {
-      if (value === true) {
-        // Switching to custom price mode
-        updatedItem.customPrice = "";
+      if (numericFields.includes(field)) {
+        updatedItem[field] = Number(value);
       } else {
-        // Switching back to preset price mode
-        updatedItem.price = Number(updatedItem.price) || 0;
+        updatedItem[field] = value;
       }
-    }
 
-    items[index] = updatedItem;
-    return { ...prev, orderedItems: items };
-  });
-};
+      // Special handling for price mode switch
+      if (field === "customPriceEnabled") {
+        if (value === true) {
+          // Switching to custom price mode
+          updatedItem.customPrice = "";
+        } else {
+          // Switching back to preset price mode
+          updatedItem.price = Number(updatedItem.price) || 0;
+        }
+      }
 
+      items[index] = updatedItem;
+      return { ...prev, orderedItems: items };
+    });
+  };
 
   const handleSave = async () => {
     try {
@@ -370,7 +437,7 @@ const updateItem = (index, field, value) => {
             ? Number(it.customPrice) || 0
             : Number(it.price) || 0,
           unit: it.unit,
-          itemCode: it.itemCode
+          itemCode: it.itemCode,
         })),
 
         totalPrice: recalculatedTotal,
@@ -462,7 +529,6 @@ const updateItem = (index, field, value) => {
     });
   };
 
-
   const handleSearchChange = async (index, value) => {
     setQuery(value);
     setActiveIndex(index);
@@ -527,6 +593,7 @@ const updateItem = (index, field, value) => {
     setShowRowModal(false); // Close the current order details modal (optional)
   };
 */
+
   const handlePrint = async () => {
     if (!selectedRow) return;
 
@@ -1071,37 +1138,50 @@ const updateItem = (index, field, value) => {
                   <form>
                     <div className="row mb-2">
                       {/* Name */}
-                      <div className="col-md-6">
-                        <label htmlFor="customerName" className="form-label">
-                          Name
-                        </label>
+                      <div className="col-md-6 position-relative">
+                        <label className="form-label">Name</label>
                         <input
                           type="text"
-                          id="customerName"
-                          name="customerName"
-                          value={editableRow.customerName}
-                          onChange={handleInputChange}
                           className="form-control"
+                          value={customerQuery}
+                          onChange={handleCustomerNameChange}
+                          onBlur={() =>
+                            setTimeout(() => setCustomerSuggestions([]), 150)
+                          }
                           placeholder="Customer Name"
                         />
+
+                        {customerSuggestions.length > 0 && (
+                          <ul
+                            className="list-group position-absolute w-100"
+                            style={{ zIndex: 1000 }}
+                          >
+                            {customerSuggestions.map((c) => (
+                              <li
+                                key={c.customerID}
+                                className="list-group-item list-group-item-action"
+                                onMouseDown={() => handleSelectCustomer(c)}
+                              >
+                                {c.customerName}
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </div>
 
                       {/* Address */}
                       <div className="col-md-6">
-                        <label htmlFor="customerAddress" className="form-label">
-                          Address
-                        </label>
+                        <label className="form-label">Address</label>
                         <input
                           type="text"
-                          id="customerAddress"
-                          name="customerAddress"
+                          className="form-control"
                           value={editableRow.customerAddress}
                           onChange={handleInputChange}
-                          className="form-control"
                           placeholder="Customer Address"
                         />
                       </div>
                     </div>
+
                     <hr />
                     <div className="d-flex justify-content-between align-items-center mb-2">
                       <h6 className="mb-0">Ordered Items</h6>
@@ -1109,10 +1189,19 @@ const updateItem = (index, field, value) => {
                         type="button"
                         className="btn btn-sm btn-success"
                         onClick={addItem}
+                        disabled={
+                          editableRow?.orderedItems?.length >= MAX_ITEMS
+                        }
                       >
                         + Add Item
                       </button>
                     </div>
+                    {itemLimitWarning && (
+                      <div className="alert alert-warning py-2 mb-2">
+                        Maximum of {MAX_ITEMS} items only.
+                      </div>
+                    )}
+                    {/* Items List */}
                     <div
                       className="rounded-3"
                       style={{ maxHeight: "250px", overflowY: "auto" }}

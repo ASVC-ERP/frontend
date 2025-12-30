@@ -14,7 +14,8 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       selector: (row) => row.invoiceID,
       sortable: true,
       grow: 0.7,
-      minWidth: "150px",
+      wrap: true,
+      maxWidth: "140px",
     },
     {
       name: "Date",
@@ -44,98 +45,118 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       width: "140px",
     },
     {
+      name: "Invoice #",
+      cell: (row) => (
+        <input
+          type="text"
+          placeholder="Invoice #"
+          className="form-control border border-secondary"
+          style={{ width: "150px" }}
+          value={
+            pendingChanges[`invoice-${row.invoiceID}`] ??
+            row.invoiceNumber ??
+            ""
+          }
+          onChange={(e) =>
+            setPendingChanges((prev) => ({
+              ...prev,
+              [`invoice-${row.invoiceID}`]: e.target.value,
+            }))
+          }
+        />
+      ),
+      grow: 1,
+      maxWidth: "150px",
+    },
+    {
       name: "Shipping Details",
-        cell: (row) => {
-          return (
-            <div className="d-flex align-items-center gap-2">
+      cell: (row) => {
+        return (
+          <div className="d-flex align-items-center gap-2 ms-2">
+            {/* Waybill Number */}
+            <input
+              type="text"
+              placeholder="Waybill"
+              className="form-control border border-secondary"
+              style={{ width: "130px" }}
+              value={
+                pendingChanges[`waybill-${row.invoiceID}`] ??
+                row.waybillNumber ??
+                ""
+              }
+              onChange={(e) =>
+                setPendingChanges((prev) => ({
+                  ...prev,
+                  [`waybill-${row.invoiceID}`]: e.target.value,
+                }))
+              }
+            />
 
-              {/* Waybill Number */}
-              <input
-                type="text"
-                placeholder="Waybill"
-                className="form-control border border-secondary"
-                style={{ width: "130px" }}
-                value={
-                  pendingChanges[`waybill-${row.invoiceID}`] ??
-                  row.waybillNumber ??
-                  ""
-                }
-                onChange={(e) =>
-                  setPendingChanges((prev) => ({
-                    ...prev,
-                    [`waybill-${row.invoiceID}`]: e.target.value,
-                  }))
-                }
-              />
+            {/* Courier */}
+            <input
+              type="text"
+              placeholder="Courier"
+              className="form-control border border-secondary"
+              style={{ width: "120px" }}
+              value={
+                pendingChanges[`courier-${row.invoiceID}`] ?? row.courier ?? ""
+              }
+              onChange={(e) =>
+                setPendingChanges((prev) => ({
+                  ...prev,
+                  [`courier-${row.invoiceID}`]: e.target.value,
+                }))
+              }
+            />
 
-              {/* Courier */}
-              <input
-                type="text"
-                placeholder="Courier"
-                className="form-control border border-secondary"
-                style={{ width: "120px" }}
-                value={
-                  pendingChanges[`courier-${row.invoiceID}`] ??
-                  row.courier ??
-                  ""
-                }
-                onChange={(e) =>
-                  setPendingChanges((prev) => ({
-                    ...prev,
-                    [`courier-${row.invoiceID}`]: e.target.value,
-                  }))
-                }
-              />
+            {/* Delivery Date */}
+            <input
+              type="date"
+              className="form-control border border-secondary"
+              style={{ width: "150px" }}
+              defaultValue={
+                row.shipDate
+                  ? new Date(row.shipDate).toISOString().slice(0, 10)
+                  : ""
+              }
+              onChange={(e) =>
+                setPendingChanges((prev) => ({
+                  ...prev,
+                  [`date-${row.invoiceID}`]: e.target.value,
+                }))
+              }
+            />
 
-              {/* Delivery Date */}
-              <input
-                type="date"
-                className="form-control border border-secondary"
-                style={{ width: "150px" }}
-                value={
-                  pendingChanges[`date-${row.invoiceID}`] ??
-                  (row.shipDate
-                    ? new Date(row.shipDate).toISOString().slice(0, 10)
-                    : "")
-                }
-                onChange={(e) =>
-                  setPendingChanges((prev) => ({
-                    ...prev,
-                    [`date-${row.invoiceID}`]: e.target.value,
-                  }))
-                }
-              />
+            {/* SAVE */}
+            <Button
+              variant="outline-success"
+              size="sm"
+              className="p-1 d-flex align-items-center justify-content-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleSave(row);
+              }}
+              title="Save"
+            >
+              <FaSave size={14} />
+            </Button>
 
-              {/* SAVE */}
-              <Button
-                variant="outline-success"
-                size="sm"
-                className="p-1 d-flex align-items-center justify-content-center"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleSave(row);
-                }}
-                title="Save"
-              >
-                <FaSave size={14} />
-              </Button>
-
-              {/* DELETE */}
-              <Button
-                variant="outline-danger"
-                size="sm"
-                className="p-1 d-flex align-items-center justify-content-center"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDelete(row);
-                }}
-                title="Delete"
-              >
-                🗑️
-              </Button>
-            </div>
-          );
-        },
+            {/* DELETE */}
+            <Button
+              variant="outline-danger"
+              size="sm"
+              className="p-1 d-flex align-items-center justify-content-center"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDelete(row);
+              }}
+              title="Delete"
+            >
+              🗑️
+            </Button>
+          </div>
+        );
+      },
       grow: 2,
       minWidth: "450px",
     },
@@ -210,8 +231,8 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       const updatedItems = row.items.map((item) => {
         const match = history.find(
           (h) =>
-          h.itemName?.trim().toLowerCase() ===
-          item.itemName?.trim().toLowerCase()
+            h.itemName?.trim().toLowerCase() ===
+            item.itemName?.trim().toLowerCase()
         );
         return {
           ...item,
@@ -311,50 +332,9 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     }));
   };
 
-  /*
   const handleSave = (row) => {
-    const newStatus = pendingChanges[row.invoiceID];
-    if (!newStatus) return;
-
-    axios
-      .put(`${API_URL}/invoice/${row.invoiceID}/waybill`, {
-        status: newStatus,
-      })
-      .then(() => {
-        const updatedData = filteredData.map((item) =>
-          item.invoiceID === row.invoiceID
-            ? { ...item, status: newStatus }
-            : item
-        );
-        setFilteredData(updatedData);
-        setPendingChanges((prev) => {
-          const copy = { ...prev };
-          delete copy[row.invoiceID];
-          return copy;
-        });
-
-        fetchInvoices();
-        Swal.fire({
-          icon: "success",
-          title: "Status Updated",
-          text: `Invoice ${row.invoiceID} marked as ${newStatus}`,
-          timer: 1500,
-          showConfirmButton: false,
-        });
-      })
-      .catch((err) => {
-        console.error("Failed to update status:", err);
-        Swal.fire({
-          icon: "error",
-          title: "Update Failed",
-          text: "Could not update invoice status.",
-        });
-      });
-  };
-*/
-
-  const handleSave = (row) => {
-    const waybill = pendingChanges[`waybill-${row.invoiceID}`] ?? row.waybillNumber;
+    const waybill =
+      pendingChanges[`waybill-${row.invoiceID}`] ?? row.waybillNumber;
     const courier = pendingChanges[`courier-${row.invoiceID}`] ?? row.courier;
     const shipDate = pendingChanges[`date-${row.invoiceID}`] ?? row.shipDate;
 
@@ -365,7 +345,11 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       shipDateChanged: !!pendingChanges[`date-${row.invoiceID}`],
     };
 
-    if (!changed.waybillChanged && !changed.courierChanged && !changed.shipDateChanged) {
+    if (
+      !changed.waybillChanged &&
+      !changed.courierChanged &&
+      !changed.shipDateChanged
+    ) {
       console.log("⚪ No changes detected → save skipped");
       return;
     }
@@ -376,7 +360,10 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       shipDate,
     };
 
-    console.log("📤 JSON Payload SENT to backend:", JSON.stringify(payload, null, 2));
+    console.log(
+      "📤 JSON Payload SENT to backend:",
+      JSON.stringify(payload, null, 2)
+    );
 
     axios
       .put(`${API_URL}/invoice/${row.invoiceID}/shipping`, {
@@ -599,14 +586,15 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                                 )}
                               </span>
                               <small className="text-muted">
-                                Qty: {item.quantity}
-                                {" "}
-                                (<span className="text-success">
+                                Qty: {item.quantity} (
+                                <span className="text-success">
                                   Served: {item.served ?? 0}
-                                </span> |{" "}
+                                </span>{" "}
+                                |{" "}
                                 <span className="text-danger">
                                   Unserved: {item.unserved ?? 0}
-                                </span>)
+                                </span>
+                                )
                               </small>
                             </div>
                           </div>
@@ -665,19 +653,23 @@ function InvoiceTable({ invoices, fetchInvoices }) {
         </div>
       )}
 
-      <div>
-        <DataTable
-          columns={columns}
-          data={filteredData}
-          onRowClicked={handleRowClick}
-          pagination
-          paginationPerPage={20}
-          highlightOnHover
-          fixedHeader
-          fixedHeaderScrollHeight="450px"
-          className="custom-data-table"
-        />
-      </div>
+      <div style={{ width: "100%", overflowX: "auto" }}> 
+  <div style={{ minWidth: "800px" }}> {/* minimum table width */}
+    <DataTable
+      columns={columns}
+      data={filteredData}
+      onRowClicked={handleRowClick}
+      pagination
+      paginationPerPage={20}
+      highlightOnHover
+      fixedHeader
+      fixedHeaderScrollHeight="450px"
+      className="custom-data-table"
+      responsive // ensures mobile/responsive behavior
+    />
+  </div>
+</div>
+
     </div>
   );
 }

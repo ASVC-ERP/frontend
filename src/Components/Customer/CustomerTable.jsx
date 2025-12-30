@@ -85,6 +85,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerName, setCustomerName] = useState("");
+  const [contactPerson, setContactPerson] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
   const [customerTIN, setCustomerTIN] = useState("");
@@ -134,6 +135,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const handleAddCustomerClick = () => {
     setCustomerName("");
     setCustomerContact("");
+    setContactPerson("");
     setCustomerAddress("");
     setCustomerTIN("");
     setCustomerTerms("");
@@ -145,6 +147,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     onRefreshCustomers();
     // Clear form fields when closing
     setCustomerName("");
+    setContactPerson("");
     setCustomerContact("");
     setCustomerAddress("");
     setCustomerTIN("");
@@ -157,6 +160,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     try {
       const newCustomer = {
         customerName,
+        contactPerson,
         customerContact,
         customerAddress,
         customerTIN,
@@ -204,6 +208,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const handleEditCustomerClick = (customer) => {
     setEditingCustomer(customer);
     setCustomerName(customer.customerName);
+    setContactPerson(customer.contactPerson || "");
     setCustomerContact(customer.customerContact);
     setCustomerAddress(customer.customerAddress);
     setCustomerTIN(customer.customerTIN || "");
@@ -216,6 +221,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     try {
       const updatedCustomer = {
         customerName,
+        contactPerson,
         customerContact: `'${customerContact}`,
         customerAddress,
         customerTIN,
@@ -397,7 +403,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
               <form>
                 <div className="row g-3">
                   {/* Customer Name */}
-                  <div className="col-12">
+                  <div className="col-6">
                     <label
                       htmlFor="customerName"
                       className="form-label fw-semibold text-muted small"
@@ -414,6 +420,36 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       placeholder="Enter customer/company name"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        transition: "border-color 0.3s ease",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  <div className="col-6">
+                    <label
+                      htmlFor="contactPerson"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-user-tie me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Contact Person
+                    </label>
+                    <input
+                      type="text"
+                      id="contactPerson"
+                      placeholder="Enter contact person name"
+                      value={contactPerson}
+                      onChange={(e) => setContactPerson(e.target.value)}
                       className="form-control"
                       required
                       style={{
@@ -681,7 +717,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
               <form>
                 <div className="row g-3">
                   {/* Customer Name */}
-                  <div className="col-12">
+                  <div className="col-6">
                     <label className="form-label fw-semibold text-muted small">
                       <i
                         className="fas fa-user-tie me-2"
@@ -694,6 +730,24 @@ function CustomerTable({ customers, onRefreshCustomers }) {
                       placeholder="Enter customer/company name"
                       value={customerName}
                       onChange={(e) => setCustomerName(e.target.value)}
+                      className="form-control"
+                    />
+                  </div>
+
+                  {/* Contact Person */}
+                  <div className="col-6">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-user-tie me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Contact Person
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter contact person name"
+                      value={contactPerson}
+                      onChange={(e) => setContactPerson(e.target.value)}
                       className="form-control"
                     />
                   </div>

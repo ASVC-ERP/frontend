@@ -176,7 +176,6 @@ function InfoForm({ info, setInfo }) {
             onChange={handleChange}
           />
         </div> */}
-
       </div>
     </div>
   );

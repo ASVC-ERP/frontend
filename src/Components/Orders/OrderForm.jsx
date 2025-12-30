@@ -117,7 +117,7 @@ function OrderForm({
                                 : "#ACACAC",
                           }}
                         >
-                          In stock: {item.stock} pcs
+                          In stock: {item.stock} {item.unit}
                         </span>
                       </div>
                     </div>
