@@ -20,7 +20,7 @@ function Inventory({ items, onAddItem, onRefreshItems }) {
         <div className="col-12">
           <div className="table-responsive table-responsive-sm">
             <InventoryTable
-              products={items}
+              items={items}
               onAddItem={onAddItem}
               onRefreshItems={onRefreshItems}
             />

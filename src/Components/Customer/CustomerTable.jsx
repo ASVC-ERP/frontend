@@ -10,14 +10,14 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const columns = [
     {
       name: "ID",
-      selector: (row) => row.customerID,
+      selector: (row) => row.cid,
       sortable: true,
       grow: 0,
       width: "100px",
     },
     {
       name: "Name",
-      selector: (row) => row.customerName,
+      selector: (row) => row.name,
       sortable: true,
       wrap: true,
       grow: 3,
@@ -25,28 +25,28 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     },
     {
       name: "Number",
-      selector: (row) => row.customerContact,
+      selector: (row) => row.number,
       sortable: true,
       grow: 0,
       minWidth: "150px",
     },
     {
       name: "TIN",
-      selector: (row) => row.customerTIN || "N/A",
+      selector: (row) => row.tin || "N/A",
       sortable: false,
       grow: 2,
       minWidth: "140px",
     },
     {
       name: "Terms",
-      selector: (row) => row.customerTerms || "N/A",
+      selector: (row) => row.terms || "N/A",
       sortable: false,
       grow: 1,
       minWidth: "100px",
     },
     {
       name: "Address",
-      selector: (row) => row.customerAddress,
+      selector: (row) => row.address,
       sortable: true,
       grow: 3,
       minWidth: "200px",
@@ -159,12 +159,12 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
     try {
       const newCustomer = {
-        customerName,
-        contactPerson,
-        customerContact,
-        customerAddress,
-        customerTIN,
-        customerTerms,
+        name: customerName,
+        // person: contactPerson, //no column yet
+        number: customerContact,
+        address: customerAddress,
+        tin: customerTIN,
+        terms: customerTerms,
       };
 
       Swal.fire({
@@ -178,7 +178,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       });
 
       // Wait for the POST request to finish
-      await axios.post(`${API_URL}/customers`, newCustomer);
+      await axios.post(`${API_URL}/customer`, newCustomer);
 
       // Close the loading Swal before showing success
       Swal.close();
@@ -207,12 +207,12 @@ function CustomerTable({ customers, onRefreshCustomers }) {
 
   const handleEditCustomerClick = (customer) => {
     setEditingCustomer(customer);
-    setCustomerName(customer.customerName);
-    setContactPerson(customer.contactPerson || "");
-    setCustomerContact(customer.customerContact);
-    setCustomerAddress(customer.customerAddress);
-    setCustomerTIN(customer.customerTIN || "");
-    setCustomerTerms(customer.customerTerms || "");
+    setCustomerName(customer.name);
+    setContactPerson(customer.person || "");
+    setCustomerContact(customer.number);
+    setCustomerAddress(customer.address);
+    setCustomerTIN(customer.tin || "");
+    setCustomerTerms(customer.terms || "");
     setShowEditModal(true);
   };
 
@@ -220,15 +220,15 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     e.preventDefault();
     try {
       const updatedCustomer = {
-        customerName,
-        contactPerson,
-        customerContact: `'${customerContact}`,
-        customerAddress,
-        customerTIN,
-        customerTerms,
+        name: customerName,
+        // contactPerson, // no column yet
+        number: customerContact,
+        address: customerAddress,
+        tin: customerTIN,
+        terms: customerTerms,
       };
       await axios.put(
-        `${API_URL}/customers/${editingCustomer.customerID}`,
+        `${API_URL}/customer/${editingCustomer.id}`,
         updatedCustomer
       );
 

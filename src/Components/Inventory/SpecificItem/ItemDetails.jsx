@@ -11,6 +11,8 @@ function ItemDetails({ item, onUpdate }) {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
+  console.log("ItemDetails item prop:", item);
+
   const isAdmin = user?.role === "admin";
 
   const [formData, setFormData] = useState({
@@ -23,9 +25,9 @@ function ItemDetails({ item, onUpdate }) {
     origin: item.origin || "",
     model: item.model || "",
     brand: item.brand || "",
-    price1: item.price?.price1 || "",
-    price2: item.price?.price2 || "",
-    price3: item.price?.price3 || "",
+    price1: item.price1 || "",
+    price2: item.price2 || "",
+    price3: item.price3 || "",
   });
 
   useEffect(() => {
@@ -52,16 +54,16 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`${API_URL}/inventory/update-inventory`, {
+      const response = await fetch(`${API_URL}/product/${item.itemID}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          itemCode: item.itemCode,
-          itemName: formData.itemName,
+          item_code: item.itemCode,
+          item_name: formData.itemName,
           brand: formData.brand,
-          minStock: formData.minStock,
-          partNum: formData.partNum,
-          interNum: formData.interNum,
+          min_stock: Number(formData.minStock),
+          part_num: formData.partNum,
+          internal_num: formData.interNum,
           unit: formData.unit,
           model: formData.model,
           origin: formData.origin,
@@ -224,7 +226,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="gPrice"
-            value={item.price?.price1}
+            value={item.price1}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -281,7 +283,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="aPrice"
-            value={item.price?.price2}
+            value={item.price2}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -330,7 +332,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="bPrice"
-            value={item.price?.price3}
+            value={item.price3}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -380,13 +382,13 @@ function ItemDetails({ item, onUpdate }) {
               type="text"
               className="form-control form-control-sm me-2 border-dark border-opacity-25"
               id="sPrice"
-              value={item.price?.price4}
+              value={item.price4}
               style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
             {user?.role === "admin" && (
               <FaEdit
-                onClick={() => handleEditSpecialPriceClick(item.price?.price4)}
+                onClick={() => handleEditSpecialPriceClick(item.price4)}
                 style={{ cursor: "pointer", margin: "0px 15px" }}
                 color="#1E5A84"
                 size={30}

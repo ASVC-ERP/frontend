@@ -237,19 +237,23 @@ function App() {
 
   const fetchItems = () => {
     axios
-      .get(`${API_URL}/items`)
+      .get(`${API_URL}/product`)
       .then((response) => {
-        //console.log("Fetched items:", response.data);
+        console.log(response.data.length);
         const transformedItems = response.data.map((item) => ({
-          itemCode: item.itemCode,
-          itemName: item.itemName,
+          itemID: item.id,
+          itemCode: item.item_code,
+          itemName: item.item_name,
           brand: item.brand,
           origin: item.origin,
           stock: item.stock,
-          price: item.price,
-          minStock: item.minStock,
-          partNum: item.partNum,
-          interNum: item.interNum,
+          price1: item.price1,
+          price2: item.price2,
+          price3: item.price3,
+          price4: item.price4,
+          minStock: item.min_stock,
+          partNum: item.part_num,
+          interNum: item.internal_num,
           unit: item.unit,
           model: item.model,
         }));
@@ -261,7 +265,7 @@ function App() {
   };
 
   const handleAddItem = async (newItem) => {
-    console.log("📦 Submitting item:", newItem);
+    console.log("📦 Submitting item in App:", newItem);
 
     Swal.fire({
       title: "Adding Item",
@@ -274,7 +278,8 @@ function App() {
     });
 
     try {
-      const response = await axios.post(`${API_URL}/items`, newItem);
+      console.log("Posting to API:", `${API_URL}/product`, newItem);
+      const response = await axios.post(`${API_URL}/product`, newItem);
       Swal.close();
       Swal.fire({
         icon: "success",
@@ -288,6 +293,8 @@ function App() {
       return true; // ✅ success
     } catch (err) {
       Swal.close();
+
+      console.log("Error adding item:", err);
 
       if (err.response?.status === 409) {
         Swal.fire({
@@ -312,10 +319,11 @@ function App() {
 
   const fetchSupplier = () => {
     axios
-      .get(`${API_URL}/suppliers`)
+      .get(`${API_URL}/supplier`)
       .then((response) => {
         const transformedSuppliers = response.data.map((supplier) => ({
           id: supplier.id,
+          sid: supplier.sid,
           name: supplier.name,
           address: supplier.address,
           currency: supplier.currency,
@@ -346,7 +354,7 @@ function App() {
     });
 
     axios
-      .post(`${API_URL}/suppliers`, newSupplier)
+      .post(`${API_URL}/supplier`, newSupplier)
       .then((response) => {
         Swal.close();
         Swal.fire({
@@ -400,19 +408,16 @@ function App() {
   //* CUSTOMER MODULE **//
   const [customers, setCustomers] = useState([]);
 
-  useEffect(() => {
-    axios
-      .get(`${API_URL}/customers`)
-      .then((res) => setCustomers(res.data))
-      .catch((err) => console.error(err));
-  }, []);
-
   const fetchCustomers = () => {
     axios
-      .get(`${API_URL}/customers`)
+      .get(`${API_URL}/customer`)
       .then((res) => setCustomers(res.data))
       .catch((err) => console.error(err));
   };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
 
   return (
     <Router>

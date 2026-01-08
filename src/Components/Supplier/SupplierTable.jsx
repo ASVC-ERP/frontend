@@ -10,7 +10,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const columns = [
     {
       name: "Supplier Code",
-      selector: (row) => row.id,
+      selector: (row) => row.sid,
       sortable: true,
       grow: 1,
       minWidth: "180px",
@@ -155,12 +155,11 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
 
   const handleUpdateSupplier = async () => {
     try {
-      await axios.put(`${API_URL}/suppliers/${selectedInvoice.id}`, {
+      await axios.put(`${API_URL}/supplier/${selectedInvoice.id}`, {
         name: selectedInvoice.name,
         address: selectedInvoice.address,
         number: selectedInvoice.number,
         currency: selectedInvoice.currency,
-        tin: selectedInvoice.tin,
       });
 
       Swal.fire({
@@ -188,7 +187,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     if (!newCode.trim() || !newName.trim() || !newAddress.trim()) return;
 
     const newSupplier = {
-      id: newCode,
+      sid: newCode,
       name: newName,
       address: newAddress,
       currency: newCurrency,

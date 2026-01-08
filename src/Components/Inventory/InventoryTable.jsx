@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import axios from "axios";
 
 function InventoryTable({
-  products = [],
+  items = [],
   onAddItem = () => {},
   onRefreshItems = () => {},
 }) {
@@ -69,7 +69,7 @@ function InventoryTable({
     },
     {
       name: "Price",
-      selector: (row) => row.price?.price1 ?? 0,
+      selector: (row) => row.price1 ?? 0,
       sortable: true,
       grow: 1,
       maxWidth: "100px",
@@ -110,16 +110,16 @@ function InventoryTable({
   useEffect(() => {
     // ✅ When products change, re-apply search if active
     if (searchTerm.trim() !== "") {
-      const filtered = Object.values(products).filter((row) =>
+      const filtered = Object.values(items).filter((row) =>
         Object.values(row).some((field) =>
           field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
       setFilteredData(filtered);
     } else {
-      setFilteredData(Object.values(products));
+      setFilteredData(Object.values(items));
     }
-  }, [products, searchTerm]);
+  }, [items, searchTerm]);
 
   // 🕒 Auto-refresh only when not searching
   useEffect(() => {
@@ -127,7 +127,7 @@ function InventoryTable({
 
     const interval = setInterval(() => {
       onRefreshItems();
-    }, 120000); 
+    }, 120000);
 
     return () => clearInterval(interval);
   }, [onRefreshItems, searchTerm]);
@@ -192,25 +192,26 @@ function InventoryTable({
     if (!itemCode || !itemName) return;
 
     const trimmedItem = {
-      itemCode: itemCode.trim(),
-      itemName: itemName.trim(),
+      item_code: itemCode.trim(),
+      item_name: itemName.trim(),
       brand: brand.trim(),
       origin: origin.trim(),
-      minStock: minimumStock || 0,
-      partNum: partNum.trim(),
-      interNum: interNum.trim(),
+      min_stock: minimumStock || 0,
+      part_num: partNum.trim(),
+      internal_num: interNum.trim(),
       unit: unit.trim(),
       model: model.trim(),
     };
 
     if (
-      !trimmedItem.itemCode ||
-      !trimmedItem.itemName ||
+      !trimmedItem.item_code ||
+      !trimmedItem.item_name ||
       !trimmedItem.brand ||
       !trimmedItem.origin ||
-      !trimmedItem.minStock ||
-      !trimmedItem.partNum ||
-      !trimmedItem.interNum ||
+      trimmedItem.min_stock === null ||
+      trimmedItem.min_stock === undefined ||
+      !trimmedItem.part_num ||
+      !trimmedItem.internal_num ||
       !trimmedItem.unit ||
       !trimmedItem.model
     ) {
@@ -224,14 +225,13 @@ function InventoryTable({
 
     const newItem = {
       ...trimmedItem,
-      stock: 0,
-      cost: 0,
-      price: {
-        price1: 0,
-        price2: 0,
-        price3: 0,
-        price4: 0,
-      },
+      min_stock: Number(trimmedItem.min_stock),
+      stock: Number(0),
+      cost: Number(0),
+      price1: Number(0),
+      price2: Number(0),
+      price3: Number(0),
+      price4: Number(0),
     };
 
     try {
@@ -527,7 +527,7 @@ function InventoryTable({
                           width: "100%",
                         }}
                       >
-                        {Object.values(products)
+                        {Object.values(items)
                           .filter((p) =>
                             p.itemCode
                               .toLowerCase()
