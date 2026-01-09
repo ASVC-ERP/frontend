@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import {  useState, useEffect, useRef, useMemo } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { Button } from "react-bootstrap";
@@ -13,8 +13,14 @@ const roleApprove = userApprove?.role || "";
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
-function OrdersTable({ orders, setOrders }) {
-  console.log("OrdersTable received orders:", orders);
+function OrdersTable({ orders, setOrders, customers }) {
+  const customerMap = useMemo(() => {
+    return customers.reduce((acc, customer) => {
+      acc[customer.cid] = customer;
+      return acc;
+    }, {});
+  }, [customers]);
+
   // Define table columns
   const columns = [
     {
@@ -38,7 +44,7 @@ function OrdersTable({ orders, setOrders }) {
     },
     {
       name: "Customer Name",
-      selector: (row) => row.cid, //change to name when available
+      selector: (row) => customerMap[row.cid]?.name || "—",
       sortable: true,
       grow: 3,
       minWidth: "200px",
@@ -46,7 +52,7 @@ function OrdersTable({ orders, setOrders }) {
     },
     {
       name: "Address",
-      selector: (row) => row.customerAddress, //change to name when available
+      selector: (row) => customerMap[row.cid]?.address || "—",
       sortable: true,
       grow: 3,
       minWidth: "250px",
@@ -119,7 +125,6 @@ function OrdersTable({ orders, setOrders }) {
   const [suggestions, setSuggestions] = useState([]);
   const [activeIndex, setActiveIndex] = useState(null);
 
-  const [customers, setCustomers] = useState([]);
   const [customerQuery, setCustomerQuery] = useState("");
   const [customerSuggestions, setCustomerSuggestions] = useState([]);
 
@@ -179,19 +184,6 @@ function OrdersTable({ orders, setOrders }) {
 
     return () => clearInterval(interval);
   }, [searchTerm]);
-
-  // Fetch customer list
-  useEffect(() => {
-    const fetchCustomers = async () => {
-      try {
-        const res = await axios.get(`${API_URL}/customers`);
-        setCustomers(res.data);
-      } catch (err) {
-        console.error("Failed to fetch customers:", err);
-      }
-    };
-    fetchCustomers();
-  }, []);
 
   useEffect(() => {
     if (!customerQuery.trim()) {

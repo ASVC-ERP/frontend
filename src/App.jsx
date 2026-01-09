@@ -452,6 +452,7 @@ function App() {
                   <SalesOrder
                     orders={Object.values(orders)}
                     setOrders={setOrders}
+                    customers={customers}
                   />
                 }
               />
@@ -484,6 +485,7 @@ function App() {
                   <SalesInvoice
                     invoices={invoices}
                     onfetchInvoices={fetchInvoices}
+                    customers={customers}
                   />
                 }
               />

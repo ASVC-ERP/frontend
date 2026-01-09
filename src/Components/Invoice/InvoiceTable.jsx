@@ -1,5 +1,5 @@
 import DataTable from "react-data-table-component";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { IoIosSearch } from "react-icons/io";
 import defaultPic from "../../assets/defaultPic.jpg";
 import { Button, Dropdown } from "react-bootstrap";
@@ -7,11 +7,18 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";
 
-function InvoiceTable({ invoices, fetchInvoices }) {
+function InvoiceTable({ invoices, fetchInvoices, customers }) {
+  const customerMap = useMemo(() => {
+    return customers.reduce((acc, customer) => {
+      acc[customer.cid] = customer;
+      return acc;
+    }, {});
+  }, [customers]);
+
   const columns = [
     {
       name: "Invoice ID",
-      selector: (row) => "INV-" + row.id,
+      selector: (row) => row.id,
       sortable: true,
       grow: 0.7,
       wrap: true,
@@ -31,7 +38,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     },
     {
       name: "Customer Name",
-      selector: (row) => row.cid,
+      selector: (row) => customerMap[row.cid]?.name || "—",
       sortable: true,
       grow: 1,
       minWidth: "200px",
@@ -53,9 +60,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           className="form-control border border-secondary"
           style={{ width: "150px" }}
           value={
-            pendingChanges[`invoice-${row.id}`] ??
-            row.invoice_number ??
-            ""
+            pendingChanges[`invoice-${row.id}`] ?? row.invoice_number ?? ""
           }
           onChange={(e) =>
             setPendingChanges((prev) => ({
@@ -80,9 +85,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               className="form-control border border-secondary"
               style={{ width: "130px" }}
               value={
-                pendingChanges[`waybill-${row.id}`] ??
-                row.waybill_number ??
-                ""
+                pendingChanges[`waybill-${row.id}`] ?? row.waybill_number ?? ""
               }
               onChange={(e) =>
                 setPendingChanges((prev) => ({
@@ -98,9 +101,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               placeholder="Courier"
               className="form-control border border-secondary"
               style={{ width: "120px" }}
-              value={
-                pendingChanges[`courier-${row.id}`] ?? row.courier ?? ""
-              }
+              value={pendingChanges[`courier-${row.id}`] ?? row.courier ?? ""}
               onChange={(e) =>
                 setPendingChanges((prev) => ({
                   ...prev,
@@ -653,23 +654,24 @@ function InvoiceTable({ invoices, fetchInvoices }) {
         </div>
       )}
 
-      <div style={{ width: "100%", overflowX: "auto" }}> 
-  <div style={{ minWidth: "800px" }}> {/* minimum table width */}
-    <DataTable
-      columns={columns}
-      data={filteredData}
-      onRowClicked={handleRowClick}
-      pagination
-      paginationPerPage={20}
-      highlightOnHover
-      fixedHeader
-      fixedHeaderScrollHeight="450px"
-      className="custom-data-table"
-      responsive // ensures mobile/responsive behavior
-    />
-  </div>
-</div>
-
+      <div style={{ width: "100%", overflowX: "auto" }}>
+        <div style={{ minWidth: "800px" }}>
+          {" "}
+          {/* minimum table width */}
+          <DataTable
+            columns={columns}
+            data={filteredData}
+            onRowClicked={handleRowClick}
+            pagination
+            paginationPerPage={20}
+            highlightOnHover
+            fixedHeader
+            fixedHeaderScrollHeight="450px"
+            className="custom-data-table"
+            responsive // ensures mobile/responsive behavior
+          />
+        </div>
+      </div>
     </div>
   );
 }

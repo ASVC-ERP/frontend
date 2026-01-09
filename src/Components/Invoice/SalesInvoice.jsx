@@ -1,6 +1,6 @@
 import InvoiceTable from "./InvoiceTable";
 
-function SalesInvoice({ invoices, onfetchInvoices }) {
+function SalesInvoice({ invoices, onfetchInvoices, customers }) {
   return (
     <div className="container-fluid mt-3">
       {/* Header */}
@@ -19,7 +19,7 @@ function SalesInvoice({ invoices, onfetchInvoices }) {
       <div className="row px-3 px-md-4">
         <div className="col-12">
           <div className="table-responsive table-responsive-sm">
-            <InvoiceTable invoices={invoices} fetchInvoices={onfetchInvoices} />
+            <InvoiceTable invoices={invoices} fetchInvoices={onfetchInvoices} customers={customers} />
           </div>
         </div>
       </div>
