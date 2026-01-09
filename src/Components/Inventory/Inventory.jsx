@@ -1,6 +1,6 @@
 import InventoryTable from "./InventoryTable";
 
-function Inventory({ items, onAddItem, onRefreshItems }) {
+function Inventory({ items, onAddItem, onRefreshItems, page, setPage, limit, setLimit, totalRows }) {
   return (
     <div className="container-fluid mt-3">
       {/* Header */}
@@ -23,6 +23,11 @@ function Inventory({ items, onAddItem, onRefreshItems }) {
               items={items}
               onAddItem={onAddItem}
               onRefreshItems={onRefreshItems}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              setLimit={setLimit}
+              totalRows={totalRows}
             />
           </div>
         </div>

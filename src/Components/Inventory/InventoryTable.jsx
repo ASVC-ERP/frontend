@@ -10,6 +10,11 @@ function InventoryTable({
   items = [],
   onAddItem = () => {},
   onRefreshItems = () => {},
+  page,
+  setPage,
+  limit,
+  setLimit,
+  totalRows,
 }) {
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
@@ -83,7 +88,7 @@ function InventoryTable({
             className="btn btn-sm btn-outline-danger"
             onClick={() => {
               console.log("Row data:", row);
-              handleDeleteItem(row.id);
+              handleDeleteItem(row.itemID);
             }}
           >
             <FaTrash />
@@ -283,7 +288,7 @@ function InventoryTable({
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${API_URL}/items/${id}`);
+        await axios.delete(`${API_URL}/product/${id}`);
 
         Swal.fire({
           title: "Deleted!",
@@ -399,7 +404,14 @@ function InventoryTable({
         columns={columns}
         data={filteredData}
         pagination
-        paginationPerPage={20}
+        paginationServer
+        paginationPerPage={limit}
+        paginationTotalRows={totalRows}
+        onChangePage={(page) => setPage(page)}
+        onChangeRowsPerPage={(newLimit, page) => {
+          setLimit(newLimit);
+          setPage(page);
+        }}
         highlightOnHover
         fixedHeader
         fixedHeaderScrollHeight="450px"

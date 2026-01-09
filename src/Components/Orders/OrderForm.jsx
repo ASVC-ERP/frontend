@@ -143,13 +143,17 @@ function OrderForm({
                           title="Back to list"
                           onClick={() => onDisableCustomPrice(idx)}
                         >
-                         <IoChevronDown />
+                          <IoChevronDown />
                         </button>
                       </div>
                     ) : (
                       <select
                         className="form-select mx-auto d-block w-50"
-                        value={item.customPriceEnabled ? "custom" : item.selectedMarkup}
+                        value={
+                          item.customPriceEnabled
+                            ? "custom"
+                            : item.selectedMarkup
+                        }
                         onChange={(e) => {
                           const value = e.target.value;
                           if (value === "custom") {
@@ -159,10 +163,10 @@ function OrderForm({
                           }
                         }}
                       >
-                        <option value="price1">₱{item.price?.price1}</option>
-                        <option value="price2">₱{item.price?.price2}</option>
-                        <option value="price3">₱{item.price?.price3}</option>
-                        <option value="price4">₱{item.price?.price4}</option>
+                        <option value="price1">₱{item.price1}</option>
+                        <option value="price2">₱{item.price2}</option>
+                        <option value="price3">₱{item.price3}</option>
+                        <option value="price4">₱{item.price4}</option>
                         <option value="custom">Custom...</option>
                       </select>
                     )}

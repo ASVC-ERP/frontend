@@ -251,7 +251,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
     try {
       // Fetch latest inventory once
-      const res = await axios.get(`${API_URL}/items`);
+      const res = await axios.get(`${API_URL}/product`);
       const inventory = res.data.map((item) => {
         const prices = [
           item.price?.price1,
@@ -297,7 +297,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
     try {
       // Fetch served data for this order
-      const res = await fetch(`${API_URL}/orders/served-items/${row.orderId}`);
+      const res = await fetch(`${API_URL}/orders/${row.orderId}/serve`);
       const servedData = await res.json();
       console.log("Fetched served orders:", servedData);
 

@@ -35,6 +35,10 @@ import Unauthorized from "./Pages/Unauthorized.jsx";
 function App() {
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
+
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -71,10 +75,12 @@ function App() {
   }, []);
 
   const [info, setInfo] = useState({
+    customerID: "",
     customerName: "",
     customerNumber: "",
     customerAddress: "",
     salesAgent: "",
+    discount: 0,
     delivery: "1",
   });
 
@@ -144,15 +150,15 @@ function App() {
     setSuggestions([]);
   };
 
-  const handlePriceChange = (index, newMarkup, isCustom = false) => {
+  const handlePriceChange = (index, selectedPriceColumn, isCustom = false) => {
     const updatedItems = [...orderItems];
 
     if (isCustom) {
       // When user types a custom price
-      updatedItems[index].customPrice = newMarkup;
+      updatedItems[index].customPrice = selectedPriceColumn;
     } else {
-      // When user picks from dropdown
-      updatedItems[index].selectedMarkup = newMarkup;
+      // When user picks a column (price1, price2, etc.)
+      updatedItems[index].selectedMarkup = selectedPriceColumn;
       updatedItems[index].customPriceEnabled = false;
     }
 
@@ -180,13 +186,11 @@ function App() {
   };
 
   const calculateTotal = (item) => {
-    // Use custom price if enabled, otherwise the selected dropdown price
     const unitPrice = item.customPriceEnabled
       ? parseFloat(item.customPrice) || 0
-      : parseFloat(item.price?.[item.selectedMarkup]) || 0;
+      : parseFloat(item[item.selectedMarkup]) || 0; // <- use column name directly
 
     const quantity = parseInt(item.quantity) || 0;
-
     return unitPrice * quantity;
   };
 
@@ -194,10 +198,9 @@ function App() {
     return orderItems.reduce((total, item) => {
       const unitPrice = item.customPriceEnabled
         ? parseFloat(item.customPrice) || 0
-        : parseFloat(item.price?.[item.selectedMarkup]) || 0;
+        : parseFloat(item[item.selectedMarkup]) || 0;
 
       const quantity = parseInt(item.quantity) || 0;
-
       return total + unitPrice * quantity;
     }, 0);
   };
@@ -225,6 +228,7 @@ function App() {
       .catch((error) => {
         console.error("Error fetching invoices:", error);
       });
+    console.log("Fetched invoices:", invoices);
   };
 
   //** INVENTORY MODULE **//
@@ -233,14 +237,18 @@ function App() {
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [page, limit]);
 
   const fetchItems = () => {
     axios
-      .get(`${API_URL}/product`)
+      .get(`${API_URL}/product`, {
+        params: {
+          page: page,
+          limit: limit,
+        },
+      })
       .then((response) => {
-        console.log(response.data.length);
-        const transformedItems = response.data.map((item) => ({
+        const transformedItems = response.data.data.map((item) => ({
           itemID: item.id,
           itemCode: item.item_code,
           itemName: item.item_name,
@@ -258,6 +266,7 @@ function App() {
           model: item.model,
         }));
         setItems(transformedItems);
+        setTotalRows(response.data.meta.total);
       })
       .catch((error) => {
         console.error("Error fetching items from backend:", error);
@@ -501,6 +510,11 @@ function App() {
                     items={items}
                     onAddItem={handleAddItem}
                     onRefreshItems={fetchItems}
+                    page={page}
+                    setPage={setPage}
+                    limit={limit}
+                    setLimit={setLimit}
+                    totalRows={totalRows}
                   />
                 }
               />

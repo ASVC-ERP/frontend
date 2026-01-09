@@ -3,6 +3,7 @@ import InfoForm from "./InfoForm";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import { Timer } from "lucide-react";
 
 function CreateOrder({
   query,
@@ -72,49 +73,58 @@ function CreateOrder({
   };
 
   const handleSubmit = async (e) => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const fullName = `${user.firstName} ${user.lastName}`;
     e.preventDefault();
 
-    const orderId = await generateNextOrderId();
+    const user = JSON.parse(localStorage.getItem("user"));
 
-    const newOrder = {
-      orderId,
-      date: new Date().toISOString().split("T")[0],
-      ...info,
-      orderedItems: orderItems.map((item) => ({
-        itemName: item.itemName,
+    if (!user) {
+      Swal.fire("Error", "User not logged in.", "error");
+      return;
+    }
+
+    if (!info.customerID) {
+      Swal.fire("Error", "Please select a customer.", "error");
+      return;
+    }
+
+    if (orderItems.length === 0) {
+      Swal.fire("Error", "Please add at least one item to the order.", "error");
+      return;
+    }
+
+    // Disable submit button (optional, prevent double clicks)
+    const submitButton = e.target.querySelector("button[type='submit']");
+    if (submitButton) submitButton.disabled = true;
+
+    Swal.fire({
+      title: "Creating Order",
+      text: "Please wait while we process the order...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    // Prepare DTO for backend
+    const orderDto = {
+      cid: info.customerID,
+      sales_agent: user.username,
+      discount: info.discount || 0,
+      items: orderItems.map((item) => ({
+        item_code: item.itemCode,
         quantity: item.quantity,
         price: item.customPriceEnabled
           ? Number(item.customPrice)
-          : item.price?.[item.selectedMarkup],
-        unit: item.unit, // <-- add this
-        itemCode: item.itemCode,
+          : Number(item[item.selectedMarkup]),
       })),
-      totalPrice: orderItems.reduce(
-        (sum, item) =>
-          sum +
-          (item.customPriceEnabled
-            ? Number(item.customPrice):
-            item.price?.[item.selectedMarkup]) *
-            item.quantity,
-        0
-      ),
-      status: "Pending",
-      salesAgent: fullName,
     };
 
-    console.log("Final Order Data:", newOrder);
-    // Show the final JSON string in console
-    const finalJson = JSON.stringify(newOrder, null, 2); // pretty-print
-    console.log("JSON to be POSTed:\n", finalJson);
+    console.log("Order DTO to send:", orderDto);
 
     try {
-      const response = await fetch(`${API_URL}/orders`, {
-        // <-- your backend endpoint
+      const response = await fetch(`${API_URL}/order`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(newOrder),
+        body: JSON.stringify(orderDto),
       });
 
       if (!response.ok) throw new Error("Failed to create order");
@@ -122,15 +132,25 @@ function CreateOrder({
       const createdOrder = await response.json();
       console.log("Order created successfully:", createdOrder);
 
-      // Optionally call local handler to update UI
+      // Update UI locally
       onAddOrder(createdOrder);
 
-      Swal.fire("Success!", "Order has been created.", "success");
-
-      navigate("/"); // Go back to order list
+      Swal.fire({
+        title: "Success!",
+        text: "Order has been created.",
+        icon: "success",
+        timer: 1500, // auto-close after 1.5 seconds
+        showConfirmButton: false, // hides the OK button
+      }).then(() => {
+        // Navigate after Swal closes
+        navigate("/");
+      });
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to create order.", "error");
+    } finally {
+      Swal.close();
+      if (submitButton) submitButton.disabled = false;
     }
   };
 

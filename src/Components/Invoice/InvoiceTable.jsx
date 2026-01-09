@@ -356,7 +356,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     }
 
     const payload = {
-      waybillNumber: waybill,
+      waybill_number: waybill,
       courier,
       shipDate,
     };

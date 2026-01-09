@@ -11,7 +11,7 @@ function InfoForm({ info, setInfo }) {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/customers`);
+        const res = await axios.get(`${API_URL}/customer`);
         setCustomers(res.data);
       } catch (err) {
         console.error("Failed to fetch customers:", err);
@@ -32,7 +32,7 @@ function InfoForm({ info, setInfo }) {
       return;
     }
     const filtered = customers.filter((c) =>
-      c.customerName.toLowerCase().includes(query.toLowerCase())
+      c.name.toLowerCase().includes(query.toLowerCase())
     );
     setSuggestions(filtered);
   }, [query, customers]);
@@ -40,13 +40,14 @@ function InfoForm({ info, setInfo }) {
   const handleSelectCustomer = (customer) => {
     setInfo({
       ...info,
-      customerName: customer.customerName,
-      customerNumber: customer.customerContact,
-      customerAddress: customer.customerAddress,
-      customerTIN: customer.customerTIN,
+      customerID: customer.cid,
+      customerName: customer.name,
+      customerNumber: customer.number,
+      customerAddress: customer.address,
+      customerTIN: customer.tin,
       //customerTerms: customer.customerTerms,
     });
-    setQuery(customer.customerName);
+    setQuery(customer.name);
     setSuggestions([]);
   };
 
@@ -95,7 +96,7 @@ function InfoForm({ info, setInfo }) {
             >
               {suggestions.map((c) => (
                 <li
-                  key={c.customerID}
+                  key={c.cid}
                   onMouseDown={() => handleSelectCustomer(c)}
                   style={{
                     padding: "8px",
@@ -103,7 +104,7 @@ function InfoForm({ info, setInfo }) {
                     borderBottom: "1px solid #eee",
                   }}
                 >
-                  {c.customerName} - {c.customerContact}
+                  {c.name} - {c.number}
                 </li>
               ))}
             </ul>
