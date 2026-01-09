@@ -64,7 +64,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
           </button>
           <button
             className="btn btn-sm btn-outline-danger"
-            onClick={() => handleDeleteCustomer(row.customerID)}
+            onClick={() => handleDeleteCustomer(row.id)}
           >
             <FaTrash />
           </button>
@@ -160,7 +160,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     try {
       const newCustomer = {
         name: customerName,
-        // person: contactPerson, //no column yet
+        pic: contactPerson,
         number: customerContact,
         address: customerAddress,
         tin: customerTIN,
@@ -208,7 +208,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   const handleEditCustomerClick = (customer) => {
     setEditingCustomer(customer);
     setCustomerName(customer.name);
-    setContactPerson(customer.person || "");
+    setContactPerson(customer.pic || "");
     setCustomerContact(customer.number);
     setCustomerAddress(customer.address);
     setCustomerTIN(customer.tin || "");
@@ -221,7 +221,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
     try {
       const updatedCustomer = {
         name: customerName,
-        // contactPerson, // no column yet
+        pic: contactPerson,
         number: customerContact,
         address: customerAddress,
         tin: customerTIN,
@@ -278,7 +278,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         },
       });
 
-      await axios.delete(`${API_URL}/customers/${customerID}`);
+      await axios.delete(`${API_URL}/customer/${customerID}`);
 
       Swal.close();
       Swal.fire({
@@ -296,7 +296,7 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: "Failed to delete customer.",
+        text: `Failed to delete customer ${customerID}.`,
       });
     }
   };

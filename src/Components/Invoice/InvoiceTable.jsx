@@ -11,7 +11,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
   const columns = [
     {
       name: "Invoice ID",
-      selector: (row) => row.invoiceID,
+      selector: (row) => "INV-" + row.id,
       sortable: true,
       grow: 0.7,
       wrap: true,
@@ -20,7 +20,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     {
       name: "Date",
       selector: (row) =>
-        new Date(row.date).toLocaleDateString("en-US", {
+        new Date(row.invoice_date).toLocaleDateString("en-US", {
           month: "2-digit",
           day: "2-digit",
           year: "2-digit",
@@ -31,7 +31,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     },
     {
       name: "Customer Name",
-      selector: (row) => row.customerName,
+      selector: (row) => row.cid,
       sortable: true,
       grow: 1,
       minWidth: "200px",
@@ -39,7 +39,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     },
     {
       name: "PIC",
-      selector: (row) => row.salesAgent,
+      selector: (row) => row.sales_agent,
       sortable: true,
       grow: 0,
       width: "140px",
@@ -53,14 +53,14 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           className="form-control border border-secondary"
           style={{ width: "150px" }}
           value={
-            pendingChanges[`invoice-${row.invoiceID}`] ??
-            row.invoiceNumber ??
+            pendingChanges[`invoice-${row.id}`] ??
+            row.invoice_number ??
             ""
           }
           onChange={(e) =>
             setPendingChanges((prev) => ({
               ...prev,
-              [`invoice-${row.invoiceID}`]: e.target.value,
+              [`invoice-${row.id}`]: e.target.value,
             }))
           }
         />
@@ -80,14 +80,14 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               className="form-control border border-secondary"
               style={{ width: "130px" }}
               value={
-                pendingChanges[`waybill-${row.invoiceID}`] ??
-                row.waybillNumber ??
+                pendingChanges[`waybill-${row.id}`] ??
+                row.waybill_number ??
                 ""
               }
               onChange={(e) =>
                 setPendingChanges((prev) => ({
                   ...prev,
-                  [`waybill-${row.invoiceID}`]: e.target.value,
+                  [`waybill-${row.id}`]: e.target.value,
                 }))
               }
             />
@@ -99,12 +99,12 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               className="form-control border border-secondary"
               style={{ width: "120px" }}
               value={
-                pendingChanges[`courier-${row.invoiceID}`] ?? row.courier ?? ""
+                pendingChanges[`courier-${row.id}`] ?? row.courier ?? ""
               }
               onChange={(e) =>
                 setPendingChanges((prev) => ({
                   ...prev,
-                  [`courier-${row.invoiceID}`]: e.target.value,
+                  [`courier-${row.id}`]: e.target.value,
                 }))
               }
             />

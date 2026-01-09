@@ -14,11 +14,12 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
 function OrdersTable({ orders, setOrders }) {
+  console.log("OrdersTable received orders:", orders);
   // Define table columns
   const columns = [
     {
       name: "Order ID",
-      selector: (row) => row.orderId,
+      selector: (row) => row.order_code,
       sortable: true,
       grow: 0,
       minWidth: "130px",
@@ -26,7 +27,7 @@ function OrdersTable({ orders, setOrders }) {
     {
       name: "Date",
       selector: (row) =>
-        new Date(row.date).toLocaleDateString("en-US", {
+        new Date(row.order_date).toLocaleDateString("en-US", {
           month: "numeric",
           day: "numeric",
           year: "2-digit",
@@ -37,7 +38,7 @@ function OrdersTable({ orders, setOrders }) {
     },
     {
       name: "Customer Name",
-      selector: (row) => row.customerName,
+      selector: (row) => row.cid, //change to name when available
       sortable: true,
       grow: 3,
       minWidth: "200px",
@@ -45,7 +46,7 @@ function OrdersTable({ orders, setOrders }) {
     },
     {
       name: "Address",
-      selector: (row) => row.customerAddress,
+      selector: (row) => row.customerAddress, //change to name when available
       sortable: true,
       grow: 3,
       minWidth: "250px",
@@ -53,7 +54,7 @@ function OrdersTable({ orders, setOrders }) {
     },
     {
       name: "PIC",
-      selector: (row) => row.salesAgent,
+      selector: (row) => row.sales_agent,
       sortable: true,
       grow: 0,
       width: "150px",
@@ -69,9 +70,11 @@ function OrdersTable({ orders, setOrders }) {
           className={`badge ${
             row.status === "Served"
               ? "bg-success"
-              : row.status === "Pending"
+              : row.status === "Partial Served"
+              ? "bg-info text-dark"
+              : row.status === "Open"
               ? "bg-warning text-dark"
-              : row.status === "Dropped"
+              : row.status === "Rejected"
               ? "bg-danger"
               : "bg-secondary"
           }`}
@@ -83,7 +86,7 @@ function OrdersTable({ orders, setOrders }) {
     {
       name: "Actions",
       grow: 0,
-      width: "50px",
+      width: "100px",
       center: true,
       cell: (row) => (
         <Button
@@ -134,10 +137,10 @@ function OrdersTable({ orders, setOrders }) {
 
     const endpoint =
       user.role === "agent"
-        ? `${API_URL}/orders?agent=${encodeURIComponent(
+        ? `${API_URL}/order?agent=${encodeURIComponent(
             user.firstName + " " + user.lastName
           )}`
-        : `${API_URL}/orders`;
+        : `${API_URL}/order`;
 
     axios
       .get(endpoint)

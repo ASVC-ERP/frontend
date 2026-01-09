@@ -61,7 +61,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get(`${API_URL}/orders`)
+      .get(`${API_URL}/order`)
       .then((res) => {
         setOrders(res.data);
       })
@@ -74,7 +74,7 @@ function App() {
     customerName: "",
     customerNumber: "",
     customerAddress: "",
-    salesAgent: "Prince 兄",
+    salesAgent: "",
     delivery: "1",
   });
 
@@ -218,7 +218,7 @@ function App() {
 
   const fetchInvoices = () => {
     axios
-      .get(`${API_URL}/invoice`)
+      .get(`${API_URL}/invoices`)
       .then((response) => {
         setInvoices(response.data);
       })

@@ -83,7 +83,7 @@ function InventoryTable({
             className="btn btn-sm btn-outline-danger"
             onClick={() => {
               console.log("Row data:", row);
-              handleDeleteItem(row.itemCode);
+              handleDeleteItem(row.id);
             }}
           >
             <FaTrash />
@@ -270,7 +270,7 @@ function InventoryTable({
     }
   };
 
-  const handleDeleteItem = async (itemCode) => {
+  const handleDeleteItem = async (id) => {
     try {
       const result = await Swal.fire({
         title: "Are you sure?",
@@ -283,7 +283,7 @@ function InventoryTable({
       });
 
       if (result.isConfirmed) {
-        await axios.delete(`${API_URL}/items/${encodeURIComponent(itemCode)}`);
+        await axios.delete(`${API_URL}/items/${id}`);
 
         Swal.fire({
           title: "Deleted!",

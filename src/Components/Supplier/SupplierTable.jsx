@@ -220,7 +220,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     if (!result.isConfirmed) return;
 
     try {
-      await axios.delete(`${API_URL}/suppliers/${supplierID}`);
+      await axios.delete(`${API_URL}/supplier/${supplierID}`);
 
       Swal.fire({
         icon: "success",
