@@ -1,4 +1,4 @@
-import {  useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { Button } from "react-bootstrap";
@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
+console.log("User role for approvals:", roleApprove);
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -250,37 +251,39 @@ function OrdersTable({ orders, setOrders, customers }) {
     setShowRowModal(false);
 
     try {
-      // Fetch latest inventory once
+      // Fetch inventory once
       const res = await axios.get(`${API_URL}/product`);
-      const inventory = res.data.map((item) => {
-        const prices = [
-          item.price?.price1,
-          item.price?.price2,
-          item.price?.price3,
-          item.price?.price4,
-        ].filter((p) => p != null && !isNaN(p));
+      const inventory = res.data;
 
-        console.log("💰 Extracted Prices for", item.itemName, ":", prices);
+      // Fetch order items
+      const response = await axios.get(
+        `${API_URL}/order/${row.id}/order-items`
+      );
+      const orderedItems = response.data;
 
-        return { ...item, prices };
-      });
-
-      // Match each ordered item to inventory
-      const updatedOrderedItems = row.orderedItems.map((ordered) => {
+      const updatedOrderedItems = orderedItems.map((ordered) => {
         const match = inventory.find(
           (inv) =>
-            inv.itemName.trim().toLowerCase() ===
-            ordered.itemName.trim().toLowerCase()
+            inv.item_code?.trim().toLowerCase() ===
+            ordered.item_code?.trim().toLowerCase()
         );
 
-        const isCustom = !match?.prices.includes(Number(ordered.price));
+        // 🔑 Convert price columns to array
+        const priceList = match
+          ? [match.price1, match.price2, match.price3, match.price4]
+              .filter((p) => p !== null && p !== undefined)
+              .map(Number)
+          : [];
+
+        const orderedPrice = Number(ordered.price);
+        const isCustom = !priceList.includes(orderedPrice);
 
         return {
           ...ordered,
-          availablePrices: match ? match.prices : [],
-          customPriceEnabled: isCustom, // mark as custom if not in price list
-          customPrice: isCustom ? Number(ordered.price) : null, // store custom price
-          price: isCustom ? null : Number(ordered.price), // store selected normal price
+          availablePrices: priceList,
+          customPriceEnabled: isCustom,
+          customPrice: isCustom ? orderedPrice : null,
+          price: isCustom ? null : orderedPrice,
         };
       });
 
@@ -297,13 +300,21 @@ function OrdersTable({ orders, setOrders, customers }) {
 
     try {
       // Fetch served data for this order
-      const res = await fetch(`${API_URL}/orders/${row.orderId}/serve`);
-      const servedData = await res.json();
+      const res = await axios.get(`${API_URL}/order/${row.id}/serve-items`);
+      const servedData = res.data;
       console.log("Fetched served orders:", servedData);
 
+      const response = await axios.get(
+        `${API_URL}/order/${row.id}/order-items`
+      );
+      const orderedItems = response.data;
+      console.log("Fetched ordered items:", orderedItems);
+
       // Inject quantityServed directly into orderedItems
-      const mergedItems = row.orderedItems.map((item) => {
-        const servedItem = servedData.find((s) => s.itemName === item.itemName);
+      const mergedItems = orderedItems.map((item) => {
+        const servedItem = servedData.find(
+          (s) => s.item_code === item.itemm_code
+        );
 
         // If found, assign quantityServed
         return {
@@ -559,8 +570,7 @@ function OrdersTable({ orders, setOrders, customers }) {
       const priceObj = item.price || {};
       updatedItems[index] = {
         ...updatedItems[index],
-        itemName: item.itemName,
-        itemCode: item.itemCode,
+        item_code: item.item_code,
         stock: item.stock,
         quantity: 1,
         availablePrices: [
@@ -876,7 +886,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center mb-2">
                     <p className="mb-2 opacity-75" style={{ fontSize: "20px" }}>
-                      {selectedRow.orderId}
+                      {selectedRow.order_code}
                     </p>
                     <button
                       type="button"
@@ -894,8 +904,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                     </h5>
 
                     <div className="d-flex gap-2">
-                      {selectedRow?.status?.trim().toLowerCase() ===
-                        "pending" && (
+                      {selectedRow?.status?.trim().toLowerCase() === "open" && (
                         <button
                           type="button"
                           className="btn btn-sm btn-light"
@@ -919,7 +928,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                       {selectedRow && (
                         <>
                           {selectedRow.status?.trim().toLowerCase() ===
-                            "pending" && (
+                            "open" && (
                             <button
                               type="button"
                               className="btn btn-sm btn-light"
@@ -992,15 +1001,11 @@ function OrdersTable({ orders, setOrders, customers }) {
                               {/* Image and Product Info */}
                               <div className="d-flex flex-column">
                                 <span className="fw-semibold">
-                                  {item.itemName}
+                                  {item.item_code} {/* ADD ITEM NAME */}
                                 </span>
 
                                 <small className="text-muted">
-                                  Price: ₱
-                                  {item.price.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                  })}{" "}
-                                  | Qty: {item.quantity}
+                                  Price: ₱{item.price} | Qty: {item.quantity}
                                   {selectedRow.status === "For Request" && (
                                     <>
                                       {" "}
@@ -1019,33 +1024,25 @@ function OrdersTable({ orders, setOrders, customers }) {
                                   )}
                                 </small>
 
-                                {item.discPercent > 0 && (
+                                {/* {item.discount > 0 && (
                                   <small className="text-danger">
-                                    Discount: {item.discPercent}% ( ₱
+                                    Discount: {item.discount}% ( ₱
                                     {(
                                       (parseFloat(
                                         item.price?.[item.selectedMarkup]
                                       ) || 0) *
                                       (parseInt(item.quantity) || 0) *
-                                      (item.discPercent / 100)
-                                    ).toLocaleString(undefined, {
-                                      minimumFractionDigits: 2,
-                                    })}
+                                      (item.discount / 100)
+                                    )}
                                     )
                                   </small>
-                                )}
+                                )} */}
                               </div>
 
                               {/* Price */}
                               <div className="text-end d-flex flex-column">
                                 <span className="fw-semibold">
-                                  ₱
-                                  {(item.price * item.quantity).toLocaleString(
-                                    undefined,
-                                    {
-                                      minimumFractionDigits: 2,
-                                    }
-                                  )}
+                                  ₱{item.price * item.quantity}
                                 </span>
                               </div>
                             </div>
@@ -1060,10 +1057,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                   <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
                     <span className="h5 fw-semibold ">Total</span>
                     <span className="fw-bold h5">
-                      ₱
-                      {selectedRow.totalPrice.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                      })}
+                      ₱{selectedRow.totalPrice}
                     </span>
                   </div>
                 </div>
@@ -1113,7 +1107,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center ">
                     <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
-                      Sales &gt; Order &gt; {selectedRow.orderId}
+                      Sales &gt; Order &gt; {selectedRow.order_code}
                     </p>
                     <button
                       type="button"
@@ -1123,7 +1117,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                   </div>
 
                   <div className="w-100 d-flex justify-content-between align-items-center ">
-                    <h5 className="mb-0">Edit Order {selectedRow.orderId}</h5>
+                    <h5 className="mb-0">Edit Order {selectedRow.order_code}</h5>
                   </div>
                 </div>
 
@@ -1211,8 +1205,9 @@ function OrdersTable({ orders, setOrders, customers }) {
                             <input
                               ref={(el) => (inputRefs.current[index] = el)}
                               type="text"
+                              //CHANGE TO ITEM NAME
                               value={
-                                activeIndex === index ? query : item.itemName
+                                activeIndex === index ? query : item.item_code 
                               }
                               onChange={(e) =>
                                 handleSearchChange(index, e.target.value)

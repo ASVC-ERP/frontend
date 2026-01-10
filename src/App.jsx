@@ -95,7 +95,7 @@ function App() {
     const value = e.target.value;
     setQuery(value);
     if (value.length > 0) {
-      const filtered = items.filter(
+      const filtered = allItems.filter(
         (p) =>
           p.itemName.toLowerCase().includes(value.toLowerCase()) ||
           p.itemCode.toLowerCase().includes(value.toLowerCase())
@@ -234,6 +234,7 @@ function App() {
   //** INVENTORY MODULE **//
 
   const [items, setItems] = useState([]);
+  const [allItems, setAllItems] = useState([]);
 
   useEffect(() => {
     fetchItems();
@@ -241,7 +242,7 @@ function App() {
 
   const fetchItems = () => {
     axios
-      .get(`${API_URL}/product`, {
+      .get(`${API_URL}/product/page/`, {
         params: {
           page: page,
           limit: limit,
@@ -267,6 +268,38 @@ function App() {
         }));
         setItems(transformedItems);
         setTotalRows(response.data.meta.total);
+      })
+      .catch((error) => {
+        console.error("Error fetching items from backend:", error);
+      });
+  };
+
+  useEffect(() => {
+    fetchAllItems();
+  }, []);
+
+  const fetchAllItems = () => {
+    axios
+      .get(`${API_URL}/product`)
+      .then((response) => {
+        const transformedItems = response.data.map((item) => ({
+          itemID: item.id,
+          itemCode: item.item_code,
+          itemName: item.item_name,
+          brand: item.brand,
+          origin: item.origin,
+          stock: item.stock,
+          price1: item.price1,
+          price2: item.price2,
+          price3: item.price3,
+          price4: item.price4,
+          minStock: item.min_stock,
+          partNum: item.part_num,
+          interNum: item.internal_num,
+          unit: item.unit,
+          model: item.model,
+        }));
+        setAllItems(transformedItems);
       })
       .catch((error) => {
         console.error("Error fetching items from backend:", error);
