@@ -8,7 +8,7 @@ import { FaTrashAlt } from "react-icons/fa";
 
 import SuggestionList from "./SuggestionList";
 
-function SupplierInvoicesTable({ items }) {
+function SupplierInvoicesTable({ allItems }) {
   const location = useLocation();
   const supplier = location.state?.row || {};
   const supplierName = supplier.name || "Supplier";
@@ -17,6 +17,7 @@ function SupplierInvoicesTable({ items }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [invoiceData, setInvoiceData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [products, setProducts] = useState({});
 
   const [selectedInvoice, setSelectedInvoice] = useState(null);
   const [showModal, setShowModal] = useState(false);
@@ -29,6 +30,7 @@ function SupplierInvoicesTable({ items }) {
     invoiceType: "Purchased",
     items: [
       {
+        itemID: null,
         itemCode: "",
         quantity: null,
         unit: "",
@@ -50,7 +52,7 @@ function SupplierInvoicesTable({ items }) {
     setQueries((prev) => ({ ...prev, [index]: value }));
 
     if (value.length > 0) {
-      const filtered = items.filter(
+      const filtered = allItems.filter(
         (p) =>
           p.itemName.toLowerCase().includes(value.toLowerCase()) ||
           p.itemCode.toLowerCase().includes(value.toLowerCase())
@@ -63,11 +65,29 @@ function SupplierInvoicesTable({ items }) {
   };
 
   const handleSelectSuggestion = (index, suggestion) => {
+    // Check if this itemID already exists in the invoiceForm items (excluding current index)
+    const isDuplicate = invoiceForm.items.some(
+      (item, i) => i !== index && item.itemID === suggestion.itemID
+    );
+
+    if (isDuplicate) {
+      Swal.fire({
+        icon: "warning",
+        iconColor: "#1E5A84",
+        title: "Duplicate Product",
+        text: `"${suggestion.itemName}" is already in the order list.`,
+        confirmButtonColor: "#1E5A84",
+      });
+      setSuggestions("");
+      return; // Exit early, do not update
+    }
+
     const updated = [...invoiceForm.items];
     updated[index] = {
       ...updated[index],
       itemName: suggestion.itemName,
       itemCode: suggestion.itemCode,
+      itemID: suggestion.itemID,
       unit: suggestion.unit || "pc",
     };
 
@@ -85,17 +105,39 @@ function SupplierInvoicesTable({ items }) {
     if (!supplierID) return;
 
     axios
-      .get(`${API_URL}/suppliers/supplier-invoices/${supplierID}`)
+      .get(`${API_URL}/supplier-invoice/sid/${supplierID}`)
       .then((res) => {
-        setInvoiceData(res.data);
-        setFilteredData(res.data);
-        console.log("📥 Fetched invoices:", res.data);
+        const data = res.data;
+        setInvoiceData(data);
+        setFilteredData(data);
       })
       .catch((err) => console.error("Error fetching invoices:", err));
   }, [supplierID]);
 
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
+  useEffect(() => {
+    if (!selectedInvoice) return;
+
+    const fetchProducts = async () => {
+      const items = selectedInvoice.supplier_invoice_items;
+      const productData = {};
+
+      for (const item of items) {
+        try {
+          const res = await axios.get(`${API_URL}/product/${item.product_id}`);
+          productData[item.product_id] = res.data;
+        } catch (err) {
+          console.error("Failed to fetch product:", item.product_id, err);
+        }
+      }
+
+      setProducts(productData);
+    };
+
+    fetchProducts();
+  }, [selectedInvoice]);
+
+  const handleSearch = (e) => {
+    const value = e.target.value.toLowerCase();
     setSearchTerm(value);
 
     const filtered = invoiceData.filter((row) =>
@@ -110,38 +152,30 @@ function SupplierInvoicesTable({ items }) {
   const handleSubmitInvoice = async () => {
     try {
       const payload = {
-        poNum: invoiceForm.poNum,
-        invoiceID: invoiceForm.invoiceID,
-        purchaseDate: invoiceForm.purchaseDate,
-        supplierID: supplierID,
-        status: invoiceForm.invoiceType,
+        invoice_number: invoiceForm.invoiceID,
+        po_number: invoiceForm.poNum,
+        purchase_date: invoiceForm.purchaseDate,
+        supplier_id: supplierID,
+        conversion_factor: invoiceForm.conversionFactor ?? 1,
+
         items: invoiceForm.items.map((item) => ({
-          itemName: item.itemName, // explicitly pass both
-          itemCode: item.itemCode,
-          quantity: item.quantity,
-          unit: item.unit,
-          unitCost: item.unitCost,
-          currency: item.currency,
-          conversionFactor: item.conversionFactor,
-          subTotal:
-            item.unitCost * item.quantity * (item.conversionFactor || 1),
+          product_id: item.itemID,
+          quantity: Number(item.quantity),
+          unit_cost: Number(item.unitCost),
         })),
       };
 
       console.log("📤 Submitting invoice data:", payload);
 
-      // Show loading Swal
       Swal.fire({
         title: "Submitting Invoice",
         text: "Please wait while we process your invoice...",
         allowOutsideClick: false,
         showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
+        didOpen: () => Swal.showLoading(),
       });
 
-      await axios.post(`${API_URL}/suppliers/supplier-invoices`, payload);
+      await axios.post(`${API_URL}/supplier-invoice`, payload);
 
       Swal.fire({
         icon: "success",
@@ -150,76 +184,75 @@ function SupplierInvoicesTable({ items }) {
         confirmButtonColor: "#1E5A84",
       });
 
+      // Reset form
       setInvoiceForm({
         poNum: "",
         invoiceID: "",
         purchaseDate: "",
-        invoiceType: "Purchased",
+        conversionFactor: 1,
         items: [
           {
-            itemName: "",
+            productId: null,
             quantity: null,
-            unit: "",
             unitCost: null,
-            currency: "",
-            conversionFactor: null,
           },
         ],
       });
+
       setQueries({});
       setSuggestions({});
-
       setShowCreateModal(false);
 
       const res = await axios.get(
-        `${API_URL}/suppliers/supplier-invoices/${supplierID}`
+        `${API_URL}/supplier-invoice/sid/${supplierID}`
       );
       setInvoiceData(res.data);
       setFilteredData(res.data);
     } catch (err) {
       console.error("Error submitting invoice:", err);
 
-      if (err.response && err.response.data && err.response.data.message) {
-        Swal.fire({
-          icon: "error",
-          title: "Invoice Error",
-          text: err.response.data.message,
-          confirmButtonColor: "#1E5A84",
-        });
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Failed to submit invoice. Please try again.",
-          confirmButtonColor: "#1E5A84",
-        });
-      }
+      Swal.fire({
+        icon: "error",
+        title: "Invoice Error",
+        text:
+          err?.response?.data?.message ||
+          "Failed to submit invoice. Please try again.",
+        confirmButtonColor: "#1E5A84",
+      });
     }
   };
 
   const columns = [
     {
       name: "Invoice ID",
-      selector: (row) => row.invoiceID,
+      selector: (row) => row.invoiceID || row.id,
       sortable: true,
     },
-    { name: "Date", selector: (row) => row.purchaseDate, sortable: true },
+    {
+      name: "Date",
+      selector: (row) => row.purchase_date || row.purchaseDate,
+      sortable: true,
+    },
     {
       name: "Number of Items",
-      selector: (row) => row.items?.length || 0,
+      selector: (row) => row.supplier_invoice_items?.length ?? 0,
       sortable: true,
     },
     {
       name: "Total Price",
       selector: (row) => {
-        const total = row.items.reduce(
-          (sum, item) => sum + (item.subTotal || 0),
+        const items = row.supplier_invoice_items ?? [];
+
+        const total = items.reduce(
+          (sum, item) => sum + Number(item.subtotal || item.subTotal || 0),
           0
         );
-        return `₱${total.toLocaleString("en-US", {
+
+        return total.toLocaleString("en-PH", {
+          style: "currency",
+          currency: row.currency || "PHP",
           minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        })}`;
+        });
       },
       sortable: true,
     },
@@ -276,6 +309,7 @@ function SupplierInvoicesTable({ items }) {
             fixedHeaderScrollHeight="500px"
             className="custom-data-table"
             onRowClicked={(row) => {
+              console.log("Selected Invoice:", row);
               setSelectedInvoice(row);
               setShowModal(true);
             }}
@@ -590,31 +624,20 @@ function SupplierInvoicesTable({ items }) {
                             type="button"
                             className="btn btn-sm"
                             onClick={() => {
-                              if (invoiceForm.items.length >= 10) {
-                                  Swal.fire({
-                                    icon: "warning",
-                                    title: "Item Limit Reached",
-                                    text: "You can only add up to 10 items per invoice.",
-                                    confirmButtonColor: "#1E5A84",
-                                  });
-                                  return; // stop here
-                                }
-
-                                setInvoiceForm({
-                                  ...invoiceForm,
-                                  items: [
-                                    ...invoiceForm.items,
-                                    {
-                                      itemCode: "",
-                                      quantity: null,
-                                      unit: "",
-                                      unitCost: null,
-                                      subTotal: null,
-                                    },
-                                  ],
-                                })
-                              }
-                            }
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                items: [
+                                  ...invoiceForm.items,
+                                  {
+                                    itemCode: "",
+                                    quantity: null,
+                                    unit: "",
+                                    unitCost: null,
+                                    subTotal: null,
+                                  },
+                                ],
+                              });
+                            }}
                             style={{
                               backgroundColor: "#28a745",
                               color: "white",
@@ -969,7 +992,8 @@ function SupplierInvoicesTable({ items }) {
                           className="mb-2 opacity-75"
                           style={{ fontSize: "12px" }}
                         >
-                          Supplier &gt; Invoices &gt; {selectedInvoice.poNum}
+                          Supplier &gt; Invoices &gt;{" "}
+                          {selectedInvoice.po_number}
                         </p>
                         <button
                           type="button"
@@ -980,7 +1004,7 @@ function SupplierInvoicesTable({ items }) {
 
                       <div className="w-100 d-flex justify-content-between align-items-center">
                         <h5 className="mb-0">
-                          Invoice ID: {selectedInvoice.invoiceID}
+                          Invoice ID: {selectedInvoice.invoice_number}
                         </h5>
                       </div>
                     </div>
@@ -998,52 +1022,64 @@ function SupplierInvoicesTable({ items }) {
                         }}
                       >
                         <ul className="list-unstyled">
-                          {selectedInvoice.items.map((item, index) => (
-                            <>
-                              <li key={index}>
-                                <div className="d-flex justify-content-between align-items-start p-3 rounded">
-                                  {/* Item Info */}
-                                  <div className="d-flex align-items-center gap-3">
-                                    <div className="d-flex flex-column">
-                                      <span className="fw-semibold">
-                                        {item.itemName}
-                                      </span>
-                                      <small className="text-muted">
-                                        Qty: {item.quantity} {item.unit}
-                                      </small>
-                                      <span
-                                        style={{ width: "fit-content" }}
-                                        className={`badge ${
-                                          selectedInvoice.status === "Purchased"
-                                            ? "bg-success"
-                                            : selectedInvoice.status ===
-                                              "Returned"
-                                            ? "bg-danger"
-                                            : "bg-secondary"
-                                        } mt-2`}
-                                      >
-                                        {selectedInvoice.status || "N/A"}
-                                      </span>
-                                    </div>
-                                  </div>
+                          {selectedInvoice.supplier_invoice_items.map(
+                            (item, index) => {
+                              const product = products[item.product_id]; // get fetched product
+                              return (
+                                <>
+                                  <li>
+                                    <div className="d-flex justify-content-between align-items-start p-3 rounded">
+                                      {/* Item Info */}
+                                      <div className="d-flex align-items-center gap-3">
+                                        <div className="d-flex flex-column">
+                                          <span className="fw-semibold">
+                                            {product
+                                              ? product.item_name
+                                              : "Loading..."}
+                                          </span>
+                                          <small className="text-muted">
+                                            Qty: {item.quantity}{" "}
+                                            {product ? product.unit : ""}
+                                          </small>
+                                          <span
+                                            style={{ width: "fit-content" }}
+                                            className={`badge ${
+                                              selectedInvoice.status ===
+                                              "Purchased"
+                                                ? "bg-success"
+                                                : selectedInvoice.status ===
+                                                  "Returned"
+                                                ? "bg-danger"
+                                                : "bg-secondary"
+                                            } mt-2`}
+                                          >
+                                            {selectedInvoice.status || "N/A"}
+                                          </span>
+                                        </div>
+                                      </div>
 
-                                  {/* Price Info */}
-                                  <div className="text-end d-flex flex-column">
-                                    <span className="fw-semibold">
-                                      ₱
-                                      {item.subTotal.toLocaleString(undefined, {
-                                        minimumFractionDigits: 2,
-                                      })}
-                                    </span>
-                                    <small className="text-muted">
-                                      Unit: ₱{item.unitCost}
-                                    </small>
-                                  </div>
-                                </div>
-                              </li>
-                              <hr className="my-0 border-secondary" />
-                            </>
-                          ))}
+                                      {/* Price Info */}
+                                      <div className="text-end d-flex flex-column">
+                                        <span className="fw-semibold">
+                                          ₱
+                                          {item.subtotal.toLocaleString(
+                                            undefined,
+                                            {
+                                              minimumFractionDigits: 2,
+                                            }
+                                          )}
+                                        </span>
+                                        <small className="text-muted">
+                                          Unit: ₱{item.unit_cost}
+                                        </small>
+                                      </div>
+                                    </div>
+                                  </li>
+                                  <hr className="my-0 border-secondary" />
+                                </>
+                              );
+                            }
+                          )}
                         </ul>
                       </div>
 
@@ -1052,8 +1088,8 @@ function SupplierInvoicesTable({ items }) {
                         <span className="h5 fw-semibold">Total Price</span>
                         <span className="fw-bold h5">
                           ₱
-                          {selectedInvoice.items
-                            .reduce((sum, item) => sum + item.subTotal, 0)
+                          {selectedInvoice.supplier_invoice_items
+                            .reduce((sum, item) => sum + item.subtotal, 0)
                             .toLocaleString(undefined, {
                               minimumFractionDigits: 2,
                             })}
@@ -1081,7 +1117,7 @@ function SupplierInvoicesTable({ items }) {
                           style={{ color: "#1E5A84" }}
                         >
                           {new Date(
-                            selectedInvoice.purchaseDate
+                            selectedInvoice.purchase_date
                           ).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "long",
@@ -1094,12 +1130,6 @@ function SupplierInvoicesTable({ items }) {
                 </div>
               </div>
             </>
-          )}
-
-          {filteredData.length === 0 && (
-            <p className="text-center text-muted">
-              No invoices found for this supplier.
-            </p>
           )}
         </div>
       </div>

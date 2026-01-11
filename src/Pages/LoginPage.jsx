@@ -15,15 +15,24 @@ function LoginPage({ onLoginSuccess }) {
     e.preventDefault();
 
     try {
-      const response = await axios.post(`${API_URL}/auth/login`, {
+      const response = await axios.post(`${API_URL}/authenticate/login`, {
         username,
         password,
       });
 
-      const user = response.data.user;
+      const token = response.data.access_token;
+
+      const user = await axios.get(`${API_URL}/authenticate/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const profile = user.data;
+      console.log("User profile:", profile);
 
       localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('user', JSON.stringify(profile));
 
       console.log("Login successful:", user);
 

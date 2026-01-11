@@ -563,7 +563,7 @@ function App() {
               />
               <Route
                 path="/supplier/invoices"
-                element={<SupplierInvoicesTable items={items} />}
+                element={<SupplierInvoicesTable allItems={allItems} />}
               />
               <Route
                 path="/customer"
