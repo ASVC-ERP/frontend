@@ -22,6 +22,13 @@ function OrdersTable({ orders, setOrders, customers }) {
     }, {});
   }, [customers]);
 
+  const customerNameMap = useMemo(() => {
+    return customers.reduce((acc, customer) => {
+      acc[customer.name] = customer; // key by name for lookup
+      return acc;
+    }, {});
+  }, [customers]);
+
   // Define table columns
   const columns = [
     {
@@ -128,6 +135,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
   const [customerQuery, setCustomerQuery] = useState("");
   const [customerSuggestions, setCustomerSuggestions] = useState([]);
+  const [customerID, setCustomerID] = useState("");
 
   const [showServeModal, setShowServeModal] = useState(false);
   const [serveData, setServeData] = useState([]);
@@ -142,7 +150,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     const user = JSON.parse(localStorage.getItem("user"));
 
     const endpoint =
-      user.role === "agent"
+      roleApprove === "agent"
         ? `${API_URL}/order?agent=${encodeURIComponent(
             user.firstName + " " + user.lastName
           )}`
@@ -193,7 +201,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
 
     const filtered = customers.filter((c) =>
-      c.customerName.toLowerCase().includes(customerQuery.toLowerCase())
+      c.name.toLowerCase().includes(customerQuery.toLowerCase())
     );
 
     setCustomerSuggestions(filtered);
@@ -203,34 +211,24 @@ function OrdersTable({ orders, setOrders, customers }) {
     const value = e.target.value;
 
     setCustomerQuery(value);
+    setCustomerID(customerNameMap[value]?.cid || "");
     setEditableRow((prev) => ({
       ...prev,
       customerName: value,
+      customerID: customerNameMap[value]?.cid || "",
     }));
   };
 
   const handleSelectCustomer = (customer) => {
-    setCustomerQuery(customer.customerName);
+    setCustomerID(customer.cid);
+    setCustomerQuery(customer.name);
     setCustomerSuggestions([]);
 
     setEditableRow((prev) => ({
       ...prev,
-      customerName: customer.customerName,
-      customerAddress: customer.customerAddress,
+      customerID: customer.cid,
+      customerName: customer.name,
     }));
-  };
-
-  const fetchStocksForItems = async (itemCodes) => {
-    try {
-      const response = await axios.get(`${API_URL}/items/check-stocks`, {
-        params: { itemCodes: itemCodes.join(",") },
-      });
-
-      return response.data.stocks;
-    } catch (err) {
-      console.error("Error fetching stocks:", err);
-      return {};
-    }
   };
 
   // Handle search input change
@@ -247,8 +245,40 @@ function OrdersTable({ orders, setOrders, customers }) {
     setFilteredData(filtered);
   };
 
+  const initializeItems = (items) => {
+    return items.map((item) => {
+      // Available prices
+      const availablePrices = [
+        item.products?.price1,
+        item.products?.price2,
+        item.products?.price3,
+        item.products?.price4,
+      ].filter((p) => p != null);
+
+      // Determine if current price is custom
+      const isCustomPrice =
+        item.price != null && !availablePrices.includes(Number(item.price));
+
+      return {
+        ...item,
+        products: item.products || null,
+        itemName: item.itemName || item.products?.item_name || "",
+        stock: item.stock || item.products?.stock || 0,
+        quantity: item.quantity || 1,
+        availablePrices,
+        price:
+          item.price ?? item.products?.actual_price ?? availablePrices[0] ?? 0,
+        customPriceEnabled: isCustomPrice, // TRUE if the price is custom
+        customPrice: isCustomPrice ? item.price : null,
+        unit: item.unit || item.products?.unit || "",
+      };
+    });
+  };
+
   const handleEdit = async (row) => {
     setShowRowModal(false);
+    setCustomerQuery(row.customer.name || "");
+    setCustomerID(row.customer.cid || "");
 
     try {
       // Fetch inventory once
@@ -287,7 +317,10 @@ function OrdersTable({ orders, setOrders, customers }) {
         };
       });
 
-      setEditableRow({ ...row, orderedItems: updatedOrderedItems });
+      setEditableRow((prev) => ({
+        ...prev,
+        items: initializeItems(prev.items),
+      }));
       setSelectedRow(row);
       setShowEditModal(true);
     } catch (err) {
@@ -300,34 +333,13 @@ function OrdersTable({ orders, setOrders, customers }) {
 
     try {
       // Fetch served data for this order
-      const res = await axios.get(`${API_URL}/order/${row.id}/serve-items`);
-      const servedData = res.data;
-      console.log("Fetched served orders:", servedData);
-
-      const response = await axios.get(
-        `${API_URL}/order/${row.id}/order-items`
-      );
-      const orderedItems = response.data;
-      console.log("Fetched ordered items:", orderedItems);
-
-      // Inject quantityServed directly into orderedItems
-      const mergedItems = orderedItems.map((item) => {
-        const servedItem = servedData.find(
-          (s) => s.item_code === item.itemm_code
-        );
-
-        // If found, assign quantityServed
-        return {
-          ...item,
-          quantityServed: servedItem ? parseInt(servedItem.quantityServed) : 0,
-        };
-      });
-
-      console.log("Merged Ordered Items with quantityServed:", mergedItems);
+      const res = await axios.get(`${API_URL}/order/${row.id}`);
+      const orderData = res.data;
+      console.log("Fetched orders:", orderData);
 
       // Update state with merged items
-      setSelectedRow({ ...row, orderedItems: mergedItems });
-      setEditableRow({ ...row, orderedItems: mergedItems });
+      setSelectedRow(orderData);
+      setEditableRow(orderData);
       setIsEditing(false);
       setShowRowModal(true);
     } catch (err) {
@@ -344,7 +356,7 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Add a new item row
   const addItem = () => {
     setEditableRow((prev) => {
-      const currentCount = prev.orderedItems?.length || 0;
+      const currentCount = prev.items?.length || 0;
 
       if (currentCount === MAX_ITEMS - 1) {
         // going from 15 → 16
@@ -356,12 +368,23 @@ function OrdersTable({ orders, setOrders, customers }) {
       }
 
       const newItems = [
-        ...(prev.orderedItems || []),
-        { itemName: "", quantity: 1 },
+        ...(prev.items || []),
+        {
+          products: null, // will hold full product details when selected
+          itemName: "", // for input display
+          quantity: 1,
+          availablePrices: [], // will populate from selected product
+          price: 0, // default price
+          customPriceEnabled: false,
+          customPrice: null,
+          unit: "", // optional, from product
+          item_code: "", // will populate from selected product
+          stock: 0, // optional, from product
+        },
       ];
 
       setActiveIndex(newItems.length - 1);
-      return { ...prev, orderedItems: newItems };
+      return { ...prev, items: newItems };
     });
 
     setQuery("");
@@ -370,107 +393,88 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Remove an item by index
   const removeItem = (index) => {
     setEditableRow((prev) => {
-      const newItems = prev.orderedItems.filter((_, i) => i !== index);
+      const newItems = prev.items.filter((_, i) => i !== index);
 
       if (newItems.length < MAX_ITEMS) {
         setItemLimitWarning(false);
       }
 
-      return { ...prev, orderedItems: newItems };
+      return { ...prev, items: newItems };
     });
   };
 
   // Update item field
   const updateItem = (index, field, value) => {
     setEditableRow((prev) => {
-      const items = [...prev.orderedItems];
-      let updatedItem = { ...items[index] };
+      const items = prev.items.map((item, i) => {
+        if (i !== index) return item;
 
-      // Numeric fields
-      const numericFields = ["quantity", "price", "customPrice"];
+        let updatedItem = { ...item };
 
-      if (numericFields.includes(field)) {
-        updatedItem[field] = Number(value);
-      } else {
-        updatedItem[field] = value;
-      }
-
-      // Special handling for price mode switch
-      if (field === "customPriceEnabled") {
-        if (value === true) {
-          // Switching to custom price mode
-          updatedItem.customPrice = "";
+        // Numeric fields
+        const numericFields = ["quantity", "price", "customPrice"];
+        if (numericFields.includes(field)) {
+          updatedItem[field] = Number(value);
         } else {
-          // Switching back to preset price mode
-          updatedItem.price = Number(updatedItem.price) || 0;
+          updatedItem[field] = value;
         }
-      }
 
-      items[index] = updatedItem;
-      return { ...prev, orderedItems: items };
+        // Handle switching between preset and custom price
+        if (field === "customPriceEnabled") {
+          if (value === true) {
+            // switch to custom, copy current price
+            updatedItem.customPrice = updatedItem.price ?? 0;
+          } else {
+            // switch back to preset, keep current selected price if available
+            updatedItem.price =
+              updatedItem.price ?? updatedItem.availablePrices[0] ?? 0;
+          }
+        }
+
+        return updatedItem;
+      });
+
+      return { ...prev, items };
     });
   };
 
   const handleSave = async () => {
     try {
-      // 🔹 Recalculate total price from ordered items
-      const recalculatedTotal = (editableRow.orderedItems || []).reduce(
-        (sum, item) => {
-          const finalPrice = item.customPriceEnabled
-            ? Number(item.customPrice) || 0
-            : Number(item.price) || 0;
-
-          return sum + finalPrice * (Number(item.quantity) || 0);
-        },
-        0
-      );
-
+      // 🔹 Prepare payload according to backend DTO
       const payload = {
-        orderId: editableRow.orderId,
-        date: editableRow.date,
-        customerName: editableRow.customerName,
-        customerAddress: editableRow.customerAddress,
-        customerNumber: editableRow.customerNumber,
-        customerTIN: editableRow.customerTIN,
-        approvalStatus: editableRow.approvalStatus,
-        status: editableRow.status,
-        salesAgent: editableRow.salesAgent,
-
-        orderedItems: (editableRow.orderedItems || []).map((it) => ({
-          itemName: it.itemName,
+        cid: customerID, // customer ID
+        sales_agent: editableRow.sales_agent?.username, // or username depending on backend
+        order_date: editableRow.order_date,
+        discount: editableRow.discount || 0,
+        items: (editableRow.items || []).map((it) => ({
+          item_code: it.item_code || it.products?.item_code, // fallback to products
           quantity: Number(it.quantity) || 0,
           price: it.customPriceEnabled
             ? Number(it.customPrice) || 0
             : Number(it.price) || 0,
-          unit: it.unit,
-          itemCode: it.itemCode,
         })),
-
-        totalPrice: recalculatedTotal,
       };
 
       console.log("Payload being sent:", payload);
 
-      await axios.patch(`${API_URL}/orders/${editableRow.orderId}`, payload);
+      // 🔹 Send patch request to update the order
+      await axios.patch(`${API_URL}/order/${editableRow.id}`, payload);
 
+      // 🔹 Update frontend state
       setOrders((prev) =>
-        prev.map((o) =>
-          o.orderId === editableRow.orderId ? { ...payload } : o
-        )
+        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o))
       );
       setFilteredData((prev) =>
-        prev.map((o) =>
-          o.orderId === editableRow.orderId ? { ...payload } : o
-        )
+        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o))
       );
-      setSelectedRow({ ...payload });
-      setEditableRow({ ...payload });
+      setSelectedRow({ ...selectedRow, ...payload });
+      setEditableRow({ ...editableRow, ...payload });
       setIsEditing(false);
 
       Swal.fire({
         icon: "success",
         title: "Order Updated",
-        text: `Order ${editableRow.orderId} was updated successfully!`,
+        text: `Order ${editableRow.order_code} was updated successfully!`,
         timer: 2000,
         showConfirmButton: false,
       });
@@ -478,9 +482,8 @@ function OrdersTable({ orders, setOrders, customers }) {
       await fetchOrders();
       setShowEditModal(false);
 
-      // ✅ Reopen the updated row after fetching data
-      const updatedRow = { ...payload };
-      handleRowClick(updatedRow);
+      // ✅ Optionally reopen the updated row
+      handleRowClick({ ...editableRow, ...payload });
     } catch (err) {
       console.error("Failed to update order:", err);
       Swal.fire({
@@ -492,33 +495,25 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
   };
 
-  const handleDelete = (row) => {
+  const handleDelete = (selectedRow) => {
     Swal.fire({
       icon: "warning",
       title: "Delete Order",
-      text: `Are you sure you want to delete order ${row.orderId}?`,
+      text: `Are you sure you want to delete ${selectedRow.order_code}?`,
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/orders/${row.orderId}`)
+          .delete(`${API_URL}/order/${selectedRow.id}`)
           .then((res) => {
-            // Remove from table UI
-            setOrders((prev) =>
-              prev.filter((item) => item.orderId !== row.orderId)
-            );
-
-            // If you use a fetchOrders() function
-            if (typeof fetchOrders === "function") {
-              fetchOrders();
-            }
+            fetchOrders();
 
             Swal.fire({
               icon: "success",
               title: "Deleted!",
-              text: `Order ${row.orderId} has been deleted successfully.`,
+              text: `${selectedRow.order_code} has been deleted successfully.`,
               timer: 1500,
               showConfirmButton: false,
             });
@@ -545,11 +540,16 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
 
     try {
-      const res = await axios.get(`${API_URL}/items?search=${value}`);
+      // Fetch full product details from API
+      const res = await axios.get(
+        `${API_URL}/product/details?item_name=${value}`
+      );
 
-      // Map prices into array for dropdown
+      // Map products for dropdown use
       const itemsWithPrices = res.data.map((item) => ({
         ...item,
+        itemCode: item.item_code,
+        itemName: item.item_name,
         prices: [item.price1, item.price2, item.price3, item.price4].filter(
           (p) => p != null
         ),
@@ -566,38 +566,40 @@ function OrdersTable({ orders, setOrders, customers }) {
 
     setEditableRow((prev) => {
       console.log("Previous editableRow:", prev);
-      const updatedItems = [...prev.orderedItems];
-      const priceObj = item.price || {};
+
+      // Make a copy of items
+      const updatedItems = [...prev.items];
+
+      // Update the selected row
       updatedItems[index] = {
         ...updatedItems[index],
         item_code: item.item_code,
-        stock: item.stock,
+        products: item, // store full product details for reference
+        itemName: item.item_name,
+        stock: item.stock || 0,
         quantity: 1,
         availablePrices: [
-          priceObj.price1,
-          priceObj.price2,
-          priceObj.price3,
-          priceObj.price4,
+          item.price1,
+          item.price2,
+          item.price3,
+          item.price4,
         ].filter((p) => p != null),
-        price: priceObj.price1,
+        price: item.actual_price || item.price2 || 0, // default to price1
+        customPriceEnabled: false, // always start with default price
+        customPrice: null,
         unit: item.unit,
       };
+
       console.log("Updated items:", updatedItems);
-      return { ...prev, orderedItems: updatedItems };
+
+      return { ...prev, items: updatedItems }; // update items in editableRow
     });
 
-    // clear search state
+    // Clear search input and suggestions
     setQuery("");
     setSuggestions([]);
     setActiveIndex(null);
   };
-
-  /*
-  const handleRequestInvoice = () => {
-    setShowRequestModal(true); // Show the Request Invoice modal
-    setShowRowModal(false); // Close the current order details modal (optional)
-  };
-*/
 
   const handlePrint = async () => {
     if (!selectedRow) return;
@@ -605,15 +607,29 @@ function OrdersTable({ orders, setOrders, customers }) {
     console.log("selectedRow: ", selectedRow);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/list/sales-order`,
-        selectedRow,
-        { responseType: "blob" } // important to handle PDF
+      // ✅ Get PDF as blob
+      const response = await axios.get(
+        `${API_URL}/print/sales-order/${selectedRow.id}`,
+        { responseType: "blob" } // important!
       );
 
+      // ✅ Create a Blob URL
       const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
-      window.open(blobUrl, "_blank");
+
+      // ✅ Open PDF in new tab
+      const newWindow = window.open(blobUrl, "_blank");
+
+      if (!newWindow) {
+        Swal.fire({
+          icon: "warning",
+          title: "Popup Blocked",
+          text: "Please allow popups to view the PDF.",
+        });
+      }
+
+      // Optional: release blob URL after 10 seconds
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 10000);
     } catch (err) {
       console.error("Failed to generate PDF:", err);
       Swal.fire({
@@ -625,142 +641,52 @@ function OrdersTable({ orders, setOrders, customers }) {
   };
 
   const handleServe = async (row) => {
-    setSelectedRow(row);
-
-    // Step 1: Build payload as you already do
-    const payload = {
-      date: row.date,
-      customerName: row.customerName,
-      customerAddress: row.customerAddress,
-      customerNumber: row.customerNumber,
-      customerTIN: row.customerTIN || "",
-      salesAgent: row.salesAgent,
-      items: row.orderedItems.map((item) => ({
-        itemName: item.itemName,
-        price: item.price,
-        quantityOrdered: item.quantity,
-        quantityServed: item.quantity,
-        quantityUnserved: 0,
-        unit: item.unit || "",
-        itemCode: item.itemCode || "",
-      })),
-    };
-
     try {
-      // Step 2: Get item codes
-      const itemCodes = payload.items.map((i) => i.itemCode).filter(Boolean);
+      setSelectedRow(row);
 
-      // Step 3: Fetch stock from backend
-      const response = await axios.get(`${API_URL}/items/check-stocks`, {
-        params: { itemCodes: itemCodes.join(",") },
-      });
+      // 🔹 Fetch full order details
+      const res = await axios.get(`${API_URL}/order/${row.id}`);
+      const order = res.data;
 
-      const stocks = response.data.stocks || {};
-
-      // Step 4: Merge stock into items
-      payload.items = payload.items.map((item) => ({
-        ...item,
-        stock: stocks[item.itemCode] ?? 0,
-      }));
-    } catch (error) {
-      console.error("Error fetching stock:", error);
+      setServeData(order);
+      setShowServeModal(true);
+    } catch (err) {
+      console.error("Failed to load order:", err);
       Swal.fire({
         icon: "error",
-        title: "Stock Error",
-        text: "Unable to fetch item stocks.",
+        title: "Load Error",
+        text: "Unable to load order details.",
       });
     }
-
-    // Step 5: Continue your existing logic
-    fetchOrders();
-    setServeData(payload);
-    setShowServeModal(true);
   };
 
-  const updateServeQuantity = (index, field, value) => {
+  const updateServeQuantity = (index, value) => {
     setServeData((prev) => {
-      const updated = { ...prev };
-      const val = Number(value) || 0;
-
-      if (field === "quantityServed") {
-        updated.items[index].quantityServed = val;
-        updated.items[index].quantityUnserved =
-          updated.items[index].quantityOrdered - val;
-      } else if (field === "quantityUnserved") {
-        updated.items[index].quantityUnserved = val;
-        updated.items[index].quantityServed =
-          updated.items[index].quantityOrdered - val;
-      }
-
-      return updated;
+      const items = [...prev.items];
+      items[index] = {
+        ...items[index],
+        quantity_to_serve: value,
+      };
+      return { ...prev, items };
     });
   };
 
   const handleApprove = async (row) => {
     try {
+      // 🔹 Show loading state
       Swal.fire({
-        title: "Approving order...",
-        text: "Please wait while we check stock and process your request.",
+        title: "Approving order…",
+        text: "Please wait while we process the approval.",
         allowOutsideClick: false,
         showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
+        didOpen: () => Swal.showLoading(),
       });
 
-      // -------------------------------
-      // 0) Validate stock availability
-      // -------------------------------
-      const itemCodes = row.orderedItems.map((item) => item.itemCode);
-      const stockResponse = await axios.get(`${API_URL}/items/check-stocks`, {
-        params: { itemCodes: itemCodes.join(",") },
-      });
+      await axios.post(`${API_URL}/order/${row.id}/approve`);
 
-      const stocks = stockResponse.data.stocks || {};
-      console.log("[handleApprove] Current stock levels:", stocks);
+      Swal.close();
 
-      const insufficientItems = row.orderedItems.filter((item) => {
-        const currentStock = Number(stocks[item.itemCode]) || 0;
-        return currentStock < item.quantityServed;
-      });
-
-      if (insufficientItems.length > 0) {
-        const message = insufficientItems
-          .map(
-            (item) =>
-              `<b>${item.itemName}</b> (Req: ${item.quantityServed}, Stock: ${
-                stocks[item.itemCode] || 0
-              })`
-          )
-          .join("\n");
-
-        Swal.fire({
-          icon: "warning",
-          title: "Insufficient Stock",
-          html: message,
-        });
-        return;
-      }
-
-      // -------------------------------
-      // 1) Proceed to Approve
-      // -------------------------------
-      const payload = {
-        orderIds: [row.orderId],
-      };
-
-      console.log(
-        "[handleApprove] Sending payload to backend:",
-        JSON.stringify(payload, null, 2)
-      );
-
-      const response = await axios.post(
-        `${API_URL}/orders/serve-approved`,
-        payload
-      );
-
-      console.log("[handleApprove] Backend response:", response.data);
-
+      // 🔹 Success feedback
       Swal.fire({
         icon: "success",
         title: "Approved!",
@@ -771,12 +697,18 @@ function OrdersTable({ orders, setOrders, customers }) {
 
       fetchOrders();
     } catch (error) {
-      console.error("[handleApprove] Error approving orders:", error);
+      console.error("[handleApprove] Error approving order:", error);
+      Swal.close();
+
+      // 🔹 More informative error handling
+      const message =
+        error.response?.data?.message ||
+        "Failed to approve order. Please try again.";
 
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Failed to approve orders. Please try again.",
+        title: "Approval Failed",
+        text: message,
       });
     }
   };
@@ -793,11 +725,8 @@ function OrdersTable({ orders, setOrders, customers }) {
     });
 
     try {
-      console.log("Reject payload:", { orderIds: row.orderId });
+      await axios.post(`${API_URL}/order/${row.id}/reject`);
 
-      await axios.post(`${API_URL}/orders/reject`, {
-        orderIds: [row.orderId],
-      });
       Swal.close();
 
       Swal.fire({
@@ -884,26 +813,19 @@ function OrdersTable({ orders, setOrders, customers }) {
                     cursor: "move", // for draggable
                   }}
                 >
-                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                    <p className="mb-2 opacity-75" style={{ fontSize: "20px" }}>
-                      {selectedRow.order_code}
-                    </p>
-                    <button
-                      type="button"
-                      className="btn-close btn-close-white p-4"
-                      onClick={() => setShowRowModal(false)}
-                    ></button>
-                  </div>
+                  <div className="w-100 d-flex justify-content-between align-items-center my-2">
+                    {/* LEFT INFO */}
+                    <div>
+                      <h5 className="mb-0">
+                        Order Code: {selectedRow?.order_code}
+                      </h5>
+                      <h5 className="mb-0">
+                        Customer: {selectedRow?.customer?.name || "—"}
+                      </h5>
+                    </div>
 
-                  <div className="w-100 d-flex justify-content-between align-items-center mb-2">
-                    {/*
-                    <h5 className="mb-0">Order ID: {selectedRow.orderId}</h5>
-                    */}
-                    <h5 className="mb-0">
-                      Customer: {selectedRow.customerName}
-                    </h5>
-
-                    <div className="d-flex gap-2">
+                    {/* ACTION BUTTONS */}
+                    <div className="d-flex gap-2 ms-auto align-items-center">
                       {selectedRow?.status?.trim().toLowerCase() === "open" && (
                         <button
                           type="button"
@@ -914,6 +836,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                           Edit
                         </button>
                       )}
+
                       {selectedRow?.status?.trim().toLowerCase() !==
                         "served" && (
                         <button
@@ -925,62 +848,65 @@ function OrdersTable({ orders, setOrders, customers }) {
                           Print Preview
                         </button>
                       )}
-                      {selectedRow && (
-                        <>
-                          {selectedRow.status?.trim().toLowerCase() ===
-                            "open" && (
+
+                      {selectedRow?.status?.trim().toLowerCase() === "open" && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-light"
+                          style={{ color: "#246c9d" }}
+                          onClick={() => {
+                            setShowRowModal(false);
+                            handleServe(selectedRow);
+                          }}
+                        >
+                          Serve
+                        </button>
+                      )}
+
+                      {roleApprove?.toLowerCase() === "admin" &&
+                        selectedRow?.status?.trim().toLowerCase() ===
+                          "for approval" && (
+                          <>
                             <button
                               type="button"
-                              className="btn btn-sm btn-light"
-                              style={{ color: "#246c9d" }}
+                              className="btn btn-sm"
+                              style={{
+                                backgroundColor: "#28a745",
+                                color: "white",
+                                border: "none",
+                              }}
                               onClick={() => {
                                 setShowRowModal(false);
-                                handleServe(selectedRow);
+                                handleApprove(selectedRow);
                               }}
                             >
-                              Serve
+                              Approve
                             </button>
-                          )}
-                          {roleApprove.toLowerCase() === "admin" &&
-                            selectedRow.status?.trim().toLowerCase() ===
-                              "for request" && (
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-light"
-                                style={{
-                                  backgroundColor: "#28a745",
-                                  color: "white",
-                                  border: "none",
-                                }}
-                                onClick={() => {
-                                  setShowRowModal(false);
-                                  handleApprove(selectedRow);
-                                }}
-                              >
-                                Approve
-                              </button>
-                            )}
-                          {roleApprove.toLowerCase() === "admin" &&
-                            selectedRow.status?.trim().toLowerCase() ===
-                              "for request" && (
-                              <button
-                                type="button"
-                                className="btn btn-sm btn-light"
-                                style={{
-                                  backgroundColor: "#dc3545",
-                                  color: "white",
-                                  border: "none",
-                                }}
-                                onClick={() => {
-                                  setShowRowModal(false);
-                                  handleReject(selectedRow);
-                                }}
-                              >
-                                Reject
-                              </button>
-                            )}
-                        </>
-                      )}
+
+                            <button
+                              type="button"
+                              className="btn btn-sm"
+                              style={{
+                                backgroundColor: "#dc3545",
+                                color: "white",
+                                border: "none",
+                              }}
+                              onClick={() => {
+                                setShowRowModal(false);
+                                handleReject(selectedRow);
+                              }}
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
+
+                      {/* CLOSE BUTTON */}
+                      <button
+                        type="button"
+                        className="btn-close btn-close-white ms-4 me-2"
+                        onClick={() => setShowRowModal(false)}
+                      />
                     </div>
                   </div>
                 </div>
@@ -994,33 +920,44 @@ function OrdersTable({ orders, setOrders, customers }) {
                     }}
                   >
                     <ul className="list-unstyled">
-                      {selectedRow.orderedItems.map((item, index) => (
+                      {selectedRow.items.map((item, index) => (
                         <>
                           <li key={index}>
                             <div className="d-flex justify-content-between align-items-center mb-2">
                               {/* Image and Product Info */}
                               <div className="d-flex flex-column">
                                 <span className="fw-semibold">
-                                  {item.item_code} {/* ADD ITEM NAME */}
+                                  {item.products.item_name}{" "}
+                                  {/* ADD ITEM NAME */}
                                 </span>
 
                                 <small className="text-muted">
                                   Price: ₱{item.price} | Qty: {item.quantity}
-                                  {selectedRow.status === "For Request" && (
+                                  {selectedRow.status === "For Approval" && (
                                     <>
                                       {" "}
                                       (
                                       <span className="text-success">
-                                        Served: {item.quantityServed ?? 0}
+                                        To Serve:{" "}
+                                        {item.serve_items.quantity_to_serve ??
+                                          0}
                                       </span>{" "}
                                       |{" "}
                                       <span className="text-danger">
                                         Unserved:{" "}
                                         {(item.quantity ?? 0) -
-                                          (item.quantityServed ?? 0)}
+                                          (item.quantity_to_serve ?? 0)}
                                       </span>
                                       )
                                     </>
+                                  )}
+                                  {selectedRow.status === "Partial Served" && (
+                                    <span className="text-primary">
+                                      {" "}
+                                      (Served:{" "}
+                                      {item.serve_items?.quantity_to_serve ?? 0}
+                                      )
+                                    </span>
                                   )}
                                 </small>
 
@@ -1057,7 +994,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                   <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
                     <span className="h5 fw-semibold ">Total</span>
                     <span className="fw-bold h5">
-                      ₱{selectedRow.totalPrice}
+                      ₱{selectedRow.total_price}
                     </span>
                   </div>
                 </div>
@@ -1117,7 +1054,9 @@ function OrdersTable({ orders, setOrders, customers }) {
                   </div>
 
                   <div className="w-100 d-flex justify-content-between align-items-center ">
-                    <h5 className="mb-0">Edit Order {selectedRow.order_code}</h5>
+                    <h5 className="mb-0">
+                      Edit Order {selectedRow.order_code}
+                    </h5>
                   </div>
                 </div>
 
@@ -1125,9 +1064,20 @@ function OrdersTable({ orders, setOrders, customers }) {
                 <div className="modal-body">
                   <h6 className="mb-1">Customer Details</h6>
                   <form>
-                    <div className="row mb-2">
+                    <div className="row mb-2 position-relative">
+                      {/* CID */}
+                      <div className="col-md-2">
+                        <label className="form-label">ID</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={customerID}
+                          placeholder="Customer ID"
+                          disabled
+                        />
+                      </div>
                       {/* Name */}
-                      <div className="col-md-6 position-relative">
+                      <div className="col-md-6 ">
                         <label className="form-label">Name</label>
                         <input
                           type="text"
@@ -1142,32 +1092,20 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                         {customerSuggestions.length > 0 && (
                           <ul
-                            className="list-group position-absolute w-100"
+                            className="list-group position-absolute"
                             style={{ zIndex: 1000 }}
                           >
                             {customerSuggestions.map((c) => (
                               <li
-                                key={c.customerID}
+                                key={c.cid}
                                 className="list-group-item list-group-item-action"
                                 onMouseDown={() => handleSelectCustomer(c)}
                               >
-                                {c.customerName}
+                                {c.name}
                               </li>
                             ))}
                           </ul>
                         )}
-                      </div>
-
-                      {/* Address */}
-                      <div className="col-md-6">
-                        <label className="form-label">Address</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={editableRow.customerAddress}
-                          onChange={handleInputChange}
-                          placeholder="Customer Address"
-                        />
                       </div>
                     </div>
 
@@ -1195,7 +1133,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                       className="rounded-3"
                       style={{ maxHeight: "250px", overflowY: "auto" }}
                     >
-                      {editableRow?.orderedItems.map((item, index) => (
+                      {editableRow?.items.map((item, index) => (
                         <div
                           key={index}
                           className="position-relative d-flex gap-2 mb-2 align-items-center"
@@ -1205,9 +1143,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                             <input
                               ref={(el) => (inputRefs.current[index] = el)}
                               type="text"
-                              //CHANGE TO ITEM NAME
                               value={
-                                activeIndex === index ? query : item.item_code 
+                                activeIndex === index
+                                  ? query
+                                  : item.products?.item_name
                               }
                               onChange={(e) =>
                                 handleSearchChange(index, e.target.value)
@@ -1286,69 +1225,85 @@ function OrdersTable({ orders, setOrders, customers }) {
                           />
 
                           {/* Price options */}
-                          {item.customPriceEnabled ? (
-                            <div
-                              className="input-group"
-                              style={{ width: "120px" }}
-                            >
-                              <input
-                                type="number"
-                                className="form-control text-center"
-                                value={item.customPrice || ""}
-                                onChange={(e) =>
-                                  updateItem(
-                                    index,
-                                    "customPrice",
-                                    Number(e.target.value)
-                                  )
+                          {(() => {
+                            console.log(
+                              "Enabled?",
+                              index,
+                              ":",
+                              item.customPriceEnabled
+                            );
+                            return item.customPriceEnabled ? (
+                              <div
+                                className="input-group"
+                                style={{ width: "120px" }}
+                              >
+                                <input
+                                  type="number"
+                                  className="form-control text-center"
+                                  value={item.customPrice || ""}
+                                  onChange={(e) =>
+                                    updateItem(
+                                      index,
+                                      "customPrice",
+                                      Number(e.target.value)
+                                    )
+                                  }
+                                  placeholder="Enter price"
+                                  style={{ fontSize: "14px" }}
+                                />
+                                <button
+                                  type="button"
+                                  className="btn border-top border-bottom border-end border-0 bg-white"
+                                  title="Back to list"
+                                  onClick={() =>
+                                    updateItem(
+                                      index,
+                                      "customPriceEnabled",
+                                      false
+                                    )
+                                  }
+                                >
+                                  <IoChevronDown />
+                                </button>
+                              </div>
+                            ) : (
+                              <select
+                                className="form-select"
+                                style={{ width: "120px" }}
+                                value={
+                                  item.customPriceEnabled
+                                    ? "custom"
+                                    : item.price || item.products?.price1 || ""
                                 }
-                                placeholder="Enter price"
-                                style={{ fontSize: "14px" }}
-                              />
-
-                              <button
-                                type="button"
-                                className="btn border-top border-bottom border-end border-0 bg-white"
-                                title="Back to list"
-                                onClick={() => {
-                                  updateItem(
-                                    index,
-                                    "customPriceEnabled",
-                                    false
-                                  );
-                                  updateItem(index, "customPrice", "");
+                                onChange={(e) => {
+                                  const val = e.target.value;
+                                  if (val === "custom") {
+                                    updateItem(
+                                      index,
+                                      "customPriceEnabled",
+                                      true
+                                    );
+                                  } else {
+                                    updateItem(index, "price", Number(val));
+                                  }
                                 }}
                               >
-                                <IoChevronDown />
-                              </button>
-                            </div>
-                          ) : (
-                            <select
-                              className="form-select"
-                              style={{ width: "120px" }}
-                              value={
-                                item.customPriceEnabled
-                                  ? "custom"
-                                  : item.price ?? ""
-                              }
-                              onChange={(e) => {
-                                const val = e.target.value;
-                                if (val === "custom") {
-                                  updateItem(index, "customPriceEnabled", true);
-                                  updateItem(index, "customPrice", "");
-                                } else {
-                                  updateItem(index, "price", Number(val));
-                                }
-                              }}
-                            >
-                              {item.availablePrices?.map((p, i) => (
-                                <option key={i} value={p}>
-                                  ₱{Number(p).toLocaleString()}
-                                </option>
-                              ))}
-                              <option value="custom">Custom...</option>
-                            </select>
-                          )}
+                                {[
+                                  item.products?.price1,
+                                  item.products?.price2,
+                                  item.products?.price3,
+                                  item.products?.price4,
+                                ]
+                                  .filter((p) => p != null)
+                                  .map((p, i) => (
+                                    <option key={i} value={p}>
+                                      ₱{Number(p).toLocaleString()}
+                                    </option>
+                                  ))}
+                                <option value="custom">Custom...</option>
+                              </select>
+                            );
+                          })()}
 
                           {/* Item total */}
                           <div
@@ -1356,13 +1311,13 @@ function OrdersTable({ orders, setOrders, customers }) {
                             style={{ width: "100px" }}
                           >
                             {(() => {
-                              const finalPrice = item.customPriceEnabled
-                                ? Number(item.customPrice)
-                                : Number(item.price);
+                              const price = item.customPriceEnabled
+                                ? Number(item.customPrice || 0)
+                                : Number(item.price || 0);
+                              const total =
+                                price * (Number(item.quantity) || 0);
 
-                              return `₱${(
-                                finalPrice * item.quantity
-                              ).toLocaleString(undefined, {
+                              return `₱${total.toLocaleString(undefined, {
                                 minimumFractionDigits: 2,
                               })}`;
                             })()}
@@ -1395,15 +1350,15 @@ function OrdersTable({ orders, setOrders, customers }) {
                 >
                   <span className="fw-semibold fs-5">Total</span>
                   <span className="fw-bold fs-5">
-                    {editableRow?.orderedItems
-                      ?.reduce((sum, item) => {
-                        const finalPrice = item.customPriceEnabled
-                          ? Number(item.customPrice)
-                          : Number(item.price);
-
-                        return sum + finalPrice * (Number(item.quantity) || 0);
-                      }, 0)
-                      .toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    {(
+                      editableRow?.items?.reduce((sum, item) => {
+                        const price = item.customPriceEnabled
+                          ? Number(item.customPrice || 0)
+                          : Number(item.price || 0);
+                        const quantity = Number(item.quantity || 0);
+                        return sum + price * quantity;
+                      }, 0) || 0
+                    ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </span>
                 </div>
 
@@ -1455,7 +1410,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
-                      Order &gt; Serve &gt; {selectedRow.orderId}
+                      Order &gt; Serve &gt; {selectedRow.order_code}
                     </p>
                     <button
                       type="button"
@@ -1466,7 +1421,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <h5 className="mb-0">
-                      Serve Items for Order {selectedRow.orderId}
+                      Serve Items for {selectedRow.order_code}
                     </h5>
                   </div>
                 </div>
@@ -1476,7 +1431,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                   <h6 className="mb-3">Order Items</h6>
 
                   {/* Header Labels */}
-                  <div className="d-flex gap-2 align-items-center mb-2 pb-2 border-bottom me-4">
+                  <div className="d-flex gap-2 align-items-center mb-2 pb-2 border-bottom w-100 me-4">
                     <div
                       className="flex-grow-1 fw-semibold text-muted"
                       style={{ fontSize: "14px" }}
@@ -1484,19 +1439,14 @@ function OrdersTable({ orders, setOrders, customers }) {
                       Item Name
                     </div>
                     <div
-                      className="text-center fw-semibold text-muted"
+                      className="text-center fw-semibold text-muted me-3"
                       style={{ width: "100px", fontSize: "14px" }}
                     >
-                      Served
+                      To Serve
                     </div>
+
                     <div
-                      className="text-center fw-semibold text-muted"
-                      style={{ width: "100px", fontSize: "14px" }}
-                    >
-                      Unserved
-                    </div>
-                    <div
-                      className="text-center fw-semibold text-muted"
+                      className="text-center fw-semibold text-muted me-2"
                       style={{ width: "80px", fontSize: "14px" }}
                     >
                       Ordered
@@ -1524,20 +1474,22 @@ function OrdersTable({ orders, setOrders, customers }) {
                           >
                             {/* Item Name */}
                             <div className="flex-grow-1 d-flex flex-column">
-                              <span className="fw-medium">{item.itemName}</span>
+                              <span className="fw-medium">
+                                {item.products.item_name}
+                              </span>
                               <small
                                 style={{
                                   fontSize: "14px",
                                   fontWeight: "700",
                                   color:
-                                    item.stock < 5
+                                    item.products.stock < 5
                                       ? "#B64345"
-                                      : item.stock >= 5 && item.stock < 20
+                                      : item.products.stock < 20
                                       ? "#F8B13D"
                                       : "#ACACAC",
                                 }}
                               >
-                                In stock: {item.stock}
+                                In stock: {item.products.stock}
                               </small>
                             </div>
 
@@ -1546,66 +1498,29 @@ function OrdersTable({ orders, setOrders, customers }) {
                               <input
                                 type="number"
                                 min={0}
-                                max={item.quantityOrdered}
-                                value={item.quantityServed}
+                                max={item.quantity}
+                                value={item.quantity_to_serve ?? ""}
                                 onChange={(e) => {
                                   const raw = e.target.value;
+
                                   if (raw === "") {
-                                    updateServeQuantity(
-                                      index,
-                                      "quantityServed",
-                                      ""
-                                    );
+                                    updateServeQuantity(index, "");
                                     return;
                                   }
 
                                   const parsed = Number(raw);
                                   if (Number.isNaN(parsed)) return;
+
                                   const clamped = Math.max(
                                     0,
-                                    Math.min(parsed, item.quantityOrdered)
+                                    Math.min(
+                                      parsed,
+                                      item.quantity,
+                                      item.products.stock
+                                    )
                                   );
-                                  updateServeQuantity(
-                                    index,
-                                    "quantityServed",
-                                    clamped
-                                  );
-                                }}
-                                className="form-control text-center"
-                                placeholder="0"
-                                style={{ width: "100px" }}
-                              />
-                            </div>
 
-                            {/* Unserved */}
-                            <div className="d-flex align-items-center">
-                              <input
-                                type="number"
-                                min={0}
-                                max={item.quantityOrdered}
-                                value={item.quantityUnserved}
-                                onChange={(e) => {
-                                  const raw = e.target.value;
-                                  if (raw === "") {
-                                    updateServeQuantity(
-                                      index,
-                                      "quantityServed",
-                                      ""
-                                    );
-                                    return;
-                                  }
-
-                                  const parsed = Number(raw);
-                                  if (Number.isNaN(parsed)) return;
-                                  const clamped = Math.max(
-                                    0,
-                                    Math.min(parsed, item.quantityOrdered)
-                                  );
-                                  updateServeQuantity(
-                                    index,
-                                    "quantityServed",
-                                    clamped
-                                  );
+                                  updateServeQuantity(index, clamped);
                                 }}
                                 className="form-control text-center"
                                 placeholder="0"
@@ -1616,13 +1531,12 @@ function OrdersTable({ orders, setOrders, customers }) {
                             {/* Ordered */}
                             <div
                               className="d-flex align-items-center justify-content-center fw-semibold"
-                              style={{ width: "80px" }}
+                              style={{ width: "100px" }}
                             >
-                              {item.quantityOrdered}
+                              {item.quantity}
                             </div>
                           </div>
 
-                          {/* Divider line between items, hide for last item */}
                           {index < serveData.items.length - 1 && (
                             <hr className="my-1 border-secondary w-100" />
                           )}
@@ -1648,51 +1562,61 @@ function OrdersTable({ orders, setOrders, customers }) {
                     style={{ backgroundColor: "#246c9d", color: "white" }}
                     onClick={async () => {
                       try {
-                        // ✅ Validate stock before submit
                         for (const item of serveData.items) {
-                          const served = Number(item.quantityServed) || 0;
-                          const stock = Number(item.stock) || 0;
+                          const servedQty = Number(item.quantity_to_serve) || 0;
+                          const stockQty = Number(item.products.stock) || 0;
 
-                          if (served > stock) {
+                          if (servedQty > stockQty) {
                             Swal.fire({
                               icon: "error",
                               title: "Insufficient Stock",
-                              html: `Item <b>${item.itemName}</b> only has <b>${stock}</b> in stock. You tried to serve <b>${served}</b>.`,
+                              html: `Item <b>${item.products.item_name}</b> only has <b>${stockQty}</b> in stock. You tried to serve <b>${servedQty}</b>.`,
                             });
-                            return; // Stop submit
+                            return; // ⛔ Stop submit
                           }
                         }
 
-                        // ✅ If validation passed, continue serving
-                        console.log("Serve button clicked");
-                        console.log("serveData being sent:", serveData);
-
-                        const user = JSON.parse(localStorage.getItem("user"));
-                        const role = user?.role || "";
-
-                        const cleanPayload = {
-                          ...serveData,
-                          items: serveData.items.map(
-                            ({ stock, ...rest }) => rest
-                          ),
+                        // ✅ 3. Remove frontend-only fields (stock)
+                        const servePayload = {
+                          items: serveData.items
+                            .filter(
+                              (item) =>
+                                (Number(item.quantity_to_serve) || 0) > 0
+                            ) // send only served items
+                            .map((item) => ({
+                              item_code: item.products.item_code,
+                              quantity_to_serve: Number(item.quantity_to_serve),
+                            })),
                         };
 
-                        await axios.patch(
-                          `${API_URL}/orders/${selectedRow.orderId}/serve`,
-                          cleanPayload,
-                          { params: { role } }
-                        );
+                        console.log("Serve payload:", servePayload);
 
+                        // ✅ 4. Submit serve request
+                        // Normalize role once
+                        const isAdmin = roleApprove?.toLowerCase() === "admin";
+
+                        // ✅ Submit serve OR request (not both)
+                        if (isAdmin) {
+                          await axios.post(
+                            `${API_URL}/order/${selectedRow.id}/serve`,
+                            servePayload,
+                            { params: { roleApprove } }
+                          );
+                        } else {
+                          await axios.post(
+                            `${API_URL}/order/${selectedRow.id}/request`,
+                            servePayload,
+                            { params: { roleApprove } }
+                          );
+                        }
+
+                        // ✅ Success message
                         Swal.fire({
                           icon: "success",
-                          title:
-                            role.toLowerCase() === "admin"
-                              ? "Served"
-                              : "Requested",
-                          text:
-                            role.toLowerCase() === "admin"
-                              ? "Serve data submitted successfully"
-                              : "Serve data requested successfully",
+                          title: isAdmin ? "Served" : "Requested",
+                          text: isAdmin
+                            ? "Serve data submitted successfully"
+                            : "Serve request submitted successfully",
                           timer: 2000,
                           showConfirmButton: false,
                         });
