@@ -222,6 +222,65 @@ function SupplierInvoicesTable({ allItems }) {
     }
   };
 
+  const handlePostInvoice = async () => {
+    if (!selectedInvoice?.id) return;
+
+    const result = await Swal.fire({
+      icon: "warning",
+      iconColor: "#1E5A84",
+      title: "Post Invoice?",
+      text: `Are you sure you want to post ${selectedInvoice.invoice_number}? This action cannot be undone.`,
+      showCancelButton: true,
+      confirmButtonText: "Yes, Post",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#1E5A84",
+      cancelButtonColor: "#6c757d",
+    });
+
+    if (!result.isConfirmed) return;
+
+    // 🔄 Loading Swal
+    Swal.fire({
+      title: "Posting Invoice",
+      text: "Please wait while we post the invoice...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
+
+    try {
+      await axios.patch(
+        `${API_URL}/supplier-invoice/${selectedInvoice.id}/post`
+      );
+
+      // Update UI state
+      setSelectedInvoice((prev) => ({
+        ...prev,
+        status: "POSTED",
+      }));
+
+      Swal.fire({
+        icon: "success",
+        iconColor: "#1E5A84",
+        title: "Invoice Posted",
+        text: `${selectedInvoice.invoice_number} has been successfully posted.`,
+        confirmButtonColor: "#1E5A84",
+      });
+    } catch (error) {
+      console.error("Error posting invoice:", error);
+
+      Swal.fire({
+        icon: "error",
+        iconColor: "#dc3545",
+        title: "Posting Failed",
+        text:
+          error.response?.data?.message ||
+          "Failed to post invoice. Please try again.",
+        confirmButtonColor: "#1E5A84",
+      });
+    }
+  };
+
   const columns = [
     {
       name: "Invoice ID",
@@ -530,7 +589,9 @@ function SupplierInvoicesTable({ allItems }) {
                             }
                           >
                             <option value="Purchased">Purchased</option>
-                            <option value="Returned">Returned</option>
+                            <option value="Returned" disabled>
+                              Returned (Unavailable)
+                            </option>
                           </select>
                         </div>
 
@@ -987,6 +1048,7 @@ function SupplierInvoicesTable({ allItems }) {
                         borderRadius: "0.5rem 0.5rem 0 0",
                       }}
                     >
+                      {/* Breadcrumb + Close */}
                       <div className="w-100 d-flex justify-content-between align-items-center">
                         <p
                           className="mb-2 opacity-75"
@@ -999,13 +1061,24 @@ function SupplierInvoicesTable({ allItems }) {
                           type="button"
                           className="btn-close btn-close-white p-4"
                           onClick={() => setShowModal(false)}
-                        ></button>
+                        />
                       </div>
 
+                      {/* Title + Post Button */}
                       <div className="w-100 d-flex justify-content-between align-items-center">
                         <h5 className="mb-0">
                           Invoice ID: {selectedInvoice.invoice_number}
                         </h5>
+
+                        {selectedInvoice.status !== "Posted" && (
+                          <button
+                            className="btn btn-sm me-5 btn-light fw-semibold"
+                            style={{ width: "100px"  }}
+                            onClick={handlePostInvoice} // optional handler
+                          >
+                            POST
+                          </button>
+                        )}
                       </div>
                     </div>
 
