@@ -91,18 +91,32 @@ function App() {
     }));
   };
 
-  const handleSearchChange = (e) => {
+  const handleSearchChange = async (e) => {
     const value = e.target.value;
     setQuery(value);
-    if (value.length > 0) {
-      const filtered = allItems.filter(
-        (p) =>
-          p.itemName.toLowerCase().includes(value.toLowerCase()) ||
-          p.itemCode.toLowerCase().includes(value.toLowerCase())
-      );
-      setSuggestions(filtered);
-    } else {
+
+    if (value.trim() === "") {
       setSuggestions([]);
+      return;
+    }
+
+    try {
+      // Fetch full product details from API
+      const res = await axios.get(
+        `${API_URL}/product/details?item_name=${value}`
+      );
+
+      // Map products for dropdown use
+      const itemList = res.data.map((item) => ({
+        ...item,
+        itemCode: item.item_code,
+        itemName: item.item_name,
+        stock: item.stock,
+      }));
+
+      setSuggestions(itemList);
+    } catch (err) {
+      console.error("Failed to fetch items:", err);
     }
   };
 
@@ -234,7 +248,7 @@ function App() {
   //** INVENTORY MODULE **//
 
   const [items, setItems] = useState([]);
-  const [allItems, setAllItems] = useState([]);
+  const [getItem, setGetItem] = useState([]);
 
   useEffect(() => {
     fetchItems();
@@ -275,12 +289,12 @@ function App() {
   };
 
   useEffect(() => {
-    fetchAllItems();
+    fetchGetItems();
   }, []);
 
-  const fetchAllItems = () => {
+  const fetchGetItems = () => {
     axios
-      .get(`${API_URL}/product`)
+      .get(`${API_URL}/product/details?item_name=`)
       .then((response) => {
         const transformedItems = response.data.map((item) => ({
           itemID: item.id,
@@ -299,7 +313,7 @@ function App() {
           unit: item.unit,
           model: item.model,
         }));
-        setAllItems(transformedItems);
+        setGetItem(transformedItems);
       })
       .catch((error) => {
         console.error("Error fetching items from backend:", error);
@@ -563,7 +577,7 @@ function App() {
               />
               <Route
                 path="/supplier/invoices"
-                element={<SupplierInvoicesTable allItems={allItems} />}
+                element={<SupplierInvoicesTable allItems={getItem} />}
               />
               <Route
                 path="/customer"

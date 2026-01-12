@@ -71,7 +71,7 @@ const ProfileModal = ({ user }) => {
                 <input
                   type="text"
                   className="form-control"
-                  value={user?.id || ""}
+                  value={user?.userId || ""}
                   readOnly
                   style={{
                     backgroundColor: "#f8f9fa",
@@ -112,35 +112,12 @@ const ProfileModal = ({ user }) => {
                     className="fas fa-user me-2"
                     style={{ color: "#1E5A84" }}
                   ></i>
-                  First Name
+                  Name
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  value={user?.firstName || ""}
-                  readOnly
-                  style={{
-                    backgroundColor: "#f8f9fa",
-                    border: "1px solid #e9ecef",
-                    borderRadius: "0.5rem",
-                    fontSize: "0.95rem",
-                  }}
-                />
-              </div>
-
-              {/* Last Name */}
-              <div className="col-md-6">
-                <label className="form-label fw-semibold text-muted small">
-                  <i
-                    className="fas fa-user me-2"
-                    style={{ color: "#1E5A84" }}
-                  ></i>
-                  Last Name
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={user?.lastName || ""}
+                  value={user?.name || ""}
                   readOnly
                   style={{
                     backgroundColor: "#f8f9fa",

@@ -115,15 +115,16 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
               type="date"
               className="form-control border border-secondary"
               style={{ width: "150px" }}
-              defaultValue={
-                row.shipDate
-                  ? new Date(row.shipDate).toISOString().slice(0, 10)
-                  : ""
+              value={
+                pendingChanges[`date-${row.id}`] ??
+                (row.shipping_date
+                  ? new Date(row.shipping_date).toISOString().slice(0, 10)
+                  : "")
               }
               onChange={(e) =>
                 setPendingChanges((prev) => ({
                   ...prev,
-                  [`date-${row.invoiceID}`]: e.target.value,
+                  [`date-${row.id}`]: e.target.value,
                 }))
               }
             />
@@ -210,52 +211,108 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
   };
 
   const handleRowClick = async (row) => {
-    setSelectedRow({
-      ...row,
-      items: Array.isArray(row.items) ? [...row.items] : [],
-    });
+    console.log("Clicked row:", row);
+    setSelectedRow(row);
 
-    const invoiceID = row.invoiceID;
-    const orderId = invoiceID.split("-")[1]; // Extract "ORD049"
+    const orderId = row.sales_order_id;
     console.log("Extracted orderId:", orderId);
 
     try {
-      const response = await axios.get(
-        `${API_URL}/inventory/sales-order-history/get-order-id`,
-        { params: { orderId } }
+      // 1️⃣ Get all items for the order
+      const responseOrder = await axios.get(
+        `${API_URL}/order/${orderId}/order-items`
+      );
+      const orderItems = responseOrder.data;
+      console.log("Order Items:", orderItems);
+
+      // 2️⃣ Get all serve-items for this sales order
+      const responseServe = await axios.get(
+        `${API_URL}/order/${orderId}/serve-items`
+      );
+      const serveHistory = responseServe.data;
+      console.log("Serve Items History:", serveHistory);
+
+      if (!serveHistory || serveHistory.length === 0) {
+        console.warn("No serve-items found for this order");
+      }
+
+      // 3️⃣ Fetch product details for each serve-item
+      // 3️⃣ Fetch product details for each serve-item
+      const serveItemsWithDetails = await Promise.all(
+        serveHistory.map(async (serve) => {
+          if (!serve.item_code) {
+            console.log("Serve item missing item_code:", serve.id);
+            return { ...serve, productDetails: null };
+          }
+          try {
+            const productRes = await axios.get(
+              `${API_URL}/product/search?q=${serve.item_code}`
+            );
+            const product = Array.isArray(productRes.data)
+              ? productRes.data[0]
+              : productRes.data; // PICK FIRST ITEM
+
+            return { ...serve, productDetails: product };
+          } catch (err) {
+            console.log(`Failed to fetch product ${serve.item_code}:`, err);
+            return { ...serve, productDetails: null };
+          }
+        })
       );
 
-      const history = response.data;
-      console.log("Sales Order Data History:", history);
+      console.log(
+        "Serve Items with Product Details (single object):",
+        serveItemsWithDetails
+      );
 
-      // 🧩 Merge served/unserved into the selectedRow items
-      const updatedItems = row.items.map((item) => {
-        const match = history.find(
+      // 4️⃣ Merge served/unserved and product details into selectedRow items
+      const updatedItems = orderItems.map((item) => {
+        const match = serveItemsWithDetails.find(
           (h) =>
-            h.itemName?.trim().toLowerCase() ===
-            item.itemName?.trim().toLowerCase()
+            h.productDetails?.item_code?.trim().toLowerCase() ===
+            item.item_code?.trim().toLowerCase()
         );
+
+        console.log(
+          "Matching serve item for order item:",
+          item.item_code,
+          match
+        );
+
         return {
           ...item,
-          served: match ? Number(match.served || 0) : 0,
-          unserved: match ? Number(match.unserved || 0) : 0,
+          served: match ? Number(match.quantity_to_serve || 0) : 0,
+          unserved: match
+            ? Number(
+                (match.quantity_ordered || 0) - (match.quantity_to_serve || 0)
+              )
+            : 0,
+          productDetails: match ? match.productDetails : null,
         };
       });
 
-      console.log("Updated Items:", updatedItems);
+      console.log("Updated Items with Quantities and Details:", updatedItems);
 
-      // Optionally compute totals
+      // 5️⃣ Compute totals
       const servedQty = updatedItems.reduce((sum, i) => sum + i.served, 0);
       const unservedQty = updatedItems.reduce((sum, i) => sum + i.unserved, 0);
 
+      // 6️⃣ Update selectedRow
       setSelectedRow((prev) => ({
         ...prev,
         items: updatedItems,
         servedQty,
         unservedQty,
       }));
+
+      console.log("Final selectedRow:", {
+        ...row,
+        items: updatedItems,
+        servedQty,
+        unservedQty,
+      });
     } catch (error) {
-      console.error("Error fetching Sales Order:", error);
+      console.error("Error fetching Sales Order or product details:", error);
     } finally {
       setShowRowModal(true);
     }
@@ -265,31 +322,36 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     return items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
   };
 
+  //PACKING LIST
   const handlePrint = async () => {
     if (!selectedRow) return;
 
     console.log("selectedRow: ", selectedRow);
 
     try {
-      // Prepare payload
-      const payload = {
-        invoiceID: selectedRow.invoiceID,
-        date: selectedRow.date,
-        customerName: selectedRow.customerName,
-        customerAddress: selectedRow.customerAddress,
-        customerTIN: selectedRow.customerTIN,
-        items: selectedRow.items, // send items array as-is
-      };
-
-      const response = await axios.post(
-        `${API_URL}/list/packing-list`,
-        payload,
-        { responseType: "blob" } // important for PDF
+      // ✅ Get PDF as blob
+      const response = await axios.get(
+        `${API_URL}/print/packing-list/${selectedRow.sales_order_id}`,
+        { responseType: "blob" } // important!
       );
 
+      // ✅ Create a Blob URL
       const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
-      window.open(blobUrl, "_blank");
+
+      // ✅ Open PDF in new tab
+      const newWindow = window.open(blobUrl, "_blank");
+
+      if (!newWindow) {
+        Swal.fire({
+          icon: "warning",
+          title: "Popup Blocked",
+          text: "Please allow popups to view the PDF.",
+        });
+      }
+
+      // Optional: release blob URL after 10 seconds
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 10000);
     } catch (err) {
       console.error("Failed to generate PDF:", err);
       Swal.fire({
@@ -304,17 +366,32 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
   const handlePrintDR = async (type, selectedRow) => {
     if (!selectedRow) return;
 
+    console.log("selectedRow: ", selectedRow);
+
     try {
-      // type should be 'a' or 'b'
-      const response = await axios.post(
-        `${API_URL}/delivery-receipts/${type}`,
-        selectedRow,
-        { responseType: "blob" } // important for PDF
+      // ✅ Get PDF as blob
+      const response = await axios.get(
+        `${API_URL}/print/delivery-receipt/${type}/${selectedRow.id}`,
+        { responseType: "blob" } // important!
       );
 
+      // ✅ Create a Blob URL
       const blob = new Blob([response.data], { type: "application/pdf" });
       const blobUrl = window.URL.createObjectURL(blob);
-      window.open(blobUrl, "_blank");
+
+      // ✅ Open PDF in new tab
+      const newWindow = window.open(blobUrl, "_blank");
+
+      if (!newWindow) {
+        Swal.fire({
+          icon: "warning",
+          title: "Popup Blocked",
+          text: "Please allow popups to view the PDF.",
+        });
+      }
+
+      // Optional: release blob URL after 10 seconds
+      setTimeout(() => window.URL.revokeObjectURL(blobUrl), 10000);
     } catch (err) {
       console.error("Failed to generate PDF:", err);
       Swal.fire({
@@ -334,19 +411,22 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
   };
 
   const handleSave = (row) => {
-    const waybill =
-      pendingChanges[`waybill-${row.invoiceID}`] ?? row.waybillNumber;
-    const courier = pendingChanges[`courier-${row.invoiceID}`] ?? row.courier;
-    const shipDate = pendingChanges[`date-${row.invoiceID}`] ?? row.shipDate;
+    const invoiceNumber =
+      pendingChanges[`invoice-${row.id}`] ?? row.invoice_number;
+    const waybill = pendingChanges[`waybill-${row.id}`] ?? row.waybill_number;
+    const courier = pendingChanges[`courier-${row.id}`] ?? row.courier;
+    const shipDate = pendingChanges[`date-${row.id}`] ?? row.shipping_date;
 
     // Detect unchanged
     const changed = {
-      waybillChanged: !!pendingChanges[`waybill-${row.invoiceID}`],
-      courierChanged: !!pendingChanges[`courier-${row.invoiceID}`],
-      shipDateChanged: !!pendingChanges[`date-${row.invoiceID}`],
+      invoiceChanged: !!pendingChanges[`invoice-${row.id}`],
+      waybillChanged: !!pendingChanges[`waybill-${row.id}`],
+      courierChanged: !!pendingChanges[`courier-${row.id}`],
+      shipDateChanged: !!pendingChanges[`date-${row.id}`],
     };
 
     if (
+      !changed.invoiceChanged &&
       !changed.waybillChanged &&
       !changed.courierChanged &&
       !changed.shipDateChanged
@@ -356,30 +436,25 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     }
 
     const payload = {
+      invoice_number: invoiceNumber,
       waybill_number: waybill,
       courier,
-      shipDate,
+      shipping_date: shipDate,
     };
 
-    console.log(
-      "📤 JSON Payload SENT to backend:",
-      JSON.stringify(payload, null, 2)
-    );
+    console.log("📤 JSON Payload SENT to backend:", payload);
 
     axios
-      .put(`${API_URL}/invoice/${row.invoiceID}/shipping`, {
-        waybillNumber: waybill,
-        courier,
-        shipDate,
-      })
+      .patch(`${API_URL}/invoices/${row.id}`, payload)
       .then(() => {
         const updatedData = filteredData.map((item) =>
-          item.invoiceID === row.invoiceID
+          item.id === row.id
             ? {
                 ...item,
-                waybillNumber: waybill,
+                invoice_number: invoiceNumber,
+                waybill_number: waybill,
                 courier,
-                shipDate,
+                shipping_date: shipDate,
               }
             : item
         );
@@ -387,9 +462,10 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
         setFilteredData(updatedData);
         setPendingChanges((prev) => {
           const updated = { ...prev };
-          delete updated[`waybill-${row.invoiceID}`];
-          delete updated[`courier-${row.invoiceID}`];
-          delete updated[`date-${row.invoiceID}`];
+          delete updated[`invoice-${row.id}`];
+          delete updated[`waybill-${row.id}`];
+          delete updated[`courier-${row.id}`];
+          delete updated[`date-${row.id}`];
           return updated;
         });
 
@@ -398,7 +474,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
         Swal.fire({
           icon: "success",
           title: "Shipping Details Updated",
-          text: `Invoice ${row.invoiceID} updated successfully`,
+          text: `Invoice ${row.id} updated successfully`,
           timer: 1500,
           showConfirmButton: false,
         });
@@ -424,7 +500,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/invoice/${row.invoiceID}`)
+          .delete(`${API_URL}/invoices/${row.invoiceID}`)
           .then((res) => {
             // Remove invoice from table
             setFilteredData((prev) =>
@@ -496,7 +572,8 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                   {/* Invoice Title + Action Buttons */}
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <h5 className="mb-0">
-                      Invoice ID: {selectedRow.invoiceID || selectedRow.orderId}
+                      Invoice ID:{" "}
+                      {selectedRow.order_invoice || selectedRow.order_invoice}
                     </h5>
                     <div className="d-flex gap-2">
                       <button
@@ -571,7 +648,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                             {/* Item Name */}
                             <div className="d-flex align-items-center gap-3">
                               <span className="fw-semibold">
-                                {item.itemName}
+                                {item.productDetails.item_name}
                               </span>
                             </div>
 

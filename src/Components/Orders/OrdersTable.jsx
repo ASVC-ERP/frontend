@@ -749,6 +749,48 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
   };
 
+  const handleInvoice = async (row) => {
+    try {
+      // 🔹 Show loading state
+      Swal.fire({
+        title: "Creating order invoice…",
+        text: "Please wait while we process the invoice.",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
+      await axios.post(`${API_URL}/order/${row.id}/invoice`);
+
+      Swal.close();
+
+      // 🔹 Success feedback
+      Swal.fire({
+        icon: "success",
+        title: "Created!",
+        text: "Sales Invoice has been created successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      fetchOrders();
+    } catch (error) {
+      console.error("[handleInvoice] Error creating invoice:", error);
+      Swal.close();
+
+      // 🔹 More informative error handling
+      const message =
+        error.response?.data?.message ||
+        "Failed to create invoice. Please try again.";
+
+      Swal.fire({
+        icon: "error",
+        title: "Invoice Creation Failed",
+        text: message,
+      });
+    }
+  };
+
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center">
@@ -826,6 +868,18 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                     {/* ACTION BUTTONS */}
                     <div className="d-flex gap-2 ms-auto align-items-center">
+                      {selectedRow?.status?.trim().toLowerCase() ===
+                        "served" && (
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-light"
+                          style={{ color: "#246c9d" }}
+                          onClick={() => handleInvoice(selectedRow)}
+                        >
+                          Create Invoice
+                        </button>
+                      )}
+
                       {selectedRow?.status?.trim().toLowerCase() === "open" && (
                         <button
                           type="button"

@@ -96,12 +96,10 @@ function ItemDetails({ item, onUpdate }) {
   const handleStockUpdate = async () => {
     try {
       const PIC = user.firstName || "";
-      const response = await axios.get(`${API_URL}/inventory/adjust-stock`, {
+      const response = await axios.get(`${API_URL}/product/${item.itemID}/stock`, {
         params: {
-          itemName: item.itemName,
-          PIC: PIC,
-          stock: stockData.newCount,
-          remarks: stockData.remarks,
+          quantity: stockData.newCount,
+          reason: stockData.remarks,
         },
       });
 
