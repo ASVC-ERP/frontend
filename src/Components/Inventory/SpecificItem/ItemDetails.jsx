@@ -8,10 +8,15 @@ function ItemDetails({ item, onUpdate }) {
   const user = JSON.parse(localStorage.getItem("user"));
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState();
+  const [itemData, setItemData] = useState(item);
+
+  useEffect(() => {
+    setItemData(item); // update whenever prop changes
+  }, [item]);
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  console.log("ItemDetails item prop:", item);
+  // console.log("ItemDetails item prop:", item);
 
   const isAdmin = user?.role === "admin";
 
@@ -94,14 +99,16 @@ function ItemDetails({ item, onUpdate }) {
   };
 
   const handleStockUpdate = async () => {
+    console.log("Submitting stock update with data:", stockData);
     try {
       const PIC = user.firstName || "";
-      const response = await axios.get(`${API_URL}/product/${item.itemID}/stock`, {
-        params: {
-          quantity: stockData.newCount,
+      const response = await axios.patch(
+        `${API_URL}/product/${item.itemID}/stock`,
+        {
+          quantity: Number(stockData.newCount),
           reason: stockData.remarks,
-        },
-      });
+        }
+      );
 
       console.log("Stock adjusted successfully:", response.data);
       Swal.fire({
@@ -110,13 +117,25 @@ function ItemDetails({ item, onUpdate }) {
         confirmButtonColor: "#1E5A84",
       });
       setShowStockModal(false);
+
+      setItemData((prev) => ({ ...prev, stock: Number(stockData.newCount) }));
+      
+
+      setStockData((prev) => ({
+        ...prev,
+        currentCount: Number(stockData.newCount),
+        newCount: "",
+        remarks: "",
+      }));
+
       if (onUpdate) {
         if (onUpdate) onUpdate({ ...item, stock: stockData.newCount });
       }
     } catch (err) {
       console.error("Stock adjustment error:", err);
+
       Swal.fire({
-        text: "Error updating stock.",
+        text: err,
         icon: "error",
         confirmButtonColor: "#1E5A84",
       });
@@ -125,7 +144,7 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleEditStockClick = () => {
     setStockData({
-      currentCount: item.stock,
+      currentCount: itemData.stock,
       newCount: "",
       remarks: "",
     });
@@ -138,9 +157,9 @@ function ItemDetails({ item, onUpdate }) {
   const [currentSpecialPrice, setCurrentSpecialPrice] = useState("");
   const [newSpecialPrice, setNewSpecialPrice] = useState("");
 
-  const handleEditSpecialPriceClick = (currentPrice) => {
-    setCurrentSpecialPrice(currentPrice);
-    setNewSpecialPrice(currentPrice);
+  const handleEditSpecialPriceClick = () => {
+    setCurrentSpecialPrice(itemData.price4); // use latest value
+    setNewSpecialPrice(itemData.price4);
     setShowEditSpecialPriceModal(true);
   };
 
@@ -155,16 +174,21 @@ function ItemDetails({ item, onUpdate }) {
     if (!newSpecialPrice) return;
 
     try {
-      const response = await axios.get(`${API_URL}/inventory/update-price`, {
-        params: {
-          itemName: item.itemName,
-          price: newSpecialPrice,
-        },
-      });
+      const response = await axios.patch(
+        `${API_URL}/product/${item.itemID}/price`,
+        {
+          price4: Number(newSpecialPrice),
+        }
+      );
 
       console.log("Price 4 updated successfully:", response.data);
       showAlert("success", "Price 4 updated successfully!");
       handleCloseSpecialPriceModal();
+
+      setCurrentSpecialPrice(Number(newSpecialPrice));
+      setItemData((prev) => ({ ...prev, price4: Number(newSpecialPrice) }));
+      setNewSpecialPrice(Number(newSpecialPrice));
+
       if (onUpdate)
         onUpdate({
           ...item,
@@ -192,7 +216,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="pid"
-            value={item.itemCode}
+            value={itemData.itemCode}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -224,7 +248,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="gPrice"
-            value={item.price1}
+            value={itemData.price1}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -243,7 +267,7 @@ function ItemDetails({ item, onUpdate }) {
               type="text"
               className="form-control form-control-sm me-2 border-dark border-opacity-25"
               id="Stock"
-              value={item.stock}
+              value={itemData.stock}
               style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
@@ -281,7 +305,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="aPrice"
-            value={item.price2}
+            value={itemData.price2}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -330,7 +354,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="bPrice"
-            value={item.price3}
+            value={itemData.price3}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -380,7 +404,7 @@ function ItemDetails({ item, onUpdate }) {
               type="text"
               className="form-control form-control-sm me-2 border-dark border-opacity-25"
               id="sPrice"
-              value={item.price4}
+              value={itemData.price4}
               style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />

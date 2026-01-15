@@ -6,6 +6,7 @@ import { IoIosSearch } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
 import axios from "axios";
 import Swal from "sweetalert2";
+import ServeQuantityInput from "./ServeQantityInput";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
@@ -75,27 +76,32 @@ function OrdersTable({ orders, setOrders, customers }) {
     },
     {
       name: "Status",
-      selector: (row) => row.status, // <-- this enables sorting
+      selector: (row) => row.status, // keeps sorting
       sortable: true,
       grow: 0,
-      minWidth: "100px",
-      cell: (row) => (
-        <span
-          className={`badge ${
-            row.status === "Served"
-              ? "bg-success"
-              : row.status === "Partial Served"
-              ? "bg-info text-dark"
-              : row.status === "Open"
-              ? "bg-warning text-dark"
-              : row.status === "Rejected"
-              ? "bg-danger"
-              : "bg-secondary"
-          }`}
-        >
-          {row.status}
-        </span>
-      ),
+      minWidth: "120px",
+      cell: (row) => {
+        const statusKey = row.status?.trim().toLowerCase();
+
+        const statusStyle = statusColors[statusKey] || {
+          bg: "#6c757d",
+          text: "#fff",
+        };
+
+        return (
+          <span
+            className="badge px-3 py-2 fw-semibold text-uppercase"
+            style={{
+              backgroundColor: statusStyle.bg,
+              color: statusStyle.text,
+              borderRadius: "20px",
+              letterSpacing: "0.5px",
+            }}
+          >
+            {row.status}
+          </span>
+        );
+      },
     },
     {
       name: "Actions",
@@ -144,6 +150,38 @@ function OrdersTable({ orders, setOrders, customers }) {
 
   const MAX_ITEMS = 16;
   const [itemLimitWarning, setItemLimitWarning] = useState(false);
+
+  const statusColors = {
+    open: {
+      bg: "#ffc107", // amber
+      text: "#000",
+    },
+    "for approval": {
+      bg: "#0dcaf0", // cyan
+      text: "#000",
+    },
+    "partial served": {
+      bg: "#fd7e14", // orange
+      text: "#fff",
+    },
+    served: {
+      bg: "#198754", // deep green
+      text: "#fff",
+    },
+    invoiced: {
+      bg: "#0d3b66", // navy
+      text: "#fff",
+    },
+    rejected: {
+      bg: "#dc3545", // red
+      text: "#fff",
+    },
+  };
+  const statusKey = selectedRow?.status?.trim().toLowerCase();
+  const statusStyle = statusColors[statusKey] || {
+    bg: "#6c757d",
+    text: "#fff",
+  };
 
   // Function to fetch orders
   const fetchOrders = () => {
@@ -858,9 +896,22 @@ function OrdersTable({ orders, setOrders, customers }) {
                   <div className="w-100 d-flex justify-content-between align-items-center my-2">
                     {/* LEFT INFO */}
                     <div>
-                      <h5 className="mb-0">
+                      <h5 className="mb-0 d-flex align-items-center">
                         Order Code: {selectedRow?.order_code}
+                        <span
+                          className="badge px-3 py-1 fw-semibold text-uppercase ms-2"
+                          style={{
+                            backgroundColor: statusStyle.bg,
+                            color: statusStyle.text,
+                            borderRadius: "20px",
+                            fontSize: "0.75rem", // slightly larger, readable
+                            letterSpacing: "0.5px",
+                          }}
+                        >
+                          {selectedRow?.status || "Unknown"}
+                        </span>
                       </h5>
+
                       <h5 className="mb-0">
                         Customer: {selectedRow?.customer?.name || "—"}
                       </h5>
@@ -1548,39 +1599,12 @@ function OrdersTable({ orders, setOrders, customers }) {
                             </div>
 
                             {/* Served */}
-                            <div className="d-flex align-items-center">
-                              <input
-                                type="number"
-                                min={0}
-                                max={item.quantity}
-                                value={item.quantity_to_serve ?? ""}
-                                onChange={(e) => {
-                                  const raw = e.target.value;
-
-                                  if (raw === "") {
-                                    updateServeQuantity(index, "");
-                                    return;
-                                  }
-
-                                  const parsed = Number(raw);
-                                  if (Number.isNaN(parsed)) return;
-
-                                  const clamped = Math.max(
-                                    0,
-                                    Math.min(
-                                      parsed,
-                                      item.quantity,
-                                      item.products.stock
-                                    )
-                                  );
-
-                                  updateServeQuantity(index, clamped);
-                                }}
-                                className="form-control text-center"
-                                placeholder="0"
-                                style={{ width: "100px" }}
-                              />
-                            </div>
+                            <ServeQuantityInput
+                              item={item}
+                              index={index}
+                              quantityToServe={item.quantity_to_serve}
+                              updateServeQuantity={updateServeQuantity}
+                            />
 
                             {/* Ordered */}
                             <div

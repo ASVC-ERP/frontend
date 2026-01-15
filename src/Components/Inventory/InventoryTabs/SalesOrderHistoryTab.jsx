@@ -34,10 +34,7 @@ function SalesOrderHistoryTab({ item }) {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${API_URL}/inventory/sales-order-history`,
-          {
-            params: { itemCode },
-          }
+          `${API_URL}/order/${itemCode}/serve-history`
         );
         console.log("Sales Order Data:", response.data);
         setData(response.data);
@@ -53,18 +50,18 @@ function SalesOrderHistoryTab({ item }) {
   }, [itemCode]);
 
   const columns = [
-    { name: "Date", selector: (row) => row.date, sortable: true },
-    { name: "Order ID", selector: (row) => row.orderID, sortable: true },
+    { name: "Date", selector: (row) => row.order_date, sortable: true },
+    { name: "Order ID", selector: (row) => row.order_code, sortable: true },
     {
       name: "Customer Name",
-      selector: (row) => row.customerName,
+      selector: (row) => row.customer_name,
       sortable: true,
     },
-    { name: "Price", selector: (row) => row.price, sortable: true },
-    { name: "Quantity", selector: (row) => row.quantity, sortable: true },
-    { name: "Served", selector: (row) => row.served, sortable: true },
-    { name: "Unserved", selector: (row) => row.unserved, sortable: true },
-    { name: "Total Price", selector: (row) => row.totalPrice, sortable: true },
+    { name: "Price", selector: (row) => row.price, sortable: true }, //price from the order_items
+    { name: "Quantity", selector: (row) => row.quantity_ordered, sortable: true },
+    { name: "Served", selector: (row) => row.quantity_to_serve , sortable: true }, //ordered_quantity - quantity_to_serve
+    { name: "Unserved", selector: (row) => (row.quantity_ordered ?? 0) - (row.quantity_to_serve ?? 0), sortable: true }, 
+    { name: "Total Price", selector: (row) => row.totalPrice, sortable: true }, //price * quantity_ordered
   ];
 
   return (

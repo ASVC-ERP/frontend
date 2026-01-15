@@ -7,10 +7,9 @@ import { useEffect, useState } from "react";
 function Tabs({ item }) {
   const [activeTab, setActiveTab] = useState("tab1");
 
-  useEffect(() => {
-    console.log("Tabs component received item:", item);
-    console.log("Item Name:", item?.itemName);
-  } );
+  // useEffect(() => {
+  //   console.log("Tabs component received item:", item);
+  // } );
 
   return (
     <div>

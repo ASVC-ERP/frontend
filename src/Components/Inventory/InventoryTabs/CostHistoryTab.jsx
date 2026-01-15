@@ -5,7 +5,7 @@ import axios from "axios";
 function CostHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemCode = item?.itemCode || "";
+  const itemID = item?.itemID || "";
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -21,20 +21,30 @@ function CostHistoryTab({ item }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!itemCode) {
+      if (!itemID) {
         setData([]);
         setLoading(false);
         return;
       }
+
       setLoading(true);
       try {
-        const response = await axios.get(`${API_URL}/inventory/cost-history`, {
-          params: { itemCode },
-        });
-        console.log("Cost History Data:", response.data);
-        setData(response.data);
+        console.log("Fetching cost history for item:", itemID);
+
+        const costRes = await axios.get(
+          `${API_URL}/supplier-invoice/costs/${itemID}`
+        );
+
+        console.log("Cost history data:", costRes.data);
+
+        const costData = costRes.data;
+
+        console.log("Final merged data (to setState):", costData);
+
+        setData(costData);
       } catch (error) {
-        console.error("Error fetching cost history:", error);
+        console.error("❌ Error fetching cost history:", error);
+
         setData([]); // Set to empty array on error
       } finally {
         setLoading(false);
@@ -42,83 +52,94 @@ function CostHistoryTab({ item }) {
     };
 
     fetchData();
-  }, [itemCode]);
+  }, [itemID]);
 
   // Define table columns
   const columns = [
     {
       id: 1,
       name: "PO #",
-      selector: (row) => row.poNum,
+      selector: (row) => row.supplier_invoices?.po_number ?? "",
       sortable: true,
       grow: 0.8,
       wrap: true,
     },
+
     {
       id: 2,
       name: "Date",
-      selector: (row) => {
-        if (!row.purchaseDate) return "";
-        const date = new Date(row.purchaseDate);
-        return `${date.getMonth() + 1}/${date.getDate()}/${String(
-          date.getFullYear()
+      selector: (row) =>
+        row.supplier_invoices?.purchase_date
+          ? new Date(row.supplier_invoices.purchase_date).getTime()
+          : 0,
+      cell: (row) => {
+        if (!row.supplier_invoices?.purchase_date) return "";
+        const d = new Date(row.supplier_invoices.purchase_date);
+        return `${d.getMonth() + 1}/${d.getDate()}/${String(
+          d.getFullYear()
         ).slice(-2)}`;
       },
       sortable: true,
       grow: 0.8,
       wrap: true,
     },
+
     {
       id: 3,
       name: "Invoice ID",
-      selector: (row) => row.invoiceID,
+      selector: (row) => row.supplier_invoices?.invoice_number ?? "",
       sortable: true,
       grow: 1,
       wrap: true,
     },
+
     {
       id: 4,
       name: "Quantity",
-      selector: (row) => row.quantity,
+      selector: (row) => Number(row.quantity ?? 0),
       sortable: true,
       grow: 0.8,
       wrap: true,
     },
+
     {
       id: 5,
       name: "Currency",
-      selector: (row) => row.currency,
+      selector: (row) => row.supplier_invoices?.supplier?.currency ?? "",
       sortable: true,
       grow: 0.8,
       wrap: true,
     },
+
     {
       id: 6,
       name: "Conversion Factor",
-      selector: (row) => row.conversionFactor,
+      selector: (row) => Number(row.supplier_invoices?.conversion_factor ?? 0),
       sortable: true,
       wrap: true,
       grow: 1.2,
     },
+
     {
       id: 7,
       name: "Cost",
-      selector: (row) => row.unitCost,
+      selector: (row) => Number(row.unit_cost ?? 0),
+      cell: (row) =>
+        row.unit_cost
+          ? Number(row.unit_cost).toLocaleString(undefined, {
+              minimumFractionDigits: 2,
+            })
+          : "",
       sortable: true,
       wrap: true,
       grow: 1,
-      cell: (row) =>
-        row.unitCost
-          ? `${parseFloat(row.unitCost).toLocaleString(undefined, {
-              minimumFractionDigits: 2,
-            })}`
-          : "",
     },
+
     {
       id: 8,
       name: "Supplier",
-      selector: (row) => row.supplierName,
-      sortable: false,
+      selector: (row) => row.supplier_invoices?.supplier?.name ?? "",
+      sortable: true, // ✅ now sortable safely
       wrap: true,
       grow: 2,
     },
