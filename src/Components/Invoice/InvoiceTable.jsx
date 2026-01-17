@@ -719,7 +719,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                   <p className="mb-0 small">{selectedRow.customerNumber}</p>
                 </div>
                 <p className="text-muted small mb-0">
-                  {new Date(selectedRow.date).toLocaleDateString("en-GB", {
+                  {new Date(selectedRow.invoice_date).toLocaleDateString("en-GB", {
                     day: "2-digit",
                     month: "long",
                     year: "numeric",

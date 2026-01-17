@@ -186,7 +186,7 @@ export default function Sidebar({ onLogout }) {
               className="h6 fw-bolder ms-3 sidebar-text mb-0"
               style={{ color: "#1E5A84" }}
             >
-              Hi, {user.name} 兄!
+              Hi, {user.name}!
             </p>
           </button>
           <ul
