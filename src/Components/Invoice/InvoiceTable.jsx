@@ -177,8 +177,8 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     if (searchTerm.trim() !== "") {
       const filtered = invoices.filter((row) =>
         Object.values(row).some((field) =>
-          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
+          field?.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+        ),
       );
       setFilteredData(filtered);
     } else {
@@ -203,8 +203,8 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
 
     const filtered = invoices.filter((row) =>
       Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
+        field?.toString().toLowerCase().includes(value),
+      ),
     );
 
     setFilteredData(filtered);
@@ -218,35 +218,35 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     console.log("Extracted orderId:", orderId);
 
     try {
-      // 1️⃣ Get all items for the order
-      const responseOrder = await axios.get(
-        `${API_URL}/order/${orderId}/order-items`
-      );
-      const orderItems = responseOrder.data;
-      console.log("Order Items:", orderItems);
+      // 1️⃣ Get invoiced order-items
+      const responseInvoice = await axios.get(`${API_URL}/invoices/${row.id}`);
+      const invoiceData = responseInvoice.data;
 
-      // 2️⃣ Get all serve-items for this sales order
-      const responseServe = await axios.get(
-        `${API_URL}/order/${orderId}/serve-items`
-      );
-      const serveHistory = responseServe.data;
-      console.log("Serve Items History:", serveHistory);
+      console.log("Invoice:", invoiceData);
 
-      if (!serveHistory || serveHistory.length === 0) {
-        console.warn("No serve-items found for this order");
+      const servedItems = invoiceData.items || [];
+      console.log("Served Items from Invoice:", servedItems);
+
+      if (servedItems.length === 0) {
+        setSelectedRow((prev) => ({
+          ...prev,
+          servedItems: [],
+          totalPrice: 0,
+          noServedItems: true, // 👈 optional flag
+        }));
+        return;
       }
 
       // 3️⃣ Fetch product details for each serve-item
-      // 3️⃣ Fetch product details for each serve-item
       const serveItemsWithDetails = await Promise.all(
-        serveHistory.map(async (serve) => {
+        servedItems.map(async (serve) => {
           if (!serve.item_code) {
             console.log("Serve item missing item_code:", serve.id);
             return { ...serve, productDetails: null };
           }
           try {
             const productRes = await axios.get(
-              `${API_URL}/product/search?q=${serve.item_code}`
+              `${API_URL}/product/search?q=${serve.item_code}`,
             );
             const product = Array.isArray(productRes.data)
               ? productRes.data[0]
@@ -257,59 +257,21 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
             console.log(`Failed to fetch product ${serve.item_code}:`, err);
             return { ...serve, productDetails: null };
           }
-        })
+        }),
       );
 
-      console.log(
-        "Serve Items with Product Details (single object):",
-        serveItemsWithDetails
-      );
+      console.log("Served Items with Product Details:", serveItemsWithDetails);
 
-      // 4️⃣ Merge served/unserved and product details into selectedRow items
-      const updatedItems = orderItems.map((item) => {
-        const match = serveItemsWithDetails.find(
-          (h) =>
-            h.productDetails?.item_code?.trim().toLowerCase() ===
-            item.item_code?.trim().toLowerCase()
-        );
-
-        console.log(
-          "Matching serve item for order item:",
-          item.item_code,
-          match
-        );
-
-        return {
-          ...item,
-          served: match ? Number(match.quantity_to_serve || 0) : 0,
-          unserved: match
-            ? Number(
-                (match.quantity_ordered || 0) - (match.quantity_to_serve || 0)
-              )
-            : 0,
-          productDetails: match ? match.productDetails : null,
-        };
-      });
-
-      console.log("Updated Items with Quantities and Details:", updatedItems);
-
-      // 5️⃣ Compute totals
-      const servedQty = updatedItems.reduce((sum, i) => sum + i.served, 0);
-      const unservedQty = updatedItems.reduce((sum, i) => sum + i.unserved, 0);
-
-      // 6️⃣ Update selectedRow
+      // 4️⃣ Update selectedRow with servedItems + totalPrice
       setSelectedRow((prev) => ({
         ...prev,
-        items: updatedItems,
-        servedQty,
-        unservedQty,
+        servedItems: serveItemsWithDetails,
+        totalPrice: getInvoiceTotal(serveItemsWithDetails),
       }));
 
       console.log("Final selectedRow:", {
         ...row,
-        items: updatedItems,
-        servedQty,
-        unservedQty,
+        servedItems: serveItemsWithDetails,
       });
     } catch (error) {
       console.error("Error fetching Sales Order or product details:", error);
@@ -332,7 +294,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
       // ✅ Get PDF as blob
       const response = await axios.get(
         `${API_URL}/print/packing-list/${selectedRow.sales_order_id}`,
-        { responseType: "blob" } // important!
+        { responseType: "blob" }, // important!
       );
 
       // ✅ Create a Blob URL
@@ -372,7 +334,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
       // ✅ Get PDF as blob
       const response = await axios.get(
         `${API_URL}/print/delivery-receipt/${type}/${selectedRow.id}`,
-        { responseType: "blob" } // important!
+        { responseType: "blob" }, // important!
       );
 
       // ✅ Create a Blob URL
@@ -456,7 +418,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                 courier,
                 shipping_date: shipDate,
               }
-            : item
+            : item,
         );
 
         setFilteredData(updatedData);
@@ -504,7 +466,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
           .then((res) => {
             // Remove invoice from table
             setFilteredData((prev) =>
-              prev.filter((item) => item.invoiceID !== row.invoiceID)
+              prev.filter((item) => item.invoiceID !== row.invoiceID),
             );
 
             fetchInvoices();
@@ -641,52 +603,54 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                   style={{ maxHeight: "250px", overflowY: "auto" }}
                 >
                   <ul className="list-unstyled">
-                    {(selectedRow.orderedItems || selectedRow.items || []).map(
-                      (item, index) => (
-                        <li key={index}>
-                          <div className="d-flex justify-content-between align-items-center mb-2">
-                            {/* Item Name */}
-                            <div className="d-flex align-items-center gap-3">
-                              <span className="fw-semibold">
-                                {item.productDetails.item_name}
-                              </span>
-                            </div>
-
-                            {/* Price and Quantity */}
-                            <div className="d-flex flex-column justify-content-center text-end">
-                              <span className="fw-semibold">
-                                ₱
-                                {(item.price * item.quantity).toLocaleString(
-                                  undefined,
-                                  {
-                                    minimumFractionDigits: 2,
-                                  }
-                                )}
-                              </span>
-                              <small className="text-muted">
-                                Qty: {item.quantity} (
-                                <span className="text-success">
-                                  Served: {item.served ?? 0}
-                                </span>{" "}
-                                |{" "}
-                                <span className="text-danger">
-                                  Unserved: {item.unserved ?? 0}
+                    {(selectedRow.servedItems?.length > 0
+                      ? selectedRow.servedItems
+                      : selectedRow.items?.length > 0
+                        ? selectedRow.items
+                        : []
+                    ).length > 0 ? (
+                      (selectedRow.servedItems || selectedRow.items || []).map(
+                        (item, index) => (
+                          <li key={index}>
+                            <div className="d-flex justify-content-between align-items-center mb-2">
+                              {/* Item Name */}
+                              <div className="d-flex align-items-center gap-3">
+                                <span className="fw-semibold">
+                                  {item.productDetails?.item_name ?? "-"}
                                 </span>
-                                )
-                              </small>
-                            </div>
-                          </div>
+                              </div>
 
-                          {/* Divider */}
-                          {index <
-                            (
-                              selectedRow.orderedItems ||
-                              selectedRow.items ||
-                              []
-                            ).length -
-                              1 && <hr className="my-0 border-secondary" />}
-                        </li>
+                              {/* Price and Quantity */}
+                              <div className="d-flex flex-column justify-content-center text-end">
+                                <span className="fw-semibold">
+                                  ₱
+                                  {(
+                                    (item.price ?? 0) * (item.quantity ?? 0)
+                                  ).toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                  })}
+                                </span>
+                                <small className="text-muted">
+                                  Served: {item.quantity ?? 0}
+                                </small>
+                              </div>
+                            </div>
+
+                            {/* Divider */}
+                            {index <
+                              (
+                                selectedRow.servedItems ||
+                                selectedRow.items ||
+                                []
+                              ).length -
+                                1 && <hr className="my-0 border-secondary" />}
+                          </li>
+                        ),
                       )
+                    ) : (
+                      <div className="text-center text-muted p-3">
+                        No served items found.
+                      </div>
                     )}
                   </ul>
                 </div>
@@ -698,12 +662,12 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                     {(
                       selectedRow.totalPrice ||
                       (
-                        selectedRow.orderedItems ||
+                        selectedRow.servedItems ||
                         selectedRow.items ||
                         []
                       ).reduce(
                         (sum, item) => sum + item.price * item.quantity,
-                        0
+                        0,
                       )
                     ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </span>
@@ -719,11 +683,14 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                   <p className="mb-0 small">{selectedRow.customerNumber}</p>
                 </div>
                 <p className="text-muted small mb-0">
-                  {new Date(selectedRow.invoice_date).toLocaleDateString("en-GB", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
+                  {new Date(selectedRow.invoice_date).toLocaleDateString(
+                    "en-GB",
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    },
+                  )}
                 </p>
               </div>
             </div>

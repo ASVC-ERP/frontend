@@ -38,14 +38,14 @@ function InventoryTable({
   const columns = [
     {
       name: "Product Code",
-      selector: (row) => row.itemCode,
+      selector: (row) => row.itemCode || row.item_code,
       sortable: true,
       grow: 2,
       minWidth: "150px",
     },
     {
       name: "Product Name",
-      selector: (row) => row.itemName,
+      selector: (row) => row.itemName || row.item_name,
       sortable: true,
       grow: 3,
       minWidth: "200px",
@@ -138,19 +138,29 @@ function InventoryTable({
   }, [onRefreshItems, searchTerm]);
 
   // 🔍 Handle search input change
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-    localStorage.setItem("searchTerm", value);
+ const handleSearch = async (event) => {
+  const value = event.target.value; // 👈 get the actual input value
+  setSearchTerm(value);
+  localStorage.setItem("searchTerm", value);
 
-    const filtered = Object.values(products).filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
-    );
+  try {
+    const res = await axios.get(`${API_URL}/product/page`, {
+      params: {
+        page: 1,
+        limit: 50,
+        search: value || undefined, // 👈 send the string to backend
+      },
+    });
 
-    setFilteredData(filtered);
-  };
+    console.log("Search response:", res.data.data);
+
+    setFilteredData(res.data.data); // adjust if your API returns differently
+  } catch (err) {
+    console.error("Search failed", err);
+  }
+};
+
+
 
   useEffect(() => {
     const checkDuplicate = async () => {

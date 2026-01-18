@@ -190,7 +190,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     const endpoint =
       roleApprove === "agent"
         ? `${API_URL}/order?agent=${encodeURIComponent(
-            user.firstName + " " + user.lastName
+            user.firstName + " " + user.lastName,
           )}`
         : `${API_URL}/order`;
 
@@ -203,8 +203,11 @@ function OrdersTable({ orders, setOrders, customers }) {
         if (searchTerm.trim() !== "") {
           const filtered = res.data.filter((row) =>
             Object.values(row).some((field) =>
-              field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-            )
+              field
+                ?.toString()
+                .toLowerCase()
+                .includes(searchTerm.toLowerCase()),
+            ),
           );
           setFilteredData(filtered);
         } else {
@@ -239,7 +242,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
 
     const filtered = customers.filter((c) =>
-      c.name.toLowerCase().includes(customerQuery.toLowerCase())
+      c.name.toLowerCase().includes(customerQuery.toLowerCase()),
     );
 
     setCustomerSuggestions(filtered);
@@ -276,8 +279,8 @@ function OrdersTable({ orders, setOrders, customers }) {
 
     const filtered = orders.filter((row) =>
       Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
+        field?.toString().toLowerCase().includes(value),
+      ),
     );
 
     setFilteredData(filtered);
@@ -325,7 +328,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
       // Fetch order items
       const response = await axios.get(
-        `${API_URL}/order/${row.id}/order-items`
+        `${API_URL}/order/${row.id}/order-items`,
       );
       const orderedItems = response.data;
 
@@ -333,7 +336,7 @@ function OrdersTable({ orders, setOrders, customers }) {
         const match = inventory.find(
           (inv) =>
             inv.item_code?.trim().toLowerCase() ===
-            ordered.item_code?.trim().toLowerCase()
+            ordered.item_code?.trim().toLowerCase(),
         );
 
         // 🔑 Convert price columns to array
@@ -500,10 +503,10 @@ function OrdersTable({ orders, setOrders, customers }) {
 
       // 🔹 Update frontend state
       setOrders((prev) =>
-        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o))
+        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o)),
       );
       setFilteredData((prev) =>
-        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o))
+        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o)),
       );
       setSelectedRow({ ...selectedRow, ...payload });
       setEditableRow({ ...editableRow, ...payload });
@@ -580,7 +583,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     try {
       // Fetch full product details from API
       const res = await axios.get(
-        `${API_URL}/product/details?item_name=${value}`
+        `${API_URL}/product/details?item_name=${value}`,
       );
 
       // Map products for dropdown use
@@ -589,7 +592,7 @@ function OrdersTable({ orders, setOrders, customers }) {
         itemCode: item.item_code,
         itemName: item.item_name,
         prices: [item.price1, item.price2, item.price3, item.price4].filter(
-          (p) => p != null
+          (p) => p != null,
         ),
       }));
 
@@ -648,7 +651,7 @@ function OrdersTable({ orders, setOrders, customers }) {
       // ✅ Get PDF as blob
       const response = await axios.get(
         `${API_URL}/print/sales-order/${selectedRow.id}`,
-        { responseType: "blob" } // important!
+        { responseType: "blob" }, // important!
       );
 
       // ✅ Create a Blob URL
@@ -919,8 +922,10 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                     {/* ACTION BUTTONS */}
                     <div className="d-flex gap-2 ms-auto align-items-center">
-                      {selectedRow?.status?.trim().toLowerCase() ===
-                        "served" && (
+                      {(selectedRow?.status?.trim().toLowerCase() ===
+                        "served" ||
+                        selectedRow?.status?.trim().toLowerCase() ===
+                          "partial served") && (
                         <button
                           type="button"
                           className="btn btn-sm btn-light"
@@ -942,8 +947,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                         </button>
                       )}
 
-                      {selectedRow?.status?.trim().toLowerCase() !==
-                        "served" && (
+                      {(selectedRow?.status?.trim().toLowerCase() !==
+                        "served" &&
+                        selectedRow?.status?.trim().toLowerCase() !==
+                          "partial served") && (
                         <button
                           type="button"
                           className="btn btn-sm btn-light"
@@ -1042,7 +1049,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     <>
                                       {" "}
                                       (
-                                      <span className="text-success">
+                                      <span className="text-primary">
                                         To Serve:{" "}
                                         {item.serve_items.quantity_to_serve ??
                                           0}
@@ -1056,8 +1063,9 @@ function OrdersTable({ orders, setOrders, customers }) {
                                       )
                                     </>
                                   )}
-                                  {selectedRow.status === "Partial Served" && (
-                                    <span className="text-primary">
+                                  {(selectedRow.status === "Partial Served" ||
+                                    selectedRow.status === "Served") && (
+                                    <span className="text-success">
                                       {" "}
                                       (Served:{" "}
                                       {item.serve_items?.quantity_to_serve ?? 0}
@@ -1335,7 +1343,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                               "Enabled?",
                               index,
                               ":",
-                              item.customPriceEnabled
+                              item.customPriceEnabled,
                             );
                             return item.customPriceEnabled ? (
                               <div
@@ -1350,7 +1358,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     updateItem(
                                       index,
                                       "customPrice",
-                                      Number(e.target.value)
+                                      Number(e.target.value),
                                     )
                                   }
                                   placeholder="Enter price"
@@ -1364,7 +1372,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     updateItem(
                                       index,
                                       "customPriceEnabled",
-                                      false
+                                      false,
                                     )
                                   }
                                 >
@@ -1386,7 +1394,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     updateItem(
                                       index,
                                       "customPriceEnabled",
-                                      true
+                                      true,
                                     );
                                   } else {
                                     updateItem(index, "price", Number(val));
@@ -1493,6 +1501,7 @@ function OrdersTable({ orders, setOrders, customers }) {
       )}
 
       {/* SERVE MODAL */}
+
       {showServeModal && selectedRow && (
         <>
           {/* Backdrop */}
@@ -1590,8 +1599,8 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     item.products.stock < 5
                                       ? "#B64345"
                                       : item.products.stock < 20
-                                      ? "#F8B13D"
-                                      : "#ACACAC",
+                                        ? "#F8B13D"
+                                        : "#ACACAC",
                                 }}
                               >
                                 In stock: {item.products.stock}
@@ -1654,13 +1663,29 @@ function OrdersTable({ orders, setOrders, customers }) {
                           }
                         }
 
+                        // ✅ ADD: block submit if ALL served quantities are 0
+                        const hasAnyServe = serveData.items.some(
+                          (item) => (Number(item.quantity_to_serve) || 0) > 0,
+                        );
+
+                        if (!hasAnyServe) {
+                          Swal.fire({
+                            icon: "warning",
+                            iconColor: "#1E5A84",
+                            title: "Nothing to Serve",
+                            text: "Please enter a quantity to serve for at least one item.",
+                            confirmButtonColor: "#246c9d",
+                          });
+                          return; // ⛔ Stop submit
+                        }
+
                         // ✅ 3. Remove frontend-only fields (stock)
                         const servePayload = {
                           items: serveData.items
                             .filter(
                               (item) =>
-                                (Number(item.quantity_to_serve) || 0) > 0
-                            ) // send only served items
+                                (Number(item.quantity_to_serve) || 0) > 0,
+                            )
                             .map((item) => ({
                               item_code: item.products.item_code,
                               quantity_to_serve: Number(item.quantity_to_serve),
@@ -1670,25 +1695,22 @@ function OrdersTable({ orders, setOrders, customers }) {
                         console.log("Serve payload:", servePayload);
 
                         // ✅ 4. Submit serve request
-                        // Normalize role once
                         const isAdmin = roleApprove?.toLowerCase() === "admin";
 
-                        // ✅ Submit serve OR request (not both)
                         if (isAdmin) {
                           await axios.post(
                             `${API_URL}/order/${selectedRow.id}/serve`,
                             servePayload,
-                            { params: { roleApprove } }
+                            { params: { roleApprove } },
                           );
                         } else {
                           await axios.post(
                             `${API_URL}/order/${selectedRow.id}/request`,
                             servePayload,
-                            { params: { roleApprove } }
+                            { params: { roleApprove } },
                           );
                         }
 
-                        // ✅ Success message
                         Swal.fire({
                           icon: "success",
                           title: isAdmin ? "Served" : "Requested",

@@ -21,12 +21,12 @@ function ItemDetails({ item, onUpdate }) {
   const isAdmin = user?.role === "admin";
 
   const [formData, setFormData] = useState({
-    itemCode: item.itemCode || "",
-    itemName: item.itemName || "",
-    partNum: item.partNum || "",
-    interNum: item.interNum || "",
+    itemCode: item.itemCode || item.item_code || "",
+    itemName: item.itemName || item.item_name || "",
+    partNum: item.partNum || item.part_num || "",
+    interNum: item.interNum || item.internal_num || "",
     unit: item.unit || "",
-    minStock: item.minStock || "",
+    minStock: item.minStock || item.min_stock || "",
     origin: item.origin || "",
     model: item.model || "",
     brand: item.brand || "",
@@ -37,12 +37,12 @@ function ItemDetails({ item, onUpdate }) {
 
   useEffect(() => {
     setFormData({
-      itemCode: item.itemCode || "",
-      itemName: item.itemName || "",
-      partNum: item.partNum || "",
-      interNum: item.interNum || "",
+      itemCode: item.itemCode || item.item_code || "",
+      itemName: item.itemName || item.item_name || "",
+      partNum: item.partNum || item.part_num || "",
+      interNum: item.interNum || item.internal_num || "",
       unit: item.unit || "",
-      minStock: item.minStock || "",
+      minStock: item.minStock || item.min_stock || "",
       origin: item.origin || "",
       model: item.model || "",
       brand: item.brand || "",
@@ -63,12 +63,12 @@ function ItemDetails({ item, onUpdate }) {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          item_code: item.itemCode,
-          item_name: formData.itemName,
+          item_code: item.itemCode || item.item_code,
+          item_name: formData.itemName || formData.item_name,
           brand: formData.brand,
-          min_stock: Number(formData.minStock),
-          part_num: formData.partNum,
-          internal_num: formData.interNum,
+          min_stock: Number(formData.minStock) || Number(formData.min_stock),
+          part_num: formData.partNum || formData.part_num,
+          internal_num: formData.interNum || formData.internal_num,
           unit: formData.unit,
           model: formData.model,
           origin: formData.origin,
@@ -216,7 +216,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="pid"
-            value={itemData.itemCode}
+            value={itemData.itemCode || itemData.item_code}
             style={{ backgroundColor: "#e9ecef" }}
             readOnly
           />
@@ -231,7 +231,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="itemName"
-            value={formData.itemName}
+            value={formData.itemName || formData.item_name}
             onChange={handleChange}
             readOnly={!isAdmin}
             style={{
@@ -288,7 +288,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="minStock"
-            value={formData.minStock}
+            value={formData.minStock || formData.min_stock}
             onChange={handleChange}
             readOnly={!isAdmin}
             style={{
@@ -322,7 +322,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="partNum"
-            value={formData.partNum}
+            value={formData.partNum || formData.part_num}
             onChange={handleChange}
             readOnly={!isAdmin}
             style={{
@@ -371,7 +371,7 @@ function ItemDetails({ item, onUpdate }) {
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
             id="interNum"
-            value={formData.interNum}
+            value={formData.interNum || formData.internal_num}
             onChange={handleChange}
             readOnly={!isAdmin}
             style={{
