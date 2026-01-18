@@ -107,7 +107,7 @@ function ItemDetails({ item, onUpdate }) {
         {
           quantity: Number(stockData.newCount),
           reason: stockData.remarks,
-        }
+        },
       );
 
       console.log("Stock adjusted successfully:", response.data);
@@ -119,7 +119,6 @@ function ItemDetails({ item, onUpdate }) {
       setShowStockModal(false);
 
       setItemData((prev) => ({ ...prev, stock: Number(stockData.newCount) }));
-      
 
       setStockData((prev) => ({
         ...prev,
@@ -175,10 +174,10 @@ function ItemDetails({ item, onUpdate }) {
 
     try {
       const response = await axios.patch(
-        `${API_URL}/product/${item.itemID}/price`,
+        `${API_URL}/product/${item.itemID || item.id}/price`,
         {
           price4: Number(newSpecialPrice),
-        }
+        },
       );
 
       console.log("Price 4 updated successfully:", response.data);
@@ -630,17 +629,17 @@ function ItemDetails({ item, onUpdate }) {
                         parseInt(stockData.currentCount)
                           ? "rgba(25, 135, 84, 0.1)"
                           : parseInt(stockData.newCount) <
-                            parseInt(stockData.currentCount)
-                          ? "rgba(220, 53, 69, 0.1)"
-                          : "rgba(12, 29, 97, 0.05)",
+                              parseInt(stockData.currentCount)
+                            ? "rgba(220, 53, 69, 0.1)"
+                            : "rgba(12, 29, 97, 0.05)",
                       border: `1px solid ${
                         parseInt(stockData.newCount) >
                         parseInt(stockData.currentCount)
                           ? "rgba(25, 135, 84, 0.2)"
                           : parseInt(stockData.newCount) <
-                            parseInt(stockData.currentCount)
-                          ? "rgba(220, 53, 69, 0.2)"
-                          : "rgba(12, 29, 97, 0.1)"
+                              parseInt(stockData.currentCount)
+                            ? "rgba(220, 53, 69, 0.2)"
+                            : "rgba(12, 29, 97, 0.1)"
                       }`,
                     }}
                   >
@@ -651,9 +650,9 @@ function ItemDetails({ item, onUpdate }) {
                           parseInt(stockData.currentCount)
                             ? "fa-arrow-up text-success"
                             : parseInt(stockData.newCount) <
-                              parseInt(stockData.currentCount)
-                            ? "fa-arrow-down text-danger"
-                            : "fa-equals"
+                                parseInt(stockData.currentCount)
+                              ? "fa-arrow-down text-danger"
+                              : "fa-equals"
                         } me-2`}
                       ></i>
                       <small className="text-muted">
@@ -922,17 +921,17 @@ function ItemDetails({ item, onUpdate }) {
                           parseFloat(currentSpecialPrice)
                             ? "rgba(25, 135, 84, 0.1)"
                             : parseFloat(newSpecialPrice) >
-                              parseFloat(currentSpecialPrice)
-                            ? "rgba(255, 193, 7, 0.1)"
-                            : "rgba(12, 29, 97, 0.05)",
+                                parseFloat(currentSpecialPrice)
+                              ? "rgba(255, 193, 7, 0.1)"
+                              : "rgba(12, 29, 97, 0.05)",
                         border: `1px solid ${
                           parseFloat(newSpecialPrice) <
                           parseFloat(currentSpecialPrice)
                             ? "rgba(25, 135, 84, 0.2)"
                             : parseFloat(newSpecialPrice) >
-                              parseFloat(currentSpecialPrice)
-                            ? "rgba(255, 193, 7, 0.2)"
-                            : "rgba(12, 29, 97, 0.1)"
+                                parseFloat(currentSpecialPrice)
+                              ? "rgba(255, 193, 7, 0.2)"
+                              : "rgba(12, 29, 97, 0.1)"
                         }`,
                       }}
                     >
@@ -943,9 +942,9 @@ function ItemDetails({ item, onUpdate }) {
                             parseFloat(currentSpecialPrice)
                               ? "fa-arrow-down text-success"
                               : parseFloat(newSpecialPrice) >
-                                parseFloat(currentSpecialPrice)
-                              ? "fa-arrow-up text-warning"
-                              : "fa-equals text-secondary"
+                                  parseFloat(currentSpecialPrice)
+                                ? "fa-arrow-up text-warning"
+                                : "fa-equals text-secondary"
                           } me-2`}
                         ></i>
                         <small className="text-muted">
