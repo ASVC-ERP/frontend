@@ -9,6 +9,7 @@ function SalesOrderHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const itemCode = item?.itemCode || "";
+  const itemId = item?.id || 0;
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -26,7 +27,7 @@ function SalesOrderHistoryTab({ item }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!itemCode) {
+      if (!itemId) {
         setData([]);
         setLoading(false);
         return;
@@ -34,7 +35,7 @@ function SalesOrderHistoryTab({ item }) {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${API_URL}/order/${itemCode}/serve-history`
+          `${API_URL}/order/${itemId}/serve-history`
         );
         console.log("Sales Order Data:", response.data);
         setData(response.data);
@@ -47,7 +48,7 @@ function SalesOrderHistoryTab({ item }) {
     };
 
     fetchData();
-  }, [itemCode]);
+  }, [itemId]);
 
   const columns = [
     { name: "Date", selector: (row) => row.order_date, sortable: true },

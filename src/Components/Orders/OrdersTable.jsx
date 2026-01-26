@@ -18,7 +18,7 @@ const API_URL = import.meta.env.VITE_API_URL;
 function OrdersTable({ orders, setOrders, customers }) {
   const customerMap = useMemo(() => {
     return customers.reduce((acc, customer) => {
-      acc[customer.cid] = customer;
+      acc[customer.id] = customer;
       return acc;
     }, {});
   }, [customers]);
@@ -34,7 +34,7 @@ function OrdersTable({ orders, setOrders, customers }) {
   const columns = [
     {
       name: "Order ID",
-      selector: (row) => row.order_code,
+      selector: (row) => row.id,
       sortable: true,
       grow: 0,
       minWidth: "130px",
@@ -125,7 +125,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     },
   ];
 
-  const [filteredData, setFilteredData] = useState(orders);
+  const [filteredData, setFilteredData] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   const [selectedRow, setSelectedRow] = useState(null);
@@ -186,18 +186,20 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Function to fetch orders
   const fetchOrders = () => {
     const user = JSON.parse(localStorage.getItem("user"));
-
-    const endpoint =
+    console.log("enterhere");
+    const endpoint = `${API_URL}/order`; 
+    /*
+    
       roleApprove === "agent"
         ? `${API_URL}/order?agent=${encodeURIComponent(
             user.firstName + " " + user.lastName,
           )}`
         : `${API_URL}/order`;
-
+    */
     axios
       .get(endpoint)
       .then((res) => {
-        setOrders(res.data);
+        setOrders(res.data.data);
 
         // ✅ Preserve search filter if user is currently searching
         if (searchTerm.trim() !== "") {
@@ -211,7 +213,7 @@ function OrdersTable({ orders, setOrders, customers }) {
           );
           setFilteredData(filtered);
         } else {
-          setFilteredData(res.data);
+          setFilteredData(res.data.data);
         }
       })
       .catch((err) => {

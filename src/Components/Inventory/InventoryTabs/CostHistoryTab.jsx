@@ -105,7 +105,7 @@ function CostHistoryTab({ item }) {
     {
       id: 5,
       name: "Currency",
-      selector: (row) => row.supplier_invoices?.supplier?.currency ?? "",
+      selector: (row) => row.supplier_invoices?.suppliers?.currency ?? "",
       sortable: true,
       grow: 0.8,
       wrap: true,
@@ -138,7 +138,7 @@ function CostHistoryTab({ item }) {
     {
       id: 8,
       name: "Supplier",
-      selector: (row) => row.supplier_invoices?.supplier?.name ?? "",
+      selector: (row) => row.supplier_invoices?.suppliers?.name ?? "",
       sortable: true, // ✅ now sortable safely
       wrap: true,
       grow: 2,

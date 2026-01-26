@@ -67,7 +67,7 @@ function App() {
     axios
       .get(`${API_URL}/order`)
       .then((res) => {
-        setOrders(res.data);
+        setOrders(res.data.data);
       })
       .catch((err) => {
         console.error("Error fetching orders:", err);
@@ -235,7 +235,7 @@ function App() {
 
   const fetchInvoices = () => {
     axios
-      .get(`${API_URL}/invoices`)
+      .get(`${API_URL}/invoice`)
       .then((response) => {
         setInvoices(response.data);
       })
@@ -256,7 +256,7 @@ function App() {
 
   const fetchItems = () => {
     axios
-      .get(`${API_URL}/product/page/`, {
+      .get(`${API_URL}/product/`, {
         params: {
           page: page,
           limit: limit,
@@ -287,7 +287,7 @@ function App() {
         console.error("Error fetching items from backend:", error);
       });
   };
-
+/*
   useEffect(() => {
     fetchGetItems();
   }, []);
@@ -319,6 +319,7 @@ function App() {
         console.error("Error fetching items from backend:", error);
       });
   };
+*/
 
   const handleAddItem = async (newItem) => {
     console.log("📦 Submitting item in App:", newItem);
@@ -585,6 +586,11 @@ function App() {
                   <Customer
                     customers={customers}
                     onRefreshCustomers={fetchCustomers}
+                    page={page}
+                    setPage={setPage}
+                    limit={limit}
+                    setLimit={setLimit}
+                    totalRows={totalRows}
                   />
                 }
               />

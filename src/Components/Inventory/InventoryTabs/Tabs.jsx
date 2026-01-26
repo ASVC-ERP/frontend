@@ -16,7 +16,7 @@ function Tabs({ item }) {
       <ul className="nav nav-tabs mt-2" id="item-details-tabs" role="tablist">
         <li className="nav-item" role="presentation">
           <button
-            className="nav-link active"
+            className={`nav-link ${activeTab === "tab1" ? "active" : ""}`}
             id="tab1-tab"
             data-bs-toggle="tab"
             data-bs-target="#tab1"
@@ -93,14 +93,14 @@ function Tabs({ item }) {
       </ul>
 
       {/* tab content */}
-      <div className="tab-content ">
-        <div className="tab-pane fade show active" id="tab1" role="tabpanel">
+      <div className="tab-content">
+        <div className={`tab-pane fade ${activeTab === "tab1" ? "show active" : ""}`}>
           <CostHistoryTab item={item} />
         </div>
-        <div className="tab-pane fade" id="tab2" role="tabpanel">
+        <div className={`tab-pane fade ${activeTab === "tab2" ? "show active" : ""}`}>
           <SalesOrderHistoryTab item={item}/>
         </div>
-        <div className="tab-pane fade" id="tab3" role="tabpanel">
+        <div className={`tab-pane fade ${activeTab === "tab3" ? "show active" : ""}`}>
           <PhysicalCountTab item={item}/>
         </div>
       </div>

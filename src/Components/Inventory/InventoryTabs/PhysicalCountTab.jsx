@@ -6,6 +6,7 @@ function PhysicalCountTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const itemCode = item?.itemCode || "";
+  const itemId = item?.id || 0;
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -23,7 +24,7 @@ function PhysicalCountTab({ item }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      if (!itemCode) {
+      if (!itemId) {
         setData([]);
         setLoading(false);
         return;
@@ -31,9 +32,9 @@ function PhysicalCountTab({ item }) {
       setLoading(true);
       try {
         const response = await axios.get(
-          `${API_URL}/inventory/physical-count`,
+          `${API_URL}/product/${itemId}/stock-adjustments`,
           {
-            params: { itemCode },
+            params: { itemId },
           }
         );
         console.log("Physical Count Data:", response.data);
@@ -47,7 +48,7 @@ function PhysicalCountTab({ item }) {
     };
 
     fetchData();
-  }, [itemCode]);
+  }, [itemId]);
 
   // Define table columns
  const columns = [
