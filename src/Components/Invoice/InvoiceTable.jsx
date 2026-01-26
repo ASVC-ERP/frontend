@@ -7,13 +7,8 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";
 
-function InvoiceTable({ invoices, fetchInvoices, customers }) {
-  const customerMap = useMemo(() => {
-    return customers.reduce((acc, customer) => {
-      acc[customer.cid] = customer;
-      return acc;
-    }, {});
-  }, [customers]);
+function InvoiceTable({ invoices, fetchInvoices }) {
+
 
   const columns = [
     {
@@ -38,7 +33,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     },
     {
       name: "Customer Name",
-      selector: (row) => customerMap[row.cid]?.name || "—",
+      selector: (row) => row.customers.name || "—",
       sortable: true,
       grow: 1,
       minWidth: "200px",
@@ -46,7 +41,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     },
     {
       name: "PIC",
-      selector: (row) => row.sales_agent,
+      selector: (row) => row.users.name,
       sortable: true,
       grow: 0,
       width: "140px",
@@ -183,6 +178,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
       setFilteredData(filtered);
     } else {
       setFilteredData(invoices);
+      console.log("Invoices data refreshed:", invoices);
     }
   }, [invoices, searchTerm]);
 
@@ -214,12 +210,12 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
     console.log("Clicked row:", row);
     setSelectedRow(row);
 
-    const orderId = row.sales_order_id;
+    const orderId = row.order_id;
     console.log("Extracted orderId:", orderId);
 
     try {
       // 1️⃣ Get invoiced order-items
-      const responseInvoice = await axios.get(`${API_URL}/invoices/${row.id}`);
+      const responseInvoice = await axios.get(`${API_URL}/invoice/${row.id}`);
       const invoiceData = responseInvoice.data;
 
       console.log("Invoice:", invoiceData);
@@ -242,7 +238,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
         servedItems.map(async (serve) => {
           if (!serve.item_code) {
             console.log("Serve item missing item_code:", serve.id);
-            return { ...serve, productDetails: null };
+            return { ...serve };
           }
           try {
             const productRes = await axios.get(
@@ -252,10 +248,10 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
               ? productRes.data[0]
               : productRes.data; // PICK FIRST ITEM
 
-            return { ...serve, productDetails: product };
+            return { ...serve};
           } catch (err) {
             console.log(`Failed to fetch product ${serve.item_code}:`, err);
-            return { ...serve, productDetails: null };
+            return { ...serve};
           }
         }),
       );
@@ -616,7 +612,7 @@ function InvoiceTable({ invoices, fetchInvoices, customers }) {
                               {/* Item Name */}
                               <div className="d-flex align-items-center gap-3">
                                 <span className="fw-semibold">
-                                  {item.productDetails?.item_name ?? "-"}
+                                  {item.products?.item_name ?? "-"}
                                 </span>
                               </div>
 

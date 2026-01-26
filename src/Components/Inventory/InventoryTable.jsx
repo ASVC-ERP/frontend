@@ -144,7 +144,7 @@ function InventoryTable({
   localStorage.setItem("searchTerm", value);
 
   try {
-    const res = await axios.get(`${API_URL}/product/page`, {
+    const res = await axios.get(`${API_URL}/product`, {
       params: {
         page: 1,
         limit: 50,
@@ -366,7 +366,7 @@ function InventoryTable({
           <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
           <input
             type="text"
-            placeholder="Search inventory"
+            placeholder="Search item code or name"
             value={searchTerm}
             onChange={handleSearch}
             className="form-control ps-5 border-2 rounded-3"

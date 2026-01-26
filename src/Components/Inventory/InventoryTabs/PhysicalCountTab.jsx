@@ -54,37 +54,37 @@ function PhysicalCountTab({ item }) {
  const columns = [
   {
     name: "From Quantity",
-    selector: (row) => row.fromQuantity,
+    selector: (row) => row.from_quantity,
     sortable: true,
     width: "150px", // fixed width
   },
   {
     name: "To Quantity",
-    selector: (row) => row.toQuantity,
+    selector: (row) => row.to_quantity,
     sortable: true,
     width: "120px",
   },
   {
     name: "Adjusted Quantity",
-    selector: (row) => row.adjustedQuantity,
+    selector: (row) => row.adjusted_quantity,
     sortable: true,
     width: "150px",
   },
   {
     name: "Date",
-    selector: (row) => row.Date,
+    selector: (row) => row.created_at,
     sortable: true,
     width: "150px",
   },
   {
     name: "PIC",
-    selector: (row) => row.PIC,
+    selector: (row) => row.pic,
     sortable: true,
     width: "150px",
   },
   {
     name: "Remarks",
-    selector: (row) => row.Remarks,
+    selector: (row) => row.remarks,
     sortable: true,
     cell: (row) => (
       <div
@@ -93,9 +93,9 @@ function PhysicalCountTab({ item }) {
           overflow: "hidden",
           textOverflow: "ellipsis",
         }}
-        title={row.Remarks} // full text on hover
+        title={row.remarks} // full text on hover
       >
-        {row.Remarks}
+        {row.remarks}
       </div>
     ),
   },

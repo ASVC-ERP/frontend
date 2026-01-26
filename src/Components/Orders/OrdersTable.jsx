@@ -376,7 +376,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
     try {
       // Fetch served data for this order
-      const res = await axios.get(`${API_URL}/order/${row.id}`);
+      const res = await axios.get(`${API_URL}/order/id/${row.id}`);
       const orderData = res.data;
       console.log("Fetched orders:", orderData);
 
@@ -687,10 +687,13 @@ function OrdersTable({ orders, setOrders, customers }) {
     try {
       setSelectedRow(row);
 
+      console.log("Loading order for serving:", row);
+
       // 🔹 Fetch full order details
-      const res = await axios.get(`${API_URL}/order/${row.id}`);
+      const res = await axios.get(`${API_URL}/order/id/${row.id}`);
       const order = res.data;
 
+      console.log("ServeData:", order);
       setServeData(order);
       setShowServeModal(true);
     } catch (err) {
@@ -708,7 +711,7 @@ function OrdersTable({ orders, setOrders, customers }) {
       const items = [...prev.items];
       items[index] = {
         ...items[index],
-        quantity_to_serve: value,
+        serve_qty: value,
       };
       return { ...prev, items };
     });
@@ -842,7 +845,7 @@ function OrdersTable({ orders, setOrders, customers }) {
           <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
           <input
             type="text"
-            placeholder="Search inventory"
+            placeholder="Search order"
             value={searchTerm}
             onChange={handleSearch}
             className="form-control ps-5 border-2 rounded-3"
@@ -1070,7 +1073,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     <span className="text-success">
                                       {" "}
                                       (Served:{" "}
-                                      {item.serve_items?.quantity_to_serve ?? 0}
+                                      {item.sales_order_items?.serve_qty ?? 0}
                                       )
                                     </span>
                                   )}
@@ -1526,7 +1529,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
-                      Order &gt; Serve &gt; {selectedRow.order_code}
+                      Order &gt; Serve &gt; {selectedRow.id}
                     </p>
                     <button
                       type="button"
@@ -1537,7 +1540,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <h5 className="mb-0">
-                      Serve Items for {selectedRow.order_code}
+                      Serve Items for Order #{selectedRow.id}
                     </h5>
                   </div>
                 </div>
@@ -1613,7 +1616,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                             <ServeQuantityInput
                               item={item}
                               index={index}
-                              quantityToServe={item.quantity_to_serve}
+                              quantityToServe={item.serve_qty}
                               updateServeQuantity={updateServeQuantity}
                             />
 
@@ -1652,7 +1655,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                     onClick={async () => {
                       try {
                         for (const item of serveData.items) {
-                          const servedQty = Number(item.quantity_to_serve) || 0;
+                          const servedQty = Number(item.serve_qty) || 0;
                           const stockQty = Number(item.products.stock) || 0;
 
                           if (servedQty > stockQty) {
@@ -1667,7 +1670,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                         // ✅ ADD: block submit if ALL served quantities are 0
                         const hasAnyServe = serveData.items.some(
-                          (item) => (Number(item.quantity_to_serve) || 0) > 0,
+                          (item) => (Number(item.serve_qty) || 0) > 0,
                         );
 
                         if (!hasAnyServe) {
@@ -1686,11 +1689,11 @@ function OrdersTable({ orders, setOrders, customers }) {
                           items: serveData.items
                             .filter(
                               (item) =>
-                                (Number(item.quantity_to_serve) || 0) > 0,
+                                (Number(item.serve_qty) || 0) > 0,
                             )
                             .map((item) => ({
-                              item_code: item.products.item_code,
-                              quantity_to_serve: Number(item.quantity_to_serve),
+                              order_item_id: item.id,
+                              serve_qty: Number(item.serve_qty),
                             })),
                         };
 
@@ -1701,13 +1704,13 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                         if (isAdmin) {
                           await axios.post(
-                            `${API_URL}/order/${selectedRow.id}/serve`,
+                            `${API_URL}/order/id/${selectedRow.id}/serve`,
                             servePayload,
                             { params: { roleApprove } },
                           );
                         } else {
                           await axios.post(
-                            `${API_URL}/order/${selectedRow.id}/request`,
+                            `${API_URL}/order/id/${selectedRow.id}/request`,
                             servePayload,
                             { params: { roleApprove } },
                           );

@@ -251,7 +251,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
           <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
           <input
             type="text"
-            placeholder="Search inventory"
+            placeholder="Search supplier code or name"
             value={searchTerm}
             onChange={handleSearch}
             className="form-control ps-5 border-2 rounded-3"
