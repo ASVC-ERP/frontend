@@ -20,33 +20,23 @@ function ItemDetails({ item, onUpdate }) {
 
   const isAdmin = user?.role === "admin";
 
-  const [formData, setFormData] = useState({
-    itemCode: item.itemCode || item.item_code || "",
-    itemName: item.itemName || item.item_name || "",
-    partNum: item.partNum || item.part_num || "",
-    interNum: item.interNum || item.internal_num || "",
-    unit: item.unit || "",
-    minStock: item.minStock || item.min_stock || "",
-    origin: item.origin || "",
-    model: item.model || "",
-    brand: item.brand || "",
-    price1: item.price1 || "",
-    price2: item.price2 || "",
-    price3: item.price3 || "",
+  const normalizeItem = (item) => ({
+    id: item.itemID ?? item.id,
+    itemCode: item.itemCode ?? item.item_code ?? "",
+    itemName: item.itemName ?? item.item_name ?? "",
+    partNum: item.partNum ?? item.part_num ?? "",
+    interNum: item.interNum ?? item.internal_num ?? "",
+    unit: item.unit ?? "",
+    minStock: item.minStock ?? item.min_stock ?? "",
+    origin: item.origin ?? "",
+    model: item.model ?? "",
+    brand: item.brand ?? "",
   });
 
+  const [formData, setFormData] = useState(() => normalizeItem(item));
+
   useEffect(() => {
-    setFormData({
-      itemCode: item.itemCode || item.item_code || "",
-      itemName: item.itemName || item.item_name || "",
-      partNum: item.partNum || item.part_num || "",
-      interNum: item.interNum || item.internal_num || "",
-      unit: item.unit || "",
-      minStock: item.minStock || item.min_stock || "",
-      origin: item.origin || "",
-      model: item.model || "",
-      brand: item.brand || "",
-    });
+    setFormData(normalizeItem(item));
   }, [item]);
 
   const handleChange = (e) => {
@@ -59,17 +49,22 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleSave = async () => {
     try {
-      console.log("item ID: ", item.itemID, " id: ", item.id);
-      const response = await fetch(`${API_URL}/product/${item.itemID}`, {
+      if (!formData.id) {
+        console.error("Missing item ID");
+        return;
+      }
+      console.log("item ID: ", formData.itemID, " id: ", formData.id);
+
+      const response = await fetch(`${API_URL}/product/${formData.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          item_code: item.itemCode || item.item_code,
-          item_name: formData.itemName || formData.item_name,
+          item_code: item.itemCode,
+          item_name: formData.itemName,
           brand: formData.brand,
-          min_stock: Number(formData.minStock) || Number(formData.min_stock),
-          part_num: formData.partNum || formData.part_num,
-          internal_num: formData.interNum || formData.internal_num,
+          min_stock: Number(formData.minStock),
+          part_num: formData.partNum,
+          internal_num: formData.interNum,
           unit: formData.unit,
           model: formData.model,
           origin: formData.origin,
