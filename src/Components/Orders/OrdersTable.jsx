@@ -806,7 +806,7 @@ function OrdersTable({ orders, setOrders, customers }) {
         didOpen: () => Swal.showLoading(),
       });
 
-      await axios.post(`${API_URL}/order/${row.id}/invoice`);
+      await axios.post(`${API_URL}/order/id/${row.id}/invoice`);
 
       Swal.close();
 

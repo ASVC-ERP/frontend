@@ -6,7 +6,7 @@ function PhysicalCountTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const itemCode = item?.itemCode || "";
-  const itemId = item?.id || 0;
+  const itemId = item?.itemID || 0;
 
   const API_URL = import.meta.env.VITE_API_URL;
 
