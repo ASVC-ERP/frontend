@@ -75,7 +75,11 @@ function CreateOrder({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    console.log("info: ", info);
+
     const user = JSON.parse(localStorage.getItem("user"));
+
+    console.log("user:", user);
 
     if (!user) {
       Swal.fire("Error", "User not logged in.", "error");
@@ -107,10 +111,10 @@ function CreateOrder({
     // Prepare DTO for backend
     const orderDto = {
       cid: info.customerID,
-      sales_agent: user.username,
+      sales_agent: user.userId,
       discount: info.discount || 0,
       items: orderItems.map((item) => ({
-        item_code: item.itemCode,
+        item_id: item.id,
         quantity: item.quantity,
         price: item.customPriceEnabled
           ? Number(item.customPrice)

@@ -51,7 +51,13 @@ export const useOrders = () => {
 
     try {
       const res = await axios.get(
-        `${API_URL}/product/details?item_name=${value}`
+        `${API_URL}/product/search`,
+        {
+          params: {
+            q: value,     // 👈 matches @Query('q')
+            limit: 20,    // 👈 optional, matches @Query('limit')
+          },
+        }
       );
 
       const itemList = res.data.map((item) => ({

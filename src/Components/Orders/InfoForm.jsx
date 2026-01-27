@@ -40,7 +40,7 @@ function InfoForm({ info, setInfo }) {
   const handleSelectCustomer = (customer) => {
     setInfo({
       ...info,
-      customerID: customer.cid,
+      customerID: customer.id,
       customerName: customer.name,
       customerNumber: customer.number,
       customerAddress: customer.address,
