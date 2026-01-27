@@ -59,8 +59,9 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleSave = async () => {
     try {
-      const response = await fetch(`${API_URL}/product/${item.itemID || item.id}`, {
-        method: "PATCH",
+      console.log("item ID: ", item.itemID, " id: ", item.id);
+      const response = await fetch(`${API_URL}/product/${item.itemID}`, {
+        method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           item_code: item.itemCode || item.item_code,
@@ -103,10 +104,10 @@ function ItemDetails({ item, onUpdate }) {
     try {
       const PIC = user.firstName || "";
       const response = await axios.patch(
-        `${API_URL}/product/${item.itemID || item.id}/stock`,
+        `${API_URL}/product/${item.itemID}/stock`,
         {
           quantity: Number(stockData.newCount),
-          reason: stockData.remarks,
+          remarks: stockData.remarks,
         },
       );
 

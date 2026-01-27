@@ -35,6 +35,25 @@ function InventoryTable({
 
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const normalizeItem = (item) => ({
+    itemID: item.itemID || item.id,
+    itemCode: item.itemCode || item.item_code,
+    itemName: item.itemName || item.item_name,
+    brand: item.brand,
+    origin: item.origin,
+    stock: item.stock,
+    price1: item.price1,
+    minStock: item.minStock || item.min_stock,
+    partNum: item.partNum || item.part_num,
+    interNum: item.interNum || item.internal_num,
+    unit: item.unit,
+    model: item.model,
+    cost: item.cost,
+    price2: item.price2,
+    price3: item.price3,
+    price4: item.price4,
+  });
+
   const columns = [
     {
       name: "Product Code",
@@ -113,16 +132,18 @@ function InventoryTable({
   }, []);
 
   useEffect(() => {
-    // ✅ When products change, re-apply search if active
+    // ✅ Normalize items before filtering
+    const normalizedItems = Object.values(items).map(normalizeItem);
+    
     if (searchTerm.trim() !== "") {
-      const filtered = Object.values(items).filter((row) =>
+      const filtered = normalizedItems.filter((row) =>
         Object.values(row).some((field) =>
           field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
         )
       );
       setFilteredData(filtered);
     } else {
-      setFilteredData(Object.values(items));
+      setFilteredData(normalizedItems);
     }
   }, [items, searchTerm]);
 
@@ -154,7 +175,8 @@ function InventoryTable({
 
     console.log("Search response:", res.data.data);
 
-    setFilteredData(res.data.data); // adjust if your API returns differently
+    const normalizedData = res.data.data.map(normalizeItem);
+    setFilteredData(normalizedData);
   } catch (err) {
     console.error("Search failed", err);
   }
@@ -400,7 +422,7 @@ function InventoryTable({
           >
             📂 Import
           </label>
-          <input
+          <input   
             type="file"
             id="fileUpload"
             accept=".xlsx"

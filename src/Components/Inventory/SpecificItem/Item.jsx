@@ -14,21 +14,12 @@ function Item({ onItemsUpdate }) {
   const fetchItem = useCallback(async () => {
     if (!item?.itemCode) return;
     try {
-      const response = await axios.get(`${API_URL}/items`);
-      const updatedItem = response.data.find(
-        (i) => i.itemCode === item.itemCode
+      const response = await axios.get(
+        `${API_URL}/product/id/${item.itemID}`
       );
-
-      if (!updatedItem) {
-        console.error(`Item with code ${item.itemCode} not found after refetch.`);
-        // Optionally, handle the case where the item is no longer found
-        return;
-      }
-
-      // Update the state for the current details page
-      setItem(updatedItem);
-
-      // Call the callback to refetch the main item list in App.jsx
+  
+      setItem(response.data);
+  
       if (onItemsUpdate) {
         onItemsUpdate();
       }
