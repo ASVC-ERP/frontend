@@ -7,9 +7,18 @@ import { useEffect, useState } from "react";
 function Tabs({ item }) {
   const [activeTab, setActiveTab] = useState("tab1");
 
-  // useEffect(() => {
-  //   console.log("Tabs component received item:", item);
-  // } );
+  const normalizeItem = (item) => ({
+    id: item.itemID ?? item.id,
+    itemCode: item.itemCode ?? item.item_code ?? "",
+    itemName: item.itemName ?? item.item_name ?? "",
+    partNum: item.partNum ?? item.part_num ?? "",
+    interNum: item.interNum ?? item.internal_num ?? "",
+    unit: item.unit ?? "",
+    minStock: item.minStock ?? item.min_stock ?? "",
+    origin: item.origin ?? "",
+    model: item.model ?? "",
+    brand: item.brand ?? "",
+  });
 
   return (
     <div>
@@ -94,14 +103,20 @@ function Tabs({ item }) {
 
       {/* tab content */}
       <div className="tab-content">
-        <div className={`tab-pane fade ${activeTab === "tab1" ? "show active" : ""}`}>
-          <CostHistoryTab item={item} />
+        <div
+          className={`tab-pane fade ${activeTab === "tab1" ? "show active" : ""}`}
+        >
+          <CostHistoryTab item={normalizeItem(item)} />
         </div>
-        <div className={`tab-pane fade ${activeTab === "tab2" ? "show active" : ""}`}>
-          <SalesOrderHistoryTab item={item}/>
+        <div
+          className={`tab-pane fade ${activeTab === "tab2" ? "show active" : ""}`}
+        >
+          <SalesOrderHistoryTab item={normalizeItem(item)} />
         </div>
-        <div className={`tab-pane fade ${activeTab === "tab3" ? "show active" : ""}`}>
-          <PhysicalCountTab item={item}/>
+        <div
+          className={`tab-pane fade ${activeTab === "tab3" ? "show active" : ""}`}
+        >
+          <PhysicalCountTab item={normalizeItem(item)} />
         </div>
       </div>
     </div>

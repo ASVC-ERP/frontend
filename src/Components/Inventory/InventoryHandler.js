@@ -48,14 +48,6 @@ export const useProductHandlers = (
   });
 
   useEffect(() => {
-    // 🔄 Load cached search term on mount
-    const cachedSearch = localStorage.getItem("searchTerm");
-    if (cachedSearch) {
-      setSearchTerm(cachedSearch);
-    }
-  }, []);
-
-  useEffect(() => {
     // ✅ Normalize items before filtering
     const normalizedItems = Object.values(items).map(normalizeItem);
     
@@ -86,7 +78,6 @@ export const useProductHandlers = (
  const handleSearch = async (event) => {
   const value = event.target.value; // 👈 get the actual input value
   setSearchTerm(value);
-  localStorage.setItem("searchTerm", value);
 
   try {
     const res = await axios.get(`${API_URL}/product`, {

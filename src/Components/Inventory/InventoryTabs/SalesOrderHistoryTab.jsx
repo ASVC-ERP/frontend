@@ -8,8 +8,8 @@ function SalesOrderHistoryTab({ itemCode }) {
 function SalesOrderHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemCode = item?.itemCode || "";
-  const itemId = item?.itemID || 0;
+  console.log("SalesOrderHistoryTab item:", item);
+  const itemId = item?.id || 0;
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -53,17 +53,17 @@ function SalesOrderHistoryTab({ item }) {
 
   const columns = [
     { name: "Date", selector: (row) => row.order_date, sortable: true },
-    { name: "Order ID", selector: (row) => row.order_code, sortable: true },
+    { name: "Order ID", selector: (row) => row.order_id, sortable: true },
     {
       name: "Customer Name",
       selector: (row) => row.customer_name,
       sortable: true,
     },
     { name: "Price", selector: (row) => row.price, sortable: true }, //price from the order_items
-    { name: "Quantity", selector: (row) => row.quantity_ordered, sortable: true },
-    { name: "Served", selector: (row) => row.quantity_to_serve , sortable: true }, //ordered_quantity - quantity_to_serve
-    { name: "Unserved", selector: (row) => (row.quantity_ordered ?? 0) - (row.quantity_to_serve ?? 0), sortable: true }, 
-    { name: "Total Price", selector: (row) => row.totalPrice, sortable: true }, //price * quantity_ordered
+    { name: "Quantity", selector: (row) => row.quantity, sortable: true },
+    { name: "Served", selector: (row) => row.serve_qty , sortable: true }, //ordered_quantity - quantity_to_serve
+    { name: "Unserved", selector: (row) => (row.quantity ?? 0) - (row.serve_qty ?? 0), sortable: true }, 
+    { name: "Total Price", selector: (row) => (row.price ?? 0) * (row.quantity ?? 0), sortable: true }, //price * quantity_ordered
   ];
 
   return (

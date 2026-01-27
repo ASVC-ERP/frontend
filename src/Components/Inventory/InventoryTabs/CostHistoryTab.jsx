@@ -5,7 +5,7 @@ import axios from "axios";
 function CostHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemID = item?.itemID || "";
+  const itemID = item?.id || "";
 
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -24,6 +24,7 @@ function CostHistoryTab({ item }) {
       if (!itemID) {
         setData([]);
         setLoading(false);
+        console.warn("No itemID provided, skipping fetch.");
         return;
       }
 
