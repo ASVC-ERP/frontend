@@ -105,7 +105,7 @@ export default function Sidebar({ onLogout }) {
               }}
             >
               <FaCashRegister className="me-3" size={25} />
-              <span className="sidebar-text">Order</span>
+              <span className="sidebar-text">Orders</span>
             </Link>
           </li>
 
@@ -120,7 +120,7 @@ export default function Sidebar({ onLogout }) {
               }}
             >
               <IoReceipt className="me-3" size={25} />
-              <span className="sidebar-text">Sales Invoice</span>
+              <span className="sidebar-text">Invoices</span>
             </Link>
           </li>
 
@@ -135,7 +135,7 @@ export default function Sidebar({ onLogout }) {
               }}
             >
               <BsBoxSeamFill className="me-3" size={25} />
-              <span className="sidebar-text">Inventory</span>
+              <span className="sidebar-text">Products</span>
             </Link>
           </li>
 
@@ -150,7 +150,7 @@ export default function Sidebar({ onLogout }) {
               }}
             >
               <FaTruck className="me-3" size={25} />
-              <span className="sidebar-text">Supplier</span>
+              <span className="sidebar-text">Suppliers</span>
             </Link>
           </li>
 
@@ -165,7 +165,7 @@ export default function Sidebar({ onLogout }) {
               }}
             >
               <FaUser className="me-3" size={25} />
-              <span className="sidebar-text">Customer</span>
+              <span className="sidebar-text">Customers</span>
             </Link>
           </li>
         </ul>

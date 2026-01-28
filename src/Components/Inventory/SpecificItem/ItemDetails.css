@@ -1,0 +1,53 @@
+  .product-details {
+    background: #f4f6f9;
+    padding-bottom: 20px;
+  } 
+
+  .readonly-input {
+    background-color: #e9ecef !important;
+    font-weight: 500;
+  }
+
+  .editable-input {
+    background-color: #ffffff;
+  }
+  
+  .product-details .form-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #444;
+  }
+  
+  .price-input {
+    text-align: right;
+    font-weight: 600;
+    background: #f8fafc;
+  }
+  
+  .edit-icon {
+    cursor: pointer;
+    margin: 0 15px;
+    color: #1E5A84;
+    transition: transform 0.15s ease;
+  }
+  
+  .edit-icon:hover {
+    transform: scale(1.1);
+  }
+  
+  .btn-save {
+    background-color: #198754;
+    color: white;
+    font-weight: 600;
+    border-radius: 8px;
+    padding: 8px 22px;
+  }
+  
+  .btn-save:hover {
+    background-color: #157347;
+  }
+  
+  .product-details .row {
+    margin-bottom: 6px;
+  }
+  

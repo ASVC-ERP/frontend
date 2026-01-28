@@ -201,7 +201,7 @@ function ItemDetails({ item, onUpdate }) {
   };
 
   return (
-    <div>
+    <div className="product-details">
       {/* First Row */}
       <div className="row mx-4 d-flex align-items-start py-1">
         <div className="col-4">
@@ -210,7 +210,7 @@ function ItemDetails({ item, onUpdate }) {
           </label>
           <input
             type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
+            className="form-control form-control-sm readonly-input border-dark border-opacity-25"
             id="pid"
             value={itemData.itemCode || itemData.item_code}
             style={{ backgroundColor: "#e9ecef" }}

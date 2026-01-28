@@ -10,7 +10,7 @@ function Inventory({ items, onAddItem, onRefreshItems, page, setPage, limit, set
             className="fw-bold fs-4 fs-md-2 mb-2"
             style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
           >
-            Inventory
+            Products
           </p>
         </div>
       </div>

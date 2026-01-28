@@ -56,31 +56,31 @@ function PhysicalCountTab({ item }) {
     name: "From Quantity",
     selector: (row) => row.from_quantity,
     sortable: true,
-    width: "150px", // fixed width
+    width: "200px", // fixed width
   },
   {
     name: "To Quantity",
     selector: (row) => row.to_quantity,
     sortable: true,
-    width: "120px",
+    width: "200px",
   },
   {
     name: "Adjusted Quantity",
     selector: (row) => row.adjusted_quantity,
     sortable: true,
-    width: "150px",
+    width: "200px",
   },
   {
     name: "Date",
     selector: (row) => row.created_at,
     sortable: true,
-    width: "150px",
+    width: "200px",
   },
   {
     name: "PIC",
     selector: (row) => row.pic,
     sortable: true,
-    width: "150px",
+    width: "200px",
   },
   {
     name: "Remarks",

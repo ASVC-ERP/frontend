@@ -10,7 +10,7 @@ function SalesOrder({ orders, setOrders, customers }) {
             className="fw-bold fs-4 fs-md-2 mb-2"
             style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
           >
-            Sales Order
+            Orders
           </p>
         </div>
       </div>
