@@ -7,6 +7,7 @@ import { IoChevronDown } from "react-icons/io5";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ServeQuantityInput from "./ServeQantityInput";
+import { useDraggableModal } from "../../hooks/useDraggableModal";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
@@ -16,6 +17,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
 function OrdersTable({ orders, setOrders, customers }) {
+
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
+
   const customerMap = useMemo(() => {
     return customers.reduce((acc, customer) => {
       acc[customer.id] = customer;
@@ -33,11 +37,11 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Define table columns
   const columns = [
     {
-      name: "Order ID",
+      name: "Order",
       selector: (row) => row.id,
       sortable: true,
       grow: 0,
-      minWidth: "130px",
+      minWidth: "100px",
     },
     {
       name: "Date",
@@ -53,7 +57,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     },
     {
       name: "Customer Name",
-      selector: (row) => customerMap[row.cid]?.name || "—",
+      selector: (row) => row.customer?.name || "—",
       sortable: true,
       grow: 3,
       minWidth: "200px",
@@ -61,7 +65,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     },
     {
       name: "Address",
-      selector: (row) => customerMap[row.cid]?.address || "—",
+      selector: (row) => row.customer?.address || "—",
       sortable: true,
       grow: 3,
       minWidth: "250px",
@@ -69,7 +73,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     },
     {
       name: "PIC",
-      selector: (row) => row.sales_agent,
+      selector: (row) => row.user?.name || "—",
       sortable: true,
       grow: 0,
       width: "150px",
@@ -186,7 +190,6 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Function to fetch orders
   const fetchOrders = () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    console.log("enterhere");
     const endpoint = `${API_URL}/order`; 
     /*
     
@@ -200,6 +203,8 @@ function OrdersTable({ orders, setOrders, customers }) {
       .get(endpoint)
       .then((res) => {
         setOrders(res.data.data);
+
+        console.log("data: ",res.data.data);
 
         // ✅ Preserve search filter if user is currently searching
         if (searchTerm.trim() !== "") {
@@ -254,7 +259,6 @@ function OrdersTable({ orders, setOrders, customers }) {
     const value = e.target.value;
 
     setCustomerQuery(value);
-    setCustomerID(customerNameMap[value]?.cid || "");
     setEditableRow((prev) => ({
       ...prev,
       customerName: value,
@@ -263,13 +267,13 @@ function OrdersTable({ orders, setOrders, customers }) {
   };
 
   const handleSelectCustomer = (customer) => {
-    setCustomerID(customer.cid);
+    setCustomerID(customer.id);
     setCustomerQuery(customer.name);
     setCustomerSuggestions([]);
 
     setEditableRow((prev) => ({
       ...prev,
-      customerID: customer.cid,
+      customerID: customer.id,
       customerName: customer.name,
     }));
   };
@@ -321,42 +325,24 @@ function OrdersTable({ orders, setOrders, customers }) {
   const handleEdit = async (row) => {
     setShowRowModal(false);
     setCustomerQuery(row.customer.name || "");
-    setCustomerID(row.customer.cid || "");
+    setCustomerID(row.customer.id || "");
+
+    console.log("row: ",row);
 
     try {
-      // Fetch inventory once
-      const res = await axios.get(`${API_URL}/product`);
-      const inventory = res.data;
-
-      // Fetch order items
       const response = await axios.get(
         `${API_URL}/order/${row.id}/order-items`,
       );
       const orderedItems = response.data;
+      console.log("items: ",orderedItems);
 
       const updatedOrderedItems = orderedItems.map((ordered) => {
-        const match = inventory.find(
-          (inv) =>
-            inv.item_code?.trim().toLowerCase() ===
-            ordered.item_code?.trim().toLowerCase(),
-        );
-
-        // 🔑 Convert price columns to array
-        const priceList = match
-          ? [match.price1, match.price2, match.price3, match.price4]
-              .filter((p) => p !== null && p !== undefined)
-              .map(Number)
-          : [];
-
-        const orderedPrice = Number(ordered.price);
-        const isCustom = !priceList.includes(orderedPrice);
+        const isCustom = ordered.customPriceEnabled;
 
         return {
           ...ordered,
-          availablePrices: priceList,
-          customPriceEnabled: isCustom,
-          customPrice: isCustom ? orderedPrice : null,
-          price: isCustom ? null : orderedPrice,
+          customPrice: isCustom ? ordered.orderedPrice : null,
+          price: isCustom ? null : ordered.orderedPrice,
         };
       });
 
@@ -486,11 +472,10 @@ function OrdersTable({ orders, setOrders, customers }) {
       // 🔹 Prepare payload according to backend DTO
       const payload = {
         cid: customerID, // customer ID
-        sales_agent: editableRow.sales_agent?.username, // or username depending on backend
         order_date: editableRow.order_date,
         discount: editableRow.discount || 0,
         items: (editableRow.items || []).map((it) => ({
-          item_code: it.item_code || it.products?.item_code, // fallback to products
+          item_id: it.products?.id, // fallback to products
           quantity: Number(it.quantity) || 0,
           price: it.customPriceEnabled
             ? Number(it.customPrice) || 0
@@ -501,7 +486,7 @@ function OrdersTable({ orders, setOrders, customers }) {
       console.log("Payload being sent:", payload);
 
       // 🔹 Send patch request to update the order
-      await axios.patch(`${API_URL}/order/${editableRow.id}`, payload);
+      await axios.put(`${API_URL}/order/id/${editableRow.id}`, payload);
 
       // 🔹 Update frontend state
       setOrders((prev) =>
@@ -583,24 +568,26 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
 
     try {
-      // Fetch full product details from API
-      const res = await axios.get(
-        `${API_URL}/product/details?item_name=${value}`,
-      );
+      const res = await axios.get(`${API_URL}/product/search`, {
+        params: {
+          q: value,
+          limit: 20,
+        },
+      });
 
-      // Map products for dropdown use
       const itemsWithPrices = res.data.map((item) => ({
         ...item,
         itemCode: item.item_code,
         itemName: item.item_name,
         prices: [item.price1, item.price2, item.price3, item.price4].filter(
-          (p) => p != null,
+          (p) => p != null
         ),
       }));
 
       setSuggestions(itemsWithPrices);
     } catch (err) {
       console.error("Failed to fetch items:", err);
+      setSuggestions([]);
     }
   };
 
@@ -616,6 +603,7 @@ function OrdersTable({ orders, setOrders, customers }) {
       // Update the selected row
       updatedItems[index] = {
         ...updatedItems[index],
+        item_id: item.item_id,
         item_code: item.item_code,
         products: item, // store full product details for reference
         itemName: item.item_name,
@@ -837,6 +825,10 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
   };
 
+  const handleCancelEdit = () => {
+    setEditableRow(false);
+  };
+  
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center">
@@ -867,10 +859,11 @@ function OrdersTable({ orders, setOrders, customers }) {
         columns={columns}
         data={filteredData}
         pagination
+        paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
         paginationPerPage={20}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="450px"
+        fixedHeaderScrollHeight="700px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
       />
@@ -879,7 +872,13 @@ function OrdersTable({ orders, setOrders, customers }) {
         <>
           {/* Backdrop */}
           <div className="modal-backdrop fade show"></div>
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+          <div className="modal fade show d-block" 
+            tabIndex="-1" 
+            role="dialog"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <div
               className="modal-dialog modal-xl modal-dialog-centered"
               role="document"
@@ -898,14 +897,16 @@ function OrdersTable({ orders, setOrders, customers }) {
                   style={{
                     background: "#246c9d 100%",
                     borderRadius: "0.5rem 0.5rem 0 0",
-                    cursor: "move", // for draggable
+                    cursor: "move", // draggable handle
+                    userSelect: 'none'
                   }}
+                  onMouseDown={handleHeaderMouseDown}
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center my-2">
                     {/* LEFT INFO */}
                     <div>
                       <h5 className="mb-0 d-flex align-items-center">
-                        Order Code: {selectedRow?.order_code}
+                      Order Code: ORD{String(selectedRow?.id).padStart(3, "0")}
                         <span
                           className="badge px-3 py-1 fw-semibold text-uppercase ms-2"
                           style={{
@@ -1056,14 +1057,14 @@ function OrdersTable({ orders, setOrders, customers }) {
                                       (
                                       <span className="text-primary">
                                         To Serve:{" "}
-                                        {item.serve_items.quantity_to_serve ??
+                                        {item.serve_qty ??
                                           0}
                                       </span>{" "}
                                       |{" "}
                                       <span className="text-danger">
                                         Unserved:{" "}
                                         {(item.quantity ?? 0) -
-                                          (item.quantity_to_serve ?? 0)}
+                                          (item.serve_qty ?? 0)}
                                       </span>
                                       )
                                     </>
@@ -1073,7 +1074,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     <span className="text-success">
                                       {" "}
                                       (Served:{" "}
-                                      {item.sales_order_items?.serve_qty ?? 0}
+                                      {item.serve_qty ?? 0}
                                       )
                                     </span>
                                   )}
@@ -1097,7 +1098,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                               {/* Price */}
                               <div className="text-end d-flex flex-column">
                                 <span className="fw-semibold">
-                                  ₱{item.price * item.quantity}
+                                  {new Intl.NumberFormat("en-PH", {
+                                    style: "currency",
+                                    currency: "PHP",
+                                  }).format(item.price * item.quantity || 0)}
                                 </span>
                               </div>
                             </div>
@@ -1112,7 +1116,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                   <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
                     <span className="h5 fw-semibold ">Total</span>
                     <span className="fw-bold h5">
-                      ₱{selectedRow.total_price}
+                      {new Intl.NumberFormat("en-PH", {
+                        style: "currency",
+                        currency: "PHP",
+                      }).format(selectedRow.total_price || 0)}
                     </span>
                   </div>
                 </div>
@@ -1147,7 +1154,13 @@ function OrdersTable({ orders, setOrders, customers }) {
         <>
           {/* Backdrop */}
           <div className="modal-backdrop fade show"></div>
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+          <div className="modal fade show d-block" 
+            tabIndex="-1" 
+            role="dialog"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <div className="modal-dialog modal-xl" role="document">
               <div className="modal-content">
                 {/* Header */}
@@ -1158,7 +1171,9 @@ function OrdersTable({ orders, setOrders, customers }) {
                       "linear-gradient(135deg, #246c9d 0%, #1e3c72 100%)",
                     borderRadius: "0.5rem 0.5rem 0 0",
                     cursor: "move", // draggable handle
+                    userSelect: 'none'
                   }}
+                  onMouseDown={handleHeaderMouseDown}
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center ">
                     <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
@@ -1184,7 +1199,7 @@ function OrdersTable({ orders, setOrders, customers }) {
                   <form>
                     <div className="row mb-2 position-relative">
                       {/* CID */}
-                      <div className="col-md-2">
+                      <div className="col-md-1">
                         <label className="form-label">ID</label>
                         <input
                           type="text"
@@ -1482,17 +1497,19 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                 {/* Footer */}
                 <div className="modal-footer d-flex justify-content-between align-items-center">
+                  {/*
                   <button
                     type="button"
                     className="btn ms-auto"
                     style={{ backgroundColor: "#B64345", color: "white" }}
-                    onClick={() => setShowEditModal(false)}
+                    onClick={handleCancelEdit}
                   >
                     Cancel
                   </button>
+                  */}
                   <button
                     type="button"
-                    className="btn"
+                    className="btn ms-auto"
                     style={{ backgroundColor: "#246c9d", color: "white" }}
                     onClick={handleSave}
                   >
@@ -1512,7 +1529,13 @@ function OrdersTable({ orders, setOrders, customers }) {
           {/* Backdrop */}
           <div className="modal-backdrop fade show"></div>
 
-          <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+          <div className="modal fade show d-block" 
+            tabIndex="-1" 
+            role="dialog"
+            onMouseMove={handleMouseMove}
+            onMouseUp={handleMouseUp}
+            onMouseLeave={handleMouseUp}
+          >
             <div
               className="modal-dialog modal-lg modal-dialog-centered"
               role="document"
@@ -1525,7 +1548,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                     background:
                       "linear-gradient(135deg, #246c9d 0%, #1e3c72 100%)",
                     borderRadius: "0.5rem 0.5rem 0 0",
+                    cursor: "move",
+                    userSelect: 'none'
                   }}
+                  onMouseDown={handleHeaderMouseDown}
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>

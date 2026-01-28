@@ -17,6 +17,14 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     minWidth: "200px",
   },
   {
+    name: "PIC",
+    selector: (row) => row.pic,
+    sortable: true,
+    wrap: true,
+    grow: 3,
+    minWidth: "200px",
+  },
+  {
     name: "Number",
     selector: (row) => row.number,
     sortable: true,

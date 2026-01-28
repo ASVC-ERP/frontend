@@ -77,10 +77,11 @@ function CustomerTable({ customers, onRefreshCustomers }) {
         columns={columns}
         data={filteredData}
         pagination
+        paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
         paginationPerPage={50}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="450px"
+        fixedHeaderScrollHeight="700px"
         className="custom-data-table"
       />
 

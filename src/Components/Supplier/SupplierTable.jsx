@@ -191,7 +191,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       name: newName,
       address: newAddress,
       currency: newCurrency,
-      number: newNumber, // Default value; can be updated later
+      number: newNumber,
     };
 
     onAddSupplier(newSupplier);
@@ -202,7 +202,6 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     setNewNumber("");
 
     onRefreshSupplier();
-    // Close modal and clear fields
     handleCloseModal();
   };
 
@@ -278,10 +277,11 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
         columns={columns}
         data={filteredData}
         pagination
-        paginationPerPage={20}
+        paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
+        paginationPerPage={50}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="450px"
+        fixedHeaderScrollHeight="700px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
       />

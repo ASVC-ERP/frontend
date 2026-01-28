@@ -98,6 +98,7 @@ function InventoryTable({
         data={filteredData}
         pagination
         paginationServer
+        paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
         paginationPerPage={limit}
         paginationTotalRows={totalRows}
         onChangePage={(page) => setPage(page)}
@@ -107,7 +108,7 @@ function InventoryTable({
         }}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="450px"
+        fixedHeaderScrollHeight="700px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
       />

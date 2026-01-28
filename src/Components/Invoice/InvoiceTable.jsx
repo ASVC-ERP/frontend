@@ -6,9 +6,11 @@ import { Button, Dropdown } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";
+import { useDraggableModal } from "../../hooks/useDraggableModal";
 
 function InvoiceTable({ invoices, fetchInvoices }) {
 
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const columns = [
     {
@@ -136,20 +138,6 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               title="Save"
             >
               <FaSave size={14} />
-            </Button>
-
-            {/* DELETE */}
-            <Button
-              variant="outline-danger"
-              size="sm"
-              className="p-1 d-flex align-items-center justify-content-center"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDelete(row);
-              }}
-              title="Delete"
-            >
-              🗑️
             </Button>
           </div>
         );
@@ -504,7 +492,13 @@ function InvoiceTable({ invoices, fetchInvoices }) {
 
       {/* Row Modal */}
       {showRowModal && selectedRow && (
-        <div className="modal fade show d-block" tabIndex="-1" role="dialog">
+        <div className="modal fade show d-block" 
+          tabIndex="-1" 
+          role="dialog"
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        >
           <div className="modal-dialog modal-lg" role="document">
             <div className="modal-content">
               <div
@@ -513,8 +507,10 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                   background:
                     "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                   borderRadius: "0.5rem 0.5rem 0 0",
-                  cursor: "move", // so it's clear this is draggable
+                  cursor: "move",
+                  userSelect: 'none'
                 }}
+                onMouseDown={handleHeaderMouseDown}
               >
                 <div className="w-100 d-flex flex-column">
                   {/* Breadcrumb + Close */}
@@ -703,10 +699,11 @@ function InvoiceTable({ invoices, fetchInvoices }) {
             data={filteredData}
             onRowClicked={handleRowClick}
             pagination
-            paginationPerPage={20}
+            paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
+            paginationPerPage={50}
             highlightOnHover
             fixedHeader
-            fixedHeaderScrollHeight="450px"
+            fixedHeaderScrollHeight="700px"
             className="custom-data-table"
             responsive // ensures mobile/responsive behavior
           />
