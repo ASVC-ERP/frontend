@@ -34,7 +34,6 @@ function OrdersTable({ orders, setOrders, customers }) {
     }, {});
   }, [customers]);
 
-  // Define table columns
   const columns = [
     {
       name: "Order",
@@ -154,6 +153,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
   const MAX_ITEMS = 16;
   const [itemLimitWarning, setItemLimitWarning] = useState(false);
+  const [addedItemOnEdit, setAddedItemOnEdit] = useState(false);
 
   const statusColors = {
     open: {
@@ -190,15 +190,15 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Function to fetch orders
   const fetchOrders = () => {
     const user = JSON.parse(localStorage.getItem("user"));
-    const endpoint = `${API_URL}/order`; 
-    /*
+    const endpoint =
     
       roleApprove === "agent"
         ? `${API_URL}/order?agent=${encodeURIComponent(
-            user.firstName + " " + user.lastName,
+            user.role,
           )}`
         : `${API_URL}/order`;
-    */
+
+    console.log("endpoint: ",endpoint);
     axios
       .get(endpoint)
       .then((res) => {
@@ -279,16 +279,25 @@ function OrdersTable({ orders, setOrders, customers }) {
   };
 
   // Handle search input change
+  const SEARCHABLE_SELECTORS = [
+    row => row.customer?.name,
+    row => row.status,
+  ];
+  
   const handleSearch = (event) => {
     const value = event.target.value.toLowerCase();
     setSearchTerm(value);
 
-    const filtered = orders.filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value),
-      ),
+    const filtered = orders.filter(row =>
+      SEARCHABLE_SELECTORS.some(fn => {
+        const field = fn(row);
+        return (
+          field &&
+          field.toString().toLowerCase().includes(value)
+        );
+      })
     );
-
+  
     setFilteredData(filtered);
   };
 
@@ -413,6 +422,7 @@ function OrdersTable({ orders, setOrders, customers }) {
       ];
 
       setActiveIndex(newItems.length - 1);
+      setAddedItemOnEdit(true);
       return { ...prev, items: newItems };
     });
 
@@ -435,6 +445,12 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Update item field
   const updateItem = (index, field, value) => {
     setEditableRow((prev) => {
+      console.log("=== updateItem called ===");
+      console.log("index:", index);
+      console.log("field:", field);
+      console.log("value:", value);
+      console.log("PREV ITEM:", prev.items[index]);
+
       const items = prev.items.map((item, i) => {
         if (i !== index) return item;
 
@@ -459,6 +475,8 @@ function OrdersTable({ orders, setOrders, customers }) {
               updatedItem.price ?? updatedItem.availablePrices[0] ?? 0;
           }
         }
+
+        console.log("UPDATED ITEM:", updatedItem);
 
         return updatedItem;
       });
@@ -808,6 +826,8 @@ function OrdersTable({ orders, setOrders, customers }) {
       });
 
       fetchOrders();
+      console.log("closing modal");
+      setShowRowModal(false);
     } catch (error) {
       console.error("[handleInvoice] Error creating invoice:", error);
       Swal.close();
@@ -823,10 +843,6 @@ function OrdersTable({ orders, setOrders, customers }) {
         text: message,
       });
     }
-  };
-
-  const handleCancelEdit = () => {
-    setEditableRow(false);
   };
   
   return (
@@ -1406,16 +1422,15 @@ function OrdersTable({ orders, setOrders, customers }) {
                                 value={
                                   item.customPriceEnabled
                                     ? "custom"
-                                    : item.price || item.products?.price1 || ""
+                                    : item.price != null
+                                      ? String(item.price)
+                                      : ""
                                 }
                                 onChange={(e) => {
                                   const val = e.target.value;
+
                                   if (val === "custom") {
-                                    updateItem(
-                                      index,
-                                      "customPriceEnabled",
-                                      true,
-                                    );
+                                    updateItem( index, "customPriceEnabled", true,);
                                   } else {
                                     updateItem(index, "price", Number(val));
                                   }
@@ -1489,7 +1504,11 @@ function OrdersTable({ orders, setOrders, customers }) {
                           ? Number(item.customPrice || 0)
                           : Number(item.price || 0);
                         const quantity = Number(item.quantity || 0);
-                        return sum + price * quantity;
+                        const total = new Intl.NumberFormat("en-PH", {
+                          style: "currency",
+                          currency: "PHP",
+                        }).format(sum + price * quantity || 0)
+                        return total;
                       }, 0) || 0
                     ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </span>
@@ -1497,19 +1516,17 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                 {/* Footer */}
                 <div className="modal-footer d-flex justify-content-between align-items-center">
-                  {/*
                   <button
                     type="button"
                     className="btn ms-auto"
                     style={{ backgroundColor: "#B64345", color: "white" }}
-                    onClick={handleCancelEdit}
+                    onClick={() => setShowEditModal(false)}
                   >
                     Cancel
                   </button>
-                  */}
                   <button
                     type="button"
-                    className="btn ms-auto"
+                    className="btn"
                     style={{ backgroundColor: "#246c9d", color: "white" }}
                     onClick={handleSave}
                   >
@@ -1727,6 +1744,7 @@ function OrdersTable({ orders, setOrders, customers }) {
 
                         // ✅ 4. Submit serve request
                         const isAdmin = roleApprove?.toLowerCase() === "admin";
+                        console.log(isAdmin);
 
                         if (isAdmin) {
                           await axios.post(

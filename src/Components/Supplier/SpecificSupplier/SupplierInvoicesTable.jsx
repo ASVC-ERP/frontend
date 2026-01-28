@@ -50,6 +50,7 @@ function SupplierInvoicesTable({ allItems }) {
 
   const handleSearchChange = (index, value) => {
     setQueries((prev) => ({ ...prev, [index]: value }));
+    console.log(index, value);
 
     if (value.length > 0) {
       const filtered = allItems.filter(
@@ -57,6 +58,7 @@ function SupplierInvoicesTable({ allItems }) {
           p.itemName.toLowerCase().includes(value.toLowerCase()) ||
           p.itemCode.toLowerCase().includes(value.toLowerCase())
       );
+
       setSuggestions((prev) => ({ ...prev, [index]: filtered }));
       console.log("Filtered suggestions:", filtered);
     } else {
@@ -105,9 +107,9 @@ function SupplierInvoicesTable({ allItems }) {
     if (!supplierID) return;
 
     axios
-      .get(`${API_URL}/supplier-invoice/sid/${supplierID}`)
+      .get(`${API_URL}/supplier-invoice?search=${supplierID}`)
       .then((res) => {
-        const data = res.data;
+        const data = res.data.data;
         setInvoiceData(data);
         setFilteredData(data);
       })
@@ -1070,7 +1072,7 @@ function SupplierInvoicesTable({ allItems }) {
                           Invoice ID: {selectedInvoice.invoice_number}
                         </h5>
 
-                        {selectedInvoice.status !== "Posted" && (
+                        {selectedInvoice.status !== "Posted" || "POSTED" && (
                           <button
                             className="btn btn-sm me-5 btn-light fw-semibold"
                             style={{ width: "100px"  }}
@@ -1097,7 +1099,7 @@ function SupplierInvoicesTable({ allItems }) {
                         <ul className="list-unstyled">
                           {selectedInvoice.supplier_invoice_items.map(
                             (item, index) => {
-                              const product = products[item.product_id]; // get fetched product
+                              const product = item.products; // get fetched product
                               return (
                                 <>
                                   <li>

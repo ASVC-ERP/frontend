@@ -14,7 +14,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
 
   const columns = [
     {
-      name: "Invoice ID",
+      name: "#",
       selector: (row) => row.id,
       sortable: true,
       grow: 0.7,
@@ -40,6 +40,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       grow: 1,
       minWidth: "200px",
       wrap: true,
+      searchable: true
     },
     {
       name: "PIC",
@@ -277,7 +278,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     try {
       // ✅ Get PDF as blob
       const response = await axios.get(
-        `${API_URL}/print/packing-list/${selectedRow.sales_order_id}`,
+        `${API_URL}/print/packing-list/${selectedRow.id}`,
         { responseType: "blob" }, // important!
       );
 
@@ -382,16 +383,16 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     }
 
     const payload = {
-      invoice_number: invoiceNumber,
-      waybill_number: waybill,
-      courier,
+      invoice_number: invoiceNumber ?? "",
+      waybill_number: waybill ?? "",
+      courier: courier ?? "",
       shipping_date: shipDate,
     };
 
     console.log("📤 JSON Payload SENT to backend:", payload);
 
     axios
-      .patch(`${API_URL}/invoices/${row.id}`, payload)
+      .patch(`${API_URL}/invoice/${row.id}`, payload)
       .then(() => {
         const updatedData = filteredData.map((item) =>
           item.id === row.id
