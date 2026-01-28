@@ -48,19 +48,31 @@ function SupplierInvoicesTable({ allItems }) {
   const [queries, setQueries] = useState({});
   const [suggestions, setSuggestions] = useState({});
 
-  const handleSearchChange = (index, value) => {
+  const handleSearchChange = async (index, value) => {
     setQueries((prev) => ({ ...prev, [index]: value }));
     console.log(index, value);
 
     if (value.length > 0) {
-      const filtered = allItems.filter(
-        (p) =>
-          p.itemName.toLowerCase().includes(value.toLowerCase()) ||
-          p.itemCode.toLowerCase().includes(value.toLowerCase())
-      );
-
-      setSuggestions((prev) => ({ ...prev, [index]: filtered }));
-      console.log("Filtered suggestions:", filtered);
+      try {
+        const res = await axios.get(`${API_URL}/product/search`, {
+          params: {
+            q: value,
+            limit: 20,
+          },
+        });
+    
+        const filtered = res.data.map((item) => ({
+          ...item,
+          itemName: item.item_name,
+          itemCode: item.item_code,
+        }));
+    
+        console.log("Filtered suggestions:", filtered);
+        setSuggestions((prev) => ({ ...prev, [index]: filtered }));
+      } catch (err) {
+        console.error("Search failed:", err);
+        setSuggestions((prev) => ({ ...prev, [index]: [] }));
+      }
     } else {
       setSuggestions((prev) => ({ ...prev, [index]: [] }));
     }
@@ -68,6 +80,9 @@ function SupplierInvoicesTable({ allItems }) {
 
   const handleSelectSuggestion = (index, suggestion) => {
     // Check if this itemID already exists in the invoiceForm items (excluding current index)
+    console.log("Selected itemName:", suggestion.itemName);
+    console.log("Selected itemID:", suggestion.id);
+
     const isDuplicate = invoiceForm.items.some(
       (item, i) => i !== index && item.itemID === suggestion.itemID
     );
@@ -89,7 +104,7 @@ function SupplierInvoicesTable({ allItems }) {
       ...updated[index],
       itemName: suggestion.itemName,
       itemCode: suggestion.itemCode,
-      itemID: suggestion.itemID,
+      itemID: suggestion.id,
       unit: suggestion.unit || "pc",
     };
 
@@ -158,7 +173,7 @@ function SupplierInvoicesTable({ allItems }) {
         po_number: invoiceForm.poNum,
         purchase_date: invoiceForm.purchaseDate,
         supplier_id: supplierID,
-        conversion_factor: invoiceForm.conversionFactor ?? 1,
+        conversion_factor: Number(invoiceForm.conversionFactor) || 1,
 
         items: invoiceForm.items.map((item) => ({
           product_id: item.itemID,
@@ -1072,7 +1087,7 @@ function SupplierInvoicesTable({ allItems }) {
                           Invoice ID: {selectedInvoice.invoice_number}
                         </h5>
 
-                        {selectedInvoice.status !== "Posted" || "POSTED" && (
+                        {selectedInvoice.status !== "POSTED" && (
                           <button
                             className="btn btn-sm me-5 btn-light fw-semibold"
                             style={{ width: "100px"  }}
