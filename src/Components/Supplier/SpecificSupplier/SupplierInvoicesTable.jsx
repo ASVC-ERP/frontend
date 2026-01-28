@@ -5,10 +5,13 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaTrashAlt } from "react-icons/fa";
+import { useDraggableModal } from "../../../hooks/useDraggableModal";
 
 import SuggestionList from "./SuggestionList";
 
 function SupplierInvoicesTable({ allItems }) {
+
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
   const location = useLocation();
   const supplier = location.state?.row || {};
   const supplierName = supplier.name || "Supplier";
@@ -122,7 +125,7 @@ function SupplierInvoicesTable({ allItems }) {
     if (!supplierID) return;
 
     axios
-      .get(`${API_URL}/supplier-invoice?search=${supplierID}`)
+      .get(`${API_URL}/supplier-invoice?supplier=${supplierID}`)
       .then((res) => {
         const data = res.data.data;
         setInvoiceData(data);
@@ -221,10 +224,10 @@ function SupplierInvoicesTable({ allItems }) {
       setShowCreateModal(false);
 
       const res = await axios.get(
-        `${API_URL}/supplier-invoice/sid/${supplierID}`
+        `${API_URL}/supplier-invoice?supplier=${supplierID}`
       );
-      setInvoiceData(res.data);
-      setFilteredData(res.data);
+      setInvoiceData(res.data.data);
+      setFilteredData(res.data.data);
     } catch (err) {
       console.error("Error submitting invoice:", err);
 
@@ -282,6 +285,8 @@ function SupplierInvoicesTable({ allItems }) {
         title: "Invoice Posted",
         text: `${selectedInvoice.invoice_number} has been successfully posted.`,
         confirmButtonColor: "#1E5A84",
+      }).then(() => {
+        window.location.reload();
       });
     } catch (error) {
       console.error("Error posting invoice:", error);
@@ -396,6 +401,9 @@ function SupplierInvoicesTable({ allItems }) {
               className="modal fade show d-block"
               tabIndex="-1"
               role="dialog"
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
               style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
             >
               <div
@@ -410,7 +418,10 @@ function SupplierInvoicesTable({ allItems }) {
                       background:
                         "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                       borderRadius: "0.5rem 0.5rem 0 0",
+                      cursor: "move", // draggable handle
+                      userSelect: 'none'
                     }}
+                    onMouseDown={handleHeaderMouseDown}
                   >
                     <div className="d-flex align-items-center">
                       <div>

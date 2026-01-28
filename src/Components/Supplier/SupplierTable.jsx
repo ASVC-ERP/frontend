@@ -5,8 +5,11 @@ import { IoIosSearch } from "react-icons/io";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import axios from "axios";
+import { useDraggableModal } from "../../hooks/useDraggableModal";
 
 function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
+
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
   const columns = [
     {
       name: "Supplier Code",
@@ -290,6 +293,9 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       <div
         className={`modal fade ${showModal ? "show" : ""}`}
         tabIndex="-1"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
         style={{ display: showModal ? "block" : "none" }}
         aria-hidden={!showModal}
       >
@@ -301,7 +307,10 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
               style={{
                 background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
+                cursor: "move", // draggable handle
+                userSelect: 'none'
               }}
+              onMouseDown={handleHeaderMouseDown}
             >
               <div className="d-flex align-items-center">
                 <div>

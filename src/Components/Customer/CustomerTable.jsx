@@ -4,11 +4,13 @@ import { IoIosSearch } from "react-icons/io";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import Swal from "sweetalert2";
-import Draggable from "react-draggable";
+import { useDraggableModal } from "../../hooks/useDraggableModal";
 import { createCustomerColumns } from "./CustomerColums";
 import { useCustomerHandlers } from "./CustomerHandler";
 
 function CustomerTable({ customers, onRefreshCustomers }) {
+
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const {
     searchTerm,
@@ -89,6 +91,9 @@ function CustomerTable({ customers, onRefreshCustomers }) {
       <div
         className={`modal fade ${showCustomerModal ? "show" : ""}`}
         tabIndex="-1"
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
         style={{ display: showCustomerModal ? "block" : "none" }}
         aria-hidden={!showCustomerModal}
       >
@@ -100,7 +105,10 @@ function CustomerTable({ customers, onRefreshCustomers }) {
               style={{
                 background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
+                cursor: "move", // draggable handle
+                userSelect: 'none'
               }}
+              onMouseDown={handleHeaderMouseDown}
             >
               <div className="d-flex align-items-center">
                 <div>
