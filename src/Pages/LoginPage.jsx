@@ -22,6 +22,8 @@ function LoginPage({ onLoginSuccess }) {
 
       const token = response.data.access_token;
 
+      localStorage.setItem('access_token', token);
+
       const user = await axios.get(`${API_URL}/authenticate/profile`, {
         headers: {
           Authorization: `Bearer ${token}`,

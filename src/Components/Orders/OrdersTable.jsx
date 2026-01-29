@@ -712,6 +712,33 @@ function OrdersTable({ orders, setOrders, customers }) {
     }
   };
 
+  const handleUnserve = async (row) => {
+    try {
+      setSelectedRow(row);
+      console.log("order id:", row.id);
+      await axios.post(`${API_URL}/order/id/${row.id}/unserve`);
+
+      Swal.fire({
+        icon: "success",
+        title: "Order Unserved!",
+        text: "Order has been unserved successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      setShowRowModal(false);
+
+      fetchOrders();
+    } catch (err) {
+      console.error("Failed to unserve order:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Unserve Error",
+        text: "Unable to unserve order.",
+      });
+    }
+  };
+
   const updateServeQuantity = (index, value) => {
     setServeData((prev) => {
       const items = [...prev.items];
@@ -948,14 +975,24 @@ function OrdersTable({ orders, setOrders, customers }) {
                         "served" ||
                         selectedRow?.status?.trim().toLowerCase() ===
                           "partial served") && (
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-light"
-                          style={{ color: "#246c9d" }}
-                          onClick={() => handleInvoice(selectedRow)}
-                        >
-                          Create Invoice
-                        </button>
+                        <>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-light"
+                            style={{ color: "#246c9d" }}
+                            onClick={() => handleUnserve(selectedRow)}
+                          >
+                            Unserve
+                          </button>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-light"
+                            style={{ color: "#246c9d" }}
+                            onClick={() => handleInvoice(selectedRow)}
+                          >
+                            Create Invoice
+                          </button>
+                        </>
                       )}
 
                       {selectedRow?.status?.trim().toLowerCase() === "open" && (
