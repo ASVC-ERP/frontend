@@ -734,7 +734,7 @@ function OrdersTable({ orders, setOrders, customers }) {
         didOpen: () => Swal.showLoading(),
       });
 
-      await axios.post(`${API_URL}/order/${row.id}/approve`);
+      await axios.post(`${API_URL}/order/id/${row.id}/approve`);
 
       Swal.close();
 
@@ -777,7 +777,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     });
 
     try {
-      await axios.post(`${API_URL}/order/${row.id}/reject`);
+      await axios.post(`${API_URL}/order/id/${row.id}/reject`);
 
       Swal.close();
 

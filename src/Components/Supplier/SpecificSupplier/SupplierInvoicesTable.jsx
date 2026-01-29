@@ -26,6 +26,7 @@ function SupplierInvoicesTable({ allItems }) {
   const [showModal, setShowModal] = useState(false);
 
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
   const [invoiceForm, setInvoiceForm] = useState({
     poNum: "",
     invoiceID: "",
@@ -300,6 +301,46 @@ function SupplierInvoicesTable({ allItems }) {
           "Failed to post invoice. Please try again.",
         confirmButtonColor: "#1E5A84",
       });
+    }
+  };
+
+  const handleEditInvoice = async () => {
+    try {
+      if (!selectedInvoice?.id) {
+        console.warn("Invoice does not exist");
+        return;
+      }
+
+      if (!selectedInvoice.supplier_invoice_items?.length) {
+        console.warn("Invoice has no items");
+        return;
+      }
+
+      const payload = {
+        invoice_number: selectedInvoice.invoice_number,
+        po_number: selectedInvoice.po_number,
+        purchase_date: selectedInvoice.purchase_date,
+        supplier_id: Number(selectedInvoice.supplier_id),
+        conversion_factor: Number(selectedInvoice.conversion_factor),
+
+        items: selectedInvoice.supplier_invoice_items.map(item => ({
+          product_id: Number(item.products?.id),
+          quantity: Number(item.quantity),
+          unit_cost: Number(item.unit_cost),
+        })),
+      };
+
+      console.log("EDIT INVOICE PAYLOAD:", payload);
+
+      await axios.put(
+        `/api/supplier-invoices/${selectedInvoice.id}`,
+        payload
+      );
+
+      setShowModal(false);
+      refreshInvoices();
+    } catch (err) {
+      console.error("Failed to update invoice:", err);
     }
   };
 
@@ -1076,8 +1117,8 @@ function SupplierInvoicesTable({ allItems }) {
                         borderRadius: "0.5rem 0.5rem 0 0",
                       }}
                     >
-                      {/* Breadcrumb + Close */}
-                      <div className="w-100 d-flex justify-content-between align-items-center">
+                      {/* Breadcrumb */}
+                      <div className="w-100">
                         <p
                           className="mb-2 opacity-75"
                           style={{ fontSize: "12px" }}
@@ -1085,28 +1126,40 @@ function SupplierInvoicesTable({ allItems }) {
                           Supplier &gt; Invoices &gt;{" "}
                           {selectedInvoice.po_number}
                         </p>
-                        <button
-                          type="button"
-                          className="btn-close btn-close-white p-4"
-                          onClick={() => setShowModal(false)}
-                        />
                       </div>
 
-                      {/* Title + Post Button */}
+                      {/* Title + Buttons Row */}
                       <div className="w-100 d-flex justify-content-between align-items-center">
                         <h5 className="mb-0">
                           Invoice ID: {selectedInvoice.invoice_number}
                         </h5>
 
-                        {selectedInvoice.status !== "POSTED" && (
+                        <div className="d-flex align-items-center gap-2">
+                          {selectedInvoice.status !== "POSTED" && (
+                            <>
+                              <button
+                                className="btn btn-sm btn-light fw-semibold"
+                                style={{ width: "100px" }}
+                                onClick={handlePostInvoice}
+                              >
+                                POST
+                              </button>
+                              <button
+                                className="btn btn-sm btn-light fw-semibold"
+                                style={{ width: "100px" }}
+                                onClick={handleEditInvoice}
+                              >
+                                EDIT
+                              </button>
+                            </>
+                          )}
                           <button
-                            className="btn btn-sm me-5 btn-light fw-semibold"
-                            style={{ width: "100px"  }}
-                            onClick={handlePostInvoice} // optional handler
-                          >
-                            POST
-                          </button>
-                        )}
+                            type="button"
+                            className="btn-close btn-close-white"
+                            onClick={() => setShowModal(false)}
+                            aria-label="Close"
+                          />
+                        </div>
                       </div>
                     </div>
 
@@ -1138,80 +1191,50 @@ function SupplierInvoicesTable({ allItems }) {
                                               ? product.item_name
                                               : "Loading..."}
                                           </span>
-                                          <small className="text-muted">
-                                            Qty: {item.quantity}{" "}
-                                            {product ? product.unit : ""}
-                                          </small>
-                                          <span
-                                            style={{ width: "fit-content" }}
-                                            className={`badge ${
-                                              selectedInvoice.status ===
-                                              "Purchased"
-                                                ? "bg-success"
-                                                : selectedInvoice.status ===
-                                                  "Returned"
-                                                ? "bg-danger"
-                                                : "bg-secondary"
-                                            } mt-2`}
-                                          >
-                                            {selectedInvoice.status || "N/A"}
-                                          </span>
+                                          <div className="d-flex align-items-center gap-3">
+                                            <small className="text-muted">
+                                              Quantity: {item.quantity}
+                                            </small>
+                                            <small className="text-muted">
+                                              Unit Cost: ₱ {item.unit_cost.toLocaleString(undefined, { minimumFractionDigits: 2, })} / {product ? product.unit : ""}
+                                            </small>
+                                          </div>
                                         </div>
                                       </div>
 
                                       {/* Price Info */}
-                                      <div className="text-end d-flex flex-column">
+                                      <div className="d-flex flex-column align-items-end">
                                         <span className="fw-semibold">
                                           ₱
-                                          {item.subtotal.toLocaleString(
-                                            undefined,
-                                            {
-                                              minimumFractionDigits: 2,
-                                            }
-                                          )}
+                                          {item.subtotal.toLocaleString(undefined, {
+                                            minimumFractionDigits: 2,
+                                          })}
                                         </span>
-                                        <small className="text-muted">
-                                          Unit: ₱{item.unit_cost}
-                                        </small>
+                                        <span
+                                          className={`badge ${
+                                            selectedInvoice.status === "Purchased"
+                                              ? "bg-success"
+                                              : selectedInvoice.status === "Returned"
+                                              ? "bg-danger"
+                                              : "bg-secondary"
+                                          }`}
+                                        >
+                                          {selectedInvoice.status}
+                                        </span>
                                       </div>
                                     </div>
                                   </li>
-                                  <hr className="my-0 border-secondary" />
                                 </>
                               );
                             }
                           )}
                         </ul>
                       </div>
-
-                      {/* Total Row */}
-                      <div className="d-flex justify-content-between align-items-center pt-3 border-top">
-                        <span className="h5 fw-semibold">Total Price</span>
-                        <span className="fw-bold h5">
-                          ₱
-                          {selectedInvoice.supplier_invoice_items
-                            .reduce((sum, item) => sum + item.subtotal, 0)
-                            .toLocaleString(undefined, {
-                              minimumFractionDigits: 2,
-                            })}
-                        </span>
-                      </div>
                     </div>
 
                     {/* Footer */}
-                    <div className="modal-footer d-flex justify-content-between align-items-center bg-light">
-                      <div>
-                        <p
-                          className="fw-bold mb-1"
-                          style={{ color: "#1E5A84" }}
-                        >
-                          {supplierName}
-                        </p>
-                        <p className="mb-0 small text-muted">
-                          Supplier ID: {supplierID}
-                        </p>
-                      </div>
-                      <div className="text-end">
+                    <div className="modal-footer d-flex justify-content-between align-items-center bg-light border-top">
+                      <div className="text-start">
                         <p className="text-muted small mb-0">Purchase Date</p>
                         <p
                           className="fw-semibold mb-0"
@@ -1225,6 +1248,19 @@ function SupplierInvoicesTable({ allItems }) {
                             year: "numeric",
                           })}
                         </p>
+                      </div>
+
+                      {/* Total Row */}
+                      <div className="d-flex align-items-center gap-3">
+                        <span className="h5 fw-semibold mb-0">Total Price:</span>
+                        <span className="fw-bold h5 mb-0">
+                          ₱
+                          {selectedInvoice.supplier_invoice_items
+                            .reduce((sum, item) => sum + item.subtotal, 0)
+                            .toLocaleString(undefined, {
+                              minimumFractionDigits: 2,
+                            })}
+                        </span>
                       </div>
                     </div>
                   </div>
