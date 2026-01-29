@@ -303,11 +303,10 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
           <div className="modal-content shadow-lg border-0">
             {/* Header with gradient background */}
             <div
-              className="modal-header text-white position-relative overflow-hidden"
+              className="modal-header text-white position-relative overflow-hidden cursor-move"
               style={{
                 background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
-                cursor: "move", // draggable handle
                 userSelect: 'none'
               }}
               onMouseDown={handleHeaderMouseDown}

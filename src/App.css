@@ -156,7 +156,7 @@ input[type=number] {
   height: 4px;
   background: rgba(0, 0, 0, 0.15);
   border-radius: 999px;
-  display: block;
+  display: none !important;
   margin: 0 auto 8px;
   transition: background 0.2s ease;
 }
@@ -220,8 +220,8 @@ input[type=number] {
 
 .modal-backdrop.show {
   background-color: rgba(0, 0, 0, 0.55);
-  backdrop-filter: blur(2px);
-  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(0.5px);
+  -webkit-backdrop-filter: blur(0.5px);
 }
 
 /* Total row */
@@ -379,4 +379,14 @@ input[type=number] {
     min-width: 180px;
     font-size: 0.9rem;
   }
+}
+
+
+/* CURSOR */
+.cursor-move {
+  cursor: grab;
+}
+
+.cursor-move:active {
+  cursor: grabbing;
 }

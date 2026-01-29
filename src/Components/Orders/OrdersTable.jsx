@@ -941,11 +941,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                 }}
               >
                 <div
-                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden cursor-move"
                   style={{
                     background: "#246c9d 100%",
                     borderRadius: "0.5rem 0.5rem 0 0",
-                    cursor: "move", // draggable handle
                     userSelect: 'none'
                   }}
                   onMouseDown={handleHeaderMouseDown}
@@ -1093,7 +1092,6 @@ function OrdersTable({ orders, setOrders, customers }) {
                     style={{
                       maxHeight: "400px",
                       overflowY: "auto",
-                      overflowY: "auto",
                       overflowX: "visible",
                     }}
                   >
@@ -1148,7 +1146,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                                   </span>
 
                                   <Modal show={showCostModal} onHide={() => setShowCostModal(false)} size="xl">
-                                    <Modal.Header closeButton className="border-0 ps-3">
+                                    <Modal.Header closeButton 
+                                      className="border-0 ps-3 cursor-move"
+                                      onMouseDown={handleHeaderMouseDown}
+                                    >
                                       <Modal.Title>
                                         Cost History - {item.products.item_name}
                                       </Modal.Title>
@@ -1275,12 +1276,11 @@ function OrdersTable({ orders, setOrders, customers }) {
               <div className="modal-content">
                 {/* Header */}
                 <div
-                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden cursor-move"
                   style={{
                     background:
                       "linear-gradient(135deg, #246c9d 0%, #1e3c72 100%)",
                     borderRadius: "0.5rem 0.5rem 0 0",
-                    cursor: "move", // draggable handle
                     userSelect: 'none'
                   }}
                   onMouseDown={handleHeaderMouseDown}
@@ -1654,12 +1654,11 @@ function OrdersTable({ orders, setOrders, customers }) {
               <div className="modal-content">
                 {/* Header */}
                 <div
-                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden cursor-move"
                   style={{
                     background:
                       "linear-gradient(135deg, #246c9d 0%, #1e3c72 100%)",
                     borderRadius: "0.5rem 0.5rem 0 0",
-                    cursor: "move",
                     userSelect: 'none'
                   }}
                   onMouseDown={handleHeaderMouseDown}

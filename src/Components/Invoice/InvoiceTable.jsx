@@ -494,12 +494,11 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           <div className="modal-dialog modal-lg" role="document">
             <div className="modal-content">
               <div
-                className="modal-header text-white position-relative overflow-hidden"
+                className="modal-header text-white position-relative overflow-hidden cursor-move"
                 style={{
                   background:
                     "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                   borderRadius: "0.5rem 0.5rem 0 0",
-                  cursor: "move",
                   userSelect: 'none'
                 }}
                 onMouseDown={handleHeaderMouseDown}

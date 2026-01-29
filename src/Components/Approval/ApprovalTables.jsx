@@ -325,11 +325,10 @@ function ApprovalTables() {
               >
                 {/* HEADER */}
                 <div
-                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden"
+                  className="modal-header d-flex flex-column align-items-start text-white position-relative overflow-hidden cursor-move"
                   style={{
                     background: "#246c9d",
                     borderRadius: "0.5rem 0.5rem 0 0",
-                    cursor: "move",
                   }}
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center mb-2">
