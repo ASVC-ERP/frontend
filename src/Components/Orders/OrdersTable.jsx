@@ -1,13 +1,14 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
-import { Button } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import { IoIosSearch } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
 import axios from "axios";
 import Swal from "sweetalert2";
 import ServeQuantityInput from "./ServeQantityInput";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
+import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
@@ -156,6 +157,8 @@ function OrdersTable({ orders, setOrders, customers }) {
   const MAX_ITEMS = 16;
   const [itemLimitWarning, setItemLimitWarning] = useState(false);
   const [addedItemOnEdit, setAddedItemOnEdit] = useState(false);
+
+  const [showCostModal, setShowCostModal] = useState(false);
 
   const statusColors = {
     open: {
@@ -1101,77 +1104,91 @@ function OrdersTable({ orders, setOrders, customers }) {
                             <div className="d-flex justify-content-between align-items-center mb-2">
                               {/* Image and Product Info */}
                               <div className="d-flex flex-column">
-                                <span 
-                                  className="fw-semibold position-relative price-hover"
-                                  style={{ cursor: "pointer" }}
-                                >
-                                  {item.products.item_name}{" "}
-                                  <div className="price-tooltip">
-                                    <strong>Prices</strong>
-                                    {(
-                                      <div>
-                                        <span>Supplier Cost</span>
-                                        <span className="fw-bold text-success">₱{item.products.cost.toLocaleString()}</span>
-                                      </div>
-                                    )}
-                                    {(
-                                      <div>
-                                        <span>Price 1</span>
-                                        <span className="fw-bold text-success">₱{item.products.price1.toLocaleString()}</span>
-                                      </div>
-                                    )}
-                                    {(
-                                      <div>
-                                        <span>Price 2</span>
-                                        <span className="fw-bold text-success">₱{item.products.price2.toLocaleString()}</span>
-                                      </div>
-                                    )}
-                                    {(
-                                      <div>
-                                        <span>Price 3</span>
-                                        <span className="fw-bold text-success">₱{item.products.price3.toLocaleString()}</span>
-                                      </div>
-                                    )}
-                                    {(
-                                      <div>
-                                        <span>Price 4</span>
-                                        <span className="fw-bold text-success">₱{item.products.price4.toLocaleString()}</span>
-                                      </div>
-                                    )}
-                                  </div>
-                                  {/* ADD ITEM NAME */}
-                                </span>
+                                <>
+                                  <span 
+                                    className="fw-semibold position-relative price-hover"
+                                    style={{ cursor: "pointer" }}
+                                    onClick={() => setShowCostModal(true)}
+                                  >
+                                    {item.products.item_name}{" "}
+                                    <div className="price-tooltip">
+                                      <strong>Prices</strong>
+                                      {(
+                                        <div>
+                                          <span>Supplier Cost</span>
+                                          <span className="fw-bold text-success">₱{item.products.cost.toLocaleString()}</span>
+                                        </div>
+                                      )}
+                                      {(
+                                        <div>
+                                          <span>Price 1</span>
+                                          <span className="fw-bold text-success">₱{item.products.price1.toLocaleString()}</span>
+                                        </div>
+                                      )}
+                                      {(
+                                        <div>
+                                          <span>Price 2</span>
+                                          <span className="fw-bold text-success">₱{item.products.price2.toLocaleString()}</span>
+                                        </div>
+                                      )}
+                                      {(
+                                        <div>
+                                          <span>Price 3</span>
+                                          <span className="fw-bold text-success">₱{item.products.price3.toLocaleString()}</span>
+                                        </div>
+                                      )}
+                                      {(
+                                        <div>
+                                          <span>Price 4</span>
+                                          <span className="fw-bold text-success">₱{item.products.price4.toLocaleString()}</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                    {/* ADD ITEM NAME */}
+                                  </span>
 
-                                <small className="text-muted">
-                                  Price: ₱{item.price} | Qty: {item.quantity}
-                                  {selectedRow.status === "For Approval" && (
-                                    <>
-                                      {" "}
-                                      (
-                                      <span className="text-primary">
-                                        To Serve:{" "}
-                                        {item.serve_qty ??
-                                          0}
-                                      </span>{" "}
-                                      |{" "}
-                                      <span className="text-danger">
-                                        Unserved:{" "}
-                                        {(item.quantity ?? 0) -
-                                          (item.serve_qty ?? 0)}
+                                  <Modal show={showCostModal} onHide={() => setShowCostModal(false)} size="xl">
+                                    <Modal.Header closeButton className="border-0 ps-3">
+                                      <Modal.Title>
+                                        Cost History - {item.products.item_name}
+                                      </Modal.Title>
+                                    </Modal.Header>
+                                    <Modal.Body>
+                                      <CostHistoryTab item={item.products} />
+                                    </Modal.Body>
+                                  </Modal>
+
+                                  <small className="text-muted">
+                                    Price: ₱{item.price} | Qty: {item.quantity}
+                                    {selectedRow.status === "For Approval" && (
+                                      <>
+                                        {" "}
+                                        (
+                                        <span className="text-primary">
+                                          To Serve:{" "}
+                                          {item.serve_qty ??
+                                            0}
+                                        </span>{" "}
+                                        |{" "}
+                                        <span className="text-danger">
+                                          Unserved:{" "}
+                                          {(item.quantity ?? 0) -
+                                            (item.serve_qty ?? 0)}
+                                        </span>
+                                        )
+                                      </>
+                                    )}
+                                    {(selectedRow.status === "Partial Served" ||
+                                      selectedRow.status === "Served") && (
+                                      <span className="text-success">
+                                        {" "}
+                                        (Served:{" "}
+                                        {item.serve_qty ?? 0}
+                                        )
                                       </span>
-                                      )
-                                    </>
-                                  )}
-                                  {(selectedRow.status === "Partial Served" ||
-                                    selectedRow.status === "Served") && (
-                                    <span className="text-success">
-                                      {" "}
-                                      (Served:{" "}
-                                      {item.serve_qty ?? 0}
-                                      )
-                                    </span>
-                                  )}
-                                </small>
+                                    )}
+                                  </small>
+                                </>
 
                                 {/* {item.discount > 0 && (
                                   <small className="text-danger">
