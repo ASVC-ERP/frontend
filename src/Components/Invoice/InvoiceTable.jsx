@@ -17,9 +17,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       name: "#",
       selector: (row) => row.id,
       sortable: true,
-      grow: 0.7,
-      wrap: true,
-      maxWidth: "140px",
+      maxWidth: "50px",
     },
     {
       name: "Date",
@@ -38,7 +36,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       selector: (row) => row.customers.name || "—",
       sortable: true,
       grow: 1,
-      minWidth: "200px",
+      minWidth: "500px",
       wrap: true,
       searchable: true
     },
@@ -50,38 +48,31 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       width: "140px",
     },
     {
-      name: "Invoice #",
-      cell: (row) => (
-        <input
-          type="text"
-          placeholder="Invoice #"
-          className="form-control border border-secondary"
-          style={{ width: "150px" }}
-          value={
-            pendingChanges[`invoice-${row.id}`] ?? row.invoice_number ?? ""
-          }
-          onChange={(e) =>
-            setPendingChanges((prev) => ({
-              ...prev,
-              [`invoice-${row.id}`]: e.target.value,
-            }))
-          }
-        />
-      ),
-      grow: 1,
-      maxWidth: "150px",
-    },
-    {
       name: "Shipping Details",
       cell: (row) => {
         return (
           <div className="d-flex align-items-center gap-2 ms-2">
+            <input
+              type="text"
+              placeholder="Invoice #"
+              className="form-control border border-secondary"
+              style={{ width: "170px" }}
+              value={
+                pendingChanges[`invoice-${row.id}`] ?? row.invoice_number ?? ""
+              }
+              onChange={(e) =>
+                setPendingChanges((prev) => ({
+                  ...prev,
+                  [`invoice-${row.id}`]: e.target.value,
+                }))
+              }
+            />
             {/* Waybill Number */}
             <input
               type="text"
               placeholder="Waybill"
               className="form-control border border-secondary"
-              style={{ width: "130px" }}
+              style={{ width: "170px" }}
               value={
                 pendingChanges[`waybill-${row.id}`] ?? row.waybill_number ?? ""
               }
@@ -98,7 +89,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               type="text"
               placeholder="Courier"
               className="form-control border border-secondary"
-              style={{ width: "120px" }}
+              style={{ width: "170px" }}
               value={pendingChanges[`courier-${row.id}`] ?? row.courier ?? ""}
               onChange={(e) =>
                 setPendingChanges((prev) => ({
@@ -528,7 +519,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                   <div className="w-100 d-flex justify-content-between align-items-center">
                     <h5 className="mb-0">
                       Invoice ID:{" "}
-                      {selectedRow.order_invoice || selectedRow.order_invoice}
+                      {selectedRow.id}
                     </h5>
                     <div className="d-flex gap-2">
                       <button
@@ -665,26 +656,6 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                     ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
                   </span>
                 </div>
-              </div>
-
-              <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
-                <div>
-                  <p className="fw-bold mb-1" style={{ color: "#1E5A84" }}>
-                    {selectedRow.customerName}
-                  </p>
-                  <p className="mb-0 small">{selectedRow.customerAddress}</p>
-                  <p className="mb-0 small">{selectedRow.customerNumber}</p>
-                </div>
-                <p className="text-muted small mb-0">
-                  {new Date(selectedRow.invoice_date).toLocaleDateString(
-                    "en-GB",
-                    {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                    },
-                  )}
-                </p>
               </div>
             </div>
           </div>

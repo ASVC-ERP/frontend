@@ -112,18 +112,20 @@ function OrdersTable({ orders, setOrders, customers }) {
       width: "100px",
       center: true,
       cell: (row) => (
-        <Button
-          variant="outline-danger"
-          size="sm"
-          className="p-1 d-flex align-items-center justify-content-center"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDelete(row);
-          }}
-          title="Delete"
-        >
-          🗑️
-        </Button>
+        row.status === "Open" ? (
+          <Button
+            variant="outline-danger"
+            size="sm"
+            className="p-1 d-flex align-items-center justify-content-center"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDelete(row);
+            }}
+            title="Delete"
+          >
+            🗑️
+          </Button>
+        ) : null
       ),
     },
   ];
@@ -552,7 +554,7 @@ function OrdersTable({ orders, setOrders, customers }) {
     }).then((result) => {
       if (result.isConfirmed) {
         axios
-          .delete(`${API_URL}/order/${selectedRow.id}`)
+          .delete(`${API_URL}/order/id/${selectedRow.id}`)
           .then((res) => {
             fetchOrders();
 
@@ -1088,6 +1090,8 @@ function OrdersTable({ orders, setOrders, customers }) {
                     style={{
                       maxHeight: "400px",
                       overflowY: "auto",
+                      overflowY: "auto",
+                      overflowX: "visible",
                     }}
                   >
                     <ul className="list-unstyled">
@@ -1097,8 +1101,44 @@ function OrdersTable({ orders, setOrders, customers }) {
                             <div className="d-flex justify-content-between align-items-center mb-2">
                               {/* Image and Product Info */}
                               <div className="d-flex flex-column">
-                                <span className="fw-semibold">
+                                <span 
+                                  className="fw-semibold position-relative price-hover"
+                                  style={{ cursor: "pointer" }}
+                                >
                                   {item.products.item_name}{" "}
+                                  <div className="price-tooltip">
+                                    <strong>Prices</strong>
+                                    {(
+                                      <div>
+                                        <span>Supplier Cost</span>
+                                        <span className="fw-bold text-success">₱{item.products.cost.toLocaleString()}</span>
+                                      </div>
+                                    )}
+                                    {(
+                                      <div>
+                                        <span>Price 1</span>
+                                        <span className="fw-bold text-success">₱{item.products.price1.toLocaleString()}</span>
+                                      </div>
+                                    )}
+                                    {(
+                                      <div>
+                                        <span>Price 2</span>
+                                        <span className="fw-bold text-success">₱{item.products.price2.toLocaleString()}</span>
+                                      </div>
+                                    )}
+                                    {(
+                                      <div>
+                                        <span>Price 3</span>
+                                        <span className="fw-bold text-success">₱{item.products.price3.toLocaleString()}</span>
+                                      </div>
+                                    )}
+                                    {(
+                                      <div>
+                                        <span>Price 4</span>
+                                        <span className="fw-bold text-success">₱{item.products.price4.toLocaleString()}</span>
+                                      </div>
+                                    )}
+                                  </div>
                                   {/* ADD ITEM NAME */}
                                 </span>
 
