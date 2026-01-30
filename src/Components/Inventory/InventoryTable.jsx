@@ -2,6 +2,7 @@ import DataTable from "react-data-table-component";
 import { IoIosSearch } from "react-icons/io";
 import { productColumns } from "./InventoryColumns";
 import { useProductHandlers } from "./InventoryHandler";
+import { useDraggableModal } from "../../hooks/useDraggableModal";
 
 function InventoryTable({
   items = [],
@@ -13,6 +14,8 @@ function InventoryTable({
   setLimit,
   totalRows,
 }) {
+
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const {
     // Search state
@@ -119,16 +122,20 @@ function InventoryTable({
         tabIndex="-1"
         style={{ display: showItemModal ? "block" : "none" }}
         aria-hidden={!showItemModal}
+        onMouseMove={handleMouseMove}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseUp}
       >
         <div className="modal-dialog modal-dialog-centered modal-lg w-50">
           <div className="modal-content shadow-lg border-0">
             {/* Header with gradient background */}
             <div
-              className="modal-header text-white position-relative overflow-hidden"
+              className="modal-header text-white position-relative overflow-hidden cursor-move"
               style={{
                 background: "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                 borderRadius: "0.5rem 0.5rem 0 0",
               }}
+              onMouseDown={handleHeaderMouseDown}
             >
               <div className="d-flex align-items-center">
                 <div>

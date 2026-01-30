@@ -13,16 +13,14 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     selector: (row) => row.name,
     sortable: true,
     wrap: true,
-    grow: 3,
-    minWidth: "200px",
+    grow: 2.5,
+    minWidth: "150px",
   },
   {
     name: "PIC",
     selector: (row) => row.pic,
     sortable: true,
     wrap: true,
-    grow: 3,
-    minWidth: "200px",
   },
   {
     name: "Number",
@@ -32,10 +30,18 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     minWidth: "150px",
   },
   {
+    name: "Address",
+    selector: (row) => row.address,
+    sortable: true,
+    grow: 3,
+    minWidth: "200px",
+    wrap: true,
+  },
+  {
     name: "TIN",
     selector: (row) => row.tin || "N/A",
     sortable: false,
-    grow: 2,
+    grow: 1,
     minWidth: "140px",
   },
   {
@@ -44,14 +50,6 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     sortable: false,
     grow: 1,
     minWidth: "100px",
-  },
-  {
-    name: "Address",
-    selector: (row) => row.address,
-    sortable: true,
-    grow: 3,
-    minWidth: "200px",
-    wrap: true,
   },
   {
     name: "Actions",

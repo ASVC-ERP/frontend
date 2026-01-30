@@ -12,11 +12,11 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
   const columns = [
     {
-      name: "Supplier Code",
+      name: "Code",
       selector: (row) => row.sid,
       sortable: true,
-      grow: 1,
-      minWidth: "180px",
+      width: "100px",
+      left: true,
     },
     {
       name: "Supplier Name",
@@ -24,27 +24,35 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       sortable: true,
       wrap: true,
       grow: 2,
-      minWidth: "200px",
+      minWidth: "180px",
     },
     {
-      name: "Number",
+      name: "Contact No.",
       selector: (row) => row.number,
       sortable: false,
-      grow: 0,
       width: "150px",
+      left: true,
+      wrap: true
     },
     {
       name: "Address",
       selector: (row) => row.address,
-      sortable: true,
-      grow: 3,
-      minWidth: "200px",
+      sortable: false,
       wrap: true,
+      grow: 3,
+      minWidth: "280px",
+    },
+    {
+      name: "Currency",
+      selector: (row) => row.currency,
+      sortable: false,
+      width: "120px",
+      center: true,
     },
     {
       name: "Actions",
       cell: (row) => (
-        <div className="d-flex gap-2">
+        <div className="d-flex justify-content-center align-items-center gap-2">
           <button
             className="btn btn-sm btn-outline-primary"
             onClick={() => handleEditSupplier(row)}
@@ -53,10 +61,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
           </button>
           <button
             className="btn btn-sm btn-outline-danger"
-            onClick={() => {
-              console.log("Row data:", row);
-              handleDeleteSupplier(row.id);
-            }}
+            onClick={() => handleDeleteSupplier(row.id)}
           >
             <FaTrash />
           </button>
@@ -65,8 +70,8 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       ignoreRowClick: true,
       allowOverflow: true,
       button: true,
-      grow: 0,
       width: "120px",
+      center: true,
     },
   ];
 

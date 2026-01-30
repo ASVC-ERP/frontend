@@ -158,6 +158,7 @@ function OrdersTable({ orders, setOrders, customers }) {
   const [itemLimitWarning, setItemLimitWarning] = useState(false);
   const [addedItemOnEdit, setAddedItemOnEdit] = useState(false);
 
+  const [selectedItem, setSelectedItem] = useState(null);
   const [showCostModal, setShowCostModal] = useState(false);
 
   const statusColors = {
@@ -1106,7 +1107,10 @@ function OrdersTable({ orders, setOrders, customers }) {
                                   <span 
                                     className="fw-semibold position-relative price-hover"
                                     style={{ cursor: "pointer" }}
-                                    onClick={() => setShowCostModal(true)}
+                                    onClick={() => {
+                                      setSelectedItem(item);
+                                      setShowCostModal(true);
+                                    }}
                                   >
                                     {item.products.item_name}{" "}
                                     <div className="price-tooltip">
@@ -1144,20 +1148,6 @@ function OrdersTable({ orders, setOrders, customers }) {
                                     </div>
                                     {/* ADD ITEM NAME */}
                                   </span>
-
-                                  <Modal show={showCostModal} onHide={() => setShowCostModal(false)} size="xl">
-                                    <Modal.Header closeButton 
-                                      className="border-0 ps-3 cursor-move"
-                                      onMouseDown={handleHeaderMouseDown}
-                                    >
-                                      <Modal.Title>
-                                        Cost History - {item.products.item_name}
-                                      </Modal.Title>
-                                    </Modal.Header>
-                                    <Modal.Body>
-                                      <CostHistoryTab item={item.products} />
-                                    </Modal.Body>
-                                  </Modal>
 
                                   <small className="text-muted">
                                     Price: ₱{item.price} | Qty: {item.quantity}
@@ -1220,6 +1210,21 @@ function OrdersTable({ orders, setOrders, customers }) {
                           <hr className="my-0 border-secondary" />
                         </>
                       ))}
+
+                      {/* NOTE BY JIKO: NEED TO MOVE THIS OUTSIDE MAP OR ELSE WILL CALL ALL ITEM COST HISTORY MODAL */}
+                      <Modal show={showCostModal} onHide={() => setShowCostModal(false)} size="xl">
+                        <Modal.Header closeButton 
+                          className="border-0 ps-3 cursor-move"
+                          onMouseDown={handleHeaderMouseDown}
+                        >
+                          <Modal.Title>
+                            Cost History - {selectedItem?.products?.item_name}
+                          </Modal.Title>
+                        </Modal.Header>
+                        <Modal.Body>
+                          {selectedItem && <CostHistoryTab item={selectedItem.products} />}
+                        </Modal.Body>
+                      </Modal>
                     </ul>
                   </div>
 
