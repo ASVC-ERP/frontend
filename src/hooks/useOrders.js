@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 const API_URL = import.meta.env.VITE_API_URL;
 const MAX_ORDER_ITEMS = 16;
 
-export const useOrders = () => {
+export const useOrders = (page, limit, setTotalRows) => {
   const [orders, setOrders] = useState({});
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
@@ -22,12 +22,15 @@ export const useOrders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [page, limit]);
 
   const fetchOrders = async () => {
     try {
-      const res = await axios.get(`${API_URL}/order`);
+      const res = await axios.get(`${API_URL}/order`, {
+        params: { page, limit },
+      });
       setOrders(res.data.data);
+      setTotalRows(res.data.meta.total);
     } catch (err) {
       console.error("Error fetching orders:", err);
     }

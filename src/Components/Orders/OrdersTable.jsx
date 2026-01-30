@@ -17,7 +17,16 @@ console.log("User role for approvals:", roleApprove);
 const API_URL = import.meta.env.VITE_API_URL;
 
 // Define table data
-function OrdersTable({ orders, setOrders, customers }) {
+function OrdersTable({ 
+  orders, 
+  setOrders, 
+  customers, 
+  page,
+  setPage,
+  limit,
+  setLimit,
+  totalRows, 
+}) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
@@ -197,24 +206,24 @@ function OrdersTable({ orders, setOrders, customers }) {
   const fetchOrders = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const endpoint =
-    
       roleApprove === "agent"
-        ? `${API_URL}/order?agent=${encodeURIComponent(
-            user.role,
-          )}`
+        ? `${API_URL}/order?agent=${encodeURIComponent(user.role)}`
         : `${API_URL}/order`;
 
-    console.log("endpoint: ",endpoint);
+    console.log("endpoint: ", endpoint);
+    
     axios
-      .get(endpoint)
+      .get(endpoint, {
+        params: { page, limit },
+      })
       .then((res) => {
+        // ✅ Fix 1: Use res.data.data consistently (not res.data)
         setOrders(res.data.data);
+        console.log("data: ", res.data.data);
 
-        console.log("data: ",res.data.data);
-
-        // ✅ Preserve search filter if user is currently searching
+        // ✅ Fix 2: Filter from res.data.data (not res.data)
         if (searchTerm.trim() !== "") {
-          const filtered = res.data.filter((row) =>
+          const filtered = res.data.data.filter((row) =>
             Object.values(row).some((field) =>
               field
                 ?.toString()
@@ -226,6 +235,11 @@ function OrdersTable({ orders, setOrders, customers }) {
         } else {
           setFilteredData(res.data.data);
         }
+
+        // ✅ Fix 3: Set total count for pagination (if your API returns it)
+        if (res.data.total) {
+          setTotalPages(Math.ceil(res.data.total / limit));
+        }
       })
       .catch((err) => {
         console.error("❌ Failed to fetch orders:", err);
@@ -235,7 +249,7 @@ function OrdersTable({ orders, setOrders, customers }) {
   // Initial fetch
   useEffect(() => {
     fetchOrders();
-  }, []);
+  }, [page, limit]);
 
   // Auto-refresh orders every 5 seconds
   useEffect(() => {
@@ -908,8 +922,15 @@ function OrdersTable({ orders, setOrders, customers }) {
         columns={columns}
         data={filteredData}
         pagination
+        paginationServer
         paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
-        paginationPerPage={20}
+        paginationPerPage={limit}
+        paginationTotalRows={totalRows}
+        onChangePage={(page) => setPage(page)}
+        onChangeRowsPerPage={(newLimit, page) => {
+          setLimit(newLimit);
+          setPage(page);
+        }}
         highlightOnHover
         fixedHeader
         fixedHeaderScrollHeight="700px"

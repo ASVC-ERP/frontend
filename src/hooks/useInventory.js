@@ -31,7 +31,7 @@ export const useInventory = (page, limit, setTotalRows) => {
 
   const fetchItems = async () => {
     try {
-      const response = await axios.get(`${API_URL}/product/`, {
+      const response = await axios.get(`${API_URL}/product`, {
         params: { page, limit },
       });
 

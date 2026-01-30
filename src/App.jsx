@@ -53,7 +53,7 @@ function App() {
     calculateTotal,
     calculateTotalPrice,
     handleRemoveProduct,
-  } = useOrders();
+  } = useOrders(page, limit, setTotalRows);
 
   if (!isAuthenticated) {
     return (
@@ -103,6 +103,11 @@ function App() {
                   orders={Object.values(orders)}
                   setOrders={setOrders}
                   customers={customers}
+                  page={page}
+                  setPage={setPage}
+                  limit={limit}
+                  setLimit={setLimit}
+                  totalRows={totalRows}
                 />
               }
             />

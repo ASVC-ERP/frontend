@@ -58,42 +58,6 @@ function InventoryTable({
             className="form-control ps-5 border-2 rounded-3"
           />
         </div>
-
-        {/* Add + Import Buttons beside each other */}
-        <div style={{ display: "flex", gap: "8px" }}>
-          <button
-            type="button"
-            className="btn"
-            style={{
-              backgroundColor: "#1E5A84",
-              color: "white",
-              whiteSpace: "nowrap",
-            }}
-            onClick={handleAddItemClick}
-          >
-            + Add Item
-          </button>
-
-          <label
-            htmlFor="fileUpload"
-            className="btn"
-            style={{
-              backgroundColor: "#198754",
-              color: "white",
-              cursor: "pointer",
-              marginLeft: "10px",
-            }}
-          >
-            📂 Import
-          </label>
-          <input   
-            type="file"
-            id="fileUpload"
-            accept=".xlsx"
-            style={{ display: "none" }}
-            onChange={handleFileUpload}
-          />
-        </div>
       </div>
 
       <DataTable
