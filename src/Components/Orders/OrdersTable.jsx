@@ -509,34 +509,30 @@ function OrdersTable({
     try {
       // 🔹 Prepare payload according to backend DTO
       const payload = {
-        cid: customerID, // customer ID
+        cid: customerID,
         order_date: editableRow.order_date,
         discount: editableRow.discount || 0,
         items: (editableRow.items || []).map((it) => ({
-          item_id: it.products?.id, // fallback to products
+          ...(it.id ? { id: it.id } : {}), // 👈 KEEP ROW ID IF EXISTS
+          item_id: it.products?.id ?? it.item_id,
           quantity: Number(it.quantity) || 0,
           price: it.customPriceEnabled
             ? Number(it.customPrice) || 0
             : Number(it.price) || 0,
-        })),
+        }))
       };
-
+  
       console.log("Payload being sent:", payload);
-
+  
       // 🔹 Send patch request to update the order
       await axios.put(`${API_URL}/order/id/${editableRow.id}`, payload);
-
-      // 🔹 Update frontend state
-      setOrders((prev) =>
-        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o)),
-      );
-      setFilteredData((prev) =>
-        prev.map((o) => (o.id === editableRow.id ? { ...o, ...payload } : o)),
-      );
-      setSelectedRow({ ...selectedRow, ...payload });
-      setEditableRow({ ...editableRow, ...payload });
+  
+      // 🔹 Refetch orders to get the updated data with new IDs
+      await fetchOrders();
+  
       setIsEditing(false);
-
+      setShowEditModal(false);
+  
       Swal.fire({
         icon: "success",
         title: "Order Updated",
@@ -544,12 +540,11 @@ function OrdersTable({
         timer: 2000,
         showConfirmButton: false,
       });
-
-      await fetchOrders();
-      setShowEditModal(false);
-
-      // ✅ Optionally reopen the updated row
-      handleRowClick({ ...editableRow, ...payload });
+  
+      // ✅ Fetch the fresh order data and reopen it
+      const updatedOrder = await axios.get(`${API_URL}/order/id/${editableRow.id}`);
+      handleRowClick(updatedOrder.data);
+  
     } catch (err) {
       console.error("Failed to update order:", err);
       Swal.fire({
