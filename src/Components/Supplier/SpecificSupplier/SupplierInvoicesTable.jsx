@@ -926,7 +926,10 @@ function SupplierInvoicesTable({ allItems }) {
                                     (item.quantity || 0) *
                                     (item.unitCost || 0) *
                                     (invoiceForm.conversionFactor || 1)
-                                  ).toFixed(2)}
+                                  ).toLocaleString('en-US', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2
+                                  })}
                                 </span>
                               </div>
                               <div className="col-1">
@@ -999,7 +1002,10 @@ function SupplierInvoicesTable({ allItems }) {
                                           (invoiceForm.conversionFactor || 1)
                                       );
                                     }, 0)
-                                    .toFixed(2)}
+                                    .toLocaleString('en-US', {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2
+                                    })}
                                 </span>
                               </div>
                             </div>

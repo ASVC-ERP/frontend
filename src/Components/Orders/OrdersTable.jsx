@@ -1617,20 +1617,19 @@ function OrdersTable({
                   }}
                 >
                   <span className="fw-semibold fs-5">Total</span>
-                  <span className="fw-bold fs-5">
-                    {(
+                  <span>
+                    {new Intl.NumberFormat("en-PH", {
+                      style: "currency",
+                      currency: "PHP",
+                    }).format(
                       editableRow?.items?.reduce((sum, item) => {
                         const price = item.customPriceEnabled
                           ? Number(item.customPrice || 0)
                           : Number(item.price || 0);
                         const quantity = Number(item.quantity || 0);
-                        const total = new Intl.NumberFormat("en-PH", {
-                          style: "currency",
-                          currency: "PHP",
-                        }).format(sum + price * quantity || 0)
-                        return total;
+                        return sum + price * quantity;
                       }, 0) || 0
-                    ).toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                    )}
                   </span>
                 </div>
 
