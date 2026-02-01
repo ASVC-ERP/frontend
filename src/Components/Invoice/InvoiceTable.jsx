@@ -20,6 +20,12 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       maxWidth: "50px",
     },
     {
+      name: "Order",
+      selector: (row) => `ORD${row.order_id}`,
+      sortable: true,
+      maxWidth: "80px",
+    },
+    {
       name: "Date",
       selector: (row) =>
         new Date(row.invoice_date).toLocaleDateString("en-US", {
@@ -33,16 +39,16 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     },
     {
       name: "Customer Name",
-      selector: (row) => row.customers.name || "—",
+      selector: (row) => row.customer.name || "—",
       sortable: true,
-      grow: 1,
-      minWidth: "500px",
+      grow: 0,
+      minWidth: "380px",
       wrap: true,
       searchable: true
     },
     {
       name: "PIC",
-      selector: (row) => row.users.name,
+      selector: (row) => row.user.name,
       sortable: true,
       grow: 0,
       width: "140px",
@@ -83,7 +89,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                 }))
               }
             />
-
+    
             {/* Courier */}
             <input
               type="text"
@@ -98,7 +104,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                 }))
               }
             />
-
+    
             {/* Delivery Date */}
             <input
               type="date"
@@ -117,25 +123,31 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                 }))
               }
             />
-
-            {/* SAVE */}
-            <Button
-              variant="outline-success"
-              size="sm"
-              className="p-1 d-flex align-items-center justify-content-center"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleSave(row);
-              }}
-              title="Save"
-            >
-              <FaSave size={14} />
-            </Button>
           </div>
         );
       },
-      grow: 2,
+      grow: 1.5,
       minWidth: "450px",
+    },
+    {
+      name: "Actions",
+      cell: (row) => (
+        <Button
+          variant="outline-success"
+          size="sm"
+          className="p-1 d-flex align-items-center justify-content-center"
+          onClick={(e) => {
+            e.stopPropagation();
+            handleSave(row);
+          }}
+          title="Save"
+        >
+          <FaSave size={14} />
+        </Button>
+      ),
+      grow: 0,
+      width: "100px",
+      center: true,
     },
   ];
 

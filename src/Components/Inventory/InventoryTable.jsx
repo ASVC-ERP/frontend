@@ -58,6 +58,22 @@ function InventoryTable({
             className="form-control ps-5 border-2 rounded-3"
           />
         </div>
+
+        {/* Add + Import Buttons beside each other */}
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            type="button"
+            className="btn"
+            style={{
+              backgroundColor: "#0C1D61",
+              color: "white",
+              whiteSpace: "nowrap",
+            }}
+            onClick={handleAddItemClick}
+          >
+            + Add Item
+          </button>
+        </div>
       </div>
 
       <DataTable
@@ -557,7 +573,7 @@ function InventoryTable({
                 }}
               >
                 <i className="fas fa-plus me-2"></i>
-                Add Item
+                Add Product
               </button>
             </div>
           </div>

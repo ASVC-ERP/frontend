@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, React } from "react";
 import DataTable from "react-data-table-component";
 import { Link } from "react-router-dom"; // Import Link from react-router-dom
 import { Modal, Button } from "react-bootstrap";
@@ -9,6 +9,7 @@ import Swal from "sweetalert2";
 import ServeQuantityInput from "./ServeQantityInput";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
 import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
+import { checkDuplicateProduct } from "../../hooks/useOrderHelpers";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
@@ -120,7 +121,6 @@ function OrdersTable({
       name: "Actions",
       grow: 0,
       width: "100px",
-      center: true,
       cell: (row) => (
         row.status === "Open" ? (
           <Button
@@ -210,18 +210,13 @@ function OrdersTable({
         ? `${API_URL}/order?agent=${encodeURIComponent(user.role)}`
         : `${API_URL}/order`;
 
-    console.log("endpoint: ", endpoint);
-    
     axios
       .get(endpoint, {
         params: { page, limit },
       })
       .then((res) => {
-        // ✅ Fix 1: Use res.data.data consistently (not res.data)
         setOrders(res.data.data);
-        console.log("data: ", res.data.data);
 
-        // ✅ Fix 2: Filter from res.data.data (not res.data)
         if (searchTerm.trim() !== "") {
           const filtered = res.data.data.filter((row) =>
             Object.values(row).some((field) =>
@@ -232,18 +227,14 @@ function OrdersTable({
             ),
           );
           setFilteredData(filtered);
-        } else {
+        } else
           setFilteredData(res.data.data);
-        }
 
-        // ✅ Fix 3: Set total count for pagination (if your API returns it)
-        if (res.data.total) {
+
+        if (res.data.total) 
           setTotalPages(Math.ceil(res.data.total / limit));
-        }
       })
-      .catch((err) => {
-        console.error("❌ Failed to fetch orders:", err);
-      });
+      .catch((err) => { console.error("❌ Failed to fetch orders:", err); });
   };
 
   // Initial fetch
@@ -626,6 +617,12 @@ function OrdersTable({
 
   const handleSelectSuggestion = (index, item) => {
     console.log("Selected item:", item, "for row index:", index);
+
+    if (checkDuplicateProduct(item.item_name, editableRow.items, index)) {
+      setQuery("");
+      setSuggestions([]);
+      return;
+    }
 
     setEditableRow((prev) => {
       console.log("Previous editableRow:", prev);
@@ -1186,7 +1183,7 @@ function OrdersTable({
                                       </>
                                     )}
                                     {(selectedRow.status === "Partial Served" ||
-                                      selectedRow.status === "Served") && (
+                                      selectedRow.status === "Served" || selectedRow.status === "Invoiced") && (
                                       <span className="text-success">
                                         {" "}
                                         (Served:{" "}
@@ -1218,7 +1215,10 @@ function OrdersTable({
                                   {new Intl.NumberFormat("en-PH", {
                                     style: "currency",
                                     currency: "PHP",
-                                  }).format(item.price * item.quantity || 0)}
+                                  }).format(
+                                    (item.customPriceEnabled ? Number(item.customPrice || 0) : Number(item.price || 0)) *
+                                    (selectedRow.status !== 'Open' ? Number(item.serve_qty || 0) : Number(item.quantity || 0))
+                                  )}
                                 </span>
                               </div>
                             </div>
@@ -1248,10 +1248,21 @@ function OrdersTable({
                   <div className="d-flex justify-content-between align-items-center pt-3 ms-3">
                     <span className="h5 fw-semibold ">Total</span>
                     <span className="fw-bold h5">
-                      {new Intl.NumberFormat("en-PH", {
-                        style: "currency",
-                        currency: "PHP",
-                      }).format(selectedRow.total_price || 0)}
+                    {new Intl.NumberFormat("en-PH", {
+                      style: "currency",
+                      currency: "PHP",
+                    }).format(
+                      editableRow?.items?.reduce((sum, item) => {
+                        const price = item.customPriceEnabled
+                          ? Number(item.customPrice || 0)
+                          : Number(item.price || 0);
+                        
+                        const qty = editableRow?.status !== 'Open' 
+                          ? Number(item.serve_qty || 0)
+                          : Number(item.quantity || 0);
+                        return sum + price * qty;
+                      }, 0) || 0  
+                    )}
                     </span>
                   </div>
                 </div>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { checkDuplicateProduct } from "./useOrderHelpers";
 
 const API_URL = import.meta.env.VITE_API_URL;
 const MAX_ORDER_ITEMS = 16;
@@ -91,18 +92,7 @@ export const useOrders = (page, limit, setTotalRows) => {
       return;
     }
 
-    const alreadyInOrder = orderItems.some(
-      (item) => item.itemName === items.itemName
-    );
-
-    if (alreadyInOrder) {
-      Swal.fire({
-        icon: "warning",
-        iconColor: "#1E5A84",
-        title: "Duplicate Product",
-        text: `${items.itemName} is already in the order list.`,
-        confirmButtonColor: "#1E5A84",
-      });
+    if (checkDuplicateProduct(items.itemName, orderItems)) {
       setQuery("");
       setSuggestions([]);
       return;
@@ -199,5 +189,6 @@ export const useOrders = (page, limit, setTotalRows) => {
     calculateTotal,
     calculateTotalPrice,
     handleRemoveProduct,
+    checkDuplicateProduct,
   };
 };

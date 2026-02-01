@@ -218,7 +218,7 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
       Swal.fire({
         icon: "error",
         title: "Error",
-        text: `Failed to delete customer ${customerID}.`,
+        text: err.response?.data?.message ||  "Failed to delete customer ${customerID}.",
       });
     }
   };

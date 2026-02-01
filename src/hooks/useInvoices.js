@@ -13,7 +13,7 @@ export const useInvoices = () => {
   const fetchInvoices = async () => {
     try {
       const response = await axios.get(`${API_URL}/invoice`);
-      setInvoices(response.data);
+      setInvoices(response.data.data);
     } catch (error) {
       console.error("Error fetching invoices:", error);
     }
