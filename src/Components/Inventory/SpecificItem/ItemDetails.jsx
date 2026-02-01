@@ -96,16 +96,17 @@ function ItemDetails({ item, onUpdate }) {
   };
 
   const handleStockUpdate = async () => {
-    console.log("Submitting stock update with data:", stockData);
+    const PIC = user?.userId;
+    const payload = {
+      quantity: Number(stockData.newCount),
+      remarks: stockData.remarks,
+      pic: Number(PIC),
+    };
+
     try {
-      const PIC = user.name || "";
       const response = await axios.patch(
         `${API_URL}/product/${item.itemID}/stock`,
-        {
-          quantity: Number(stockData.newCount),
-          remarks: stockData.remarks,
-          pic: PIC,
-        },
+        payload
       );
 
       console.log("Stock adjusted successfully:", response.data);
