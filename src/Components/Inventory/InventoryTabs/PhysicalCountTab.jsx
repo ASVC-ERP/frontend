@@ -111,7 +111,7 @@ function PhysicalCountTab({ item }) {
         pagination
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="200px"
+        fixedHeaderScrollHeight="300px"
         customStyles={customStyles}
         dense={true}
       />

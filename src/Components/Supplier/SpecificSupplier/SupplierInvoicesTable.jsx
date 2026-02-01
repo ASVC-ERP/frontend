@@ -346,19 +346,39 @@ function SupplierInvoicesTable({ allItems }) {
 
   const columns = [
     {
-      name: "Invoice ID",
-      selector: (row) => row.invoiceID || row.id,
+      name: "#",
+      selector: (row) => row.id,
       sortable: true,
+      grow: 0,
+      minWidth: "100px"
     },
     {
-      name: "Date",
+      name: "Invoice No.",
+      selector: (row) => row.invoice_number,
+      sortable: true,
+      grow: 0,
+      minWidth: "200px"
+    },
+    {
+      name: "PO No.",
+      selector: (row) => row.po_number,
+      sortable: true,
+      grow: 0,
+      minWidth: "200px"
+    },
+    {
+      name: "Purchase Date",
       selector: (row) => row.purchase_date || row.purchaseDate,
       sortable: true,
+      grow: 0,
+      minWidth: "300px"
     },
     {
       name: "Number of Items",
       selector: (row) => row.supplier_invoice_items?.length ?? 0,
       sortable: true,
+      grow: 0,
+      minWidth: "300px"
     },
     {
       name: "Total Price",

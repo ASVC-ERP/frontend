@@ -3,6 +3,7 @@ import { FaEdit } from "react-icons/fa";
 import axios from "axios";
 import Swal from "sweetalert2";
 import showAlert from "../../Swal";
+import "./ItemDetails.css"
 
 function ItemDetails({ item, onUpdate }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -16,7 +17,7 @@ function ItemDetails({ item, onUpdate }) {
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  // console.log("ItemDetails item prop:", item);
+  console.log("ItemDetails item prop:", item);
 
   const isAdmin = user?.role === "admin";
 
@@ -452,7 +453,36 @@ function ItemDetails({ item, onUpdate }) {
           />
         </div>
 
-        <div className="col-auto d-flex align-items-end ms-auto mt-4">
+        <div className="col-4">
+          <label htmlFor="Cost" className="form-label h6">
+            Cost:
+          </label>
+          <div className="d-flex align-items-center">
+            <input
+              type="text"
+              className="form-control form-control-sm me-2 border-dark border-opacity-25"
+              id="Cost"
+              value={itemData.cost}
+              style={{ backgroundColor: "#e9ecef" }}
+              readOnly
+            />
+{/* -- TODO --
+            {user?.role === "admin" && (
+              <FaEdit
+                onClick={() => handleEditSpecialPriceClick(item.cost)}
+                style={{ cursor: "pointer", margin: "0px 15px" }}
+                color="#1E5A84"
+                size={30}
+              />
+            )}
+*/}
+          </div>
+        </div>
+
+        <div 
+          className="col-auto d-flex align-items-end ms-auto mt-4"
+          style={{ position: "relative", bottom: "10px", right: "830px" }}
+        >
           {isAdmin && (
             <button
               type="button"

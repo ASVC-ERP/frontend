@@ -16,6 +16,7 @@ const transformItem = (item) => ({
   price3: item.price3,
   price4: item.price4,
   minStock: item.min_stock,
+  cost: item.cost,
   partNum: item.part_num,
   interNum: item.internal_num,
   unit: item.unit,

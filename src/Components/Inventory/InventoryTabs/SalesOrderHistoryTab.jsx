@@ -75,7 +75,7 @@ function SalesOrderHistoryTab({ item }) {
         pagination
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="400px"
+        fixedHeaderScrollHeight="300px"
         customStyles={customStyles}
         dense
       />

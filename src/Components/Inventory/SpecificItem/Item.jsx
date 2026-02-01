@@ -34,7 +34,7 @@ function Item({ onItemsUpdate }) {
       <div className="row mt-3 mx-3">
         <div
           className="border rounded-3"
-          style={{ height: "350px", backgroundColor: "#E8E7EC" }}
+          style={{ height: "430px", backgroundColor: "#E8E7EC" }}
         >
           <ItemDetails item={item} onUpdate={fetchItem} />
         </div>
@@ -42,7 +42,7 @@ function Item({ onItemsUpdate }) {
       <div className="row mt-3 mx-3">
         <div
           className="border rounded-3"
-          style={{ height: "250px", backgroundColor: "#E8E7EC" }}
+          style={{ height: "430px", backgroundColor: "#E8E7EC" }}
         >
           <Tabs item={item} />
         </div>

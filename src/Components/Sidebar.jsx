@@ -9,6 +9,7 @@ import axios from "axios";
 
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
+import "./Sidebar.css";
 
 export default function Sidebar({ onLogout }) {
   const user = JSON.parse(localStorage.getItem("user"));
@@ -39,7 +40,7 @@ export default function Sidebar({ onLogout }) {
   }, []);
 
   return (
-    <div className="d-flex flex-column vh-100 position-sticky">
+    <div className="sidebar-container d-flex flex-column vh-100 position-sticky">
       {/* Logo and Company Name */}
       <div className="d-flex flex-column align-items-center mb-3 px-3">
         <img
@@ -172,7 +173,7 @@ export default function Sidebar({ onLogout }) {
       </div>
 
       {/* Profile Section at the Bottom */}
-      <div className="d-flex align-items-center justify-content-center mb-4 mt-auto">
+      <div className="profile-section d-flex align-items-center justify-content-center mb-4 mt-auto">
         <div className="dropdown">
           <button
             className="btn p-0 border-0 bg-transparent d-flex align-items-center"

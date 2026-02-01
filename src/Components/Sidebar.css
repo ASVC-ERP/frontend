@@ -1,0 +1,223 @@
+/* Hover effect for navigation links */
+.nav-link {
+    transition: background-color 0.3s ease, transform 0.2s ease;
+  }
+  
+  .nav-link:hover {
+    background-color: rgba(30, 90, 132, 0.1);
+    transform: translateX(5px);
+  }
+  
+  /* Icon hover animation */
+  .nav-link:hover svg {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
+  
+  .nav-link svg {
+    transition: transform 0.2s ease;
+  }
+  
+  /* Profile dropdown hover */
+  .dropdown button:hover {
+    opacity: 0.85;
+    transition: opacity 0.3s ease;
+  }
+  
+  /* Dropdown items hover */
+  .dropdown-item {
+    transition: background-color 0.2s ease;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f8f9fa;
+  }
+  
+  .dropdown-item.text-danger:hover {
+    background-color: #ffe6e6;
+  }
+  
+  /* Logo hover effect */
+  .d-flex.flex-column.align-items-center.mb-3.px-3 img:hover {
+    transform: scale(1.05);
+    transition: transform 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .d-flex.flex-column.align-items-center.mb-3.px-3 img {
+    transition: transform 0.3s ease;
+  }
+  
+  /* Badge pulse animation */
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  
+  .badge.bg-danger {
+    animation: pulse 2s infinite;
+  }
+  
+  /* Smooth shadow on sidebar */
+  .vh-100.position-sticky {
+    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .vh-100.position-sticky:hover {
+    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
+  }
+  
+  /* Active link indicator */
+  .nav-link.active {
+    background-color: rgba(30, 90, 132, 0.15);
+    border-left: 4px solid #1E5A84;
+    padding-left: calc(1rem - 4px);
+  }
+  
+  /* Profile section hover lift effect */
+  .dropdown button {
+    transition: transform 0.2s ease;
+  }
+  
+  .dropdown button:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* Smooth scrollbar */
+  .vh-100::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  .vh-100::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .vh-100::-webkit-scrollbar-thumb {
+    background: rgba(30, 90, 132, 0.3);
+    border-radius: 3px;
+  }
+  
+  .vh-100::-webkit-scrollbar-thumb:hover {
+    background: rgba(30, 90, 132, 0.5);
+  }
+
+  /* Profile Section Container */
+.profile-section {
+    padding: 1rem;
+    border-top: 1px solid #e0e0e0;
+    background: linear-gradient(to bottom, transparent, rgba(30, 90, 132, 0.02));
+  }
+  
+  /* Profile Button */
+  .profile-section .dropdown button {
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 8px;
+    width: 100%;
+  }
+  
+  .profile-section .dropdown button:hover {
+    background-color: rgba(30, 90, 132, 0.08);
+    transform: translateY(-2px);
+  }
+  
+  /* Profile Icon Animation */
+  .profile-section .dropdown button svg {
+    transition: all 0.3s ease;
+  }
+  
+  .profile-section .dropdown button:hover svg {
+    transform: scale(1.15) rotate(5deg);
+    filter: drop-shadow(0 2px 4px rgba(30, 90, 132, 0.3));
+  }
+  
+  /* Profile Text */
+  .profile-section .sidebar-text {
+    transition: color 0.3s ease;
+  }
+  
+  .profile-section .dropdown button:hover .sidebar-text {
+    color: #164663 !important;
+  }
+  
+  /* Dropdown Menu */
+  .profile-section .dropdown-menu {
+    min-width: 220px;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    border-radius: 8px;
+    padding: 0.5rem 0;
+    margin-top: 0.5rem;
+    animation: slideUp 0.3s ease;
+  }
+  
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  /* Dropdown Items */
+  .profile-section .dropdown-item {
+    padding: 0.75rem 1.25rem;
+    transition: all 0.2s ease;
+    border-radius: 4px;
+    margin: 0 0.5rem;
+    display: flex;
+    align-items: center;
+  }
+  
+  .profile-section .dropdown-item:hover {
+    background-color: #f0f8ff;
+    transform: translateX(5px);
+    padding-left: 1.5rem;
+  }
+  
+  .profile-section .dropdown-item i {
+    transition: transform 0.2s ease;
+  }
+  
+  .profile-section .dropdown-item:hover i {
+    transform: scale(1.2);
+  }
+  
+  /* Logout Button Special Styling */
+  .profile-section .dropdown-item.text-danger:hover {
+    background-color: #ffe6e6;
+    color: #dc3545 !important;
+  }
+  
+  .profile-section .dropdown-item.text-danger:hover i {
+    animation: shake 0.5s ease;
+  }
+  
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); }
+    75% { transform: translateX(3px); }
+  }
+  
+  /* Dropdown Divider */
+  .profile-section .dropdown-divider {
+    margin: 0.5rem 0;
+    border-color: #e0e0e0;
+  }
+  
+  /* Active/Focus States */
+  .profile-section .dropdown button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 90, 132, 0.15);
+  }
