@@ -1665,7 +1665,6 @@ function OrdersTable({
       )}
 
       {/* SERVE MODAL */}
-
       {showServeModal && selectedRow && (
         <>
           {/* Backdrop */}

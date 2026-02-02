@@ -1,4 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { useState } from "react";
 
 import "./App.css";
@@ -26,12 +31,31 @@ import { useCustomers } from "./hooks/useCustomers";
 import { usePagination } from "./hooks/usePagination";
 
 function App() {
-
   const { isAuthenticated, user, handleLoginSuccess, handleLogout } = useAuth();
-  const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination();
-  const { invoices, fetchInvoices } = useInvoices();
-  const { items, fetchItems, handleAddItem } = useInventory(page, limit, setTotalRows);
+
+  // Orders pagination
+  const ordersPagination = usePagination();
+
+  // Inventory pagination
+  const inventoryPagination = usePagination();
+
+  // Invoice pagination
+  const invoicePagination = usePagination();
+
+  const { invoices, fetchInvoices } = useInvoices(
+    invoicePagination.page,
+    invoicePagination.limit,
+    invoicePagination.setTotalRows,
+  );
+
+  const { items, fetchItems, handleAddItem } = useInventory(
+    inventoryPagination.page,
+    inventoryPagination.limit,
+    inventoryPagination.setTotalRows,
+  );
+
   const { suppliers, fetchSuppliers, handleAddSupplier } = useSuppliers();
+
   const { customers, fetchCustomers } = useCustomers();
 
   const {
@@ -53,13 +77,20 @@ function App() {
     calculateTotal,
     calculateTotalPrice,
     handleRemoveProduct,
-  } = useOrders(page, limit, setTotalRows);
+  } = useOrders(
+    ordersPagination.page,
+    ordersPagination.limit,
+    ordersPagination.setTotalRows,
+  );
 
   if (!isAuthenticated) {
     return (
       <Router>
         <Routes>
-          <Route path="/login" element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
+          <Route
+            path="/login"
+            element={<LoginPage onLoginSuccess={handleLoginSuccess} />}
+          />
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>
@@ -103,11 +134,11 @@ function App() {
                   orders={Object.values(orders)}
                   setOrders={setOrders}
                   customers={customers}
-                  page={page}
-                  setPage={setPage}
-                  limit={limit}
-                  setLimit={setLimit}
-                  totalRows={totalRows}
+                  page={ordersPagination.page}
+                  setPage={ordersPagination.setPage}
+                  limit={ordersPagination.limit}
+                  setLimit={ordersPagination.setLimit}
+                  totalRows={ordersPagination.totalRows}
                 />
               }
             />
@@ -148,7 +179,10 @@ function App() {
             />
 
             {/* Inventory */}
-            <Route path="/inventory/item" element={<Item onItemsUpdate={fetchItems} />} />
+            <Route
+              path="/inventory/item"
+              element={<Item onItemsUpdate={fetchItems} />}
+            />
             <Route
               path="/inventory"
               element={
@@ -156,11 +190,11 @@ function App() {
                   items={items}
                   onAddItem={handleAddItem}
                   onRefreshItems={fetchItems}
-                  page={page}
-                  setPage={setPage}
-                  limit={limit}
-                  setLimit={setLimit}
-                  totalRows={totalRows}
+                  page={inventoryPagination.page}
+                  setPage={inventoryPagination.setPage}
+                  limit={inventoryPagination.limit}
+                  setLimit={inventoryPagination.setLimit}
+                  totalRows={inventoryPagination.totalRows}
                 />
               }
             />
@@ -176,7 +210,10 @@ function App() {
                 />
               }
             />
-            <Route path="/supplier/invoices" element={<SupplierInvoicesTable />} />
+            <Route
+              path="/supplier/invoices"
+              element={<SupplierInvoicesTable />}
+            />
 
             {/* Customers */}
             <Route
@@ -185,11 +222,6 @@ function App() {
                 <Customer
                   customers={customers}
                   onRefreshCustomers={fetchCustomers}
-                  page={page}
-                  setPage={setPage}
-                  limit={limit}
-                  setLimit={setLimit}
-                  totalRows={totalRows}
                 />
               }
             />
