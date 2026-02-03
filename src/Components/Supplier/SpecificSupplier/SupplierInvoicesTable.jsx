@@ -344,41 +344,42 @@ function SupplierInvoicesTable({ allItems }) {
     }
   };
 
+  const statusColors = {
+    pending: {
+      bg: "#ffc107", // amber
+      text: "#000",
+    },
+    posted: {
+      bg: "#198754", // deep green
+      text: "#fff",
+    },
+  };
+
   const columns = [
     {
       name: "#",
       selector: (row) => row.id,
-      sortable: true,
-      grow: 0,
-      minWidth: "100px"
+      width: "200px"
     },
     {
       name: "Invoice No.",
       selector: (row) => row.invoice_number,
-      sortable: true,
-      grow: 0,
-      minWidth: "200px"
+      width: "200px"
     },
     {
       name: "PO No.",
       selector: (row) => row.po_number,
-      sortable: true,
-      grow: 0,
-      minWidth: "200px"
+      width: "200px"
     },
     {
       name: "Purchase Date",
       selector: (row) => row.purchase_date || row.purchaseDate,
-      sortable: true,
-      grow: 0,
-      minWidth: "300px"
+      width: "200px"
     },
     {
-      name: "Number of Items",
+      name: "Item Count",
       selector: (row) => row.supplier_invoice_items?.length ?? 0,
-      sortable: true,
-      grow: 0,
-      minWidth: "300px"
+      width: "200px"
     },
     {
       name: "Total Price",
@@ -396,8 +397,35 @@ function SupplierInvoicesTable({ allItems }) {
           minimumFractionDigits: 2,
         });
       },
-      sortable: true,
+      width: "300px"
     },
+    {
+      name: "Status",
+      selector: (row) => row.status,
+      width: "200px",
+      cell: (row) => {
+        const statusKey = row.status?.trim().toLowerCase();
+
+        const statusStyle = statusColors[statusKey] || {
+          bg: "#6c757d",
+          text: "#fff",
+        };
+
+        return (
+          <span
+            className="badge px-3 py-2 fw-semibold text-uppercase"
+            style={{
+              backgroundColor: statusStyle.bg,
+              color: statusStyle.text,
+              borderRadius: "20px",
+              letterSpacing: "0.5px",
+            }}
+          >
+            {row.status}
+          </span>
+        );
+      },
+    }
   ];
 
   return (
