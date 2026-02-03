@@ -16,13 +16,11 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     {
       name: "#",
       selector: (row) => row.id,
-      sortable: true,
       maxWidth: "50px",
     },
     {
       name: "Order",
       selector: (row) => `ORD${row.order_id}`,
-      sortable: true,
       maxWidth: "80px",
     },
     {
@@ -33,14 +31,12 @@ function InvoiceTable({ invoices, fetchInvoices }) {
           day: "2-digit",
           year: "2-digit",
         }),
-      sortable: true,
       grow: 0,
       width: "100px",
     },
     {
       name: "Customer Name",
       selector: (row) => row.customer.name || "—",
-      sortable: true,
       grow: 0,
       minWidth: "380px",
       wrap: true,
@@ -49,7 +45,6 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     {
       name: "PIC",
       selector: (row) => row.user.name,
-      sortable: true,
       grow: 0,
       width: "140px",
     },

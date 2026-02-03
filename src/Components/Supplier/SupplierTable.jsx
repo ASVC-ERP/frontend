@@ -14,40 +14,35 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     {
       name: "Code",
       selector: (row) => row.sid,
-      sortable: true,
       width: "100px",
       left: true,
     },
     {
       name: "Supplier Name",
       selector: (row) => row.name,
-      sortable: true,
       wrap: true,
-      grow: 2,
-      minWidth: "180px",
+      width: "350px",
+      wrap: true
     },
     {
       name: "Contact No.",
       selector: (row) => row.number,
-      sortable: false,
-      width: "150px",
+      width: "200px",
       left: true,
       wrap: true
     },
     {
       name: "Address",
       selector: (row) => row.address,
-      sortable: false,
       wrap: true,
-      grow: 3,
-      minWidth: "280px",
+      width: "600px"
     },
     {
       name: "Currency",
       selector: (row) => row.currency,
-      sortable: false,
-      width: "120px",
-      center: true,
+      grow: 3,
+      minWidth: "120px",
+      left: true,
     },
     {
       name: "Actions",

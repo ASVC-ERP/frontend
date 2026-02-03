@@ -49,9 +49,7 @@ function OrdersTable({
     {
       name: "Order",
       selector: (row) => row.id,
-      sortable: true,
-      grow: 0,
-      minWidth: "100px",
+      width: "100px",
     },
     {
       name: "Date",
@@ -61,39 +59,30 @@ function OrdersTable({
           day: "numeric",
           year: "2-digit",
         }),
-      sortable: true,
-      grow: 0,
-      minWidth: "100px",
+      width: "100px",
     },
     {
       name: "Customer Name",
       selector: (row) => row.customer?.name || "—",
-      sortable: true,
-      grow: 3,
-      minWidth: "200px",
+      width: "300px",
       wrap: true,
     },
     {
       name: "Address",
       selector: (row) => row.customer?.address || "—",
-      sortable: true,
-      grow: 3,
-      minWidth: "250px",
+      width: "700px",
       wrap: true,
     },
     {
       name: "PIC",
       selector: (row) => row.user?.name || "—",
-      sortable: true,
-      grow: 0,
       width: "150px",
     },
     {
       name: "Status",
       selector: (row) => row.status, // keeps sorting
-      sortable: true,
-      grow: 0,
-      minWidth: "120px",
+      grow: 1,
+      minWidth: "150px",
       cell: (row) => {
         const statusKey = row.status?.trim().toLowerCase();
 

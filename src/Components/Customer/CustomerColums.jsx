@@ -4,14 +4,12 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
   {
     name: "ID",
     selector: (row) => row.id,
-    sortable: true,
     grow: 0,
     width: "100px",
   },
   {
     name: "Name",
     selector: (row) => row.name,
-    sortable: true,
     wrap: true,
     grow: 2.5,
     minWidth: "150px",
@@ -19,20 +17,17 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
   {
     name: "PIC",
     selector: (row) => row.pic,
-    sortable: true,
     wrap: true,
   },
   {
     name: "Number",
     selector: (row) => row.number,
-    sortable: true,
     grow: 0,
     minWidth: "150px",
   },
   {
     name: "Address",
     selector: (row) => row.address,
-    sortable: true,
     grow: 3,
     minWidth: "200px",
     wrap: true,
@@ -40,14 +35,12 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
   {
     name: "TIN",
     selector: (row) => row.tin || "N/A",
-    sortable: false,
     grow: 1,
     minWidth: "140px",
   },
   {
     name: "Terms",
     selector: (row) => row.terms || "N/A",
-    sortable: false,
     grow: 1,
     minWidth: "100px",
   },

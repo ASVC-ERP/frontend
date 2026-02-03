@@ -4,40 +4,47 @@ export const productColumns = (handleDeleteItem) => [
     {
       name: "Product Code",
       selector: (row) => row.itemCode || row.item_code,
-      sortable: true,
-      minWidth: "100px",
+      width: "200px",
     },
     {
       name: "Product Name",
       selector: (row) => row.itemName || row.item_name,
-      sortable: true,
-      grow: 3,
-      minWidth: "200px",
+      width: "550px",
       wrap: true,
     },
     {
       name: "Stock",
       selector: (row) => row.stock,
-      sortable: true,
-      maxWidth: "80px",
+      width: "100px",
       left: true
     },
     {
-      name: "Cost",
-      selector: (row) => row.cost ?? 0,
-      sortable: true,
-      maxWidth: "100px",
+      name: "Price",
+      selector: (row) => row.price4 ?? 0,
+      width: "100px",
       left: true
+    },
+    {
+      name: "Unit",
+      width: "100px",
+      selector: (row) => row.unit,
     },
     {
       name: "Brand",
+      width: "150px",
       selector: (row) => row.brand,
-      sortable: true,
+    },
+    {
+      name: "Model",
+      width: "200px",
+      selector: (row) => row.model,
+      wrap: true
     },
     {
       name: "Origin",
+      grow: 2,
+      minWidth: "150px",
       selector: (row) => row.origin,
-      sortable: true,
     },
     {
       name: "Actions",
