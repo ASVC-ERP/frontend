@@ -22,7 +22,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       selector: (row) => row.name,
       wrap: true,
       width: "350px",
-      wrap: true
+      left: true
     },
     {
       name: "Contact No.",
