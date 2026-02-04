@@ -8,9 +8,17 @@ import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
 
-function InvoiceTable({ invoices, fetchInvoices }) {
-
-  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
+function InvoiceTable({
+  invoices,
+  fetchInvoices,
+  page,
+  setPage,
+  limit,
+  setLimit,
+  totalRows,
+}) {
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } =
+    useDraggableModal();
 
   const columns = [
     {
@@ -40,7 +48,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
       grow: 0,
       minWidth: "380px",
       wrap: true,
-      searchable: true
+      searchable: true,
     },
     {
       name: "PIC",
@@ -84,7 +92,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                 }))
               }
             />
-    
+
             {/* Courier */}
             <input
               type="text"
@@ -99,7 +107,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                 }))
               }
             />
-    
+
             {/* Delivery Date */}
             <input
               type="date"
@@ -180,17 +188,25 @@ function InvoiceTable({ invoices, fetchInvoices }) {
     return () => clearInterval(interval);
   }, [fetchInvoices, searchTerm]);
 
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
+  const handleSearch = async (event) => {
+    const value = event.target.value; // 👈 get the actual input value
     setSearchTerm(value);
 
-    const filtered = invoices.filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value),
-      ),
-    );
+    try {
+      const res = await axios.get(`${API_URL}/invoice`, {
+        params: {
+          page: 1,
+          limit: 50,
+          search: value || undefined, // 👈 send the string to backend
+        },
+      });
 
-    setFilteredData(filtered);
+      console.log("Search response:", res.data.data);
+
+      setFilteredData(res.data.data);
+    } catch (err) {
+      console.error("Search failed", err);
+    }
   };
 
   const handleRowClick = async (row) => {
@@ -235,10 +251,10 @@ function InvoiceTable({ invoices, fetchInvoices }) {
               ? productRes.data[0]
               : productRes.data; // PICK FIRST ITEM
 
-            return { ...serve};
+            return { ...serve };
           } catch (err) {
             console.log(`Failed to fetch product ${serve.item_code}:`, err);
-            return { ...serve};
+            return { ...serve };
           }
         }),
       );
@@ -491,8 +507,9 @@ function InvoiceTable({ invoices, fetchInvoices }) {
 
       {/* Row Modal */}
       {showRowModal && selectedRow && (
-        <div className="modal fade show d-block" 
-          tabIndex="-1" 
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
           role="dialog"
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
@@ -506,7 +523,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
                   background:
                     "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                   borderRadius: "0.5rem 0.5rem 0 0",
-                  userSelect: 'none'
+                  userSelect: "none",
                 }}
                 onMouseDown={handleHeaderMouseDown}
               >
@@ -523,10 +540,7 @@ function InvoiceTable({ invoices, fetchInvoices }) {
 
                   {/* Invoice Title + Action Buttons */}
                   <div className="w-100 d-flex justify-content-between align-items-center">
-                    <h5 className="mb-0">
-                      Invoice ID:{" "}
-                      {selectedRow.id}
-                    </h5>
+                    <h5 className="mb-0">Invoice ID: {selectedRow.id}</h5>
                     <div className="d-flex gap-2">
                       <button
                         type="button"
@@ -677,8 +691,15 @@ function InvoiceTable({ invoices, fetchInvoices }) {
             data={filteredData}
             onRowClicked={handleRowClick}
             pagination
+            paginationServer
             paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
-            paginationPerPage={50}
+            paginationPerPage={limit}
+            paginationTotalRows={totalRows}
+            onChangePage={(page) => setPage(page)}
+            onChangeRowsPerPage={(newLimit, page) => {
+              setLimit(newLimit);
+              setPage(page);
+            }}
             highlightOnHover
             fixedHeader
             fixedHeaderScrollHeight="700px"

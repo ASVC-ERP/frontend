@@ -10,8 +10,8 @@ import { useDraggableModal } from "../../../hooks/useDraggableModal";
 import SuggestionList from "./SuggestionList";
 
 function SupplierInvoicesTable({ allItems }) {
-
-  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } =
+    useDraggableModal();
   const location = useLocation();
   const supplier = location.state?.row || {};
   const supplierName = supplier.name || "Supplier";
@@ -64,13 +64,13 @@ function SupplierInvoicesTable({ allItems }) {
             limit: 20,
           },
         });
-    
+
         const filtered = res.data.map((item) => ({
           ...item,
           itemName: item.item_name,
           itemCode: item.item_code,
         }));
-    
+
         console.log("Filtered suggestions:", filtered);
         setSuggestions((prev) => ({ ...prev, [index]: filtered }));
       } catch (err) {
@@ -88,7 +88,7 @@ function SupplierInvoicesTable({ allItems }) {
     console.log("Selected itemID:", suggestion.id);
 
     const isDuplicate = invoiceForm.items.some(
-      (item, i) => i !== index && item.itemID === suggestion.itemID
+      (item, i) => i !== index && item.itemID === suggestion.itemID,
     );
 
     if (isDuplicate) {
@@ -122,17 +122,22 @@ function SupplierInvoicesTable({ allItems }) {
     setSuggestions((prev) => ({ ...prev, [index]: [] }));
   };
 
+  const fetchInvoices = async () => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/supplier-invoice?supplier=${supplierID}`,
+      );
+      const data = res.data.data;
+      setInvoiceData(data);
+      setFilteredData(data);
+    } catch (err) {
+      console.error("Error fetching invoices:", err);
+    }
+  };
+
   useEffect(() => {
     if (!supplierID) return;
-
-    axios
-      .get(`${API_URL}/supplier-invoice?supplier=${supplierID}`)
-      .then((res) => {
-        const data = res.data.data;
-        setInvoiceData(data);
-        setFilteredData(data);
-      })
-      .catch((err) => console.error("Error fetching invoices:", err));
+    fetchInvoices();
   }, [supplierID]);
 
   useEffect(() => {
@@ -163,8 +168,8 @@ function SupplierInvoicesTable({ allItems }) {
 
     const filtered = invoiceData.filter((row) =>
       Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
+        field?.toString().toLowerCase().includes(value),
+      ),
     );
 
     setFilteredData(filtered);
@@ -225,7 +230,7 @@ function SupplierInvoicesTable({ allItems }) {
       setShowCreateModal(false);
 
       const res = await axios.get(
-        `${API_URL}/supplier-invoice?supplier=${supplierID}`
+        `${API_URL}/supplier-invoice?supplier=${supplierID}`,
       );
       setInvoiceData(res.data.data);
       setFilteredData(res.data.data);
@@ -271,7 +276,7 @@ function SupplierInvoicesTable({ allItems }) {
 
     try {
       await axios.patch(
-        `${API_URL}/supplier-invoice/${selectedInvoice.id}/post`
+        `${API_URL}/supplier-invoice/${selectedInvoice.id}/post`,
       );
 
       // Update UI state
@@ -304,44 +309,149 @@ function SupplierInvoicesTable({ allItems }) {
     }
   };
 
-  const handleEditInvoice = async () => {
+  const handleEditModal = (selectedInvoice) => {
+    console.log("Selected Invoice for Editing:", selectedInvoice);
+    setInvoiceForm({
+      invoice_number: selectedInvoice.invoice_number,
+      po_number: selectedInvoice.po_number,
+      purchase_date: selectedInvoice.purchase_date,
+      supplier_id: selectedInvoice.supplier_id,
+      conversion_factor: selectedInvoice.conversion_factor ?? 1,
+      items: selectedInvoice.supplier_invoice_items.map((item) => ({
+        product_id: item.products.id,
+        itemName: item.products?.item_name || "",
+        unit: item.products?.unit || "",
+        quantity: item.quantity,
+        unit_cost: item.unit_cost,
+      })),
+    });
+
+    console.log("Editing Invoice Form Data:", invoiceForm);
+
+    // Pre-fill queries so autocomplete input shows existing names
+    setQueries(
+      Object.fromEntries(
+        selectedInvoice.supplier_invoice_items.map((item, index) => [
+          index,
+          item.products?.item_name || "",
+        ]),
+      ),
+    );
+
+    setShowEditModal(true);
+  };
+
+  const handleUpdateInvoice = async () => {
+    const payload = {
+      invoice_number: invoiceForm.invoice_number,
+      po_number: invoiceForm.po_number,
+      purchase_date: invoiceForm.purchase_date,
+      supplier_id: invoiceForm.supplier_id,
+      conversion_factor: invoiceForm.conversion_factor,
+      items: invoiceForm.items.map((item) => ({
+        product_id: item.product_id,
+        quantity: item.quantity,
+        unit_cost: item.unit_cost,
+      })),
+    };
+
+    // 🟡 Confirm first
+    const result = await Swal.fire({
+      title: "Update Invoice?",
+      text: "Are you sure you want to save these changes?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, update",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
-      if (!selectedInvoice?.id) {
-        console.warn("Invoice does not exist");
-        return;
-      }
-
-      if (!selectedInvoice.supplier_invoice_items?.length) {
-        console.warn("Invoice has no items");
-        return;
-      }
-
-      const payload = {
-        invoice_number: selectedInvoice.invoice_number,
-        po_number: selectedInvoice.po_number,
-        purchase_date: selectedInvoice.purchase_date,
-        supplier_id: Number(selectedInvoice.supplier_id),
-        conversion_factor: Number(selectedInvoice.conversion_factor),
-
-        items: selectedInvoice.supplier_invoice_items.map(item => ({
-          product_id: Number(item.products?.id),
-          quantity: Number(item.quantity),
-          unit_cost: Number(item.unit_cost),
-        })),
-      };
-
-      console.log("EDIT INVOICE PAYLOAD:", payload);
+      console.log("📤 Updating invoice with payload:", payload);
+      // 🔄 Loading state
+      Swal.fire({
+        title: "Updating...",
+        text: "Please wait",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
 
       await axios.put(
-        `/api/supplier-invoices/${selectedInvoice.id}`,
-        payload
+        `${API_URL}/supplier-invoice/${selectedInvoice.id}`,
+        payload,
       );
 
+       await fetchInvoices();
+
+      // ✅ Success
+      await Swal.fire({
+        title: "Updated!",
+        text: "Invoice has been updated successfully.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      setShowEditModal(false);
       setShowModal(false);
-      refreshInvoices();
-    } catch (err) {
-      console.error("Failed to update invoice:", err);
+    } catch (error) {
+      console.error(error);
+
+      // ❌ Error
+      Swal.fire({
+        title: "Update Failed",
+        text:
+          error.response?.data?.message ||
+          "Something went wrong while updating the invoice.",
+        icon: "error",
+      });
     }
+  };
+
+  const handleEditSearchChange = (index, value) => {
+    setQueries((prev) => ({ ...prev, [index]: value }));
+
+    // clear existing product binding
+    setInvoiceForm((prev) => {
+      const updated = [...prev.items];
+      updated[index] = {
+        ...updated[index],
+        itemName: value,
+        unit: "",
+      };
+      return { ...prev, items: updated };
+    });
+
+    // reuse your existing search logic
+    handleSearchChange(index, value);
+  };
+
+  const handleEditSelectSuggestion = (index, suggestion) => {
+    setInvoiceForm((prev) => {
+      const updated = [...prev.items];
+      updated[index] = {
+        ...updated[index],
+        product_id: suggestion.id,
+        itemName: suggestion.item_name,
+        unit: suggestion.unit,
+      };
+      return { ...prev, items: updated };
+    });
+
+    setQueries((prev) => ({
+      ...prev,
+      [index]: suggestion.item_name,
+    }));
+
+    setSuggestions((prev) => {
+      const updated = { ...prev };
+      delete updated[index];
+      return updated;
+    });
   };
 
   const statusColors = {
@@ -359,27 +469,27 @@ function SupplierInvoicesTable({ allItems }) {
     {
       name: "#",
       selector: (row) => row.id,
-      width: "200px"
+      width: "200px",
     },
     {
       name: "Invoice No.",
       selector: (row) => row.invoice_number,
-      width: "200px"
+      width: "200px",
     },
     {
       name: "PO No.",
       selector: (row) => row.po_number,
-      width: "200px"
+      width: "200px",
     },
     {
       name: "Purchase Date",
       selector: (row) => row.purchase_date || row.purchaseDate,
-      width: "200px"
+      width: "200px",
     },
     {
       name: "Item Count",
       selector: (row) => row.supplier_invoice_items?.length ?? 0,
-      width: "200px"
+      width: "200px",
     },
     {
       name: "Total Price",
@@ -388,7 +498,7 @@ function SupplierInvoicesTable({ allItems }) {
 
         const total = items.reduce(
           (sum, item) => sum + Number(item.subtotal || item.subTotal || 0),
-          0
+          0,
         );
 
         return total.toLocaleString("en-PH", {
@@ -397,7 +507,7 @@ function SupplierInvoicesTable({ allItems }) {
           minimumFractionDigits: 2,
         });
       },
-      width: "300px"
+      width: "300px",
     },
     {
       name: "Status",
@@ -425,7 +535,7 @@ function SupplierInvoicesTable({ allItems }) {
           </span>
         );
       },
-    }
+    },
   ];
 
   return (
@@ -507,7 +617,7 @@ function SupplierInvoicesTable({ allItems }) {
                       background:
                         "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
                       borderRadius: "0.5rem 0.5rem 0 0",
-                      userSelect: 'none'
+                      userSelect: "none",
                     }}
                     onMouseDown={handleHeaderMouseDown}
                   >
@@ -923,6 +1033,7 @@ function SupplierInvoicesTable({ allItems }) {
                                   type="text"
                                   className="form-control form-control-sm"
                                   value={item.unit ?? ""}
+                                  readOnly
                                   onChange={(e) => {
                                     const updated = [...invoiceForm.items];
                                     updated[index] = {
@@ -974,9 +1085,9 @@ function SupplierInvoicesTable({ allItems }) {
                                     (item.quantity || 0) *
                                     (item.unitCost || 0) *
                                     (invoiceForm.conversionFactor || 1)
-                                  ).toLocaleString('en-US', {
+                                  ).toLocaleString("en-US", {
                                     minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2
+                                    maximumFractionDigits: 2,
                                   })}
                                 </span>
                               </div>
@@ -987,7 +1098,7 @@ function SupplierInvoicesTable({ allItems }) {
                                   style={{ color: "#B64345" }}
                                   onClick={() => {
                                     const updated = invoiceForm.items.filter(
-                                      (_, i) => i !== index
+                                      (_, i) => i !== index,
                                     );
                                     setInvoiceForm((prev) => ({
                                       ...prev,
@@ -1050,9 +1161,9 @@ function SupplierInvoicesTable({ allItems }) {
                                           (invoiceForm.conversionFactor || 1)
                                       );
                                     }, 0)
-                                    .toLocaleString('en-US', {
+                                    .toLocaleString("en-US", {
                                       minimumFractionDigits: 2,
-                                      maximumFractionDigits: 2
+                                      maximumFractionDigits: 2,
                                     })}
                                 </span>
                               </div>
@@ -1200,7 +1311,7 @@ function SupplierInvoicesTable({ allItems }) {
                               <button
                                 className="btn btn-sm btn-light fw-semibold"
                                 style={{ width: "100px" }}
-                                onClick={handleEditInvoice}
+                                onClick={() => handleEditModal(selectedInvoice)}
                               >
                                 EDIT
                               </button>
@@ -1249,7 +1360,12 @@ function SupplierInvoicesTable({ allItems }) {
                                               Quantity: {item.quantity}
                                             </small>
                                             <small className="text-muted">
-                                              Unit Cost: ₱ {item.unit_cost.toLocaleString(undefined, { minimumFractionDigits: 2, })} / {product ? product.unit : ""}
+                                              Unit Cost: ₱{" "}
+                                              {item.unit_cost.toLocaleString(
+                                                undefined,
+                                                { minimumFractionDigits: 2 },
+                                              )}{" "}
+                                              / {product ? product.unit : ""}
                                             </small>
                                           </div>
                                         </div>
@@ -1259,17 +1375,22 @@ function SupplierInvoicesTable({ allItems }) {
                                       <div className="d-flex flex-column align-items-end">
                                         <span className="fw-semibold">
                                           ₱
-                                          {item.subtotal.toLocaleString(undefined, {
-                                            minimumFractionDigits: 2,
-                                          })}
+                                          {item.subtotal.toLocaleString(
+                                            undefined,
+                                            {
+                                              minimumFractionDigits: 2,
+                                            },
+                                          )}
                                         </span>
                                         <span
                                           className={`badge ${
-                                            selectedInvoice.status === "Purchased"
+                                            selectedInvoice.status ===
+                                            "Purchased"
                                               ? "bg-success"
-                                              : selectedInvoice.status === "Returned"
-                                              ? "bg-danger"
-                                              : "bg-secondary"
+                                              : selectedInvoice.status ===
+                                                  "Returned"
+                                                ? "bg-danger"
+                                                : "bg-secondary"
                                           }`}
                                         >
                                           {selectedInvoice.status}
@@ -1279,7 +1400,7 @@ function SupplierInvoicesTable({ allItems }) {
                                   </li>
                                 </>
                               );
-                            }
+                            },
                           )}
                         </ul>
                       </div>
@@ -1294,7 +1415,7 @@ function SupplierInvoicesTable({ allItems }) {
                           style={{ color: "#1E5A84" }}
                         >
                           {new Date(
-                            selectedInvoice.purchase_date
+                            selectedInvoice.purchase_date,
                           ).toLocaleDateString("en-GB", {
                             day: "2-digit",
                             month: "long",
@@ -1305,7 +1426,9 @@ function SupplierInvoicesTable({ allItems }) {
 
                       {/* Total Row */}
                       <div className="d-flex align-items-center gap-3">
-                        <span className="h5 fw-semibold mb-0">Total Price:</span>
+                        <span className="h5 fw-semibold mb-0">
+                          Total Price:
+                        </span>
                         <span className="fw-bold h5 mb-0">
                           ₱
                           {selectedInvoice.supplier_invoice_items
@@ -1320,6 +1443,265 @@ function SupplierInvoicesTable({ allItems }) {
                 </div>
               </div>
             </>
+          )}
+
+          {showEditModal && (
+            <div
+              className="modal fade show d-block"
+              tabIndex="-1"
+              role="dialog"
+              onMouseMove={handleMouseMove}
+              onMouseUp={handleMouseUp}
+              onMouseLeave={handleMouseUp}
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+            >
+              <div className="modal-dialog modal-xl modal-dialog-centered">
+                <div className="modal-content shadow-lg border-0">
+                  {/* Header */}
+                  <div
+                    className="modal-header text-white cursor-move"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
+                      userSelect: "none",
+                    }}
+                    onMouseDown={handleHeaderMouseDown}
+                  >
+                    <h5 className="mb-0">
+                      Edit Supplier Invoice — {invoiceForm.invoice_number}
+                    </h5>
+
+                    <button
+                      className="btn-close btn-close-white"
+                      onClick={() => setShowEditModal(false)}
+                    />
+                  </div>
+
+                  {/* Body */}
+                  <div className="modal-body p-4">
+                    <form>
+                      {/* Header Info */}
+                      <div className="row g-3 mb-4">
+                        <div className="col-md-3">
+                          <label className="form-label small fw-semibold">
+                            PO Number
+                          </label>
+                          <input
+                            className="form-control"
+                            value={invoiceForm.po_number}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                po_number: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+
+                        <div className="col-md-3">
+                          <label className="form-label small fw-semibold">
+                            Invoice #
+                          </label>
+                          <input
+                            className="form-control"
+                            value={invoiceForm.invoice_number}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                invoice_number: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+
+                        <div className="col-md-3">
+                          <label className="form-label small fw-semibold">
+                            Purchase Date
+                          </label>
+                          <input
+                            type="date"
+                            className="form-control"
+                            value={invoiceForm.purchase_date}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                purchase_date: e.target.value,
+                              })
+                            }
+                          />
+                        </div>
+
+                        <div className="col-md-3">
+                          <label className="form-label small fw-semibold">
+                            Conversion Factor
+                          </label>
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="form-control"
+                            value={invoiceForm.conversion_factor}
+                            onChange={(e) =>
+                              setInvoiceForm({
+                                ...invoiceForm,
+                                conversion_factor: Number(e.target.value),
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      {/* Items Section */}
+                      <div className="mb-4">
+                        <div className="d-flex justify-content-between mb-3">
+                          <h6 className="fw-semibold text-primary">
+                            Invoice Items
+                          </h6>
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-success"
+                            onClick={() =>
+                              setInvoiceForm((prev) => ({
+                                ...prev,
+                                items: [
+                                  ...prev.items,
+                                  {
+                                    product_id: null,
+                                    itemName: "",
+                                    unit: "",
+                                    quantity: 0,
+                                    unit_cost: 0,
+                                  },
+                                ],
+                              }))
+                            }
+                          >
+                            + Add Item
+                          </button>
+                        </div>
+
+                        {invoiceForm.items.map((item, index) => (
+                          <div
+                            key={index}
+                            className="row g-2 mb-2 align-items-center"
+                          >
+                            <div className="position-relative col-4">
+                              <input
+                                ref={(el) => (inputRefs.current[index] = el)}
+                                type="text"
+                                className="form-control form-control-sm"
+                                placeholder="Item Name"
+                                value={queries[index] ?? item.itemName ?? ""}
+                                onChange={(e) =>
+                                  handleEditSearchChange(index, e.target.value)
+                                }
+                              />
+
+                              <SuggestionList
+                                anchorRef={{
+                                  current: inputRefs.current[index],
+                                }}
+                                suggestions={suggestions[index]}
+                                onSelect={(s) =>
+                                  handleEditSelectSuggestion(index, s)
+                                }
+                              />
+                            </div>
+
+                            <div className="col-2">
+                              <input
+                                type="number"
+                                className="form-control form-control-sm"
+                                value={item.quantity}
+                                onChange={(e) => {
+                                  const updated = [...invoiceForm.items];
+                                  updated[index].quantity = Number(
+                                    e.target.value,
+                                  );
+                                  setInvoiceForm({
+                                    ...invoiceForm,
+                                    items: updated,
+                                  });
+                                }}
+                              />
+                            </div>
+
+                            <div className="col-2">
+                              <input
+                                className="form-control form-control-sm"
+                                value={item.unit || ""}
+                                readOnly
+                              />
+                            </div>
+
+                            <div className="col-2">
+                              <input
+                                type="number"
+                                step="0.01"
+                                className="form-control form-control-sm"
+                                value={item.unit_cost}
+                                onChange={(e) => {
+                                  const updated = [...invoiceForm.items];
+                                  updated[index].unit_cost = Number(
+                                    e.target.value,
+                                  );
+                                  setInvoiceForm({
+                                    ...invoiceForm,
+                                    items: updated,
+                                  });
+                                }}
+                              />
+                            </div>
+
+                            <div className="col-1 fw-semibold">
+                              ₱
+                              {(
+                                item.quantity *
+                                item.unit_cost *
+                                invoiceForm.conversion_factor
+                              ).toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                              })}
+                            </div>
+
+                            <div className="col-1">
+                              <button
+                                className="btn btn-sm text-danger"
+                                onClick={() =>
+                                  setInvoiceForm((prev) => ({
+                                    ...prev,
+                                    items: prev.items.filter(
+                                      (_, i) => i !== index,
+                                    ),
+                                  }))
+                                }
+                              >
+                                ✕
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </form>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="modal-footer bg-light">
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => setShowEditModal(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="btn btn-primary"
+                      onClick={handleUpdateInvoice}
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
         </div>
       </div>

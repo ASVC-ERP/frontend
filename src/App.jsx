@@ -174,6 +174,11 @@ function App() {
                   invoices={invoices}
                   onfetchInvoices={fetchInvoices}
                   customers={customers}
+                  page={invoicePagination.page}
+                  setPage={invoicePagination.setPage}
+                  limit={invoicePagination.limit}
+                  setLimit={invoicePagination.setLimit}
+                  totalRows={invoicePagination.totalRows}
                 />
               }
             />

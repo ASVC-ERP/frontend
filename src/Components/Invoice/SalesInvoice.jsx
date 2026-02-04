@@ -1,6 +1,15 @@
 import InvoiceTable from "./InvoiceTable";
 
-function SalesInvoice({ invoices, onfetchInvoices, customers }) {
+function SalesInvoice({
+  invoices,
+  onfetchInvoices,
+  customers,
+  page,
+  setPage,
+  limit,
+  setLimit,
+  totalRows,
+}) {
   return (
     <div className="container-fluid mt-3">
       {/* Header */}
@@ -19,7 +28,16 @@ function SalesInvoice({ invoices, onfetchInvoices, customers }) {
       <div className="row px-3 px-md-4">
         <div className="col-12">
           <div className="table-responsive table-responsive-sm">
-            <InvoiceTable invoices={invoices} fetchInvoices={onfetchInvoices} customers={customers} />
+            <InvoiceTable
+              invoices={invoices}
+              fetchInvoices={onfetchInvoices}
+              customers={customers}
+              page={page}
+              setPage={setPage}
+              limit={limit}
+              setLimit={setLimit}
+              totalRows={totalRows}
+            />
           </div>
         </div>
       </div>
