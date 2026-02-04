@@ -476,7 +476,7 @@ function SupplierInvoicesTable({ allItems }) {
             pagination
             highlightOnHover
             fixedHeader
-            fixedHeaderScrollHeight="500px"
+            fixedHeaderScrollHeight="700px"
             className="custom-data-table"
             onRowClicked={(row) => {
               console.log("Selected Invoice:", row);
