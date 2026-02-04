@@ -163,7 +163,6 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleCloseSpecialPriceModal = () => {
     setShowEditSpecialPriceModal(false);
-    // Clear form fields when closing
     setCurrentSpecialPrice("");
     setNewSpecialPrice("");
   };
@@ -196,6 +195,58 @@ function ItemDetails({ item, onUpdate }) {
       console.error("Price 4 update error:", err);
       Swal.fire({
         text: "Error updating Price 4.",
+        icon: "error",
+        confirmButtonColor: "#1E5A84",
+      });
+    }
+  };
+
+  // Edit Cost
+  const [showEditCostModal, setShowEditCostModal] =
+    useState(false);
+  const [currentCost, setCurrentCost] = useState("");
+  const [newCost, setNewCost] = useState("");
+
+  const handleEditCostClick = () => {
+    setCurrentCost(itemData.cost); // use latest value
+    setNewCost("");
+    setShowEditCostModal(true);
+  };
+
+  const handleCloseCostModal = () => {
+    setShowEditCostModal(false);
+    setCurrentCost("");
+    setNewCost("");
+  };
+
+  const handleSubmitCost = async () => {
+    if (!newCost) return;
+
+    try {
+      const response = await axios.patch(
+        `${API_URL}/product/${item.itemID || item.id}/cost`,
+        {
+          cost: Number(newCost),
+        },
+      );
+
+      console.log("Cost updated successfully:", response.data);
+      showAlert("success", "Cost updated successfully!");
+      handleCloseCostModal();
+
+      setCurrentCost(Number(newCost));
+      setItemData((prev) => ({ ...prev, cost: Number(newCost) }));
+      setNewCost(Number(newCost));
+
+      if (onUpdate)
+        onUpdate({
+          ...item,
+          cost: { ...item.cost, cost: newCost },
+        });
+    } catch (err) {
+      console.error("Cost update error:", err);
+      Swal.fire({
+        text: "Error updating Cost.",
         icon: "error",
         confirmButtonColor: "#1E5A84",
       });
@@ -467,16 +518,14 @@ function ItemDetails({ item, onUpdate }) {
               style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
-{/* -- TODO --
             {user?.role === "admin" && (
               <FaEdit
-                onClick={() => handleEditSpecialPriceClick(item.cost)}
+                onClick={() => handleEditCostClick(item.cost)}
                 style={{ cursor: "pointer", margin: "0px 15px" }}
                 color="#1E5A84"
                 size={30}
               />
             )}
-*/}
           </div>
         </div>
 
@@ -1072,6 +1121,291 @@ function ItemDetails({ item, onUpdate }) {
                 >
                   <i className="fas fa-save me-2"></i>
                   Update Price 4
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Cost Modal */}
+      {showEditCostModal && (
+        <div
+          className="modal fade show d-block"
+          tabIndex="-1"
+          role="dialog"
+          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
+        >
+          <div
+            className="modal-dialog modal-dialog-centered modal-lg w-50"
+            role="document"
+          >
+            <div className="modal-content shadow-lg border-0">
+              {/* Header with gradient background */}
+              <div
+                className="modal-header text-white position-relative overflow-hidden"
+                style={{
+                  background:
+                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
+                  borderRadius: "0.5rem 0.5rem 0 0",
+                }}
+              >
+                <div className="d-flex align-items-center">
+                  <div>
+                    <h5 className="modal-title mb-0">Edit Cost</h5>
+                    <small className="opacity-75">
+                      Modify Cost for item
+                    </small>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  className="btn-close btn-close-white p-4"
+                  onClick={handleCloseCostModal}
+                  aria-label="Close"
+                ></button>
+
+                {/* Decorative elements */}
+                <div
+                  className="position-absolute"
+                  style={{
+                    top: "-50px",
+                    right: "-50px",
+                    width: "100px",
+                    height: "100px",
+                    background: "rgba(255, 255, 255, 0.1)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+                <div
+                  className="position-absolute"
+                  style={{
+                    bottom: "-30px",
+                    left: "-30px",
+                    width: "60px",
+                    height: "60px",
+                    background: "rgba(255, 255, 255, 0.05)",
+                    borderRadius: "50%",
+                  }}
+                ></div>
+              </div>
+
+              <div className="modal-body p-4">
+                <form>
+                  <div className="row g-3">
+                    {/* Current Special Price (Read-only) */}
+                    <div className="col-12">
+                      <label className="form-label fw-semibold text-muted small">
+                        <i
+                          className="fas fa-tag me-2"
+                          style={{ color: "#1E5A84" }}
+                        ></i>
+                        Current Cost
+                      </label>
+                      <div className="input-group">
+                        <span
+                          className="input-group-text"
+                          style={{
+                            backgroundColor: "#f8f9fa",
+                            color: "#495057",
+                          }}
+                        >
+                          ₱
+                        </span>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={currentCost}
+                          disabled
+                          style={{
+                            backgroundColor: "#f8f9fa",
+                            border: "1px solid #e9ecef",
+                            fontSize: "0.95rem",
+                            fontWeight: "500",
+                          }}
+                        />
+                      </div>
+                    </div>
+
+                    {/* New Cost */}
+                    <div className="col-12">
+                      <label
+                        htmlFor="newCost"
+                        className="form-label fw-semibold text-muted small"
+                      >
+                        <i
+                          className="fas fa-star me-2"
+                          style={{ color: "#1E5A84" }}
+                        ></i>
+                        New Cost
+                      </label>
+                      <div className="input-group">
+                        <span
+                          className="input-group-text"
+                          style={{ backgroundColor: "#fff", color: "#495057" }}
+                        >
+                          ₱
+                        </span>
+                        <input
+                          type="number"
+                          step="0.01"
+                          id="newCost"
+                          className="form-control"
+                          placeholder="0.00"
+                          value={newCost}
+                          onChange={(e) => setNewCost(e.target.value)}
+                          style={{
+                            border: "1px solid #e9ecef",
+                            fontSize: "0.95rem",
+                            transition: "border-color 0.3s ease",
+                          }}
+                          onFocus={(e) =>
+                            (e.target.style.borderColor = "#1E5A84")
+                          }
+                          onBlur={(e) =>
+                            (e.target.style.borderColor = "#e9ecef")
+                          }
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+                {/* Price Change Indicator */}
+                {currentCost &&
+                  newCost &&
+                  currentCost !== newCost && (
+                    <div
+                      className="mt-4 p-3 rounded-3"
+                      style={{
+                        backgroundColor:
+                          parseFloat(newCost) <
+                          parseFloat(currentCost)
+                            ? "rgba(25, 135, 84, 0.1)"
+                            : parseFloat(newCost) >
+                                parseFloat(currentCost)
+                              ? "rgba(255, 193, 7, 0.1)"
+                              : "rgba(12, 29, 97, 0.05)",
+                        border: `1px solid ${
+                          parseFloat(newCost) <
+                          parseFloat(currentCost)
+                            ? "rgba(25, 135, 84, 0.2)"
+                            : parseFloat(newCost) >
+                                parseFloat(currentCost)
+                              ? "rgba(255, 193, 7, 0.2)"
+                              : "rgba(12, 29, 97, 0.1)"
+                        }`,
+                      }}
+                    >
+                      <div className="d-flex align-items-center">
+                        <i
+                          className={`fas ${
+                            parseFloat(newCost) <
+                            parseFloat(currentCost)
+                              ? "fa-arrow-down text-success"
+                              : parseFloat(newCost) >
+                                  parseFloat(currentCost)
+                                ? "fa-arrow-up text-warning"
+                                : "fa-equals text-secondary"
+                          } me-2`}
+                        ></i>
+                        <small className="text-muted">
+                          <strong>Price Change: </strong>
+                          {parseFloat(newCost) >
+                          parseFloat(currentCost)
+                            ? "+"
+                            : ""}
+                          ₱
+                          {(
+                            parseFloat(newCost) -
+                            parseFloat(currentCost)
+                          ).toFixed(2)}
+                          {parseFloat(newCost) <
+                            parseFloat(currentCost) &&
+                            " (Price Decrease)"}
+                          {parseFloat(newCost) >
+                            parseFloat(currentCost) &&
+                            " (Price Increase)"}
+                        </small>
+                      </div>
+                    </div>
+                  )}
+
+                {/* Info card */}
+                <div
+                  className="mt-4 p-3 rounded-3"
+                  style={{
+                    backgroundColor: "rgba(12, 29, 97, 0.05)",
+                    border: "1px solid rgba(12, 29, 97, 0.1)",
+                  }}
+                >
+                  <div className="d-flex align-items-center">
+                    <i
+                      className="fas fa-info-circle me-2"
+                      style={{ color: "#1E5A84" }}
+                    ></i>
+                    <small className="text-muted">
+                      Changes will be applied immediately. Make sure the new
+                      cost is accurate before saving.
+                    </small>
+                  </div>
+                </div>
+              </div>
+
+              <div className="modal-footer bg-light border-0 rounded-bottom">
+                <button
+                  type="button"
+                  className="btn px-4 py-2 me-2"
+                  onClick={() => setShowEditCostModal(false)}
+                  style={{
+                    backgroundColor: "#dc3545",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = "#c82333";
+                    e.target.style.transform = "translateY(-1px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = "#dc3545";
+                    e.target.style.transform = "translateY(0)";
+                  }}
+                >
+                  <i className="fas fa-times me-2"></i>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  className="btn px-4 py-2"
+                  onClick={handleSubmitCost}
+                  disabled={!newCost}
+                  style={{
+                    backgroundColor: !newCost ? "#6c757d" : "#1E5A84",
+                    color: "white",
+                    border: "none",
+                    borderRadius: "0.5rem",
+                    fontWeight: "500",
+                    transition: "all 0.3s ease",
+                    cursor: !newCost ? "not-allowed" : "pointer",
+                  }}
+                  onMouseEnter={(e) => {
+                    if (newCost) {
+                      e.target.style.backgroundColor = "#1e3c72";
+                      e.target.style.transform = "translateY(-1px)";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (newCost) {
+                      e.target.style.backgroundColor = "#1E5A84";
+                      e.target.style.transform = "translateY(0)";
+                    }
+                  }}
+                >
+                  <i className="fas fa-save me-2"></i>
+                  Update Cost
                 </button>
               </div>
             </div>
