@@ -7,16 +7,6 @@
   background-color: rgba(30, 90, 132, 0.15);
   box-shadow: inset 3px 0 0 rgba(30, 90, 132, 0.8); /* Left border accent */
 }
-
-/* Icon hover animation */
-.nav-link:hover svg {
-  transform: scale(1.05);
-  transition: transform 0.2s ease;
-}
-
-.nav-link svg {
-  transition: transform 0.2s ease;
-}
   
   /* Profile dropdown hover */
   .dropdown button:hover {
@@ -35,30 +25,6 @@
   
   .dropdown-item.text-danger:hover {
     background-color: #ffe6e6;
-  }
-  
-  /* Logo hover effect */
-  .d-flex.flex-column.align-items-center.mb-3.px-3 img:hover {
-    transform: scale(1.05);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .d-flex.flex-column.align-items-center.mb-3.px-3 img {
-    transition: transform 0.3s ease;
-  }
-  
-  /* Badge pulse animation */
-  @keyframes pulse {
-    0% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
-    100% {
-      transform: scale(1);
-    }
   }
   
   .badge.bg-danger {
@@ -85,10 +51,6 @@
   /* Profile section hover lift effect */
   .dropdown button {
     transition: transform 0.2s ease;
-  }
-  
-  .dropdown button:hover {
-    transform: translateY(-2px);
   }
   
   /* Smooth scrollbar */
@@ -118,7 +80,6 @@
   
   /* Profile Button */
   .profile-section .dropdown button {
-    transition: all 0.3s ease;
     padding: 0.5rem;
     border-radius: 8px;
     width: 100%;
@@ -126,22 +87,6 @@
   
   .profile-section .dropdown button:hover {
     background-color: rgba(30, 90, 132, 0.08);
-    transform: translateY(-2px);
-  }
-  
-  /* Profile Icon Animation */
-  .profile-section .dropdown button svg {
-    transition: all 0.3s ease;
-  }
-  
-  .profile-section .dropdown button:hover svg {
-    transform: scale(1.15) rotate(5deg);
-    filter: drop-shadow(0 2px 4px rgba(30, 90, 132, 0.3));
-  }
-  
-  /* Profile Text */
-  .profile-section .sidebar-text {
-    transition: color 0.3s ease;
   }
   
   .profile-section .dropdown button:hover .sidebar-text {
@@ -150,64 +95,31 @@
   
   /* Dropdown Menu */
   .profile-section .dropdown-menu {
-    min-width: 220px;
     border: 1px solid #e0e0e0;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
     border-radius: 8px;
     padding: 0.5rem 0;
     margin-top: 0.5rem;
-    animation: slideUp 0.3s ease;
-  }
-  
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
   }
   
   /* Dropdown Items */
   .profile-section .dropdown-item {
-    padding: 0.75rem 1.25rem;
-    transition: all 0.2s ease;
     border-radius: 4px;
-    margin: 0 0.5rem;
+    margin: 0.25rem 0.5rem;
     display: flex;
     align-items: center;
   }
   
   .profile-section .dropdown-item:hover {
     background-color: #f0f8ff;
-    transform: translateX(5px);
-    padding-left: 1.5rem;
-  }
-  
-  .profile-section .dropdown-item i {
-    transition: transform 0.2s ease;
-  }
-  
-  .profile-section .dropdown-item:hover i {
-    transform: scale(1.2);
+    width: 90%;
   }
   
   /* Logout Button Special Styling */
   .profile-section .dropdown-item.text-danger:hover {
     background-color: #ffe6e6;
+    width: 90%;
     color: #dc3545 !important;
-  }
-  
-  .profile-section .dropdown-item.text-danger:hover i {
-    animation: shake 0.5s ease;
-  }
-  
-  @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-3px); }
-    75% { transform: translateX(3px); }
   }
   
   /* Dropdown Divider */

@@ -195,7 +195,7 @@ export default function Sidebar({ onLogout }) {
             aria-labelledby="profileDropdown"
           >
             <li>
-              <a
+              <button
                 className="dropdown-item"
                 href="#profile"
                 data-bs-toggle="modal"
@@ -203,7 +203,7 @@ export default function Sidebar({ onLogout }) {
               >
                 <i className="bi bi-person me-2"></i>
                 Profile
-              </a>
+              </button>
             </li>
             <li>
               <hr className="dropdown-divider" />
