@@ -85,11 +85,14 @@ function OrderForm({
             >
               <tr>
                 <th className="text-start col-4">Product</th>
-                <th className="col-3" title="Choose unit price">
-                  Price
-                </th>
                 <th className="col-1" title="Enter number of units">
                   Quantity
+                </th>
+                <th className="col-2" title="Unit of measurement">
+                  UOM
+                </th>
+                <th className="col-3" title="Choose unit price">
+                  Price
                 </th>
                 <th className="col-2" title="Final total after discount">
                   Total
@@ -121,6 +124,34 @@ function OrderForm({
                         </span>
                       </div>
                     </div>
+                  </td>
+
+                  {/* Quantity */}
+                  <td>
+                    <input
+                      type="text"
+                      value={item.quantity}
+                      min="1"
+                      max={item.stock}
+                      onChange={(e) =>
+                        onUpdateOrderItem(
+                          idx,
+                          "quantity",
+                          parseInt(e.target.value) || 1
+                        )
+                      }
+                      className="form-control mx-auto d-block w-75 text-center"
+                    />
+                  </td>
+
+                  {/* UOM */}
+                  <td>
+                    <input
+                      type="text"
+                      value={item.unit}
+                      className="form-control mx-auto d-block w-50 text-center"
+                      readOnly
+                    />
                   </td>
 
                   {/* Price */}
@@ -172,26 +203,8 @@ function OrderForm({
                     )}
                   </td>
 
-                  {/* Quantity */}
-                  <td>
-                    <input
-                      type="text"
-                      value={item.quantity}
-                      min="1"
-                      max={item.stock}
-                      onChange={(e) =>
-                        onUpdateOrderItem(
-                          idx,
-                          "quantity",
-                          parseInt(e.target.value) || 1
-                        )
-                      }
-                      className="form-control mx-auto d-block w-75 text-center"
-                    />
-                  </td>
-
                   {/* Total */}
-                  <td>
+                  <td className="align-middle">
                     <span>₱</span>
                     <span>
                       {onCalculateTotal(item).toLocaleString(undefined, {
