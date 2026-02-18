@@ -42,6 +42,9 @@ function App() {
   // Invoice pagination
   const invoicePagination = usePagination();
 
+  // Supplier Invoices pagination
+  const supplierInvoicePagination = usePagination()
+
   const { invoices, fetchInvoices } = useInvoices(
     invoicePagination.page,
     invoicePagination.limit,

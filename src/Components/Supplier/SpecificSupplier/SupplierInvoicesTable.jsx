@@ -6,10 +6,11 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaTrashAlt } from "react-icons/fa";
 import { useDraggableModal } from "../../../hooks/useDraggableModal";
-
+import { usePagination } from "../../../hooks/usePagination";
 import SuggestionList from "./SuggestionList";
 
 function SupplierInvoicesTable({ allItems }) {
+  const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination(1, 50);
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } =
     useDraggableModal();
   const location = useLocation();
@@ -124,12 +125,14 @@ function SupplierInvoicesTable({ allItems }) {
 
   const fetchInvoices = async () => {
     try {
-      const res = await axios.get(
-        `${API_URL}/supplier-invoice?supplier=${supplierID}`,
-      );
-      const data = res.data.data;
+      const res = await axios.get(`${API_URL}/supplier-invoice`, {
+        params: { supplier: supplierID, page, limit },
+      });
+
+      const { data, meta } = res.data;
       setInvoiceData(data);
       setFilteredData(data);
+      setTotalRows(meta.total);
     } catch (err) {
       console.error("Error fetching invoices:", err);
     }
@@ -138,7 +141,7 @@ function SupplierInvoicesTable({ allItems }) {
   useEffect(() => {
     if (!supplierID) return;
     fetchInvoices();
-  }, [supplierID]);
+  }, [supplierID, page, limit]);
 
   useEffect(() => {
     if (!selectedInvoice) return;
@@ -584,6 +587,15 @@ function SupplierInvoicesTable({ allItems }) {
             columns={columns}
             data={filteredData}
             pagination
+            paginationServer
+            paginationTotalRows={totalRows}
+            paginationRowsPerPageOptions={[50, 100, 150, 200]}
+            paginationPerPage={50}
+            onChangePage={(newPage) => setPage(newPage)}
+            onChangeRowsPerPage={(newLimit) => {
+              setLimit(newLimit);
+              setPage(1);
+            }}
             highlightOnHover
             fixedHeader
             fixedHeaderScrollHeight="700px"
