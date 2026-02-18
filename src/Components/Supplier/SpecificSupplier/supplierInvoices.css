@@ -1,0 +1,94 @@
+/* Modal Base */
+.modal-title,
+.modal h5 {
+  font-size: 1.6rem !important;
+  font-weight: 700;
+}
+
+/* Wider modal */
+.modal-dialog.modal-xl {
+  max-width: 80vw !important;
+}
+
+.modal-dialog.modal-lg {
+  max-width: 70vw !important;
+}
+
+.modal-body .form-control-sm {
+  font-size: 1.3rem !important;
+}
+
+/* Subtotal value in create/edit modal items */
+.modal-body .col-1 span.badge {
+  font-size: 1.1rem !important;
+}
+
+/* Form Labels */
+.form-label {
+  font-size: 1.15rem !important;
+  font-weight: 600;
+}
+
+/* Form Inputs & Selects */
+.form-control,
+.form-select {
+  font-size: 1.15rem !important;
+}
+
+.form-control-sm,
+.form-select-sm {
+  font-size: 1.05rem !important;
+}
+
+/* Subtotal Badge */
+.badge.bg-light {
+  font-size: 1rem !important;
+}
+
+/* Total Price */
+.fw-bold.fs-4 {
+  font-size: 1.75rem !important;
+}
+
+.fw-semibold[style*="color: #1E5A84"] {
+  font-size: 1.15rem;
+}
+
+/* Buttons */
+.btn {
+  font-size: 1.1rem !important;
+}
+
+.btn-sm {
+  font-size: 1rem !important;
+}
+
+/* Modal Footer */
+.modal-footer .h5 {
+  font-size: 1.35rem !important;
+}
+
+/* Breadcrumb in view modal */
+.modal-header p {
+  font-size: 1rem !important;
+}
+
+/* Invoice item names */
+.modal .fw-semibold {
+  font-size: 1.15rem;
+}
+
+/* Item meta (quantity, unit cost) */
+.modal small.text-muted {
+  font-size: 1rem !important;
+}
+
+/* Reduce modal footer padding */
+.modal-footer {
+    padding: 0.5rem 1rem !important;
+  }
+  
+  /* Give items list more height */
+  .modal-body [style*="maxHeight"] {
+    max-height: 400px !important;
+  }

@@ -8,6 +8,7 @@ import { FaTrashAlt } from "react-icons/fa";
 import { useDraggableModal } from "../../../hooks/useDraggableModal";
 import { usePagination } from "../../../hooks/usePagination";
 import SuggestionList from "./SuggestionList";
+import "./supplierInvoices.css";
 
 function SupplierInvoicesTable({ allItems }) {
   const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination(1, 50);
@@ -1033,11 +1034,6 @@ function SupplierInvoicesTable({ allItems }) {
                                       items: updated,
                                     });
                                   }}
-                                  style={{
-                                    border: "1px solid #e9ecef",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem",
-                                  }}
                                 />
                               </div>
                               <div className="col-2">
@@ -1057,11 +1053,6 @@ function SupplierInvoicesTable({ allItems }) {
                                       items: updated,
                                     });
                                   }}
-                                  style={{
-                                    border: "1px solid #e9ecef",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem",
-                                  }}
                                 />
                               </div>
                               <div className="col-1">
@@ -1080,27 +1071,24 @@ function SupplierInvoicesTable({ allItems }) {
                                       items: updated,
                                     });
                                   }}
-                                  style={{
-                                    border: "1px solid #e9ecef",
-                                    borderRadius: "0.375rem",
-                                    fontSize: "0.875rem",
-                                  }}
                                 />
                               </div>
                               <div className="col-1">
                                 <span
                                   className="badge bg-light text-dark fw-normal"
-                                  style={{ fontSize: "0.75rem" }}
+                                  style={{ fontSize: "1.1rem" }}
                                 >
                                   ₱
-                                  {(
-                                    (item.quantity || 0) *
-                                    (item.unitCost || 0) *
-                                    (invoiceForm.conversionFactor || 1)
-                                  ).toLocaleString("en-US", {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                  })}
+                                  <span style={{ fontSize: "1.3rem" }}>
+                                    {(
+                                      (item.quantity || 0) *
+                                      (item.unitCost || 0) *
+                                      (invoiceForm.conversionFactor || 1)
+                                    ).toLocaleString("en-US", {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })}
+                                  </span>
                                 </span>
                               </div>
                               <div className="col-1">
@@ -1138,50 +1126,50 @@ function SupplierInvoicesTable({ allItems }) {
                           ))}
                         </div>
 
-                        {/* Total Section */}
-                        <div
-                          className="border-top pt-3 mt-3"
-                          style={{
-                            background:
-                              "linear-gradient(135deg, rgba(12, 29, 97, 0.05) 0%, rgba(30, 60, 114, 0.05) 100%)",
-                            borderRadius: "0.5rem",
-                            padding: "1rem",
-                          }}
-                        >
-                          <div className="row">
-                            <div className="col-md-8"></div>
-                            <div className="col-md-4">
-                              <div className="d-flex justify-content-between align-items-center">
-                                <span
-                                  className="fw-semibold"
-                                  style={{ color: "#1E5A84" }}
-                                >
-                                  <i className="fas fa-calculator me-2"></i>
-                                  Total Price:
-                                </span>
-                                <span
-                                  className="fw-bold fs-4"
-                                  style={{ color: "#1E5A84" }}
-                                >
-                                  ₱
-                                  {invoiceForm.items
-                                    .reduce((total, item) => {
-                                      return (
-                                        total +
-                                        item.quantity *
-                                          item.unitCost *
-                                          (invoiceForm.conversionFactor || 1)
-                                      );
-                                    }, 0)
-                                    .toLocaleString("en-US", {
-                                      minimumFractionDigits: 2,
-                                      maximumFractionDigits: 2,
-                                    })}
-                                </span>
+                          {/* Total Section */}
+                          <div
+                            className="border-top pt-1 mt-1"
+                            style={{
+                              background:
+                                "linear-gradient(135deg, rgba(12, 29, 97, 0.05) 0%, rgba(30, 60, 114, 0.05) 100%)",
+                              borderRadius: "0.5rem",
+                              padding: "0.5rem 1rem",
+                            }}
+                          >
+                            <div className="row">
+                              <div className="col-md-8"></div>
+                              <div className="col-md-4">
+                                <div className="d-flex justify-content-between align-items-center">
+                                  <span
+                                    className="fw-semibold"
+                                    style={{ color: "#1E5A84" }}
+                                  >
+                                    <i className="fas fa-calculator me-2"></i>
+                                    Total Price:
+                                  </span>
+                                  <span
+                                    className="fw-bold fs-4"
+                                    style={{ color: "#1E5A84" }}
+                                  >
+                                    ₱
+                                    {invoiceForm.items
+                                      .reduce((total, item) => {
+                                        return (
+                                          total +
+                                          item.quantity *
+                                            item.unitCost *
+                                            (invoiceForm.conversionFactor || 1)
+                                        );
+                                      }, 0)
+                                      .toLocaleString("en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                      })}
+                                  </span>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
                       </div>
                     </form>
                   </div>
