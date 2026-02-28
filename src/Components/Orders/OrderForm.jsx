@@ -38,17 +38,18 @@ function OrderForm({
                 left: 0,
                 right: 0,
                 backgroundColor: "#fff",
-                border: "1px solid #ccc",
+                border: "2px solid #6c757d",
                 borderTop: "none",
                 listStyleType: "none",
                 margin: 0,
                 marginLeft: "10px",
                 padding: 0,
                 zIndex: 1000,
-                maxHeight: "200px",
+                maxHeight: "400px",
                 overflowY: "auto",
                 borderRadius: "0.5rem",
                 width: "98%",
+                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Add shadow
               }}
             >
               {suggestions.map((items, index) => (
@@ -61,6 +62,7 @@ function OrderForm({
                     borderBottom: "1px solid #eee",
                   }}
                 >
+                  <IoIosSearch className="me-2" />
                   <strong>{items.itemName}</strong> <br />
                   Stock: {items.stock}
                 </li>
@@ -116,8 +118,8 @@ function OrderForm({
                               item.stock < 5
                                 ? "#B64345"
                                 : item.stock >= 5 && item.stock < 10
-                                ? "#F8B13D"
-                                : "#ACACAC",
+                                  ? "#F8B13D"
+                                  : "#ACACAC",
                           }}
                         >
                           In stock: {item.stock} {item.unit}
@@ -137,7 +139,7 @@ function OrderForm({
                         onUpdateOrderItem(
                           idx,
                           "quantity",
-                          parseInt(e.target.value) || 1
+                          parseInt(e.target.value) || 1,
                         )
                       }
                       className="form-control mx-auto d-block w-75 text-center"
@@ -162,6 +164,7 @@ function OrderForm({
                           type="number"
                           className="form-control text-center w-50"
                           value={item.customPrice || ""}
+                          onWheel={(e) => e.target.blur()}
                           onChange={(e) =>
                             onPriceChange(idx, e.target.value, true)
                           }

@@ -128,6 +128,7 @@ function AddItem({ onAddItem }) {
                   </label>
                   <input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     className="form-control form-control-sm"
                     id="stock"
                     value={stock}
@@ -140,6 +141,7 @@ function AddItem({ onAddItem }) {
                   </label>
                   <input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     className="form-control form-control-sm"
                     id="originalPrice"
                     value={original}
@@ -156,6 +158,7 @@ function AddItem({ onAddItem }) {
                   </label>
                   <input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     className="form-control form-control-sm"
                     id="netAPrice"
                     value={markup1}
@@ -168,6 +171,7 @@ function AddItem({ onAddItem }) {
                   </label>
                   <input
                     type="number"
+                    onWheel={(e) => e.target.blur()}
                     className="form-control form-control-sm"
                     id="netBPrice"
                     value={markup2}

@@ -11,7 +11,8 @@ import SuggestionList from "./SuggestionList";
 import "./supplierInvoices.css";
 
 function SupplierInvoicesTable({ allItems }) {
-  const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination(1, 50);
+  const { page, setPage, limit, setLimit, totalRows, setTotalRows } =
+    usePagination(1, 50);
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } =
     useDraggableModal();
   const location = useLocation();
@@ -389,7 +390,7 @@ function SupplierInvoicesTable({ allItems }) {
         payload,
       );
 
-       await fetchInvoices();
+      await fetchInvoices();
 
       // ✅ Success
       await Swal.fire({
@@ -1025,6 +1026,7 @@ function SupplierInvoicesTable({ allItems }) {
                                   placeholder="Qty"
                                   className="form-control form-control-sm"
                                   value={item.quantity || ""}
+                                  onWheel={(e) => e.target.blur()}
                                   onChange={(e) => {
                                     const updated = [...invoiceForm.items];
                                     updated[index].quantity =
@@ -1062,6 +1064,7 @@ function SupplierInvoicesTable({ allItems }) {
                                   placeholder="Cost"
                                   className="form-control form-control-sm"
                                   value={item.unitCost || ""}
+                                  onWheel={(e) => e.target.blur()}
                                   onChange={(e) => {
                                     const updated = [...invoiceForm.items];
                                     updated[index].unitCost =
@@ -1126,50 +1129,50 @@ function SupplierInvoicesTable({ allItems }) {
                           ))}
                         </div>
 
-                          {/* Total Section */}
-                          <div
-                            className="border-top pt-1 mt-1"
-                            style={{
-                              background:
-                                "linear-gradient(135deg, rgba(12, 29, 97, 0.05) 0%, rgba(30, 60, 114, 0.05) 100%)",
-                              borderRadius: "0.5rem",
-                              padding: "0.5rem 1rem",
-                            }}
-                          >
-                            <div className="row">
-                              <div className="col-md-8"></div>
-                              <div className="col-md-4">
-                                <div className="d-flex justify-content-between align-items-center">
-                                  <span
-                                    className="fw-semibold"
-                                    style={{ color: "#1E5A84" }}
-                                  >
-                                    <i className="fas fa-calculator me-2"></i>
-                                    Total Price:
-                                  </span>
-                                  <span
-                                    className="fw-bold fs-4"
-                                    style={{ color: "#1E5A84" }}
-                                  >
-                                    ₱
-                                    {invoiceForm.items
-                                      .reduce((total, item) => {
-                                        return (
-                                          total +
-                                          item.quantity *
-                                            item.unitCost *
-                                            (invoiceForm.conversionFactor || 1)
-                                        );
-                                      }, 0)
-                                      .toLocaleString("en-US", {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2,
-                                      })}
-                                  </span>
-                                </div>
+                        {/* Total Section */}
+                        <div
+                          className="border-top pt-1 mt-1"
+                          style={{
+                            background:
+                              "linear-gradient(135deg, rgba(12, 29, 97, 0.05) 0%, rgba(30, 60, 114, 0.05) 100%)",
+                            borderRadius: "0.5rem",
+                            padding: "0.5rem 1rem",
+                          }}
+                        >
+                          <div className="row">
+                            <div className="col-md-8"></div>
+                            <div className="col-md-4">
+                              <div className="d-flex justify-content-between align-items-center">
+                                <span
+                                  className="fw-semibold"
+                                  style={{ color: "#1E5A84" }}
+                                >
+                                  <i className="fas fa-calculator me-2"></i>
+                                  Total Price:
+                                </span>
+                                <span
+                                  className="fw-bold fs-4"
+                                  style={{ color: "#1E5A84" }}
+                                >
+                                  ₱
+                                  {invoiceForm.items
+                                    .reduce((total, item) => {
+                                      return (
+                                        total +
+                                        item.quantity *
+                                          item.unitCost *
+                                          (invoiceForm.conversionFactor || 1)
+                                      );
+                                    }, 0)
+                                    .toLocaleString("en-US", {
+                                      minimumFractionDigits: 2,
+                                      maximumFractionDigits: 2,
+                                    })}
+                                </span>
                               </div>
                             </div>
                           </div>
+                        </div>
                       </div>
                     </form>
                   </div>
@@ -1540,6 +1543,7 @@ function SupplierInvoicesTable({ allItems }) {
                             step="0.01"
                             className="form-control"
                             value={invoiceForm.conversion_factor}
+                            onWheel={(e) => e.target.blur()}
                             onChange={(e) =>
                               setInvoiceForm({
                                 ...invoiceForm,
@@ -1612,6 +1616,7 @@ function SupplierInvoicesTable({ allItems }) {
                                 type="number"
                                 className="form-control form-control-sm"
                                 value={item.quantity}
+                                onWheel={(e) => e.target.blur()}
                                 onChange={(e) => {
                                   const updated = [...invoiceForm.items];
                                   updated[index].quantity = Number(
@@ -1639,6 +1644,7 @@ function SupplierInvoicesTable({ allItems }) {
                                 step="0.01"
                                 className="form-control form-control-sm"
                                 value={item.unit_cost}
+                                onWheel={(e) => e.target.blur()}
                                 onChange={(e) => {
                                   const updated = [...invoiceForm.items];
                                   updated[index].unit_cost = Number(

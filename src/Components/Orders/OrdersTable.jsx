@@ -1481,6 +1481,7 @@ function OrdersTable({
                           <input
                             type="number"
                             value={item.quantity}
+                            onWheel={(e) => e.target.blur()}
                             onChange={(e) =>
                               updateItem(index, "quantity", e.target.value)
                             }
@@ -1501,10 +1502,11 @@ function OrdersTable({
                                 className="input-group"
                                 style={{ width: "120px" }}
                               >
-                                <input
+                                <inpust
                                   type="number"
                                   className="form-control text-center"
                                   value={item.customPrice || ""}
+                                  onWheel={(e) => e.target.blur()}
                                   onChange={(e) =>
                                     updateItem(
                                       index,

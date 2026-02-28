@@ -442,6 +442,7 @@ function InventoryTable({
                     </label>
                     <input
                       type="number"
+                      onWheel={(e) => e.target.blur()}
                       id="minimumStock"
                       placeholder="Enter min stock"
                       value={minimumStock}

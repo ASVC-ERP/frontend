@@ -53,6 +53,7 @@ function ServeQuantityInput({
         value={tempValue}
         onChange={handleChange}
         onBlur={handleBlur}
+        onWheel={(e) => e.target.blur()}
         className={`form-control text-center ${showWarning ? "border-warning" : ""}`}
         style={{ width: "100px" }}
         placeholder="0"

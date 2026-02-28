@@ -649,6 +649,7 @@ function ItemDetails({ item, onUpdate }) {
                     </label>
                     <input
                       type="number"
+                      onWheel={(e) => e.target.blur()}
                       className="form-control"
                       placeholder="Enter new stock count"
                       value={stockData.newCount}
@@ -968,6 +969,7 @@ function ItemDetails({ item, onUpdate }) {
                           className="form-control"
                           placeholder="0.00"
                           value={newSpecialPrice}
+                          onWheel={(e) => e.target.blur()}
                           onChange={(e) => setNewSpecialPrice(e.target.value)}
                           style={{
                             border: "1px solid #e9ecef",
@@ -1253,6 +1255,7 @@ function ItemDetails({ item, onUpdate }) {
                           className="form-control"
                           placeholder="0.00"
                           value={newCost}
+                          onWheel={(e) => e.target.blur()}
                           onChange={(e) => setNewCost(e.target.value)}
                           style={{
                             border: "1px solid #e9ecef",
