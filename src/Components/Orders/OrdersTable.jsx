@@ -1502,7 +1502,7 @@ function OrdersTable({
                                 className="input-group"
                                 style={{ width: "120px" }}
                               >
-                                <inpust
+                                <input
                                   type="number"
                                   className="form-control text-center"
                                   value={item.customPrice || ""}
