@@ -74,7 +74,7 @@ function OrderForm({
 
       {/* Order Table */}
       <div className="row justify-content-between mx-2 mt-3">
-        <div style={{ maxHeight: "310px", overflowY: "auto" }}>
+        <div style={{ maxHeight: "550px", overflowY: "auto" }}>
           <table className="table transparent-table custom-border-table text-center fw-semibold">
             <thead
               className="custom-header-color bg-light"
