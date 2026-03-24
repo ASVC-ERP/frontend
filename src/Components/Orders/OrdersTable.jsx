@@ -17,7 +17,6 @@ console.log("User role for approvals:", roleApprove);
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Define table data
 function OrdersTable({ 
   orders, 
   setOrders, 
@@ -40,7 +39,7 @@ function OrdersTable({
 
   const customerNameMap = useMemo(() => {
     return customers.reduce((acc, customer) => {
-      acc[customer.name] = customer; // key by name for lookup
+      acc[customer.name] = customer;
       return acc;
     }, {});
   }, [customers]);
@@ -80,7 +79,7 @@ function OrdersTable({
     },
     {
       name: "Status",
-      selector: (row) => row.status, // keeps sorting
+      selector: (row) => row.status,
       grow: 1,
       minWidth: "150px",
       cell: (row) => {
@@ -161,27 +160,27 @@ function OrdersTable({
 
   const statusColors = {
     open: {
-      bg: "#ffc107", // amber
+      bg: "#ffc107",
       text: "#000",
     },
     "for approval": {
-      bg: "#0dcaf0", // cyan
+      bg: "#0dcaf0",
       text: "#000",
     },
     "partial served": {
-      bg: "#fd7e14", // orange
+      bg: "#fd7e14",
       text: "#fff",
     },
     served: {
-      bg: "#198754", // deep green
+      bg: "#198754",
       text: "#fff",
     },
     invoiced: {
-      bg: "#0d3b66", // navy
+      bg: "#0d3b66",
       text: "#fff",
     },
     rejected: {
-      bg: "#dc3545", // red
+      bg: "#dc3545",
       text: "#fff",
     },
   };
@@ -191,7 +190,6 @@ function OrdersTable({
     text: "#fff",
   };
 
-  // Function to fetch orders
   const fetchOrders = () => {
     const user = JSON.parse(localStorage.getItem("user"));
     const endpoint =
@@ -278,7 +276,6 @@ function OrdersTable({
     }));
   };
 
-  // Handle search input change
   const SEARCHABLE_SELECTORS = [
     row => row.customer?.name,
     row => row.status,
@@ -303,7 +300,6 @@ function OrdersTable({
 
   const initializeItems = (items) => {
     return items.map((item) => {
-      // Available prices
       const availablePrices = [
         item.products?.price1,
         item.products?.price2,
@@ -311,7 +307,6 @@ function OrdersTable({
         item.products?.price4,
       ].filter((p) => p != null);
 
-      // Determine if current price is custom
       const isCustomPrice =
         item.price != null && !availablePrices.includes(Number(item.price));
 
@@ -324,7 +319,7 @@ function OrdersTable({
         availablePrices,
         price:
           item.price ?? item.products?.actual_price ?? availablePrices[0] ?? 0,
-        customPriceEnabled: isCustomPrice, // TRUE if the price is custom
+        customPriceEnabled: isCustomPrice,
         customPrice: isCustomPrice ? item.price : null,
         unit: item.unit || item.products?.unit || "",
       };
@@ -370,12 +365,10 @@ function OrdersTable({
     console.log("Row clicked:", row);
 
     try {
-      // Fetch served data for this order
       const res = await axios.get(`${API_URL}/order/id/${row.id}`);
       const orderData = res.data;
       console.log("Fetched orders:", orderData);
 
-      // Update state with merged items
       setSelectedRow(orderData);
       setEditableRow(orderData);
       setIsEditing(false);
@@ -385,13 +378,11 @@ function OrdersTable({
     }
   };
 
-  // Handle top-level inputs (customerName, status, etc.)
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setEditableRow((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Add a new item row
   const addItem = () => {
     setEditableRow((prev) => {
       const currentCount = prev.items?.length || 0;
@@ -402,22 +393,22 @@ function OrdersTable({
       }
 
       if (currentCount >= MAX_ITEMS) {
-        return prev; // hard stop
+        return prev;
       }
 
       const newItems = [
         ...(prev.items || []),
         {
-          products: null, // will hold full product details when selected
-          itemName: "", // for input display
+          products: null,
+          itemName: "",
           quantity: 1,
-          availablePrices: [], // will populate from selected product
-          price: 0, // default price
+          availablePrices: [],
+          price: 0,
           customPriceEnabled: false,
           customPrice: null,
-          unit: "", // optional, from product
-          item_code: "", // will populate from selected product
-          stock: 0, // optional, from product
+          unit: "",
+          item_code: "",
+          stock: 0,
         },
       ];
 
@@ -1182,20 +1173,6 @@ function OrdersTable({
                                     )}
                                   </small>
                                 </>
-
-                                {/* {item.discount > 0 && (
-                                  <small className="text-danger">
-                                    Discount: {item.discount}% ( ₱
-                                    {(
-                                      (parseFloat(
-                                        item.price?.[item.selectedMarkup]
-                                      ) || 0) *
-                                      (parseInt(item.quantity) || 0) *
-                                      (item.discount / 100)
-                                    )}
-                                    )
-                                  </small>
-                                )} */}
                               </div>
 
                               {/* Price */}
@@ -1255,26 +1232,6 @@ function OrdersTable({
                     </span>
                   </div>
                 </div>
-
-                {/* Modal Footer */}
-                {/*
-                <div className="modal-footer d-flex justify-content-between align-items-end px-3 ">
-                  <div>
-                    <p className="fw-bold mb-1" style={{ color: "#246c9d" }}>
-                      {selectedRow.customerName}
-                    </p>
-                    <p className="mb-0 small">{selectedRow.customerAddress}</p>
-                    <p className="mb-0 small">{selectedRow.customerNumber}</p>
-                  </div>
-                  <p className="text-muted small mb-0">
-                    {new Date(selectedRow.date).toLocaleDateString("en-GB", {
-                      day: "2-digit",
-                      month: "long",
-                      year: "numeric",
-                    })}
-                  </p>
-                </div>
-                */}
               </div>
             </div>
           </div>
@@ -1326,7 +1283,6 @@ function OrdersTable({
 
                 {/* Body */}
                 <div className="modal-body">
-                  <h6 className="mb-1">Customer Details</h6>
                   <form>
                     <div className="row mb-2 position-relative">
                       {/* CID */}
@@ -1342,7 +1298,7 @@ function OrdersTable({
                       </div>
                       {/* Name */}
                       <div className="col-md-6 ">
-                        <label className="form-label">Name</label>
+                        <label className="form-label">Customer</label>
                         <input
                           type="text"
                           className="form-control"
@@ -1395,7 +1351,7 @@ function OrdersTable({
                     {/* Items List */}
                     <div
                       className="rounded-3"
-                      style={{ maxHeight: "250px", overflowY: "auto" }}
+                      style={{ maxHeight: "430px", overflowY: "auto" }}
                     >
                       {editableRow?.items.map((item, index) => (
                         <div
@@ -1611,6 +1567,8 @@ function OrdersTable({
                   className="d-flex justify-content-between align-items-center px-4 py-3 border-top mt-3"
                   style={{
                     backgroundColor: "#f8f9fa",
+                    fontSize: "1.2rem", // increase text size
+                    fontWeight: 600, 
                   }}
                 >
                   <span className="fw-semibold fs-5">Total</span>

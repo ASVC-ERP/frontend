@@ -390,7 +390,7 @@ function ItemDetails({ item, onUpdate }) {
             {user?.role === "admin" && (
               <button
                 className="btn btn-outline-secondary"
-                onClick={() => handleEditSpecialPriceClick(item.price4)}
+                onClick={() => handleEditCostClick(item.cost)}
               >
                 <FaEdit size={14} />
               </button>
