@@ -12,9 +12,14 @@ function CostHistoryTab({ item }) {
   const customStyles = {
     headCells: {
       style: {
-        fontSize: "0.875rem",
+        fontSize: "1rem",
         fontWeight: "600",
         color: "#1E5A84",
+      },
+    },
+    cells: {
+      style: {
+        fontSize: "1rem", // ✅ increase row text
       },
     },
   };
@@ -153,9 +158,11 @@ function CostHistoryTab({ item }) {
         data={data}
         progressPending={loading}
         pagination
+        paginationRowsPerPageOptions={[50, 100]}
+        paginationPerPage={50}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="300px"
+        fixedHeaderScrollHeight="430px"
         customStyles={customStyles}
         dense
         defaultSortFieldId={1}

@@ -904,7 +904,7 @@ function OrdersTable({
         data={filteredData}
         pagination
         paginationServer
-        paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
+        paginationRowsPerPageOptions={[50, 100, 250, 500]}
         paginationPerPage={limit}
         paginationTotalRows={totalRows}
         onChangePage={(page) => setPage(page)}

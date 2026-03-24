@@ -255,9 +255,8 @@ function ItemDetails({ item, onUpdate }) {
 
   return (
     <div className="product-details">
-      {/* First Row */}
       <div className="row mx-4 d-flex align-items-start py-1">
-        <div className="col-4">
+        <div className="col-auto" style={{ minWidth: "250px" }}>
           <label htmlFor="pid" className="form-label h6">
             Product Code:
           </label>
@@ -271,11 +270,8 @@ function ItemDetails({ item, onUpdate }) {
           />
         </div>
 
-        {/* name */}
-        <div className="col-4">
-          <label htmlFor="itemName" className="form-label h6">
-            Product Name:
-          </label>
+        <div className="col-auto" style={{ minWidth: "1190px" }}>
+          <label className="form-label h6">Product Name</label>
           <input
             type="text"
             className="form-control form-control-sm border-dark border-opacity-25"
@@ -283,270 +279,204 @@ function ItemDetails({ item, onUpdate }) {
             value={formData.itemName || formData.item_name}
             onChange={handleChange}
             readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
+            style={{ backgroundColor: !isAdmin ? "#e9ecef" : "white", }}
           />
         </div>
-
-        <div className="col-4">
-          <label htmlFor="gPrice" className="form-label h6">
-            Price 1:
-          </label>
+        <div className="col-auto" style={{ width: "150px" }}>
+          <label className="form-label h6">Unit</label>
           <input
             type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="gPrice"
-            value={itemData.price1}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
-          />
-        </div>
-      </div>
-
-      {/* Second Row */}
-      <div className="row mx-4 mt-2 d-flex align-items-start">
-        {/* stock */}
-        <div className="col-4">
-          <label htmlFor="Stock" className="form-label h6">
-            Stock:
-          </label>
-          <div className="d-flex align-items-center">
-            <input
-              type="text"
-              className="form-control form-control-sm me-2 border-dark border-opacity-25"
-              id="Stock"
-              value={itemData.stock}
-              style={{ backgroundColor: "#e9ecef" }}
-              readOnly
-            />
-            <FaEdit
-              onClick={handleEditStockClick}
-              style={{ cursor: "pointer", margin: "0px 15px" }}
-              color="#1E5A84"
-              size={30}
-            />
-          </div>
-        </div>
-
-        <div className="col-4">
-          <label htmlFor="minStock" className="form-label h6">
-            Minimum Stock:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="minStock"
-            value={formData.minStock || formData.min_stock}
-            onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
-          />
-        </div>
-
-        <div className="col-4">
-          <label htmlFor="aPrice" className="form-label h6">
-            Price 2:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="aPrice"
-            value={itemData.price2}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
-          />
-        </div>
-      </div>
-
-      {/* Third Row */}
-      <div className="row mx-4 mt-2 d-flex align-items-start">
-        <div className="col-4">
-          <label htmlFor="partNum" className="form-label h6">
-            Part No.:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="partNum"
-            value={formData.partNum || formData.part_num}
-            onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
-          />
-        </div>
-        <div className="col-4">
-          <label htmlFor="origin" className="form-label h6">
-            Origin:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="origin"
-            value={formData.origin}
-            onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
-          />
-        </div>
-        <div className="col-4">
-          <label htmlFor="bPrice" className="form-label h6">
-            Price 3:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="bPrice"
-            value={itemData.price3}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
-          />
-        </div>
-      </div>
-
-      {/* Fourth Row */}
-      <div className="row mx-4 mt-2 d-flex align-items-start">
-        <div className="col-4">
-          <label htmlFor="interNum" className="form-label h6">
-            Interchange No.:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="interNum"
-            value={formData.interNum || formData.internal_num}
-            onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
-          />
-        </div>
-        <div className="col-4">
-          <label htmlFor="brand" className="form-label h6">
-            Brand:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="brand"
-            value={formData.brand}
-            onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
-          />
-        </div>
-        <div className="col-4">
-          <label htmlFor="sPrice" className="form-label h6">
-            Price 4:
-          </label>
-          <div className="d-flex align-items-center">
-            <input
-              type="text"
-              className="form-control form-control-sm me-2 border-dark border-opacity-25"
-              id="sPrice"
-              value={itemData.price4}
-              style={{ backgroundColor: "#e9ecef" }}
-              readOnly
-            />
-            {user?.role === "admin" && (
-              <FaEdit
-                onClick={() => handleEditSpecialPriceClick(item.price4)}
-                style={{ cursor: "pointer", margin: "0px 15px" }}
-                color="#1E5A84"
-                size={30}
-              />
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Final Row */}
-      <div className="row mx-4 mt-2 d-flex align-items-start">
-        <div className="col-4">
-          <label htmlFor="unit" className="form-label h6">
-            Unit:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
+            className="form-control form-control-sm" 
             id="unit"
             value={formData.unit}
             onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
+            readOnly={!isAdmin} 
           />
         </div>
-
-        <div className="col-4">
-          <label htmlFor="model" className="form-label h6">
-            Model:
-          </label>
+      </div>
+      <div className="row mx-4 mt-3 g-3">
+        <div className="col-auto" style={{ minWidth: "250px" }}>
+          <label className="form-label h6">Part No.</label>
           <input
             type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="model"
-            value={formData.model}
+            className="form-control form-control-sm" 
+            id="partNum"
             onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{
-              backgroundColor: !isAdmin ? "#e9ecef" : "white",
-            }}
-          />
+            value={formData.partNum || formData.part_num} 
+            readOnly={!isAdmin} />
         </div>
 
-        <div className="col-4">
+        <div className="col-auto" style={{ width: "350px" }}>
+          <label className="form-label h6">Model</label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="model"
+            onChange={handleChange}
+            value={formData.model}
+            readOnly={!isAdmin} />
+        </div>
+        <div className="col-auto" style={{ minWidth: "350px" }}>
+          <label className="form-label h6">Interchange No.</label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="interNum"
+            onChange={handleChange}
+            value={formData.interNum || formData.internal_num}
+            readOnly={!isAdmin} />
+        </div>
+        <div className="col-auto" style={{ minWidth: "150px" }}>
+          <label className="form-label h6">Brand</label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="brand"
+            onChange={handleChange}
+            value={formData.brand}
+            readOnly={!isAdmin} />
+        </div>
+        <div className="col-auto" style={{ minwidth: "120px" }}>
+          <label className="form-label h6">Origin</label>
+          <input 
+            type="text"
+            className="form-control form-control-sm"
+            id="origin"
+            onChange={handleChange}
+            value={formData.origin}
+            readOnly={!isAdmin} />
+        </div>
+        <div className="col-auto" style={{ width: "120px" }}>
+          <label className="form-label h6">Min Stock</label>
+          <input
+            type="text"
+            className="form-control form-control-sm"
+            id="minStock"
+            onChange={handleChange}
+            value={formData.minStock || formData.min_stock}
+            readOnly={!isAdmin} />
+        </div>
+        <div className="col-auto d-flex flex-column justify-content-end">
+          <label className="form-label h6">
+            Save
+          </label>
+
+          {isAdmin && (
+            <button
+              type="button"
+              className="btn btn-success btn-sm"
+              onClick={handleSave}
+              style={{ whiteSpace: "nowrap" }}
+            >
+              Save
+            </button>
+          )}
+        </div>
+      </div>
+      <div className="row mx-4 mt-3 g-3">
+        <div className="col-auto" style={{ minWidth: "280px" }}>
           <label htmlFor="Cost" className="form-label h6">
             Cost:
           </label>
-          <div className="d-flex align-items-center">
+          <div className="input-group input-group-sm">
             <input
               type="text"
-              className="form-control form-control-sm me-2 border-dark border-opacity-25"
+              className="form-control border-dark border-opacity-25"
               id="Cost"
               value={itemData.cost}
               style={{ backgroundColor: "#e9ecef" }}
               readOnly
             />
             {user?.role === "admin" && (
-              <FaEdit
-                onClick={() => handleEditCostClick(item.cost)}
-                style={{ cursor: "pointer", margin: "0px 15px" }}
-                color="#1E5A84"
-                size={30}
-              />
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => handleEditSpecialPriceClick(item.price4)}
+              >
+                <FaEdit size={14} />
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="col-auto" style={{ minWidth: "250px" }}>
+          <label htmlFor="gPrice" className="form-label h6">
+            Price 1:
+          </label>
+          <input
+            type="text"
+            className="form-control border-dark border-opacity-25"
+            id="gPrice"
+            value={itemData.price1}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
+          />
+        </div>
+
+        <div className="col-auto" style={{ minWidth: "250px" }}>
+          <label htmlFor="aPrice" className="form-label h6">
+            Price 2:
+          </label>
+          <input
+            type="text"
+            className="form-control border-dark border-opacity-25"
+            id="aPrice"
+            value={itemData.price2}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
+          />
+        </div>
+
+        <div className="col-auto" style={{ minWidth: "250px" }}>
+          <label htmlFor="bPrice" className="form-label h6">
+            Price 3:
+          </label>
+          <input
+            type="text"
+            className="form-control border-dark border-opacity-25"
+            id="bPrice"
+            value={itemData.price3}
+            style={{ backgroundColor: "#e9ecef" }}
+            readOnly
+          />
+        </div>
+        <div className="col-auto" style={{ minWidth: "250px" }}>
+          <label htmlFor="sPrice" className="form-label h6">
+            Price 4:
+          </label>
+
+          <div className="input-group input-group-sm">
+            <input
+              type="text"
+              className="form-control border-dark border-opacity-25"
+              id="sPrice"
+              value={itemData.price4}
+              style={{ backgroundColor: "#e9ecef" }}
+              readOnly
+            />
+
+            {user?.role === "admin" && (
+              <button
+                className="btn btn-outline-secondary"
+                onClick={() => handleEditSpecialPriceClick(item.price4)}
+              >
+                <FaEdit size={14} />
+              </button>
             )}
           </div>
         </div>
 
-        <div 
-          className="col-auto d-flex align-items-end ms-auto mt-4"
-          style={{ position: "relative", bottom: "10px", right: "830px" }}
-        >
-          {isAdmin && (
-            <button
-              type="button"
-              className="btn"
-              style={{
-                backgroundColor: "#198754",
-                color: "white",
-                whiteSpace: "nowrap",
-              }}
-              onClick={handleSave}
-            >
-              Save
+        <div className="col-auto" style={{ minWidth: "250px" }}>
+          <label className="form-label h6">Stock</label>
+          <div className="input-group input-group-sm">
+            <input 
+              className="form-control border-dark border-opacity-25"
+              value={itemData.stock} 
+              style={{ backgroundColor: "#e9ecef" }}
+              readOnly 
+            />
+            <button className="btn btn-outline-secondary" onClick={handleEditStockClick}>
+              <FaEdit size={14} />
             </button>
-          )}
+          </div>
         </div>
       </div>
 
