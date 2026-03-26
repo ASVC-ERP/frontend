@@ -9,7 +9,6 @@ import { useState } from "react";
 import "./App.css";
 import Sidebar from "./Components/Sidebar.jsx";
 import ProfileModal from "./Components/ProfileModal";
-import Approval from "./Components/Approval/Approval.jsx";
 import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
@@ -118,17 +117,7 @@ function App() {
         {/* Main Content */}
         <div className="flex-grow-1 d-flex flex-column p-0">
           <Routes>
-            {/* Admin Routes */}
-            <Route
-              path="/approval"
-              element={
-                <ProtectedRoute user={user} requiredRole="admin">
-                  <Approval supplier={suppliers} />
-                </ProtectedRoute>
-              }
-            />
             <Route path="/unauthorized" element={<Unauthorized />} />
-
             {/* Sales Orders */}
             <Route
               path="/"

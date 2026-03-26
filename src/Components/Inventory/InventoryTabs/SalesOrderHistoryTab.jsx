@@ -8,7 +8,7 @@ function SalesOrderHistoryTab({ itemCode }) {
 function SalesOrderHistoryTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  console.log("SalesOrderHistoryTab item:", item);
+
   const itemId = item?.id || 0;
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -32,7 +32,6 @@ function SalesOrderHistoryTab({ item }) {
 
   useEffect(() => {
     const fetchData = async () => {
-      console.log(itemId);
       if (!itemId) {
         setData([]);
         setLoading(false);
@@ -43,16 +42,15 @@ function SalesOrderHistoryTab({ item }) {
         const response = await axios.get(
           `${API_URL}/order/${itemId}/serve-history`
         );
-        console.log("Sales Order Data:", response.data);
+        //console.log("Sales Order Data:", response.data);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching Sales Order:", error);
-        setData([]); // Set to empty array on error
+        setData([]);
       } finally {
         setLoading(false);
       }
     };
-
     fetchData();
   }, [itemId]);
 

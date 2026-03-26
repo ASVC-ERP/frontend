@@ -2,11 +2,6 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 
 export const createCustomerColumns = (handleEdit, handleDelete) => [
   {
-    name: "ID",
-    selector: (row) => row.id,
-    width: "60px",
-  },
-  {
     name: "Name",
     selector: (row) => row.name,
     wrap: true,

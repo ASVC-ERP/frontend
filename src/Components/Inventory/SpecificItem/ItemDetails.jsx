@@ -6,20 +6,21 @@ import showAlert from "../../Swal";
 import "./ItemDetails.css"
 
 function ItemDetails({ item, onUpdate }) {
+  const API_URL = import.meta.env.VITE_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
+  const isAdmin = user?.role === "admin";
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState();
   const [itemData, setItemData] = useState(item);
 
+  /* USE EFFECTS */
   useEffect(() => {
-    setItemData(item); // update whenever prop changes
+    setItemData(item);
   }, [item]);
 
-  const API_URL = import.meta.env.VITE_API_URL;
-
-  console.log("ItemDetails item prop:", item);
-
-  const isAdmin = user?.role === "admin";
+  useEffect(() => {
+    setFormData(normalizeItem(item));
+  }, [item]);
 
   const normalizeItem = (item) => ({
     id: item.itemID ?? item.id,
@@ -35,10 +36,6 @@ function ItemDetails({ item, onUpdate }) {
   });
 
   const [formData, setFormData] = useState(() => normalizeItem(item));
-
-  useEffect(() => {
-    setFormData(normalizeItem(item));
-  }, [item]);
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -149,9 +146,7 @@ function ItemDetails({ item, onUpdate }) {
     setShowStockModal(true);
   };
 
-  // Edit Special Price
-  const [showEditSpecialPriceModal, setShowEditSpecialPriceModal] =
-    useState(false);
+  const [showEditSpecialPriceModal, setShowEditSpecialPriceModal] = useState(false);
   const [currentSpecialPrice, setCurrentSpecialPrice] = useState("");
   const [newSpecialPrice, setNewSpecialPrice] = useState("");
 
@@ -201,14 +196,12 @@ function ItemDetails({ item, onUpdate }) {
     }
   };
 
-  // Edit Cost
-  const [showEditCostModal, setShowEditCostModal] =
-    useState(false);
+  const [showEditCostModal, setShowEditCostModal] = useState(false);
   const [currentCost, setCurrentCost] = useState("");
   const [newCost, setNewCost] = useState("");
 
   const handleEditCostClick = () => {
-    setCurrentCost(itemData.cost); // use latest value
+    setCurrentCost(itemData.cost);
     setNewCost("");
     setShowEditCostModal(true);
   };
@@ -270,7 +263,7 @@ function ItemDetails({ item, onUpdate }) {
           />
         </div>
 
-        <div className="col-auto" style={{ minWidth: "1190px" }}>
+        <div className="col" style={{ minWidth: "250px", maxWidth: "100%" }}>
           <label className="form-label h6">Product Name</label>
           <input
             type="text"
@@ -282,7 +275,7 @@ function ItemDetails({ item, onUpdate }) {
             style={{ backgroundColor: !isAdmin ? "#e9ecef" : "white", }}
           />
         </div>
-        <div className="col-auto" style={{ width: "150px" }}>
+        <div className="col" style={{ minWidth: "30px", maxWidth: "10%" }}>
           <label className="form-label h6">Unit</label>
           <input
             type="text"
@@ -357,10 +350,6 @@ function ItemDetails({ item, onUpdate }) {
             readOnly={!isAdmin} />
         </div>
         <div className="col-auto d-flex flex-column justify-content-end">
-          <label className="form-label h6">
-            Save
-          </label>
-
           {isAdmin && (
             <button
               type="button"

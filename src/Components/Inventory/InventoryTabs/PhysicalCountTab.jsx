@@ -42,11 +42,11 @@ function PhysicalCountTab({ item }) {
             params: { itemId },
           }
         );
-        console.log("Physical Count Data:", response.data);
+        //console.log("Physical Count Data:", response.data);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching Physical Count:", error);
-        setData([]); // Set to empty array on error
+        setData([]);
       } finally {
         setLoading(false);
       }

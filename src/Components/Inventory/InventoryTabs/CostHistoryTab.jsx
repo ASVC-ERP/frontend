@@ -32,26 +32,17 @@ function CostHistoryTab({ item }) {
         console.warn("No itemID provided, skipping fetch.");
         return;
       }
-
       setLoading(true);
       try {
-        console.log("Fetching cost history for item:", itemID);
-
+        //console.log("Fetch Cost History for ", itemID);
         const costRes = await axios.get(
           `${API_URL}/supplier-invoice/costs/${itemID}`
         );
-
-        console.log("Cost history data:", costRes.data);
-
         const costData = costRes.data;
-
-        console.log("Final merged data (to setState):", costData);
-
         setData(costData);
       } catch (error) {
         console.error("❌ Error fetching cost history:", error);
-
-        setData([]); // Set to empty array on error
+        setData([]);
       } finally {
         setLoading(false);
       }
@@ -60,7 +51,6 @@ function CostHistoryTab({ item }) {
     fetchData();
   }, [itemID]);
 
-  // Define table columns
   const columns = [
     {
       id: 1,

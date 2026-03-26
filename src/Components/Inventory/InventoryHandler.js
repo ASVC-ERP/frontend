@@ -258,8 +258,8 @@ export const useProductHandlers = (
   };
 
   const handleRowClick = (row) => {
-    console.log("CLICKED", row); // Log the clicked row data
-    navigate("/inventory/item", { state: { row } }); // Navigate to the details page with the selected row data
+    console.log("CLICKED", row);
+    navigate("/inventory/item", { state: { row } });
   };
 
   const handleFileUpload = async (event) => {
