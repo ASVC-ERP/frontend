@@ -144,6 +144,7 @@ function OrdersTable({
 
   const [customerQuery, setCustomerQuery] = useState("");
   const [customerSuggestions, setCustomerSuggestions] = useState([]);
+  const [isFocused, setIsFocused] = useState(false);
   const [customerID, setCustomerID] = useState("");
 
   const [showServeModal, setShowServeModal] = useState(false);
@@ -362,12 +363,12 @@ function OrdersTable({
   };
 
   const handleRowClick = async (row) => {
-    console.log("Row clicked:", row);
+    //console.log("Row clicked:", row);
 
     try {
       const res = await axios.get(`${API_URL}/order/id/${row.id}`);
       const orderData = res.data;
-      console.log("Fetched orders:", orderData);
+      //console.log("Fetched orders:", orderData);
 
       setSelectedRow(orderData);
       setEditableRow(orderData);
@@ -1084,7 +1085,7 @@ function OrdersTable({
                   <div
                     className=" rounded-3"
                     style={{
-                      maxHeight: "400px",
+                      maxHeight: "600px",
                       overflowY: "auto",
                       overflowX: "visible",
                     }}
@@ -1297,20 +1298,27 @@ function OrdersTable({
                         />
                       </div>
                       {/* Name */}
-                      <div className="col-md-6 ">
+                      <div className="col-md-6 position-relative">
                         <label className="form-label">Customer</label>
                         <input
                           type="text"
                           className="form-control"
                           value={customerQuery}
                           onChange={handleCustomerNameChange}
-                          onBlur={() =>
-                            setTimeout(() => setCustomerSuggestions([]), 150)
-                          }
+                          onFocus={() => {
+                            setIsFocused(true);
+                            setCustomerSuggestions([]);
+                          }}
+                          onBlur={() => {
+                            setTimeout(() => {
+                              setIsFocused(false);
+                              setCustomerSuggestions([]);
+                            }, 150);
+                          }}
                           placeholder="Customer Name"
                         />
 
-                        {customerSuggestions.length > 0 && (
+                        {isFocused && customerSuggestions.length > 0 && (
                           <ul
                             className="list-group position-absolute"
                             style={{ zIndex: 1000 }}
@@ -1363,33 +1371,19 @@ function OrdersTable({
                             <input
                               ref={(el) => (inputRefs.current[index] = el)}
                               type="text"
-                              value={
-                                activeIndex === index
-                                  ? query
-                                  : item.products?.item_name
-                              }
-                              onChange={(e) =>
-                                handleSearchChange(index, e.target.value)
-                              }
+                              value={ activeIndex === index ? query : item.products?.item_name }
+                              onChange={(e) => handleSearchChange(index, e.target.value) }
                               className="form-control"
                               placeholder="Search item..."
                             />
 
-                            {activeIndex === index &&
-                              suggestions.length > 0 && (
+                            { activeIndex === index && query?.trim() !== "" && suggestions.length > 0 && (
                                 <ul
                                   style={{
-                                    position: "fixed", // makes it float above all content
-                                    top:
-                                      inputRefs.current[
-                                        index
-                                      ]?.getBoundingClientRect().bottom +
-                                      window.scrollY,
-                                    left: inputRefs.current[
-                                      index
-                                    ]?.getBoundingClientRect().left,
-                                    width:
-                                      inputRefs.current[index]?.offsetWidth,
+                                    position: "fixed",
+                                    top: inputRefs.current[ index ]?.getBoundingClientRect().bottom + window.scrollY,
+                                    left: inputRefs.current[ index ]?.getBoundingClientRect().left - 190,
+                                    width: inputRefs.current[index]?.offsetWidth,
                                     backgroundColor: "#fff",
                                     border: "1px solid #ccc",
                                     borderRadius: "0.25rem",
@@ -1405,32 +1399,22 @@ function OrdersTable({
                                   {suggestions.map((s, i) => (
                                     <li
                                       key={i}
-                                      onClick={() =>
-                                        handleSelectSuggestion(index, s)
-                                      }
+                                      onMouseDown = {() => handleSelectSuggestion(index, s) }
+                                      onMouseEnter = { (e) => (e.currentTarget.style.background = "#f8f9fa") }
+                                      onMouseLeave={ (e) => ( e.currentTarget.style.background = "white") }
                                       style={{
                                         padding: "8px",
                                         cursor: "pointer",
                                         borderBottom: "1px solid #eee",
                                         background: "white",
                                       }}
-                                      onMouseEnter={(e) =>
-                                        (e.currentTarget.style.background =
-                                          "#f8f9fa")
-                                      }
-                                      onMouseLeave={(e) =>
-                                        (e.currentTarget.style.background =
-                                          "white")
-                                      }
                                     >
                                       <strong>{s.itemName}</strong> <br />
-                                      <small className="text-muted">
-                                        Stock: {s.stock}
-                                      </small>
+                                      <small className="text-muted"> Stock: {s.stock} </small>
                                     </li>
                                   ))}
                                 </ul>
-                              )}
+                            )}
                           </div>
 
                           {/* Quantity */}
@@ -1438,21 +1422,14 @@ function OrdersTable({
                             type="number"
                             value={item.quantity}
                             onWheel={(e) => e.target.blur()}
-                            onChange={(e) =>
-                              updateItem(index, "quantity", e.target.value)
-                            }
+                            onChange={(e) => updateItem(index, "quantity", e.target.value) }
                             className="form-control"
                             style={{ width: "80px" }}
                           />
 
                           {/* Price options */}
                           {(() => {
-                            console.log(
-                              "Enabled?",
-                              index,
-                              ":",
-                              item.customPriceEnabled,
-                            );
+                            console.log( "Enabled?", index, ":", item.customPriceEnabled, );
                             return item.customPriceEnabled ? (
                               <div
                                 className="input-group"
@@ -1463,13 +1440,7 @@ function OrdersTable({
                                   className="form-control text-center"
                                   value={item.customPrice || ""}
                                   onWheel={(e) => e.target.blur()}
-                                  onChange={(e) =>
-                                    updateItem(
-                                      index,
-                                      "customPrice",
-                                      Number(e.target.value),
-                                    )
-                                  }
+                                  onChange={(e) => updateItem( index, "customPrice", Number(e.target.value), )}
                                   placeholder="Enter price"
                                   style={{ fontSize: "14px" }}
                                 />
@@ -1477,13 +1448,7 @@ function OrdersTable({
                                   type="button"
                                   className="btn border-top border-bottom border-end border-0 bg-white"
                                   title="Back to list"
-                                  onClick={() =>
-                                    updateItem(
-                                      index,
-                                      "customPriceEnabled",
-                                      false,
-                                    )
-                                  }
+                                  onClick={() => updateItem( index, "customPriceEnabled", false, )}
                                 >
                                   <IoChevronDown />
                                 </button>
