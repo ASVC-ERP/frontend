@@ -155,8 +155,6 @@ function CostHistoryTab({ item }) {
         fixedHeaderScrollHeight="430px"
         customStyles={customStyles}
         dense
-        defaultSortFieldId={1}
-        defaultSortAsc={false}
       />
     </div>
   );
