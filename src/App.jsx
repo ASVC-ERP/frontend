@@ -28,6 +28,7 @@ import { useInventory } from "./hooks/useInventory";
 import { useSuppliers } from "./hooks/useSuppliers";
 import { useCustomers } from "./hooks/useCustomers";
 import { usePagination } from "./hooks/usePagination";
+import HomePage from "./Components/Home.jsx";
 
 function App() {
   const { isAuthenticated, user, handleLoginSuccess, handleLogout } = useAuth();
@@ -118,9 +119,10 @@ function App() {
         <div className="flex-grow-1 d-flex flex-column p-0">
           <Routes>
             <Route path="/unauthorized" element={<Unauthorized />} />
+            <Route path="/" element={<HomePage />} />
             {/* Sales Orders */}
             <Route
-              path="/"
+              path="/order"
               element={
                 <SalesOrder
                   orders={Object.values(orders)}

@@ -1,5 +1,6 @@
 import { BsBoxSeamFill, BsPersonCircle } from "react-icons/bs";
 import { FaCashRegister } from "react-icons/fa6";
+import { FaTachometerAlt } from "react-icons/fa";
 import { IoReceipt } from "react-icons/io5";
 import { FaTruck, FaUser } from "react-icons/fa";
 import { PiListChecksFill } from "react-icons/pi";
@@ -98,6 +99,21 @@ export default function Sidebar({ onLogout }) {
           <li className="mt-2">
             <Link
               to="/"
+              className="nav-link d-flex align-items-center"
+              style={{
+                color: "#1E5A84",
+                fontSize: "1.1rem",
+                cursor: "pointer",
+              }}
+            >
+              <FaTachometerAlt className="me-3" size={25} />
+              <span className="sidebar-text">Dashboard</span>
+            </Link>
+          </li>
+
+          <li className="mt-2">
+            <Link
+              to="/order"
               className="nav-link d-flex align-items-center"
               style={{
                 color: "#1E5A84",
