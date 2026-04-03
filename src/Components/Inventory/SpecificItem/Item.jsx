@@ -4,7 +4,7 @@ import ItemDetails from "./ItemDetails";
 import Tabs from "../InventoryTabs/Tabs";
 import axios from "axios";
 
-function Item({ onItemsUpdate }) {
+function Item() {
   const location = useLocation();
   const { row: initialItem } = location.state || {};
   const [item, setItem] = useState(initialItem);
@@ -14,20 +14,13 @@ function Item({ onItemsUpdate }) {
   const fetchItem = useCallback(async () => {
     if (!item?.itemCode) return;
     try {
-      const response = await axios.get(
-        `${API_URL}/product/id/${item.itemID}`
-      );
-  
+      const response = await axios.get( `${API_URL}/product/id/${item.itemID}` );
       setItem(response.data);
-  
-      if (onItemsUpdate) {
-        onItemsUpdate();
-      }
+      console.log("fetch: ",response.data)
     } catch (error) {
       console.error("Failed to fetch updated item data:", error);
     }
-  }, [item?.itemCode, onItemsUpdate]);
-
+  }, [item?.itemCode]);
   
   return (
     <>
@@ -35,8 +28,8 @@ function Item({ onItemsUpdate }) {
         <div
           className="border rounded-3"
           style={{ height: "330px", backgroundColor: "#E8E7EC" }}
-        >
-          <ItemDetails item={item} onUpdate={fetchItem} />
+          >
+            <ItemDetails item={item} onUpdate={fetchItem} />
         </div>
       </div>
       <div className="row mt-3 mx-3">

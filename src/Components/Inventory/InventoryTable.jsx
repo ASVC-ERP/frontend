@@ -6,7 +6,6 @@ import { useDraggableModal } from "../../hooks/useDraggableModal";
 
 function InventoryTable({
   items = [],
-  onAddItem = () => {},
   onRefreshItems = () => {},
   page,
   setPage,
@@ -18,11 +17,6 @@ function InventoryTable({
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const {
-    // Search state
-    searchTerm, setSearchTerm,
-    filteredData, handleSearch,
-    
-    // Item form state
     itemCode, setItemCode,
     itemName, setItemName,
     brand, setBrand,
@@ -33,52 +27,37 @@ function InventoryTable({
     model, setModel,
     origin, setOrigin,
     isDuplicate,
-    
-    // Modal state
-    showItemModal, setShowItemModal,
-    
-    // Handlers
-    handleAddItemClick, handleCloseItemModal, handleSubmitItem, handleDeleteItem, handleRowClick, handleFileUpload,
 
-  } = useProductHandlers(items, onAddItem, onRefreshItems, );
+    showItemModal,
+
+    handleAddItemClick, handleCloseItemModal, handleSubmitItem, handleDeleteItem, handleRowClick,
+  } = useProductHandlers( onRefreshItems, );
 
   const columns = productColumns( handleDeleteItem );
 
   return (
     <div>
       <div className="d-flex align-items-center justify-content-between ">
-        {/* Search input field */}
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search item code or name"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
-
-        {/* Add + Import Buttons beside each other */}
+        {/* Add a Product*/}
         <div style={{ display: "flex", gap: "8px" }}>
           <button
             type="button"
             className="btn"
             style={{
-              backgroundColor: "#0C1D61",
+              backgroundColor: "#1E5A84",
               color: "white",
               whiteSpace: "nowrap",
             }}
             onClick={handleAddItemClick}
           >
-            + Add Item
+            Add Product
           </button>
         </div>
       </div>
 
       <DataTable
         columns={columns}
-        data={filteredData}
+        data={items}
         pagination
         paginationServer
         paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}

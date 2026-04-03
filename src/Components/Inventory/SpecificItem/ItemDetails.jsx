@@ -51,7 +51,6 @@ function ItemDetails({ item, onUpdate }) {
         console.error("Missing item ID");
         return;
       }
-      console.log("item ID: ", formData.itemID, " id: ", formData.id);
 
       const response = await fetch(`${API_URL}/product/${formData.id}`, {
         method: "PUT",
@@ -76,9 +75,23 @@ function ItemDetails({ item, onUpdate }) {
           confirmButtonColor: "#1E5A84",
         });
 
-        // 🔄 Immediately refresh data from backend
+        const updatedItem = {
+          ...item,
+          itemCode: formData.itemCode,
+          itemName: formData.itemName,
+          brand: formData.brand,
+          minStock: Number(formData.minStock),
+          partNum: formData.partNum,
+          interNum: formData.interNum,
+          unit: formData.unit,
+          model: formData.model,
+          origin: formData.origin,
+        };
+        setItemData(updatedItem);
+        setFormData(normalizeItem(updatedItem));
+
         if (onUpdate) {
-          onUpdate(); // calls fetchItem
+          onUpdate();
         }
       } else {
         Swal.fire({

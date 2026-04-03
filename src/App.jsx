@@ -24,7 +24,6 @@ import Unauthorized from "./Pages/Unauthorized.jsx";
 import { useAuth } from "./hooks/useAuth";
 import { useOrders } from "./hooks/useOrders";
 import { useInvoices } from "./hooks/useInvoices";
-import { useInventory } from "./hooks/useInventory";
 import { useSuppliers } from "./hooks/useSuppliers";
 import { useCustomers } from "./hooks/useCustomers";
 import { usePagination } from "./hooks/usePagination";
@@ -35,9 +34,6 @@ function App() {
 
   // Orders pagination
   const ordersPagination = usePagination();
-
-  // Inventory pagination
-  const inventoryPagination = usePagination();
 
   // Invoice pagination
   const invoicePagination = usePagination();
@@ -51,14 +47,7 @@ function App() {
     invoicePagination.setTotalRows,
   );
 
-  const { items, fetchItems, handleAddItem } = useInventory(
-    inventoryPagination.page,
-    inventoryPagination.limit,
-    inventoryPagination.setTotalRows,
-  );
-
   const { suppliers, fetchSuppliers, handleAddSupplier } = useSuppliers();
-
   const { customers, fetchCustomers } = useCustomers();
 
   const {
@@ -179,22 +168,13 @@ function App() {
 
             {/* Inventory */}
             <Route
-              path="/inventory/item"
-              element={<Item onItemsUpdate={fetchItems} />}
+              path="/products/:itemID"
+              element={<Item />}
             />
             <Route
-              path="/inventory"
+              path="/products"
               element={
-                <Inventory
-                  items={items}
-                  onAddItem={handleAddItem}
-                  onRefreshItems={fetchItems}
-                  page={inventoryPagination.page}
-                  setPage={inventoryPagination.setPage}
-                  limit={inventoryPagination.limit}
-                  setLimit={inventoryPagination.setLimit}
-                  totalRows={inventoryPagination.totalRows}
-                />
+                <Inventory />
               }
             />
 

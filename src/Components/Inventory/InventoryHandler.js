@@ -4,14 +4,10 @@ import axios from "axios";
 import Swal from "sweetalert2";
 
 export const useProductHandlers = (
-  items = [],
-  onAddItem = () => {},
   onRefreshItems = () => {},
 ) => {
 
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
 
   const [itemCode, setItemCode] = useState("");
   const [itemName, setItemName] = useState("");
@@ -28,76 +24,11 @@ export const useProductHandlers = (
 
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const normalizeItem = (item) => ({
-    itemID: item.itemID || item.id,
-    itemCode: item.itemCode || item.item_code,
-    itemName: item.itemName || item.item_name,
-    brand: item.brand,
-    origin: item.origin,
-    stock: item.stock,
-    price1: item.price1,
-    minStock: item.minStock || item.min_stock,
-    partNum: item.partNum || item.part_num,
-    interNum: item.interNum || item.internal_num,
-    unit: item.unit,
-    model: item.model,
-    cost: item.cost,
-    price2: item.price2,
-    price3: item.price3,
-    price4: item.price4,
-  });
-
+  // Auto-refresh 2 minutes
   useEffect(() => {
-    // ✅ Normalize items before filtering
-    const normalizedItems = Object.values(items).map(normalizeItem);
-    
-    if (searchTerm.trim() !== "") {
-      const filtered = normalizedItems.filter((row) =>
-        Object.values(row).some((field) =>
-          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(normalizedItems);
-    }
-  }, [items, searchTerm]);
-
-  // 🕒 Auto-refresh only when not searching
-  useEffect(() => {
-    if (searchTerm.trim() !== "") return; // ⛔ Pause refresh if searching
-
-    const interval = setInterval(() => {
-      onRefreshItems();
-    }, 120000);
-
+    const interval = setInterval(() => { onRefreshItems(); }, 120000);
     return () => clearInterval(interval);
-  }, [onRefreshItems, searchTerm]);
-
-  // 🔍 Handle search input change
- const handleSearch = async (event) => {
-  const value = event.target.value; // 👈 get the actual input value
-  setSearchTerm(value);
-
-  try {
-    const res = await axios.get(`${API_URL}/product`, {
-      params: {
-        page: 1,
-        limit: 50,
-        search: value || undefined, // 👈 send the string to backend
-      },
-    });
-
-    console.log("Search response:", res.data.data);
-
-    const normalizedData = res.data.data.map(normalizeItem);
-    setFilteredData(normalizedData);
-  } catch (err) {
-    console.error("Search failed", err);
-  }
-};
-
-
+  }, [onRefreshItems]);
 
   useEffect(() => {
     const checkDuplicate = async () => {
@@ -105,30 +36,64 @@ export const useProductHandlers = (
         setIsDuplicate(false);
         return;
       }
-
-      try {
-        const response = await axios.get(
-          `http://localhost:3000/items/check-code?itemCode=${encodeURIComponent(
-            itemCode
-          )}`
-        );
+      try { 
+        const response = await axios.get(`${API_URL}/items/check-code?itemCode=${encodeURIComponent( itemCode )}` );
         setIsDuplicate(response.data.exists);
-      } catch (error) {
-        console.error("Error checking item code:", error);
-      }
+      } catch (error) { console.error("Error checking item code:", error); }
     };
-
     const delay = setTimeout(checkDuplicate, 400);
     return () => clearTimeout(delay);
   }, [itemCode]);
 
-  const handleAddItemClick = () => {
-    setShowItemModal(true);
+  const handleAddItemClick = () => { setShowItemModal(true); };
+
+  const handleAddItem = async (newItem) => {
+    Swal.fire({
+      title: "Adding Item",
+      text: "Please wait while we add the new item...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const res = await axios.post(`${API_URL}/product`, newItem);
+      
+      Swal.close();
+      Swal.fire({
+        icon: "success",
+        title: "Added!",
+        text: "Item added successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+
+      onRefreshItems();
+      return true;
+    } catch (err) {
+      Swal.close();
+
+      if (err.response?.status === 409) {
+        Swal.fire({
+          icon: "error",
+          title: "Duplicate Item",
+          text: err.response.data.message,
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Something went wrong. Please try again later.",
+        });
+      }
+      return false;
+    }
   };
 
   const handleCloseItemModal = () => {
     setShowItemModal(false);
-    // Clear form fields when closing
     setItemCode("");
     setItemName("");
     setBrand("");
@@ -188,22 +153,10 @@ export const useProductHandlers = (
 
     try {
       console.log("New Item:", newItem);
-      const success = await onAddItem(newItem);
+      const success = await handleAddItem(newItem);
       console.log("onAddItem returned:", success);
 
       if (success) {
-        // Reset inputs only if added successfully
-        setItemCode("");
-        setItemName("");
-        setBrand("");
-        setOrigin("");
-        setMinimumStock("");
-        setPartNum("");
-        setInterNum("");
-        setUnit("Pc");
-        setModel("");
-
-        // ✅ Close modal
         handleCloseItemModal();
       } else {
         Swal.fire({
@@ -235,6 +188,16 @@ export const useProductHandlers = (
       });
 
       if (result.isConfirmed) {
+        Swal.fire({
+          title: "Deleting Item",
+          text: "Please wait while we delete the item...",
+          allowOutsideClick: false,
+          showConfirmButton: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+        });
+        
         await axios.delete(`${API_URL}/product/${id}`);
 
         Swal.fire({
@@ -259,80 +222,27 @@ export const useProductHandlers = (
 
   const handleRowClick = (row) => {
     console.log("CLICKED", row);
-    navigate("/inventory/item", { state: { row } });
-  };
-
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-
-    const formData = new FormData();
-    formData.append("file", file);
-
-    try {
-      const response = await axios.post(`${API_URL}/items/import`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
-      Swal.fire({
-        icon: "success",
-        title: "Imported!",
-        text: response.data.message || "Items imported successfully",
-        timer: 2000,
-        showConfirmButton: false,
-      });
-
-      // Refresh items table
-      onRefreshItems();
-    } catch (error) {
-      console.error("Error importing items:", error);
-      const errMsg = error.response?.data?.message || error.message;
-      Swal.fire({
-        icon: "error",
-        title: "Import failed",
-        text: errMsg,
-      });
-    }
+    navigate(`/products/${row.itemID}`, { state: { row } });
   };
 
   return {
-    // Search state
-    searchTerm,
-    setSearchTerm,
-    filteredData,
-    handleSearch,
-    
-    // Item form state
-    itemCode,
-    setItemCode,
-    itemName,
-    setItemName,
-    brand,
-    setBrand,
-    minimumStock,
-    setMinimumStock,
-    partNum,
-    setPartNum,
-    interNum,
-    setInterNum,
-    unit,
-    setUnit,
-    model,
-    setModel,
-    origin,
-    setOrigin,
+    itemCode, setItemCode,
+    itemName, setItemName,
+    brand, setBrand,
+    minimumStock, setMinimumStock,
+    partNum, setPartNum,
+    interNum, setInterNum,
+    unit, setUnit,
+    model, setModel,
+    origin, setOrigin,
     isDuplicate,
     
-    // Modal state
-    showItemModal,
-    setShowItemModal,
+    showItemModal, setShowItemModal,
     
-    // Handlers
     handleAddItemClick,
     handleCloseItemModal,
     handleSubmitItem,
     handleDeleteItem,
     handleRowClick,
-    handleFileUpload,
   };
 }
