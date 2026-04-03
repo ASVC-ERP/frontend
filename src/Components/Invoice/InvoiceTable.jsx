@@ -9,16 +9,15 @@ import { FaSave } from "react-icons/fa";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
 
 function InvoiceTable({
-  invoices,
-  fetchInvoices,
+  invoices = [],
+  fetchInvoices = () => {},
   page,
   setPage,
   limit,
   setLimit,
   totalRows,
 }) {
-  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } =
-    useDraggableModal();
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const columns = [
     {
@@ -155,59 +154,18 @@ function InvoiceTable({
   ];
 
   const API_URL = import.meta.env.VITE_API_URL;
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showRowModal, setShowRowModal] = useState(false);
   const [pendingChanges, setPendingChanges] = useState({});
 
-  useEffect(() => {
-    // ✅ Re-apply search whenever invoices or searchTerm change
-    if (searchTerm.trim() !== "") {
-      const filtered = invoices.filter((row) =>
-        Object.values(row).some((field) =>
-          field?.toString().toLowerCase().includes(searchTerm.toLowerCase()),
-        ),
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(invoices);
-      console.log("Invoices data refreshed:", invoices);
-    }
-  }, [invoices, searchTerm]);
-
   // 🕒 Auto-refresh invoices every 10s (paused when searching)
   useEffect(() => {
-    if (searchTerm.trim() !== "") return; // ⛔ skip refresh if searching
-
     const interval = setInterval(() => {
       fetchInvoices();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [fetchInvoices, searchTerm]);
-
-  const handleSearch = async (event) => {
-    const value = event.target.value; // 👈 get the actual input value
-    setSearchTerm(value);
-
-    try {
-      const res = await axios.get(`${API_URL}/invoice`, {
-        params: {
-          page: 1,
-          limit: 50,
-          search: value || undefined, // 👈 send the string to backend
-        },
-      });
-
-      console.log("Search response:", res.data.data);
-
-      setFilteredData(res.data.data);
-    } catch (err) {
-      console.error("Search failed", err);
-    }
-  };
+  }, [fetchInvoices]);
 
   const handleRowClick = async (row) => {
     console.log("Clicked row:", row);
@@ -231,7 +189,7 @@ function InvoiceTable({
           ...prev,
           servedItems: [],
           totalPrice: 0,
-          noServedItems: true, // 👈 optional flag
+          noServedItems: true,
         }));
         return;
       }
@@ -249,7 +207,7 @@ function InvoiceTable({
             );
             const product = Array.isArray(productRes.data)
               ? productRes.data[0]
-              : productRes.data; // PICK FIRST ITEM
+              : productRes.data;
 
             return { ...serve };
           } catch (err) {
@@ -283,7 +241,6 @@ function InvoiceTable({
     return items.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
   };
 
-  //PACKING LIST
   const handlePrint = async () => {
     if (!selectedRow) return;
 
@@ -323,7 +280,6 @@ function InvoiceTable({
     }
   };
 
-  // Frontend example for Delivery Receipt A
   const handlePrintDR = async (type, selectedRow) => {
     if (!selectedRow) return;
 
@@ -361,14 +317,6 @@ function InvoiceTable({
         text: "Failed to generate PDF. See console for details.",
       });
     }
-  };
-
-  const handleStatusChange = (row, newStatus) => {
-    // Just update local pending changes
-    setPendingChanges((prev) => ({
-      ...prev,
-      [row.invoiceID]: newStatus,
-    }));
   };
 
   const handleSave = (row) => {
@@ -450,61 +398,8 @@ function InvoiceTable({
       });
   };
 
-  const handleDelete = (row) => {
-    Swal.fire({
-      icon: "warning",
-      title: "Delete Invoice",
-      text: `Are you sure you want to delete invoice ${row.invoiceID}?`,
-      showCancelButton: true,
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "Cancel",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        axios
-          .delete(`${API_URL}/invoices/${row.invoiceID}`)
-          .then((res) => {
-            // Remove invoice from table
-            setFilteredData((prev) =>
-              prev.filter((item) => item.invoiceID !== row.invoiceID),
-            );
-
-            fetchInvoices();
-
-            Swal.fire({
-              icon: "success",
-              title: "Deleted!",
-              text: `Invoice ${row.invoiceID} has been deleted and items returned to stock.`,
-              timer: 1500,
-              showConfirmButton: false,
-            });
-          })
-          .catch((err) => {
-            console.error("Failed to delete invoice:", err);
-            Swal.fire({
-              icon: "error",
-              title: "Delete Failed",
-              text: "Could not delete invoice. See console for details.",
-            });
-          });
-      }
-    });
-  };
-
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search invoices"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
-      </div>
-
       {/* Row Modal */}
       {showRowModal && selectedRow && (
         <div
@@ -688,7 +583,7 @@ function InvoiceTable({
           {/* minimum table width */}
           <DataTable
             columns={columns}
-            data={filteredData}
+            data={invoices}
             onRowClicked={handleRowClick}
             pagination
             paginationServer
@@ -702,7 +597,7 @@ function InvoiceTable({
             }}
             highlightOnHover
             fixedHeader
-            fixedHeaderScrollHeight="700px"
+            fixedHeaderScrollHeight="740px"
             className="custom-data-table"
             responsive // ensures mobile/responsive behavior
           />

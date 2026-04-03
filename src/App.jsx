@@ -4,7 +4,6 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import { useState } from "react";
 
 import "./App.css";
 import Sidebar from "./Components/Sidebar.jsx";
@@ -17,17 +16,14 @@ import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import Supplier from "./Components/Supplier/Supplier.jsx";
 import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
 import Customer from "./Components/Customer/Customer.jsx";
+import HomePage from "./Components/Home.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
-import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
-
 import { useAuth } from "./hooks/useAuth";
 import { useOrders } from "./hooks/useOrders";
 import { useInvoices } from "./hooks/useInvoices";
-import { useSuppliers } from "./hooks/useSuppliers";
 import { useCustomers } from "./hooks/useCustomers";
 import { usePagination } from "./hooks/usePagination";
-import HomePage from "./Components/Home.jsx";
 
 function App() {
   const { isAuthenticated, user, handleLoginSuccess, handleLogout } = useAuth();
@@ -37,9 +33,6 @@ function App() {
 
   // Invoice pagination
   const invoicePagination = usePagination();
-
-  // Supplier Invoices pagination
-  const supplierInvoicePagination = usePagination()
 
   const { invoices, fetchInvoices } = useInvoices(
     invoicePagination.page,
@@ -152,16 +145,7 @@ function App() {
             <Route
               path="/invoice"
               element={
-                <SalesInvoice
-                  invoices={invoices}
-                  onfetchInvoices={fetchInvoices}
-                  customers={customers}
-                  page={invoicePagination.page}
-                  setPage={invoicePagination.setPage}
-                  limit={invoicePagination.limit}
-                  setLimit={invoicePagination.setLimit}
-                  totalRows={invoicePagination.totalRows}
-                />
+                <SalesInvoice />
               }
             />
 
