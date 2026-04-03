@@ -47,7 +47,6 @@ function App() {
     invoicePagination.setTotalRows,
   );
 
-  const { suppliers, fetchSuppliers, handleAddSupplier } = useSuppliers();
   const { customers, fetchCustomers } = useCustomers();
 
   const {
@@ -182,11 +181,7 @@ function App() {
             <Route
               path="/supplier"
               element={
-                <Supplier
-                  supplier={suppliers}
-                  onAddSupplier={handleAddSupplier}
-                  onRefreshSupplier={fetchSuppliers}
-                />
+                <Supplier />
               }
             />
             <Route

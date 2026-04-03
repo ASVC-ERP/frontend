@@ -1,13 +1,20 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
-import { IoIosSearch } from "react-icons/io";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
 
-function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
+function SupplierTable({ 
+  suppliers  = [], 
+  onRefreshSupplier = () => {}, 
+  page, 
+  setPage, 
+  limit, 
+  setLimit, 
+  totalRows,
+}) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
   const columns = [
@@ -73,8 +80,6 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
 
   const [newCode, setNewCode] = useState("");
   const [newName, setNewName] = useState("");
@@ -87,9 +92,65 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
 
   const [showModal, setShowModal] = useState(false);
 
+  const handleAddSupplier = async (newSupplier) => {
+    Swal.fire({
+      title: "Adding Supplier",
+      text: "Please wait while we add a new supplier...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
+    try {
+      const response = await axios.post(`${API_URL}/supplier`, newSupplier);
+      
+      Swal.close();
+      Swal.fire({
+        icon: "success",
+        title: "Supplier added!",
+        text: response.data.message || "Supplier added successfully.",
+        timer: 2000,
+        showConfirmButton: false,
+      });
+      
+      onRefreshSupplier();
+    } catch (err) {
+      Swal.close();
+
+      if (err.response) {
+        if (err.response.status === 409) {
+          Swal.fire({
+            icon: "error",
+            title: "Duplicate Supplier",
+            text: err.response.data.message || "This supplier already exists.",
+          });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: err.response.data.message || "Something went wrong. Please try again later.",
+          });
+        }
+      } else if (err.request) {
+        Swal.fire({
+          icon: "error",
+          title: "Network Error",
+          text: "Unable to reach the server. Please check your connection.",
+        });
+      } else {
+        Swal.fire({
+          icon: "error",
+          title: "Unexpected Error",
+          text: err.message,
+        });
+      }
+    }
+  };
+
   const handleEditSupplier = (row) => {
-    console.log("Editing row:", row);
-    setSelectedInvoice(row); // set invoice/supplier row for modal
+    setSelectedInvoice(row);
     setShowEditModal(true);
   };
 
@@ -104,7 +165,6 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
 
   const handleCloseModal = () => {
     setShowModal(false);
-    // Clear form fields when closing
     setNewCode("");
     setNewName("");
     setNewAddress("");
@@ -112,48 +172,18 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
     setNewNumber("");
   };
 
+  // 🕒 Auto-refresh every 2 minutes
   useEffect(() => {
-    // ✅ Re-apply search whenever supplier data or searchTerm changes
-    if (searchTerm.trim() !== "") {
-      const filtered = supplier.filter((row) =>
-        Object.values(row).some((field) =>
-          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(supplier);
-    }
-  }, [supplier, searchTerm]);
-
-  // 🕒 Auto-refresh every 2 minutes, paused while searching
-  useEffect(() => {
-    if (searchTerm.trim() !== "") return; // ⛔ skip refresh if searching
-
     const interval = setInterval(() => {
       onRefreshSupplier();
     }, 120000);
 
     return () => clearInterval(interval);
-  }, [onRefreshSupplier, searchTerm]);
-
-  // Handle search input change
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    const filtered = Object.values(supplier).filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
-    );
-
-    setFilteredData(filtered);
-  };
+  }, [onRefreshSupplier]);
 
   const handleRowClick = (row) => {
-    console.log("CLICKED", row); // Log the clicked row data
-    navigate("/supplier/invoices", { state: { row } }); // Navigate to the details page with the selected row data
+    console.log("CLICKED", row);
+    navigate("/supplier/invoices", { state: { row } });
   };
 
   const handleUpdateSupplier = async () => {
@@ -186,7 +216,6 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   };
 
   const handleSubmitSupplier = () => {
-    console.log("▶ Add Item Clicked");
     if (!newCode.trim() || !newName.trim() || !newAddress.trim()) return;
 
     const newSupplier = {
@@ -197,15 +226,9 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       number: newNumber,
     };
 
-    onAddSupplier(newSupplier);
-    setNewCode("");
-    setNewName("");
-    setNewAddress("");
-    setNewCurrency("");
-    setNewNumber("");
-
-    onRefreshSupplier();
+    handleAddSupplier(newSupplier);
     handleCloseModal();
+    onRefreshSupplier();
   };
 
   const handleDeleteSupplier = async (supplierID) => {
@@ -232,7 +255,7 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
         showConfirmButton: false,
       });
 
-      onRefreshSupplier(); // 👈 refresh supplier list
+      onRefreshSupplier();
     } catch (err) {
       console.error("Error deleting supplier:", err);
       Swal.fire({
@@ -248,18 +271,6 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center">
-        {/* Search box */}
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search supplier code or name"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
-
         {/* Add Supplier button */}
         <button
           type="button"
@@ -278,10 +289,17 @@ function SupplierTable({ supplier, onAddSupplier, onRefreshSupplier }) {
       {/* 📋 Data Table */}
       <DataTable
         columns={columns}
-        data={filteredData}
+        data={suppliers}
         pagination
+        paginationServer
         paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
-        paginationPerPage={50}
+        paginationPerPage={limit}
+        paginationTotalRows={totalRows}
+        onChangePage={(page) => setPage(page)}
+        onChangeRowsPerPage={(newLimit, page) => {
+          setLimit(newLimit);
+          setPage(page);
+        }}
         highlightOnHover
         fixedHeader
         fixedHeaderScrollHeight="700px"
