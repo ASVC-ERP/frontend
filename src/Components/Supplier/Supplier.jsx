@@ -21,6 +21,7 @@ function Supplier() {
   const [search, setSearch] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
   const [clearLoading, setClearLoading] = useState(false);
+  const [tableLoading, setTableLoading] = useState(false);
   
   useEffect(() => {
     fetchSuppliers();
@@ -28,14 +29,19 @@ function Supplier() {
 
   const fetchSuppliers = async (searchValue = search) => {
     try {
+      setTableLoading(true);
       const response = await axios.get(`${API_URL}/supplier`, { params: { page, limit, search: searchValue, }, });
       const transformedSuppliers = response.data.data.map(transformSupplier);
       setSuppliers(transformedSuppliers);
       setTotalRows(response.data.meta.total);
     } catch (error) {
       console.error("Error fetching suppliers from backend:", error);
+    } finally {
+      setTableLoading(false);
     }
   };
+
+  const loadingText = search ? "Searching suppliers..." : "Loading suppliers...";
 
   return (
     <div className="container-fluid mt-3">
@@ -57,8 +63,8 @@ function Supplier() {
           <input
             type="text"
             className="form-control"
-            style={{ width: "400px" }}
-            placeholder="Search..."
+            style={{ width: "450px" }}
+            placeholder="Search Supplier Name..."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -66,6 +72,7 @@ function Supplier() {
 
         <div className="col-auto d-flex gap-2">
           <button
+            disabled={tableLoading}
             type="button"
             className="btn"
             onClick={ async () => {
@@ -84,6 +91,7 @@ function Supplier() {
           </button>
 
           <button
+            disabled={tableLoading}
             type="button"
             className="btn btn-secondary"
             onClick={ async () => {
@@ -116,6 +124,33 @@ function Supplier() {
               limit={limit}
               setLimit={setLimit}
               totalRows={totalRows}
+              progressPending={tableLoading}
+              progressComponent={
+                <div
+                  style={{
+                    padding: "40px 0",
+                    textAlign: "center",
+                  }}
+                >
+                  <div
+                    className="spinner-border"
+                    style={{
+                      color: "#1E5A84",
+                      width: "2.5rem",
+                      height: "2.5rem",
+                    }}
+                  />
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      color: "#6c757d",
+                      fontWeight: "600",
+                    }}
+                  >
+                    {loadingText}
+                  </div>
+                </div>
+              }
             />
           </div>
         </div>

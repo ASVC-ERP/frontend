@@ -12,6 +12,8 @@ function InventoryTable({
   limit,
   setLimit,
   totalRows,
+  progressPending, 
+  progressComponent, 
 }) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
@@ -73,6 +75,8 @@ function InventoryTable({
         fixedHeaderScrollHeight="700px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
+        progressPending={progressPending}
+        progressComponent={progressComponent}
       />
 
       {/* Add Item Modal */}

@@ -26,6 +26,8 @@ function OrdersTable({
   limit,
   setLimit,
   totalRows,
+  progressPending, 
+  progressComponent, 
 }) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
@@ -64,7 +66,7 @@ function OrdersTable({
       },
     },
     {
-      name: "Order",
+      name: "Order No.",
       selector: (row) => row.id,
       width: "120px",
       center: true
@@ -834,6 +836,8 @@ function OrdersTable({
         fixedHeaderScrollHeight="700px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
+        progressPending={progressPending}
+        progressComponent={progressComponent}
       />
 
       {showRowModal && selectedRow && (

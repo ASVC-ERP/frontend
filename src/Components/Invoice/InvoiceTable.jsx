@@ -14,12 +14,14 @@ function InvoiceTable({
   limit,
   setLimit,
   totalRows,
+  progressPending, 
+  progressComponent,
 }) {
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const columns = [
     {
-      name: "Order ID",
+      name: "Order No.",
       selector: (row) => `ORD${String(row.order_id).padStart(4, "0")}`,
       width: "120px",
       center: true,
@@ -600,6 +602,8 @@ function InvoiceTable({
             fixedHeaderScrollHeight="740px"
             className="custom-data-table"
             responsive // ensures mobile/responsive behavior
+            progressPending={progressPending}
+            progressComponent={progressComponent}
           />
         </div>
       </div>

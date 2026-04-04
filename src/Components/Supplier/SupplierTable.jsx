@@ -14,6 +14,8 @@ function SupplierTable({
   limit, 
   setLimit, 
   totalRows,
+  progressPending, 
+  progressComponent, 
 }) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
@@ -305,6 +307,8 @@ function SupplierTable({
         fixedHeaderScrollHeight="700px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
+        progressPending={progressPending}
+        progressComponent={progressComponent}
       />
 
       {/* Add Supplier Modal */}

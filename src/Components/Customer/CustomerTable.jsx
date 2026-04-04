@@ -8,7 +8,17 @@ import { useDraggableModal } from "../../hooks/useDraggableModal";
 import { createCustomerColumns } from "./CustomerColums";
 import { useCustomerHandlers } from "./CustomerHandler";
 
-function CustomerTable({ customers = [], onRefreshCustomers = () => {} }) {
+function CustomerTable({ 
+  customers = [], 
+  onRefreshCustomers = () => {},
+  page, 
+  setPage, 
+  limit, 
+  setLimit, 
+  totalRows, 
+  progressPending, 
+  progressComponent, 
+}) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
@@ -64,12 +74,21 @@ function CustomerTable({ customers = [], onRefreshCustomers = () => {} }) {
         columns={columns}
         data={customers}
         pagination
+        paginationServer
         paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
-        paginationPerPage={50}
+        paginationPerPage={limit}
+        paginationTotalRows={totalRows}
+        onChangePage={(page) => setPage(page)}
+        onChangeRowsPerPage={(newLimit, page) => {
+          setLimit(newLimit);
+          setPage(page);
+        }}
         highlightOnHover
         fixedHeader
         fixedHeaderScrollHeight="700px"
         className="custom-data-table"
+        progressPending={progressPending}
+        progressComponent={progressComponent}
       />
 
       {/* Add Customer Modal */}
