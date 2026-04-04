@@ -23,14 +23,12 @@ function Supplier() {
   const [clearLoading, setClearLoading] = useState(false);
   
   useEffect(() => {
-    console.log(page,limit)
     fetchSuppliers();
   }, [page, limit, search]);
 
   const fetchSuppliers = async (searchValue = search) => {
     try {
       const response = await axios.get(`${API_URL}/supplier`, { params: { page, limit, search: searchValue, }, });
-      console.log("data: ", response.data.data)
       const transformedSuppliers = response.data.data.map(transformSupplier);
       setSuppliers(transformedSuppliers);
       setTotalRows(response.data.meta.total);

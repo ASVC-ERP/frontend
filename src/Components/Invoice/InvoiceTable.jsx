@@ -19,14 +19,10 @@ function InvoiceTable({
 
   const columns = [
     {
-      name: "#",
-      selector: (row) => row.id,
-      maxWidth: "50px",
-    },
-    {
-      name: "Order",
-      selector: (row) => `ORD${row.order_id}`,
-      maxWidth: "80px",
+      name: "Order ID",
+      selector: (row) => `ORD${String(row.order_id).padStart(4, "0")}`,
+      width: "120px",
+      center: true,
     },
     {
       name: "Date",
@@ -36,25 +32,34 @@ function InvoiceTable({
           day: "2-digit",
           year: "2-digit",
         }),
-      grow: 0,
-      width: "100px",
+      width: "120px",
+      center: true,
     },
     {
       name: "Customer Name",
       selector: (row) => row.customer.name || "—",
-      grow: 0,
-      minWidth: "380px",
+      width: "300px",
       wrap: true,
       searchable: true,
     },
     {
-      name: "PIC",
-      selector: (row) => row.user.name,
-      grow: 0,
-      width: "140px",
+      name: "Total Price",
+      selector: (row) =>
+        row.total_price != null
+          ? `₱${Number(row.total_price).toLocaleString("en-PH", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`
+          : "—",
+      width: "150px",
     },
     {
-      name: "Shipping Details",
+      name: "PIC",
+      selector: (row) => row.user.name,
+      width: "110px",
+    },
+    {
+      name: "Shipping Details ( Invoice No., Waybill, Courier, Shipping Date)",
       cell: (row) => {
         return (
           <div className="d-flex align-items-center gap-2 ms-2">
@@ -126,28 +131,25 @@ function InvoiceTable({
           </div>
         );
       },
-      grow: 1.5,
-      minWidth: "450px",
+      width: "750px",
     },
     {
       name: "Actions",
       cell: (row) => (
-        <Button
-          variant="outline-success"
-          size="sm"
-          className="p-1 d-flex align-items-center justify-content-center"
+        <button
+          className="btn btn-sm btn-outline-success"
           onClick={(e) => {
             e.stopPropagation();
             handleSave(row);
           }}
           title="Save"
         >
-          <FaSave size={14} />
-        </Button>
+          <FaSave />
+        </button>
       ),
-      grow: 0,
-      width: "100px",
+      width: "70px",
       center: true,
+      button: true,
     },
   ];
 

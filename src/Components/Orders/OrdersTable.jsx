@@ -9,6 +9,7 @@ import ServeQuantityInput from "./ServeQantityInput";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
 import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 import { checkDuplicateProduct } from "../../hooks/useOrderHelpers";
+import { FaTrash } from "react-icons/fa";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
@@ -39,49 +40,13 @@ function OrdersTable({
 
   const columns = [
     {
-      name: "Order",
-      selector: (row) => row.id,
-      width: "100px",
-    },
-    {
-      name: "Date",
-      selector: (row) =>
-        new Date(row.order_date).toLocaleDateString("en-US", {
-          month: "numeric",
-          day: "numeric",
-          year: "2-digit",
-        }),
-      width: "100px",
-    },
-    {
-      name: "Customer Name",
-      selector: (row) => row.customer?.name || "—",
-      width: "300px",
-      wrap: true,
-    },
-    {
-      name: "Address",
-      selector: (row) => row.customer?.address || "—",
-      width: "700px",
-      wrap: true,
-    },
-    {
-      name: "PIC",
-      selector: (row) => row.user?.name || "—",
-      width: "150px",
-    },
-    {
       name: "Status",
       selector: (row) => row.status,
-      grow: 1,
-      minWidth: "150px",
+      width: "120px",
+      center: true,
       cell: (row) => {
         const statusKey = row.status?.trim().toLowerCase();
-
-        const statusStyle = statusColors[statusKey] || {
-          bg: "#6c757d",
-          text: "#fff",
-        };
+        const statusStyle = statusColors[statusKey] || { bg: "#6c757d", text: "#fff", };
 
         return (
           <span
@@ -99,25 +64,71 @@ function OrdersTable({
       },
     },
     {
+      name: "Order",
+      selector: (row) => row.id,
+      width: "120px",
+      center: true
+    },
+    {
+      name: "Date Created",
+      selector: (row) =>
+        new Date(row.order_date).toLocaleDateString("en-US", {
+          month: "numeric",
+          day: "numeric",
+          year: "2-digit",
+        }),
+      width: "140px",
+      center: true
+    },
+    {
+      name: "Customer",
+      selector: (row) => row.customer?.name || "—",
+      width: "300px",
+      wrap: true,
+    },
+    {
+      name: "Address",
+      selector: (row) => row.customer?.address || "—",
+      width: "600px",
+      wrap: true,
+    },
+    {
+      name: "Total Price",
+      selector: (row) =>
+        row.total_price != null
+          ? `₱${Number(row.total_price).toLocaleString("en-PH", {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2,
+            })}`
+          : "—",
+      width: "130px",
+      center: true,
+    },
+    {
+      name: "PIC",
+      selector: (row) => row.user?.name || "—",
+      width: "120px",
+    },
+    {
       name: "Actions",
-      grow: 0,
-      width: "100px",
       cell: (row) => (
         row.status === "Open" ? (
-          <Button
-            variant="outline-danger"
-            size="sm"
-            className="p-1 d-flex align-items-center justify-content-center"
+          <button
+            className="btn btn-sm btn-outline-danger"
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(row);
             }}
             title="Delete"
           >
-            🗑️
-          </Button>
+            <FaTrash />
+          </button>
         ) : null
       ),
+      width: "70px",
+      ignoreRowClick: true,
+      center: true,
+      button: true
     },
   ];
 

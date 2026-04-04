@@ -25,24 +25,24 @@ function SupplierTable({
       left: true,
     },
     {
-      name: "Supplier Name",
+      name: "Name",
       selector: (row) => row.name,
       wrap: true,
-      width: "350px",
+      width: "270px",
       left: true
-    },
-    {
-      name: "Contact No.",
-      selector: (row) => row.number,
-      width: "200px",
-      left: true,
-      wrap: true
     },
     {
       name: "Address",
       selector: (row) => row.address,
       wrap: true,
       width: "600px"
+    },
+    {
+      name: "Contact No.",
+      selector: (row) => row.number,
+      width: "350px",
+      left: true,
+      wrap: true
     },
     {
       name: "Currency",

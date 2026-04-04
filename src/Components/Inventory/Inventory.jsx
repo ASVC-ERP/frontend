@@ -33,7 +33,6 @@ function Inventory() {
   const [clearLoading, setClearLoading] = useState(false);
 
   useEffect(() => {
-    console.log(page,limit)
     fetchItems();
   }, [page, limit, search]);
 
