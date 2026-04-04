@@ -63,7 +63,7 @@ function SalesInvoice() {
             type="text"
             className="form-control"
             style={{ width: "400px" }}
-            placeholder="Search..."
+            placeholder="Search Customer or Order No."
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
           />
@@ -96,7 +96,7 @@ function SalesInvoice() {
               setSearchInput("");
               setSearch("");
               setClearLoading(true);
-              await fetchInvoices();
+              await fetchInvoices("");
               setClearLoading(false);
             }}
             style={{ whiteSpace: "nowrap" }}

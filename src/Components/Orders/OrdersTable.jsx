@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, useMemo, React } from "react";
 import DataTable from "react-data-table-component";
-import { Link } from "react-router-dom"; // Import Link from react-router-dom
+import { Link } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
-import { IoIosSearch } from "react-icons/io";
 import { IoChevronDown } from "react-icons/io5";
 import axios from "axios";
 import Swal from "sweetalert2";
@@ -18,26 +17,20 @@ console.log("User role for approvals:", roleApprove);
 const API_URL = import.meta.env.VITE_API_URL;
 
 function OrdersTable({ 
-  orders, 
-  setOrders, 
-  customers, 
+  orders = [],
+  customers = [],
+  fetchOrders  = () => {}, 
   page,
   setPage,
   limit,
   setLimit,
-  totalRows, 
+  totalRows,
 }) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
-  const customerMap = useMemo(() => {
-    return customers.reduce((acc, customer) => {
-      acc[customer.id] = customer;
-      return acc;
-    }, {});
-  }, [customers]);
-
   const customerNameMap = useMemo(() => {
+    if (!Array.isArray(customers)) return {};
     return customers.reduce((acc, customer) => {
       acc[customer.name] = customer;
       return acc;
@@ -128,9 +121,6 @@ function OrdersTable({
     },
   ];
 
-  const [filteredData, setFilteredData] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
-
   const [selectedRow, setSelectedRow] = useState(null);
   const [editableRow, setEditableRow] = useState(null);
 
@@ -191,55 +181,14 @@ function OrdersTable({
     text: "#fff",
   };
 
-  const fetchOrders = () => {
-    const user = JSON.parse(localStorage.getItem("user"));
-    const endpoint =
-      roleApprove === "agent"
-        ? `${API_URL}/order?agent=${encodeURIComponent(user.role)}`
-        : `${API_URL}/order`;
-
-    axios
-      .get(endpoint, {
-        params: { page, limit },
-      })
-      .then((res) => {
-        setOrders(res.data.data);
-
-        if (searchTerm.trim() !== "") {
-          const filtered = res.data.data.filter((row) =>
-            Object.values(row).some((field) =>
-              field
-                ?.toString()
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()),
-            ),
-          );
-          setFilteredData(filtered);
-        } else
-          setFilteredData(res.data.data);
-
-
-        if (res.data.total) 
-          setTotalPages(Math.ceil(res.data.total / limit));
-      })
-      .catch((err) => { console.error("❌ Failed to fetch orders:", err); });
-  };
-
-  // Initial fetch
-  useEffect(() => {
-    fetchOrders();
-  }, [page, limit]);
-
   // Auto-refresh orders every 5 seconds
   useEffect(() => {
-    if (searchTerm.trim() !== "") return;
-
     const interval = setInterval(() => {
       fetchOrders();
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [searchTerm]);
+  }, [fetchOrders]);
 
   useEffect(() => {
     if (!customerQuery.trim()) {
@@ -261,7 +210,7 @@ function OrdersTable({
     setEditableRow((prev) => ({
       ...prev,
       customerName: value,
-      customerID: customerNameMap[value]?.cid || "",
+      customerID: customerNameMap[value]?.id || "",
     }));
   };
 
@@ -275,28 +224,6 @@ function OrdersTable({
       customerID: customer.id,
       customerName: customer.name,
     }));
-  };
-
-  const SEARCHABLE_SELECTORS = [
-    row => row.customer?.name,
-    row => row.status,
-  ];
-  
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    const filtered = orders.filter(row =>
-      SEARCHABLE_SELECTORS.some(fn => {
-        const field = fn(row);
-        return (
-          field &&
-          field.toString().toLowerCase().includes(value)
-        );
-      })
-    );
-  
-    setFilteredData(filtered);
   };
 
   const initializeItems = (items) => {
@@ -852,7 +779,6 @@ function OrdersTable({
       console.error("[handleInvoice] Error creating invoice:", error);
       Swal.close();
 
-      // 🔹 More informative error handling
       const message =
         error.response?.data?.message ||
         "Failed to create invoice. Please try again.";
@@ -868,35 +794,23 @@ function OrdersTable({
   return (
     <div>
       <div className="d-flex justify-content-between align-items-center">
-        {/* Search input field */}
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search order"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
-
         <Link to="/create-order">
           <button
             type="button"
             className="btn me-5"
-            style={{ backgroundColor: "#246c9d", color: "white" }}
+            style={{ backgroundColor: "#1E5A84", color: "white" }}
           >
-            + Add Order
+            Add Order
           </button>
         </Link>
       </div>
 
       <DataTable
         columns={columns}
-        data={filteredData}
+        data={Array.isArray(orders) ? orders : []}
         pagination
         paginationServer
-        paginationRowsPerPageOptions={[50, 100, 250, 500]}
+        paginationRowsPerPageOptions={[10, 50, 100, 250, 500,]}
         paginationPerPage={limit}
         paginationTotalRows={totalRows}
         onChangePage={(page) => setPage(page)}

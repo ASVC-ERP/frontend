@@ -31,17 +31,6 @@ function App() {
   // Orders pagination
   const ordersPagination = usePagination();
 
-  // Invoice pagination
-  const invoicePagination = usePagination();
-
-  const { invoices, fetchInvoices } = useInvoices(
-    invoicePagination.page,
-    invoicePagination.limit,
-    invoicePagination.setTotalRows,
-  );
-
-  const { customers, fetchCustomers } = useCustomers();
-
   const {
     orders,
     setOrders,
@@ -99,24 +88,9 @@ function App() {
         {/* Main Content */}
         <div className="flex-grow-1 d-flex flex-column p-0">
           <Routes>
-            <Route path="/unauthorized" element={<Unauthorized />} />
-            <Route path="/" element={<HomePage />} />
-            {/* Sales Orders */}
-            <Route
-              path="/order"
-              element={
-                <SalesOrder
-                  orders={Object.values(orders)}
-                  setOrders={setOrders}
-                  customers={customers}
-                  page={ordersPagination.page}
-                  setPage={ordersPagination.setPage}
-                  limit={ordersPagination.limit}
-                  setLimit={ordersPagination.setLimit}
-                  totalRows={ordersPagination.totalRows}
-                />
-              }
-            />
+            <Route path="/unauthorized" element={ <Unauthorized />} />
+            <Route path="/" element={ <HomePage />} />
+            <Route path="/order" element={ <SalesOrder /> } />
             <Route
               path="/create-order"
               element={
@@ -140,49 +114,12 @@ function App() {
                 />
               }
             />
-
-            {/* Invoices */}
-            <Route
-              path="/invoice"
-              element={
-                <SalesInvoice />
-              }
-            />
-
-            {/* Inventory */}
-            <Route
-              path="/products/:itemID"
-              element={<Item />}
-            />
-            <Route
-              path="/products"
-              element={
-                <Inventory />
-              }
-            />
-
-            {/* Suppliers */}
-            <Route
-              path="/supplier"
-              element={
-                <Supplier />
-              }
-            />
-            <Route
-              path="/supplier/invoices"
-              element={<SupplierInvoicesTable />}
-            />
-
-            {/* Customers */}
-            <Route
-              path="/customer"
-              element={
-                <Customer
-                  customers={customers}
-                  onRefreshCustomers={fetchCustomers}
-                />
-              }
-            />
+            <Route path="/invoice" element={ <SalesInvoice /> } />
+            <Route path="/products/:itemID" element={<Item />} />
+            <Route path="/products" element={ <Inventory /> } />
+            <Route path="/supplier" element={ <Supplier /> } />
+            <Route path="/supplier/invoices" element={<SupplierInvoicesTable />} />
+            <Route path="/customer" element={ <Customer /> } />
           </Routes>
         </div>
 

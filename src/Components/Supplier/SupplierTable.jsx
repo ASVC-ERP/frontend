@@ -282,7 +282,7 @@ function SupplierTable({
           }}
           onClick={handleAddSupplierClick}
         >
-          + Add Supplier
+          Add Supplier
         </button>
       </div>
 

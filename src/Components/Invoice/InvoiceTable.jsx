@@ -1,8 +1,6 @@
 import DataTable from "react-data-table-component";
 import { useState, useEffect, useMemo } from "react";
-import { IoIosSearch } from "react-icons/io";
-import defaultPic from "../../assets/defaultPic.jpg";
-import { Button, Dropdown } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import axios from "axios";
 import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";

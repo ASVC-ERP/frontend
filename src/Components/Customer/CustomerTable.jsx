@@ -8,14 +8,11 @@ import { useDraggableModal } from "../../hooks/useDraggableModal";
 import { createCustomerColumns } from "./CustomerColums";
 import { useCustomerHandlers } from "./CustomerHandler";
 
-function CustomerTable({ customers, onRefreshCustomers }) {
+function CustomerTable({ customers = [], onRefreshCustomers = () => {} }) {
 
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const {
-    searchTerm,
-    filteredData,
-    handleSearch,
     showCustomerModal,
     setShowCustomerModal,
     customerName,
@@ -48,18 +45,6 @@ function CustomerTable({ customers, onRefreshCustomers }) {
   return (
     <div>
       <div className="d-flex align-items-center justify-content-between mb-2">
-        {/* Search input field */}
-        <div className="position-relative w-25 my-3">
-          <IoIosSearch className="position-absolute top-50 start-0 translate-middle-y ms-3 text-muted" />
-          <input
-            type="text"
-            placeholder="Search customer name"
-            value={searchTerm}
-            onChange={handleSearch}
-            className="form-control ps-5 border-2 rounded-3"
-          />
-        </div>
-
         {/* Add Customer button */}
         <button
           type="button"
@@ -71,13 +56,13 @@ function CustomerTable({ customers, onRefreshCustomers }) {
           }}
           onClick={handleAddCustomerClick}
         >
-          + Add Customer
+          Add Customer
         </button>
       </div>
 
       <DataTable
         columns={columns}
-        data={filteredData}
+        data={customers}
         pagination
         paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
         paginationPerPage={50}

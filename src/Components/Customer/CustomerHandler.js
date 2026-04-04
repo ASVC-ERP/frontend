@@ -4,11 +4,6 @@ import Swal from "sweetalert2";
 
 export const useCustomerHandlers = (customers, onRefreshCustomers) => {
   const API_URL = import.meta.env.VITE_API_URL;
-
-  // Search state
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredData, setFilteredData] = useState([]);
-
   // Modal state
   const [showCustomerModal, setShowCustomerModal] = useState(false);
   const [customerName, setCustomerName] = useState("");
@@ -20,43 +15,13 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
 
-  // Search effect
-  useEffect(() => {
-    if (searchTerm.trim() !== "") {
-      const filtered = customers.filter((row) =>
-        Object.values(row).some((field) =>
-          field?.toString().toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      );
-      setFilteredData(filtered);
-    } else {
-      setFilteredData(customers);
-    }
-  }, [customers, searchTerm]);
-
   // Auto-refresh effect
   useEffect(() => {
-    if (searchTerm.trim() !== "") return;
-
     const interval = setInterval(() => {
       onRefreshCustomers();
     }, 120000);
-
     return () => clearInterval(interval);
-  }, [onRefreshCustomers, searchTerm]);
-
-  const handleSearch = (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-
-    const filtered = customers.filter((row) =>
-      Object.values(row).some((field) =>
-        field?.toString().toLowerCase().includes(value)
-      )
-    );
-
-    setFilteredData(filtered);
-  };
+  }, [onRefreshCustomers]);
 
   const clearForm = () => {
     setCustomerName("");
@@ -224,10 +189,6 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
   };
 
   return {
-    // Search state
-    searchTerm,
-    filteredData,
-    handleSearch,
     // Modal state
     showCustomerModal,
     setShowCustomerModal,
