@@ -5,6 +5,7 @@ export const productColumns = (handleDeleteItem) => [
     name: "Code",
     selector: (row) => row.itemCode || row.item_code,
     width: "200px",
+    wrap: true,
   },
   {
     name: "Description",
@@ -68,7 +69,7 @@ export const productColumns = (handleDeleteItem) => [
   {
     name: "Unit",
     width: "100px",
-    selector: (row) => row.unit.toUpperCase(),
+    selector: (row) => row.unit,
     center: true
   },
   {

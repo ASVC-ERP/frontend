@@ -54,11 +54,13 @@ function InvoiceTable({
             })}`
           : "—",
       width: "150px",
+      center: true,
     },
     {
       name: "PIC",
       selector: (row) => row.user.name,
       width: "110px",
+      center: true,
     },
     {
       name: "Shipping Details ( Invoice No., Waybill, Courier, Shipping Date)",

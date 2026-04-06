@@ -110,6 +110,7 @@ function OrdersTable({
       name: "PIC",
       selector: (row) => row.user?.name || "—",
       width: "120px",
+      center: true
     },
     {
       name: "Actions",
