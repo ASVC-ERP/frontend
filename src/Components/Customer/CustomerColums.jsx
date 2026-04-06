@@ -3,37 +3,67 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 export const createCustomerColumns = (handleEdit, handleDelete) => [
   {
     name: "Name",
-    selector: (row) => row.name,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.name || "N/A"}
+      </div>
+    ),
     wrap: true,
     width: "300px",
   },
   {
     name: "PIC",
-    selector: (row) => row.pic,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.pic || "N/A"}
+      </div>
+    ),
     width: "250px",
     wrap: true,
   },
   {
     name: "Number",
-    selector: (row) => row.number,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.number || "N/A"}
+      </div>
+    ),
     width: "170px",
   },
   {
     name: "Address",
-    selector: (row) => row.address,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.address || "N/A"}
+      </div>
+    ),
     width: "450px",
     wrap: true,
   },
   {
     name: "TIN",
-    selector: (row) => row.tin || "N/A",
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.tin || "N/A"}
+      </div>
+    ),
     width: "200px",
   },
   {
     name: "Terms",
     selector: (row) => row.terms || "N/A",
-    grow: 1,
-    minWidth: "100px",
+    width: "150px",
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.terms || "N/A"}
+      </div>
+    ),
   },
   {
     name: "Actions",

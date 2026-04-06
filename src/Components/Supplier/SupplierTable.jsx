@@ -23,35 +23,49 @@ function SupplierTable({
     {
       name: "Code",
       selector: (row) => row.sid,
-      width: "100px",
-      left: true,
+      width: "90px",
+      center: true,
     },
     {
       name: "Name",
-      selector: (row) => row.name,
+      center: true,
+      cell: (row) => (
+        <div style={{ width: "100%", textAlign: "left" }}>
+          {row.name || "N/A"}
+        </div>
+      ),
       wrap: true,
       width: "270px",
       left: true
     },
     {
       name: "Address",
-      selector: (row) => row.address,
+      center: true,
+      cell: (row) => (
+        <div style={{ width: "100%", textAlign: "left" }}>
+          {row.address || "N/A"}
+        </div>
+      ),
       wrap: true,
       width: "600px"
     },
     {
       name: "Contact No.",
-      selector: (row) => row.number,
+      center: true,
+      cell: (row) => (
+        <div style={{ width: "100%", textAlign: "left" }}>
+          {row.number || "N/A"}
+        </div>
+      ),
       width: "350px",
       left: true,
       wrap: true
     },
     {
       name: "Currency",
-      selector: (row) => row.currency,
-      grow: 3,
-      minWidth: "120px",
-      left: true,
+      selector: (row) => row?.currency.toUpperCase(),
+      width: "160px",
+      center: true,
     },
     {
       name: "Actions",
@@ -247,6 +261,14 @@ function SupplierTable({
     if (!result.isConfirmed) return;
 
     try {
+      Swal.fire({
+        title: "Deleting Supplier",
+        text: "Please wait while we delete the supplier...",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => Swal.showLoading(),
+      });
+
       await axios.delete(`${API_URL}/supplier/${supplierID}`);
 
       Swal.fire({
@@ -262,7 +284,7 @@ function SupplierTable({
       console.error("Error deleting supplier:", err);
       Swal.fire({
         icon: "error",
-        title: "Error",
+        title: "Cannot Delete Supplier",
         text:
           err.response?.data?.message ||
           "Failed to delete supplier. Please try again.",

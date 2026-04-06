@@ -3,13 +3,23 @@ import { FaTrash } from "react-icons/fa";
 export const productColumns = (handleDeleteItem) => [
   {
     name: "Code",
-    selector: (row) => row.itemCode || row.item_code,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.itemCode || row.item_code || "N/A"}
+      </div>
+    ),
     width: "200px",
     wrap: true,
   },
   {
     name: "Description",
-    selector: (row) => row.itemName || row.item_name,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.itemName || row.item_name || "N/A"}
+      </div>
+    ),
     width: "450px",
     wrap: true,
   },
@@ -75,18 +85,28 @@ export const productColumns = (handleDeleteItem) => [
   {
     name: "Brand",
     width: "150px",
-    selector: (row) => row.brand,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.brand || "N/A"}
+      </div>
+    ),
   },
   {
     name: "Model",
     width: "200px",
-    selector: (row) => row.model,
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left" }}>
+        {row.model || "N/A"}
+      </div>
+    ),
     wrap: true
   },
   {
     name: "Origin",
-    grow: 2,
-    minWidth: "150px",
+    width: "150px",
+    center: true,
     selector: (row) => row.origin,
   },
   {
@@ -107,7 +127,7 @@ export const productColumns = (handleDeleteItem) => [
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
-    width: "70px",
+    width: "150px",
     center: true,
   },
 ];

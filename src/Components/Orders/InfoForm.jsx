@@ -11,7 +11,8 @@ function InfoForm({ info, setInfo }) {
   useEffect(() => {
     const fetchCustomers = async () => {
       try {
-        const res = await axios.get(`${API_URL}/customer`);
+        // TODO: need to change when customers goes beyond 500
+        const res = await axios.get(`${API_URL}/customer`, { params: { limit: 500 } } );
         setCustomers(res.data.data);
       } catch (err) {
         console.error("Failed to fetch customers:", err);

@@ -67,7 +67,7 @@ export default function HomePage() {
   );
 
   const quickActions = [
-    { label: "View Inventory", route: "/inventory", className: "btn-primary" },
+    { label: "View Products", route: "/products", className: "btn-primary" },
     { label: "Create Order", route: "/create-order", className: "btn-success" },
     { label: "Manage Suppliers", route: "/supplier", className: "btn-warning" },
     { label: "View Invoices", route: "/invoice", className: "btn-dark" },
@@ -136,7 +136,7 @@ export default function HomePage() {
 
       {/* Latest Invoices */}
       <div className="card shadow-sm border-0 p-4 mb-4">
-        <h5 className="mb-3">Latest Open Invoices</h5>
+        <h5 className="mb-3">Latest Invoices</h5>
         {latestInvoices.length === 0 ? (
           <p style={{ color: "#6c757d" }}>No invoices.</p>
         ) : (

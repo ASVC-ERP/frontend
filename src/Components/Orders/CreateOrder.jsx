@@ -10,6 +10,7 @@ const MAX_ORDER_ITEMS = 16;
 function CreateOrder() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
+  const [orders, setOrders] = useState({});
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [orderItems, setOrderItems] = useState([]);
@@ -55,7 +56,6 @@ function CreateOrder() {
 
   const handleSearchChange = async (e) => {
     const value = e.target.value;
-    console.log(value)
     setQuery(value);
 
     if (value.trim() === "") {
@@ -201,11 +201,11 @@ function CreateOrder() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log("info: ", info);
+    //console.log("info: ", info);
 
     const user = JSON.parse(localStorage.getItem("user"));
 
-    console.log("user:", user);
+    //console.log("user:", user);
 
     if (!user) {
       Swal.fire("Error", "User not logged in.", "error");
@@ -248,7 +248,7 @@ function CreateOrder() {
       })),
     };
 
-    console.log("Order DTO to send:", orderDto);
+    //console.log("Order DTO to send:", orderDto);
 
     try {
       const response = await fetch(`${API_URL}/order`, {
@@ -260,27 +260,24 @@ function CreateOrder() {
       if (!response.ok) throw new Error("Failed to create order");
 
       const createdOrder = await response.json();
-      console.log("Order created successfully:", createdOrder);
+      //console.log("Order created successfully:", createdOrder);
 
       // Update UI locally
-      //onAddOrder(createdOrder);
       handleAddOrder(createdOrder)
 
       Swal.fire({
         title: "Success!",
         text: "Order has been created.",
         icon: "success",
-        timer: 1500, // auto-close after 1.5 seconds
-        showConfirmButton: false, // hides the OK button
+        timer: 1500,
+        showConfirmButton: false,
       }).then(() => {
-        // Navigate after Swal closes
-        navigate("/");
+        navigate("/order");
       });
     } catch (err) {
       console.error(err);
       Swal.fire("Error", "Failed to create order.", "error");
     } finally {
-      Swal.close();
       if (submitButton) submitButton.disabled = false;
     }
   };
@@ -290,7 +287,7 @@ function CreateOrder() {
   };
 
   const handleCancel = () => {
-    navigate("/"); // Navigate back to SalesOrder page
+    navigate("/order"); // Navigate back to SalesOrder page
   };
 
   return (

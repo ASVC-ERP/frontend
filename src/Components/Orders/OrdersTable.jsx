@@ -13,7 +13,7 @@ import { FaTrash } from "react-icons/fa";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
-console.log("User role for approvals:", roleApprove);
+//console.log("User role for approvals:", roleApprove);
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -84,15 +84,25 @@ function OrdersTable({
     },
     {
       name: "Customer",
-      selector: (row) => row.customer?.name || "—",
+      cell: (row) => (
+        <div style={{ width: "100%", textAlign: "left" }}>
+          {row?.customer?.name || "N/A"}
+        </div>
+      ),
       width: "300px",
       wrap: true,
+      center: true,
     },
     {
       name: "Address",
-      selector: (row) => row.customer?.address || "—",
+      cell: (row) => (
+        <div style={{ width: "100%", textAlign: "left" }}>
+          {row?.customer?.address || "N/A"}
+        </div>
+      ),
       width: "600px",
       wrap: true,
+      center: true
     },
     {
       name: "Total Price",
@@ -273,14 +283,14 @@ function OrdersTable({
     setCustomerQuery(row.customer.name || "");
     setCustomerID(row.customer.id || "");
 
-    console.log("row: ",row);
+    //console.log("row: ",row);
 
     try {
       const response = await axios.get(
         `${API_URL}/order/${row.id}/order-items`,
       );
       const orderedItems = response.data;
-      console.log("items: ",orderedItems);
+      //console.log("items: ",orderedItems);
 
       const updatedOrderedItems = orderedItems.map((ordered) => {
         const isCustom = ordered.customPriceEnabled;
@@ -378,11 +388,13 @@ function OrdersTable({
   // Update item field
   const updateItem = (index, field, value) => {
     setEditableRow((prev) => {
+      /*
       console.log("=== updateItem called ===");
       console.log("index:", index);
       console.log("field:", field);
       console.log("value:", value);
       console.log("PREV ITEM:", prev.items[index]);
+      */
 
       const items = prev.items.map((item, i) => {
         if (i !== index) return item;
@@ -409,7 +421,7 @@ function OrdersTable({
           }
         }
 
-        console.log("UPDATED ITEM:", updatedItem);
+        //console.log("UPDATED ITEM:", updatedItem);
 
         return updatedItem;
       });
@@ -435,7 +447,7 @@ function OrdersTable({
         }))
       };
   
-      console.log("Payload being sent:", payload);
+      //console.log("Payload being sent:", payload);
   
       // 🔹 Send patch request to update the order
       await axios.put(`${API_URL}/order/id/${editableRow.id}`, payload);
@@ -449,7 +461,7 @@ function OrdersTable({
       Swal.fire({
         icon: "success",
         title: "Order Updated",
-        text: `Order ${editableRow.order_code} was updated successfully!`,
+        text: `Order ${editableRow.id} was updated successfully!`,
         timer: 2000,
         showConfirmButton: false,
       });
@@ -473,7 +485,7 @@ function OrdersTable({
     Swal.fire({
       icon: "warning",
       title: "Delete Order",
-      text: `Are you sure you want to delete ${selectedRow.order_code}?`,
+      text: `Are you sure you want to delete ${selectedRow.id}?`,
       showCancelButton: true,
       confirmButtonText: "Yes, delete it!",
       cancelButtonText: "Cancel",
@@ -487,8 +499,8 @@ function OrdersTable({
             Swal.fire({
               icon: "success",
               title: "Deleted!",
-              text: `${selectedRow.order_code} has been deleted successfully.`,
-              timer: 1500,
+              text: `${selectedRow.id} has been deleted successfully.`,
+              timer: 3000,
               showConfirmButton: false,
             });
           })
@@ -538,7 +550,7 @@ function OrdersTable({
   };
 
   const handleSelectSuggestion = (index, item) => {
-    console.log("Selected item:", item, "for row index:", index);
+    //console.log("Selected item:", item, "for row index:", index);
 
     if (checkDuplicateProduct(item.item_name, editableRow.items, index)) {
       setQuery("");
@@ -547,7 +559,7 @@ function OrdersTable({
     }
 
     setEditableRow((prev) => {
-      console.log("Previous editableRow:", prev);
+      //console.log("Previous editableRow:", prev);
 
       // Make a copy of items
       const updatedItems = [...prev.items];
@@ -573,7 +585,7 @@ function OrdersTable({
         unit: item.unit,
       };
 
-      console.log("Updated items:", updatedItems);
+      //console.log("Updated items:", updatedItems);
 
       return { ...prev, items: updatedItems }; // update items in editableRow
     });
@@ -587,7 +599,7 @@ function OrdersTable({
   const handlePrint = async () => {
     if (!selectedRow) return;
 
-    console.log("selectedRow: ", selectedRow);
+    //console.log("selectedRow: ", selectedRow);
 
     try {
       // ✅ Get PDF as blob
@@ -627,13 +639,13 @@ function OrdersTable({
     try {
       setSelectedRow(row);
 
-      console.log("Loading order for serving:", row);
+      //console.log("Loading order for serving:", row);
 
       // 🔹 Fetch full order details
       const res = await axios.get(`${API_URL}/order/id/${row.id}`);
       const order = res.data;
 
-      console.log("ServeData:", order);
+      //console.log("ServeData:", order);
       setServeData(order);
       setShowServeModal(true);
     } catch (err) {
@@ -649,7 +661,7 @@ function OrdersTable({
   const handleUnserve = async (row) => {
     try {
       setSelectedRow(row);
-      console.log("order id:", row.id);
+      //console.log("order id:", row.id);
       await axios.post(`${API_URL}/order/id/${row.id}/unserve`);
 
       Swal.fire({
@@ -787,7 +799,6 @@ function OrdersTable({
       });
 
       fetchOrders();
-      console.log("closing modal");
       setShowRowModal(false);
     } catch (error) {
       console.error("[handleInvoice] Error creating invoice:", error);
@@ -1195,20 +1206,14 @@ function OrdersTable({
                   onMouseDown={handleHeaderMouseDown}
                 >
                   <div className="w-100 d-flex justify-content-between align-items-center ">
-                    <p className="mb-2 opacity-75" style={{ fontSize: "12px" }}>
-                      Sales &gt; Order &gt; {selectedRow.order_code}
-                    </p>
+                    <h5 className="mb-0">
+                      Edit Order {selectedRow.id}
+                    </h5>
                     <button
                       type="button"
                       className="btn-close btn-close-white p-4"
                       onClick={() => setShowEditModal(false)}
                     ></button>
-                  </div>
-
-                  <div className="w-100 d-flex justify-content-between align-items-center ">
-                    <h5 className="mb-0">
-                      Edit Order {selectedRow.order_code}
-                    </h5>
                   </div>
                 </div>
 
@@ -1311,7 +1316,7 @@ function OrdersTable({
                                 <ul
                                   style={{
                                     position: "fixed",
-                                    top: inputRefs.current[ index ]?.getBoundingClientRect().bottom + window.scrollY,
+                                    top: inputRefs.current[ index ]?.getBoundingClientRect().bottom + window.scrollY - 20,
                                     left: inputRefs.current[ index ]?.getBoundingClientRect().left - 190,
                                     width: inputRefs.current[index]?.offsetWidth,
                                     backgroundColor: "#fff",
@@ -1321,7 +1326,7 @@ function OrdersTable({
                                     margin: 0,
                                     padding: 0,
                                     zIndex: 2000,
-                                    maxHeight: "200px",
+                                    maxHeight: "350px",
                                     overflowY: "auto",
                                     boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
                                   }}
@@ -1359,7 +1364,7 @@ function OrdersTable({
 
                           {/* Price options */}
                           {(() => {
-                            console.log( "Enabled?", index, ":", item.customPriceEnabled, );
+                            //console.log( "Enabled?", index, ":", item.customPriceEnabled, );
                             return item.customPriceEnabled ? (
                               <div
                                 className="input-group"

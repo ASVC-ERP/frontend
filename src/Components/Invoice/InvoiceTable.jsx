@@ -39,9 +39,14 @@ function InvoiceTable({
     },
     {
       name: "Customer Name",
-      selector: (row) => row.customer.name || "—",
+      cell: (row) => (
+        <div style={{ width: "100%", textAlign: "left" }}>
+          {row.customer.name || "N/A"}
+        </div>
+      ),
       width: "300px",
       wrap: true,
+      center: true,
       searchable: true,
     },
     {
@@ -64,6 +69,7 @@ function InvoiceTable({
     },
     {
       name: "Shipping Details ( Invoice No., Waybill, Courier, Shipping Date)",
+      center: true,
       cell: (row) => {
         return (
           <div className="d-flex align-items-center gap-2 ms-2">
@@ -158,6 +164,7 @@ function InvoiceTable({
   ];
 
   const API_URL = import.meta.env.VITE_API_URL;
+  const [filteredData, setFilteredData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
   const [showRowModal, setShowRowModal] = useState(false);
   const [pendingChanges, setPendingChanges] = useState({});
@@ -324,6 +331,14 @@ function InvoiceTable({
   };
 
   const handleSave = (row) => {
+    Swal.fire({
+      title: "Updating Invoice",
+      text: "Please wait while we process changes...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => Swal.showLoading(),
+    });
+    
     const invoiceNumber =
       pendingChanges[`invoice-${row.id}`] ?? row.invoice_number;
     const waybill = pendingChanges[`waybill-${row.id}`] ?? row.waybill_number;

@@ -56,7 +56,7 @@ function ItemDetails({ item, onUpdate }) {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          item_code: item.itemCode,
+          item_code: formData.itemCode,
           item_name: formData.itemName,
           brand: formData.brand,
           min_stock: Number(formData.minStock),
