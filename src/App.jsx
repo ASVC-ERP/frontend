@@ -91,29 +91,7 @@ function App() {
             <Route path="/unauthorized" element={ <Unauthorized />} />
             <Route path="/" element={ <HomePage />} />
             <Route path="/order" element={ <SalesOrder /> } />
-            <Route
-              path="/create-order"
-              element={
-                <CreateOrder
-                  query={query}
-                  suggestions={suggestions}
-                  orderItems={orderItems}
-                  setOrderItems={setOrderItems}
-                  onSearchChange={handleSearchChange}
-                  onSelectProduct={handleSelectProduct}
-                  onPriceChange={handlePriceChange}
-                  onEnableCustomPrice={handleEnableCustomPrice}
-                  onDisableCustomPrice={handleDisableCustomPrice}
-                  onUpdateOrderItem={updateOrderItem}
-                  onCalculateTotal={calculateTotal}
-                  onCalculateTotalPrice={calculateTotalPrice}
-                  onRemoveProduct={handleRemoveProduct}
-                  info={info}
-                  setInfo={setInfo}
-                  onAddOrder={handleAddOrder}
-                />
-              }
-            />
+            <Route path="/create-order" element={ <CreateOrder /> } />
             <Route path="/invoice" element={ <SalesInvoice /> } />
             <Route path="/products/:itemID" element={<Item />} />
             <Route path="/products" element={ <Inventory /> } />

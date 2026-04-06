@@ -12,7 +12,7 @@ function InfoForm({ info, setInfo }) {
     const fetchCustomers = async () => {
       try {
         const res = await axios.get(`${API_URL}/customer`);
-        setCustomers(res.data);
+        setCustomers(res.data.data);
       } catch (err) {
         console.error("Failed to fetch customers:", err);
       }
