@@ -30,7 +30,7 @@ function SupplierTable({
       name: "Name",
       center: true,
       cell: (row) => (
-        <div style={{ width: "100%", textAlign: "left" }}>
+        <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
           {row.name || "N/A"}
         </div>
       ),
@@ -42,7 +42,7 @@ function SupplierTable({
       name: "Address",
       center: true,
       cell: (row) => (
-        <div style={{ width: "100%", textAlign: "left" }}>
+        <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
           {row.address || "N/A"}
         </div>
       ),
@@ -53,7 +53,7 @@ function SupplierTable({
       name: "Contact No.",
       center: true,
       cell: (row) => (
-        <div style={{ width: "100%", textAlign: "left" }}>
+        <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
           {row.number || "N/A"}
         </div>
       ),

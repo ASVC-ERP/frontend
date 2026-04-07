@@ -5,7 +5,7 @@ export const productColumns = (handleDeleteItem) => [
     name: "Code",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.itemCode || row.item_code || "N/A"}
       </div>
     ),
@@ -16,7 +16,7 @@ export const productColumns = (handleDeleteItem) => [
     name: "Description",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.itemName || row.item_name || "N/A"}
       </div>
     ),
@@ -87,7 +87,7 @@ export const productColumns = (handleDeleteItem) => [
     width: "150px",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.brand || "N/A"}
       </div>
     ),
@@ -97,7 +97,7 @@ export const productColumns = (handleDeleteItem) => [
     width: "200px",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.model || "N/A"}
       </div>
     ),

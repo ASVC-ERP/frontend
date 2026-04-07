@@ -85,7 +85,7 @@ function OrdersTable({
     {
       name: "Customer",
       cell: (row) => (
-        <div style={{ width: "100%", textAlign: "left" }}>
+        <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
           {row?.customer?.name || "N/A"}
         </div>
       ),
@@ -96,7 +96,7 @@ function OrdersTable({
     {
       name: "Address",
       cell: (row) => (
-        <div style={{ width: "100%", textAlign: "left" }}>
+        <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
           {row?.customer?.address || "N/A"}
         </div>
       ),
@@ -314,7 +314,7 @@ function OrdersTable({
   };
 
   const handleRowClick = async (row) => {
-    //console.log("Row clicked:", row);
+    console.log("Row clicked:", row);
 
     try {
       const res = await axios.get(`${API_URL}/order/id/${row.id}`);

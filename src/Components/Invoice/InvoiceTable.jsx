@@ -40,7 +40,7 @@ function InvoiceTable({
     {
       name: "Customer Name",
       cell: (row) => (
-        <div style={{ width: "100%", textAlign: "left" }}>
+        <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
           {row.customer.name || "N/A"}
         </div>
       ),

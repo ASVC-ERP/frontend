@@ -5,7 +5,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     name: "Name",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.name || "N/A"}
       </div>
     ),
@@ -16,7 +16,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     name: "PIC",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.pic || "N/A"}
       </div>
     ),
@@ -27,7 +27,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     name: "Number",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.number || "N/A"}
       </div>
     ),
@@ -37,7 +37,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     name: "Address",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.address || "N/A"}
       </div>
     ),
@@ -48,7 +48,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     name: "TIN",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.tin || "N/A"}
       </div>
     ),
@@ -60,7 +60,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     width: "150px",
     center: true,
     cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left" }}>
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.terms || "N/A"}
       </div>
     ),
