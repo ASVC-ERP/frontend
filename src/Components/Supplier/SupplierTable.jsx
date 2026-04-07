@@ -189,6 +189,7 @@ function SupplierTable({
   };
 
   // 🕒 Auto-refresh every 2 minutes
+  /*
   useEffect(() => {
     const interval = setInterval(() => {
       onRefreshSupplier();
@@ -196,7 +197,8 @@ function SupplierTable({
 
     return () => clearInterval(interval);
   }, [onRefreshSupplier]);
-
+  */
+ 
   const handleRowClick = (row) => {
     console.log("CLICKED", row);
     navigate("/supplier/invoices", { state: { row } });

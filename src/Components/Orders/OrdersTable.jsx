@@ -205,14 +205,14 @@ function OrdersTable({
     text: "#fff",
   };
 
-  // Auto-refresh orders every 5 seconds
-  useEffect(() => {
+  // disabled timeout refresh
+  /* useEffect(() => {
     const interval = setInterval(() => {
       fetchOrders();
-    }, 30000);
+    }, 300000);
 
     return () => clearInterval(interval);
-  }, [fetchOrders]);
+  }, [fetchOrders]); */
 
   useEffect(() => {
     if (!customerQuery.trim()) {

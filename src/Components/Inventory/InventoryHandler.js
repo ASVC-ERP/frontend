@@ -25,11 +25,13 @@ export const useProductHandlers = (
   const API_URL = import.meta.env.VITE_API_URL;
 
   // Auto-refresh 2 minutes
+  /*
   useEffect(() => {
     const interval = setInterval(() => { onRefreshItems(); }, 120000);
     return () => clearInterval(interval);
   }, [onRefreshItems]);
-
+  */
+ 
   useEffect(() => {
     const checkDuplicate = async () => {
       if (!itemCode.trim()) {

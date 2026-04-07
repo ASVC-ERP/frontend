@@ -170,6 +170,7 @@ function InvoiceTable({
   const [pendingChanges, setPendingChanges] = useState({});
 
   // 🕒 Auto-refresh invoices every 10s (paused when searching)
+  /*
   useEffect(() => {
     const interval = setInterval(() => {
       fetchInvoices();
@@ -177,7 +178,8 @@ function InvoiceTable({
 
     return () => clearInterval(interval);
   }, [fetchInvoices]);
-
+  */
+ 
   const handleRowClick = async (row) => {
     console.log("Clicked row:", row);
     setSelectedRow(row);

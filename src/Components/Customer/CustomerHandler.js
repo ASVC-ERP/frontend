@@ -16,13 +16,15 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
   const [showEditModal, setShowEditModal] = useState(false);
 
   // Auto-refresh effect
+  /*
   useEffect(() => {
     const interval = setInterval(() => {
       onRefreshCustomers();
     }, 120000);
     return () => clearInterval(interval);
   }, [onRefreshCustomers]);
-
+  */
+ 
   const clearForm = () => {
     setCustomerName("");
     setContactPerson("");

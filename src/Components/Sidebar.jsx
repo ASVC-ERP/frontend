@@ -19,6 +19,7 @@ export default function Sidebar({ onLogout }) {
 
   const [pendingCount, setPendingCount] = useState(0);
 
+  /*
   useEffect(() => {
     const fetchPendingOrders = async () => {
       try {
@@ -39,7 +40,8 @@ export default function Sidebar({ onLogout }) {
     const interval = setInterval(fetchPendingOrders, 60000);
     return () => clearInterval(interval);
   }, []);
-
+  */
+ 
   return (
     <div className="sidebar-container d-flex flex-column vh-100 position-sticky">
       {/* Logo and Company Name */}
