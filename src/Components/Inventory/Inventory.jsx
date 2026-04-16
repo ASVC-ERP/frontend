@@ -27,6 +27,7 @@ const transformItem = (item) => ({
 function Inventory() {
   const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination();
   const [items, setItems] = useState([]);
+  const [stock, setStock] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [searchLoading, setSearchLoading] = useState(false);
@@ -35,12 +36,12 @@ function Inventory() {
 
   useEffect(() => {
     fetchItems();
-  }, [page, limit, search]);
+  }, [page, limit, search, stock]);
 
-  const fetchItems = async (searchValue = search) => {
+  const fetchItems = async (searchValue = search, stockValue = stock) => {
     try {
       setTableLoading(true);
-      const response = await axios.get(`${API_URL}/product`, { params: { page, limit, search: searchValue, }, });
+      const response = await axios.get(`${API_URL}/product`, { params: { page, limit, search: searchValue, stock: stockValue, }, });
       const transformedItems = response.data.data.map(transformItem);
       setItems(transformedItems);
       setTotalRows(response.data.meta.total);
@@ -76,6 +77,29 @@ function Inventory() {
             onChange={(e) => setSearchInput(e.target.value)}
           />
         </div>
+        <div className="col-auto">
+          <select
+            className="form-select"
+            style={{
+              width: "200px",
+              padding: "6px 12px",
+              borderRadius: "6px",
+              border: "1px solid #ced4da",
+              backgroundColor: "#fff",
+              color: "#495057",
+              fontSize: "14px",
+              height: "38px",
+            }}
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+          >
+            <option value="">All</option>
+            <option value="in">In Stock</option>
+            <option value="out">Out of Stock</option>
+          </select>
+        </div>
+
+        {/* Stock filter */}
 
         <div className="col-auto d-flex gap-2">
           <button
@@ -86,7 +110,7 @@ function Inventory() {
               setPage(1);
               setSearch(searchInput);
               setSearchLoading(true);
-              await fetchItems(searchInput);
+              await fetchItems(searchInput, stock);
               setSearchLoading(false);
             }}
             style={{ backgroundColor: "#1E5A84", color: "white", whiteSpace: "nowrap", }}

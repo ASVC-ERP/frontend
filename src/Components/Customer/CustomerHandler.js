@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -10,26 +10,18 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
   const [contactPerson, setContactPerson] = useState("");
   const [customerContact, setCustomerContact] = useState("");
   const [customerAddress, setCustomerAddress] = useState("");
+  const [customerCity, setCustomerCity] = useState("");
   const [customerTIN, setCustomerTIN] = useState("");
   const [customerTerms, setCustomerTerms] = useState("");
   const [editingCustomer, setEditingCustomer] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
-
-  // Auto-refresh effect
-  /*
-  useEffect(() => {
-    const interval = setInterval(() => {
-      onRefreshCustomers();
-    }, 120000);
-    return () => clearInterval(interval);
-  }, [onRefreshCustomers]);
-  */
  
   const clearForm = () => {
     setCustomerName("");
     setContactPerson("");
     setCustomerContact("");
     setCustomerAddress("");
+    setCustomerCity("");
     setCustomerTIN("");
     setCustomerTerms("");
   };
@@ -54,6 +46,7 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
         pic: contactPerson,
         number: customerContact,
         address: customerAddress,
+        city: customerCity,
         tin: customerTIN,
         terms: customerTerms,
       };
@@ -98,8 +91,9 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
     setEditingCustomer(customer);
     setCustomerName(customer.name);
     setContactPerson(customer.pic || "");
-    setCustomerContact(customer.number);
-    setCustomerAddress(customer.address);
+    setCustomerContact(customer.number || "");
+    setCustomerAddress(customer.address || "");
+    setCustomerCity(customer.city || "")
     setCustomerTIN(customer.tin || "");
     setCustomerTerms(customer.terms || "");
     setShowEditModal(true);
@@ -113,6 +107,7 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
         pic: contactPerson,
         number: customerContact,
         address: customerAddress,
+        city: customerCity,
         tin: customerTIN,
         terms: customerTerms,
       };
@@ -202,6 +197,8 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
     setCustomerContact,
     customerAddress,
     setCustomerAddress,
+    customerCity,
+    setCustomerCity,
     customerTIN,
     setCustomerTIN,
     customerTerms,

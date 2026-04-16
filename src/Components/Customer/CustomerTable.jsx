@@ -1,9 +1,4 @@
 import DataTable from "react-data-table-component";
-import { useState, useEffect } from "react";
-import { IoIosSearch } from "react-icons/io";
-import { FaEdit, FaTrash } from "react-icons/fa";
-import axios from "axios";
-import Swal from "sweetalert2";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
 import { createCustomerColumns } from "./CustomerColums";
 import { useCustomerHandlers } from "./CustomerHandler";
@@ -33,6 +28,8 @@ function CustomerTable({
     setCustomerContact,
     customerAddress,
     setCustomerAddress,
+    customerCity,
+    setCustomerCity,
     customerTIN,
     setCustomerTIN,
     customerTerms,
@@ -101,7 +98,7 @@ function CustomerTable({
         style={{ display: showCustomerModal ? "block" : "none" }}
         aria-hidden={!showCustomerModal}
       >
-        <div className="modal-dialog modal-dialog-centered modal-lg">
+        <div className="modal-dialog modal-dialog-centered modal-lg modal-fullscreen-md-down">
           <div className="modal-content shadow-lg border-0">
             {/* Header with gradient background */}
             <div
@@ -217,8 +214,69 @@ function CustomerTable({
                     />
                   </div>
 
-                  {/* Contact Number & Customer TIN Side by Side */}
+                  {/* Customer Address */}
                   <div className="col-md-6 col-12">
+                    <label
+                      htmlFor="customerAddress"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-map-marker-alt me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Street Address
+                    </label>
+                    <textarea
+                      id="customerAddress"
+                      placeholder="House No, Street, Barangay"
+                      value={customerAddress}
+                      onChange={(e) => setCustomerAddress(e.target.value)}
+                      className="form-control"
+                      rows="1"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                        resize: "vertical",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* City */}
+                  <div className="col-md-4 col-12">
+                    <label
+                      htmlFor="customerCity"
+                      className="form-label fw-semibold text-muted small"
+                    >
+                      <i
+                        className="fas fa-city me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      City
+                    </label>
+                    <input
+                      type="text"
+                      id="customerCity"
+                      placeholder="Enter city"
+                      value={customerCity}
+                      onChange={(e) => setCustomerCity(e.target.value)}
+                      className="form-control"
+                      required
+                      style={{
+                        border: "1px solid #e9ecef",
+                        borderRadius: "0.5rem",
+                        fontSize: "0.95rem",
+                      }}
+                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
+                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
+                    />
+                  </div>
+
+                  {/* Contact Number & Customer TIN Side by Side */}
+                  <div className="col-md-3 col-12">
                     <label
                       htmlFor="contactName"
                       className="form-label fw-semibold text-muted small"
@@ -248,7 +306,7 @@ function CustomerTable({
                     />
                   </div>
 
-                  <div className="col-md-6 col-12">
+                  <div className="col-md-3 col-12">
                     <label
                       htmlFor="CustomerTIN"
                       className="form-label fw-semibold text-muted small"
@@ -277,7 +335,7 @@ function CustomerTable({
                   </div>
 
                   {/* Customer Terms */}
-                  <div className="col-12">
+                  <div className="col-md-3 col-12">
                     <label
                       htmlFor="CustomerTerms"
                       className="form-label fw-semibold text-muted small"
@@ -300,37 +358,6 @@ function CustomerTable({
                         borderRadius: "0.5rem",
                         fontSize: "0.95rem",
                       }}
-                    />
-                  </div>
-
-                  {/* Customer Address */}
-                  <div className="col-12">
-                    <label
-                      htmlFor="customerAddress"
-                      className="form-label fw-semibold text-muted small"
-                    >
-                      <i
-                        className="fas fa-map-marker-alt me-2"
-                        style={{ color: "#1E5A84" }}
-                      ></i>
-                      Customer Address
-                    </label>
-                    <textarea
-                      id="customerAddress"
-                      placeholder="Enter complete customer address"
-                      value={customerAddress}
-                      onChange={(e) => setCustomerAddress(e.target.value)}
-                      className="form-control"
-                      rows="3"
-                      required
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
-                        resize: "vertical",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
                     />
                   </div>
                 </div>
@@ -506,6 +533,42 @@ function CustomerTable({
                     />
                   </div>
 
+                  {/* Customer Address */}
+                  <div className="col-6">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-map-marker-alt me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      Address
+                    </label>
+                    <textarea
+                      placeholder="Enter complete customer address"
+                      value={customerAddress}
+                      onChange={(e) => setCustomerAddress(e.target.value)}
+                      className="form-control"
+                      rows="1"
+                    />
+                  </div>
+
+                  {/* Customer City */}
+                  <div className="col-6">
+                    <label className="form-label fw-semibold text-muted small">
+                      <i
+                        className="fas fa-map-marker-alt me-2"
+                        style={{ color: "#1E5A84" }}
+                      ></i>
+                      City
+                    </label>
+                    <textarea
+                      placeholder="Enter customer city"
+                      value={customerCity}
+                      onChange={(e) => setCustomerCity(e.target.value)}
+                      className="form-control"
+                      rows="1"
+                    />
+                  </div>
+
                   {/* Contact & TIN Side by Side */}
                   <div className="col-md-6">
                     <label className="form-label fw-semibold text-muted small">
@@ -556,24 +619,6 @@ function CustomerTable({
                       value={customerTerms}
                       onChange={(e) => setCustomerTerms(e.target.value)}
                       className="form-control"
-                    />
-                  </div>
-
-                  {/* Customer Address */}
-                  <div className="col-12">
-                    <label className="form-label fw-semibold text-muted small">
-                      <i
-                        className="fas fa-map-marker-alt me-2"
-                        style={{ color: "#1E5A84" }}
-                      ></i>
-                      Customer Address
-                    </label>
-                    <textarea
-                      placeholder="Enter complete customer address"
-                      value={customerAddress}
-                      onChange={(e) => setCustomerAddress(e.target.value)}
-                      className="form-control"
-                      rows="3"
                     />
                   </div>
                 </div>

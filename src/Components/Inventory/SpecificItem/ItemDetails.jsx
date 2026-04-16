@@ -261,224 +261,127 @@ function ItemDetails({ item, onUpdate }) {
 
   return (
     <div className="product-details">
-      <div className="row mx-4 d-flex align-items-start py-1">
-        <div className="col-auto" style={{ minWidth: "250px" }}>
-          <label htmlFor="pid" className="form-label h6">
-            Product Code:
-          </label>
-          <input
-            type="text"
-            className="form-control form-control-sm readonly-input border-dark border-opacity-25"
-            id="pid"
-            value={itemData.itemCode || itemData.item_code}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
-          />
-        </div>
-
-        <div className="col" style={{ minWidth: "250px", maxWidth: "100%" }}>
-          <label className="form-label h6">Product Name</label>
-          <input
-            type="text"
-            className="form-control form-control-sm border-dark border-opacity-25"
-            id="itemName"
-            value={formData.itemName || formData.item_name}
-            onChange={handleChange}
-            readOnly={!isAdmin}
-            style={{ backgroundColor: !isAdmin ? "#e9ecef" : "white", }}
-          />
-        </div>
-        <div className="col" style={{ minWidth: "30px", maxWidth: "10%" }}>
-          <label className="form-label h6">Unit</label>
-          <input
-            type="text"
-            className="form-control form-control-sm" 
-            id="unit"
-            value={formData.unit}
-            onChange={handleChange}
-            readOnly={!isAdmin} 
-          />
-        </div>
-      </div>
-      <div className="row mx-4 mt-3 g-3">
-        <div className="col-auto" style={{ minWidth: "250px" }}>
-          <label className="form-label h6">Part No.</label>
-          <input
-            type="text"
-            className="form-control form-control-sm" 
-            id="partNum"
-            onChange={handleChange}
-            value={formData.partNum || formData.part_num} 
-            readOnly={!isAdmin} />
-        </div>
-
-        <div className="col-auto" style={{ width: "350px" }}>
-          <label className="form-label h6">Model</label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="model"
-            onChange={handleChange}
-            value={formData.model}
-            readOnly={!isAdmin} />
-        </div>
-        <div className="col-auto" style={{ minWidth: "350px" }}>
-          <label className="form-label h6">Interchange No.</label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="interNum"
-            onChange={handleChange}
-            value={formData.interNum || formData.internal_num}
-            readOnly={!isAdmin} />
-        </div>
-        <div className="col-auto" style={{ minWidth: "150px" }}>
-          <label className="form-label h6">Brand</label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="brand"
-            onChange={handleChange}
-            value={formData.brand}
-            readOnly={!isAdmin} />
-        </div>
-        <div className="col-auto" style={{ minwidth: "120px" }}>
-          <label className="form-label h6">Origin</label>
-          <input 
-            type="text"
-            className="form-control form-control-sm"
-            id="origin"
-            onChange={handleChange}
-            value={formData.origin}
-            readOnly={!isAdmin} />
-        </div>
-        <div className="col-auto" style={{ width: "120px" }}>
-          <label className="form-label h6">Min Stock</label>
-          <input
-            type="text"
-            className="form-control form-control-sm"
-            id="minStock"
-            onChange={handleChange}
-            value={formData.minStock || formData.min_stock}
-            readOnly={!isAdmin} />
-        </div>
-        <div className="col-auto d-flex flex-column justify-content-end">
+      <div className="pd-card">
+        <div className="header-row">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <span className="section-title">Product Details</span>
+            <span className="code-chip">{itemData.itemCode || itemData.item_code}</span>
+          </div>
           {isAdmin && (
-            <button
-              type="button"
-              className="btn btn-success btn-sm"
-              onClick={handleSave}
-              style={{ whiteSpace: "nowrap" }}
-            >
-              Save
-            </button>
+            <button className="save-btn" onClick={handleSave}>Save changes</button>
           )}
         </div>
+        <div className="divider" />
+
+        <div className="pd-grid grid-top">
+          <div className="field-group">
+            <span className="field-label">Product code</span>
+            <input className="field-input" readOnly value={itemData.itemCode || itemData.item_code} />
+          </div>
+          <div className="field-group">
+            <span className="field-label">Product name</span>
+            <input
+              className="field-input"
+              id="itemName"
+              value={formData.itemName || formData.item_name}
+              onChange={handleChange}
+              readOnly={!isAdmin}
+            />
+          </div>
+          <div className="field-group">
+            <span className="field-label">Unit</span>
+            <input
+              className="field-input"
+              id="unit"
+              value={formData.unit}
+              onChange={handleChange}
+              readOnly={!isAdmin}
+            />
+          </div>
+        </div>
       </div>
-      <div className="row mx-4 mt-3 g-3">
-        <div className="col-auto" style={{ minWidth: "280px" }}>
-          <label htmlFor="Cost" className="form-label h6">
-            Cost:
-          </label>
-          <div className="input-group input-group-sm">
-            <input
-              type="text"
-              className="form-control border-dark border-opacity-25"
-              id="Cost"
-              value={itemData.cost}
-              style={{ backgroundColor: "#e9ecef" }}
-              readOnly
-            />
-            {user?.role === "admin" && (
-              <button
-                className="btn btn-outline-secondary"
-                onClick={() => handleEditCostClick(item.cost)}
-              >
-                <FaEdit size={14} />
+      <div className="pd-card">
+        <div className="section-header">
+          <span className="section-title">Metadata</span>
+        </div>
+        <div className="divider" />
+        <div className="pd-grid grid-meta">
+          {[
+            { label: 'Part no.',        id: 'partNum',  value: formData.partNum  || formData.part_num },
+            { label: 'Model',           id: 'model',    value: formData.model },
+            { label: 'Interchange no.', id: 'interNum', value: formData.interNum || formData.internal_num },
+            { label: 'Brand',           id: 'brand',    value: formData.brand },
+            { label: 'Origin',          id: 'origin',   value: formData.origin },
+            { label: 'Min. stock',      id: 'minStock', value: formData.minStock || formData.min_stock },
+          ].map(({ label, id, value }) => (
+            <div className="field-group" key={id}>
+              <span className="field-label">{label}</span>
+              <input
+                className="field-input"
+                id={id}
+                value={value}
+                onChange={handleChange}
+                readOnly={!isAdmin}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="pd-card">
+        <div className="section-header">
+          <span className="section-title">Pricing & Inventory</span>
+        </div>
+        <div className="divider" />
+        <div className="pd-grid grid-pricing">
+          <div className="price-card">
+            <span className="price-label">Cost</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="price-value">₱ {itemData.cost}</span>
+              {user?.role === 'admin' && (
+                <button className="edit-btn-sm" onClick={() => handleEditCostClick(item.cost)}>
+                  <FaEdit size={12} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {[
+            { label: 'Price 1', value: itemData.price1 },
+            { label: 'Price 2', value: itemData.price2 },
+            { label: 'Price 3', value: itemData.price3 },
+          ].map(({ label, value }) => (
+            <div className="price-card" key={label}>
+              <span className="price-label">{label}</span>
+              <span className="price-value">₱ {value}</span>
+            </div>
+          ))}
+
+          <div className="price-card">
+            <span className="price-label">Price 4</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="price-value">₱ {itemData.price4}</span>
+              {user?.role === 'admin' && (
+                <button className="edit-btn-sm" onClick={() => handleEditSpecialPriceClick(item.price4)}>
+                  <FaEdit size={12} />
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="price-card price-card--stock">
+            <span className="price-label" style={{ color: 'var(--color-text-info)' }}>Stock</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              <span className="price-value" style={{ color: 'var(--color-text-info)' }}>
+                {itemData.stock} pcs
+              </span>
+              <button className="edit-btn-sm" onClick={handleEditStockClick}>
+                <FaEdit size={12} />
               </button>
-            )}
+            </div>
+            <span className="stock-badge">&#10003; In stock</span>
           </div>
-        </div>
-        <div className="col-auto" style={{ minWidth: "250px" }}>
-          <label htmlFor="gPrice" className="form-label h6">
-            Price 1:
-          </label>
-          <input
-            type="text"
-            className="form-control border-dark border-opacity-25"
-            id="gPrice"
-            value={itemData.price1}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
-          />
-        </div>
 
-        <div className="col-auto" style={{ minWidth: "250px" }}>
-          <label htmlFor="aPrice" className="form-label h6">
-            Price 2:
-          </label>
-          <input
-            type="text"
-            className="form-control border-dark border-opacity-25"
-            id="aPrice"
-            value={itemData.price2}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
-          />
-        </div>
-
-        <div className="col-auto" style={{ minWidth: "250px" }}>
-          <label htmlFor="bPrice" className="form-label h6">
-            Price 3:
-          </label>
-          <input
-            type="text"
-            className="form-control border-dark border-opacity-25"
-            id="bPrice"
-            value={itemData.price3}
-            style={{ backgroundColor: "#e9ecef" }}
-            readOnly
-          />
-        </div>
-        <div className="col-auto" style={{ minWidth: "250px" }}>
-          <label htmlFor="sPrice" className="form-label h6">
-            Price 4:
-          </label>
-
-          <div className="input-group input-group-sm">
-            <input
-              type="text"
-              className="form-control border-dark border-opacity-25"
-              id="sPrice"
-              value={itemData.price4}
-              style={{ backgroundColor: "#e9ecef" }}
-              readOnly
-            />
-
-            {user?.role === "admin" && (
-              <button
-                className="btn btn-outline-secondary"
-                onClick={() => handleEditSpecialPriceClick(item.price4)}
-              >
-                <FaEdit size={14} />
-              </button>
-            )}
-          </div>
-        </div>
-
-        <div className="col-auto" style={{ minWidth: "250px" }}>
-          <label className="form-label h6">Stock</label>
-          <div className="input-group input-group-sm">
-            <input 
-              className="form-control border-dark border-opacity-25"
-              value={itemData.stock} 
-              style={{ backgroundColor: "#e9ecef" }}
-              readOnly 
-            />
-            <button className="btn btn-outline-secondary" onClick={handleEditStockClick}>
-              <FaEdit size={14} />
-            </button>
-          </div>
         </div>
       </div>
 
@@ -921,8 +824,10 @@ function ItemDetails({ item, onUpdate }) {
                 </form>
 
                 {/* Price Change Indicator */}
-                {currentSpecialPrice &&
-                  newSpecialPrice &&
+                { currentSpecialPrice !== null &&
+                  currentSpecialPrice !== undefined &&
+                  newSpecialPrice !== null &&
+                  newSpecialPrice !== undefined &&
                   currentSpecialPrice !== newSpecialPrice && (
                     <div
                       className="mt-4 p-3 rounded-3"

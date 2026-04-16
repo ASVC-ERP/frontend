@@ -27,7 +27,7 @@ function Item() {
       <div className="row mt-3 mx-3">
         <div
           className="border rounded-3"
-          style={{ height: "330px", backgroundColor: "#E8E7EC" }}
+          style={{ minHeight: "528px", backgroundColor: "#E8E7EC" }}
           >
             <ItemDetails item={item} onUpdate={fetchItem} />
         </div>
@@ -35,7 +35,7 @@ function Item() {
       <div className="row mt-3 mx-3">
         <div
           className="border rounded-3"
-          style={{ height: "570px", backgroundColor: "#E8E7EC" }}
+          style={{ minHeight: "510px", backgroundColor: "#E8E7EC" }}
         >
           <Tabs item={item} />
         </div>

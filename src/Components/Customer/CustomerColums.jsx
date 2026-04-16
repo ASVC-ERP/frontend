@@ -45,11 +45,11 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     wrap: true,
   },
   {
-    name: "TIN",
+    name: "City",
     center: true,
     cell: (row) => (
       <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
-        {row.tin || "N/A"}
+        {row.city || "-"}
       </div>
     ),
     width: "200px",
