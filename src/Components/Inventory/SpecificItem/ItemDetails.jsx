@@ -15,14 +15,15 @@ function ItemDetails({ item, onUpdate }) {
 
   /* USE EFFECTS */
   useEffect(() => {
-    setItemData(item);
-  }, [item]);
+    onUpdate?.();
+  }, []);
 
   useEffect(() => {
+    setItemData(item);
     setFormData(normalizeItem(item));
   }, [item]);
 
-  const normalizeItem = (item) => ({
+  const normalizeItem = (item = {}) => ({
     id: item.itemID ?? item.id,
     itemCode: item.itemCode ?? item.item_code ?? "",
     itemName: item.itemName ?? item.item_name ?? "",
@@ -35,7 +36,9 @@ function ItemDetails({ item, onUpdate }) {
     brand: item.brand ?? "",
   });
 
-  const [formData, setFormData] = useState(() => normalizeItem(item));
+  const [formData, setFormData] = useState(() => 
+    item ? normalizeItem(item) : {}
+  );
 
   const handleChange = (e) => {
     const { id, value } = e.target;
@@ -46,6 +49,16 @@ function ItemDetails({ item, onUpdate }) {
   };
 
   const handleSave = async () => {
+    Swal.fire({
+      title: "Saving changes",
+      text: "Please wait while we save your changes...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     try {
       if (!formData.id) {
         console.error("Missing item ID");
@@ -106,6 +119,16 @@ function ItemDetails({ item, onUpdate }) {
   };
 
   const handleStockUpdate = async () => {
+    Swal.fire({
+      title: "Updating Stock",
+      text: "Please wait while we update the stock...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     const PIC = user?.userId;
     const payload = {
       quantity: Number(stockData.newCount),
@@ -115,7 +138,7 @@ function ItemDetails({ item, onUpdate }) {
 
     try {
       const response = await axios.patch(
-        `${API_URL}/product/${item.itemID}/stock`,
+        `${API_URL}/product/${item.itemID || item.id}/stock`,
         payload
       );
 
@@ -178,6 +201,16 @@ function ItemDetails({ item, onUpdate }) {
   const handleSubmitSpecialPrice = async () => {
     if (!newSpecialPrice) return;
 
+    Swal.fire({
+      title: "Updating Special Price",
+      text: "Please wait while we update the special price...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     try {
       const response = await axios.patch(
         `${API_URL}/product/${item.itemID || item.id}/price`,
@@ -227,6 +260,16 @@ function ItemDetails({ item, onUpdate }) {
 
   const handleSubmitCost = async () => {
     if (!newCost) return;
+
+    Swal.fire({
+      title: "Updating Cost",
+      text: "Please wait while we update the cost...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
 
     try {
       const response = await axios.patch(
@@ -340,7 +383,7 @@ function ItemDetails({ item, onUpdate }) {
               <span className="price-value">₱ {itemData.cost}</span>
               {user?.role === 'admin' && (
                 <button className="edit-btn-sm" onClick={() => handleEditCostClick(item.cost)}>
-                  <FaEdit size={12} />
+                  <FaEdit size={15} />
                 </button>
               )}
             </div>
@@ -363,7 +406,7 @@ function ItemDetails({ item, onUpdate }) {
               <span className="price-value">₱ {itemData.price4}</span>
               {user?.role === 'admin' && (
                 <button className="edit-btn-sm" onClick={() => handleEditSpecialPriceClick(item.price4)}>
-                  <FaEdit size={12} />
+                  <FaEdit size={15} />
                 </button>
               )}
             </div>
@@ -373,15 +416,28 @@ function ItemDetails({ item, onUpdate }) {
             <span className="price-label" style={{ color: 'var(--color-text-info)' }}>Stock</span>
             <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
               <span className="price-value" style={{ color: 'var(--color-text-info)' }}>
-                {itemData.stock} pcs
+                {itemData.stock} {itemData.unit}/s
               </span>
               <button className="edit-btn-sm" onClick={handleEditStockClick}>
-                <FaEdit size={12} />
+                <FaEdit size={15} />
               </button>
             </div>
-            <span className="stock-badge">&#10003; In stock</span>
+            <span
+              className={`stock-badge ${
+                itemData.stock === 0
+                  ? "stock-badge--danger"
+                  : itemData.stock <= ( itemData.minStock || itemData.min_stock )
+                  ? "stock-badge--warning"
+                  : ""
+              }`}
+            >
+              {itemData.stock === 0
+                ? "❌ Out of stock"
+                : itemData.stock <= ( itemData.minStock || itemData.min_stock )
+                ? "⚠️ Low stock"
+                : "✔ In stock"}
+            </span>
           </div>
-
         </div>
       </div>
 

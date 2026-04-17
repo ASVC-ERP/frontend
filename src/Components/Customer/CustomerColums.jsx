@@ -10,7 +10,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
       </div>
     ),
     wrap: true,
-    width: "300px",
+    width: "290px",
   },
   {
     name: "PIC",
@@ -41,7 +41,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.address || "N/A"}
       </div>
     ),
-    width: "450px",
+    width: "300px",
     wrap: true,
   },
   {
@@ -52,7 +52,17 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.city || "-"}
       </div>
     ),
-    width: "200px",
+    width: "180px",
+  },
+  {
+    name: "TIN",
+    center: true,
+    cell: (row) => (
+      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
+        {row.tin || "-"}
+      </div>
+    ),
+    width: "180px",
   },
   {
     name: "Terms",

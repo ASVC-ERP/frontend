@@ -101,6 +101,17 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
 
   const handleSubmitEditCustomer = async (e) => {
     e.preventDefault();
+
+    Swal.fire({
+      title: "Updating Customer",
+      text: "Please wait while we update the customer...",
+      allowOutsideClick: false,
+      showConfirmButton: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
+
     try {
       const updatedCustomer = {
         name: customerName,

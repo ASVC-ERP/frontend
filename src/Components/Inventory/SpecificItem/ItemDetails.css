@@ -21,9 +21,9 @@
 }
 
 .field-group  { display: flex; flex-direction: column; gap: 5px; }
-.field-label  { font-size: 15px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.03em; }
+.field-label  { font-size: 16px; font-weight: 500; color: #6c757d; letter-spacing: 0.03em; }
 .field-input  {
-  height: 34px; padding: 0 10px; font-size: 18px;
+  height: 34px; padding: 0 10px; font-size: 20px;
   border: 1px solid #dee2e6; border-radius: 8px; outline: none;
   transition: border-color 0.15s;
 }
@@ -34,8 +34,8 @@
 .price-card--danger  { background: #fff5f5; border-color: #f5c2c2; }
 .price-card--warning { background: #fffbea; border-color: #ffe69c; }
 .price-card--stock { background: #e6f1fb; border-color: #b5d4f4; }
-.price-label       { font-size: 15px; font-weight: 600; color: #6c757d; text-transform: uppercase; letter-spacing: 0.06em; }
-.price-value       { font-size: 18px; font-weight: 500; color: #212529; }
+.price-label       { font-size: 16px; font-weight: 500; color: #6c757d; letter-spacing: 0.03em; }
+.price-value       { font-size: 20px; font-weight: 500; color: #212529; }
 .stock-badge       { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 20px; font-size: 13px; font-weight: 500; background: #d1e7dd; color: #0a5a2f; align-self: flex-start; margin-top: 4px; }
 .stock-badge--danger  { background: #f8d7da; color: #842029; }
 .stock-badge--warning { background: #fff3cd; color: #664d03; }
@@ -50,8 +50,8 @@
 
 .header-row    { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
 .section-header{ display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
-.section-title { font-size: 15px; font-weight: 750; }
-.code-chip     { font-size: 15px; background: #f1f3f5; border: 1px solid #dee2e6; border-radius: 6px; padding: 2px 8px; color: #6c757d; }
+.section-title { font-size: 15px; font-weight: 700; text-transform: uppercase; }
+.code-chip     { font-size: 18px; background: #f1f3f5; border: 1px solid #dee2e6; border-radius: 6px; padding: 2px 8px; color: #6c757d; }
 .save-btn      { height: 32px; padding: 0 16px; background: #185FA5; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 500; cursor: pointer; }
 .save-btn:hover{ background: #0C447C; }
 .divider       { height: 1px; background: #e9ecef; margin-bottom: 1rem; }
