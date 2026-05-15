@@ -448,6 +448,13 @@ function OrdersTable({
       };
   
       //console.log("Payload being sent:", payload);
+      Swal.fire({
+        title: "Editing order…",
+        text: "Please wait while we process the changes.",
+        allowOutsideClick: false,
+        showConfirmButton: false,
+        didOpen: () => Swal.showLoading(),
+      });
   
       // 🔹 Send patch request to update the order
       await axios.put(`${API_URL}/order/id/${editableRow.id}`, payload);
@@ -457,6 +464,7 @@ function OrdersTable({
   
       setIsEditing(false);
       setShowEditModal(false);
+      Swal.close();
   
       Swal.fire({
         icon: "success",
