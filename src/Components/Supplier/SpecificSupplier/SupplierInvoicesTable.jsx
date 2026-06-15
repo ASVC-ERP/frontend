@@ -580,7 +580,7 @@ function SupplierInvoicesTable({ allItems }) {
                   whiteSpace: "nowrap",
                 }}
               >
-                + Add Invoice
+                + Create
               </button>
             </div>
           </div>
@@ -679,7 +679,7 @@ function SupplierInvoicesTable({ allItems }) {
                       {/* Invoice Header Information */}
                       <div className="row g-3 mb-4">
                         {/* Purchase Order Number */}
-                        <div className="col-md-2">
+                        <div className="col-md-3">
                           <label
                             htmlFor="poNum"
                             className="form-label fw-semibold text-muted small"
@@ -718,7 +718,7 @@ function SupplierInvoicesTable({ allItems }) {
                         </div>
 
                         {/* Invoice ID */}
-                        <div className="col-md-2">
+                        <div className="col-md-3">
                           <label
                             htmlFor="invoiceID"
                             className="form-label fw-semibold text-muted small"
@@ -793,7 +793,7 @@ function SupplierInvoicesTable({ allItems }) {
                             }
                           />
                         </div>
-
+                        {/*
                         <div className="col-md-2">
                           <label
                             htmlFor="invoiceType"
@@ -834,6 +834,7 @@ function SupplierInvoicesTable({ allItems }) {
                             </option>
                           </select>
                         </div>
+                        */}
 
                         <div className="col-md-2">
                           <label

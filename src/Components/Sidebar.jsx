@@ -1,12 +1,13 @@
-import { BsBoxSeamFill, BsPersonCircle } from "react-icons/bs";
-import { FaCashRegister } from "react-icons/fa6";
-import { FaTachometerAlt } from "react-icons/fa";
-import { IoReceipt } from "react-icons/io5";
-import { FaTruck, FaUser } from "react-icons/fa";
-import { PiListChecksFill } from "react-icons/pi";
+import { LiaUserCircle } from "react-icons/lia";
+import { MdOutlinePeopleAlt } from "react-icons/md";
+import { BsPersonGear } from "react-icons/bs";
+import { PiGearSixBold, PiShoppingBagBold } from "react-icons/pi";
+import { TbTruckDelivery, TbTruckReturn } from "react-icons/tb";
+import { RiReceiptLine } from "react-icons/ri";
+import { LuLayoutDashboard } from "react-icons/lu";
+import { HiOutlineReceiptRefund } from "react-icons/hi";
 
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useState } from "react";
 
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
@@ -41,20 +42,23 @@ export default function Sidebar({ onLogout }) {
     return () => clearInterval(interval);
   }, []);
   */
+
+  const linkStyle = {
+    color: "#1E5A84",
+    fontSize: "1.1rem",
+    cursor: "pointer",
+    textDecoration: "none",
+  };
  
   return (
-    <div className="sidebar-container d-flex flex-column vh-100 position-sticky">
+    <div className="sidebar-container d-flex flex-column">
       {/* Logo and Company Name */}
-      <div className="d-flex flex-column align-items-center mb-3 px-3">
-        <img
-          src={logo}
-          alt="Logo"
-          className="m-0 p-0 mt-2"
-          style={{ height: "150px", width: "150px" }}
-        />
+      <div className="logo-container">
+        <img src={logo} alt="Logo" className="sidebar-logo" />
       </div>
 
       {/* Navigation Links */}
+      {/*
       <div className="d-flex flex-column flex-grow-1">
         <ul className="nav flex-column list-unstyled ms-2 mt-2">
           <li className="mt-2">
@@ -148,6 +152,104 @@ export default function Sidebar({ onLogout }) {
           </li>
         </ul>
       </div>
+      */}
+      
+      <div className="sidebar">
+
+        {/* ANALYTICS */}
+        <p className="sidebar-header">ANALYTICS</p>
+        <ul className="sidebar-group">
+          <li className="mt-2">
+            <Link to="/" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <LuLayoutDashboard className="me-3" size={25} />
+              <span className="sidebar-text">Dashboard</span>
+            </Link>
+          </li>
+
+          {/* If you have reports */}
+          {/*
+          <li className="mt-2">
+            <Link to="/reports" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <FaChartBar className="me-3" size={25} />
+              <span className="sidebar-text">Reports</span>
+            </Link>
+          </li>
+          */}
+        </ul>
+
+        {/* SALES */}
+        <p className="sidebar-header">SALES</p>
+        <ul className="sidebar-group">
+          <li className="mt-2">
+            <Link to="/order" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <PiShoppingBagBold className="me-3" size={25} />
+              <span className="sidebar-text">Orders</span>
+            </Link>
+          </li>
+
+          <li className="mt-2">
+            <Link to="/invoice" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <RiReceiptLine className="me-3" size={25} />
+              <span className="sidebar-text">Invoices</span>
+            </Link>
+          </li>
+
+          <li className="mt-2">
+            <Link to="/invoice" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <HiOutlineReceiptRefund className="me-3" size={25} />
+              <span className="sidebar-text">Returns</span>
+            </Link>
+          </li>
+        </ul>
+
+        {/* PROCUREMENT */}
+        <p className="sidebar-header">PROCUREMENT</p>
+        <ul className="sidebar-group">
+          <li className="mt-2">
+            <Link to="/order" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <TbTruckDelivery className="me-3" size={25} />
+              <span className="sidebar-text">Purchases</span>
+            </Link>
+          </li>
+
+          <li className="mt-2">
+            <Link to="/invoice" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <TbTruckReturn className="me-3" size={25} />
+              <span className="sidebar-text">Returns</span>
+            </Link>
+          </li>
+        </ul>
+
+        {/* INVENTORY */}
+        <p className="sidebar-header">INVENTORY</p>
+        <ul className="sidebar-group">
+          <li className="mt-2">
+            <Link to="/products" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <PiGearSixBold className="me-3" size={25} />
+              <span className="sidebar-text">Products</span>
+            </Link>
+          </li>
+        </ul>
+
+        {/* ADMIN */}
+        <p className="sidebar-header">ADMIN</p>
+        <ul className="sidebar-group">
+          <li className="mt-2">
+            <Link to="/supplier" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <BsPersonGear className="me-3" size={25} />
+              <span className="sidebar-text">Suppliers</span>
+            </Link>
+          </li>
+
+          <li className="mt-2">
+            <Link to="/customer" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <MdOutlinePeopleAlt className="me-3" size={25} />
+              <span className="sidebar-text">Customers</span>
+            </Link>
+          </li>
+        </ul>
+
+      </div>
 
       {/* Profile Section at the Bottom */}
       <div className="profile-section d-flex align-items-center justify-content-center mb-4 mt-auto">
@@ -159,7 +261,7 @@ export default function Sidebar({ onLogout }) {
             aria-expanded="false"
             id="profileDropdown"
           >
-            <BsPersonCircle size={25} color="#1E5A84" />
+            <LiaUserCircle size={35} color="#1E5A84" />
             <p
               className="h6 fw-bolder ms-3 sidebar-text mb-0"
               style={{ color: "#1E5A84" }}

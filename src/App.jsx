@@ -74,14 +74,7 @@ function App() {
     <Router>
       <div className="container-fluid vh-100 d-flex p-0">
         {/* Sidebar */}
-        <div
-          style={{
-            width: "185px",
-            backgroundColor: "#E8E7EC",
-            fontFamily: "'Outfit', sans-serif",
-          }}
-          className="d-flex flex-column"
-        >
+        <div className="d-flex flex-column" >
           <Sidebar onLogout={handleLogout} />
         </div>
 

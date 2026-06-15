@@ -1,11 +1,55 @@
 @import url("https://fonts.googleapis.com/css2?family=Karla:wght@200;300;400;500;600;700;800&display=swap");
 
+.logo-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 5px;
+  padding: 5px;
+}
+
+.sidebar-logo {
+  width: 200px;   /* adjust as needed */
+  height: auto;
+  display: block;
+  margin: 5px;
+  padding-right: 50px;
+}
+
+.sidebar-container {
+  width: 220px;
+  height: 100vh;      /* Full browser height */
+  background: #E8E7EC;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6b7a90;
+  letter-spacing: 1px;
+  padding-left: 20px;
+}
+
+.sidebar-group {
+  list-style: none;
+  padding-left: 10px;
+  margin-bottom: 20px;
+}
+
 .sidebar-text {
+  font-size: 1.2rem;
+  margin-top: 5px;
+  margin-bottom: 5px;
   font-family: "Karla", sans-serif;
 }
 
 /* Hover effect for navigation links */
 .nav-link {
+  padding-left: 10px;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
@@ -35,16 +79,6 @@
   
   .badge.bg-danger {
     animation: pulse 2s infinite;
-  }
-  
-  /* Smooth shadow on sidebar */
-  .vh-100.position-sticky {
-    box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .vh-100.position-sticky:hover {
-    box-shadow: 2px 0 12px rgba(0, 0, 0, 0.08);
   }
   
   /* Active link indicator */
@@ -79,7 +113,7 @@
 
   /* Profile Section Container */
 .profile-section {
-    padding: 1rem;
+    padding-right: 40px;
     border-top: 1px solid #e0e0e0;
     background: linear-gradient(to bottom, transparent, rgba(30, 90, 132, 0.02));
   }
