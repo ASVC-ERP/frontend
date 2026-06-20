@@ -195,7 +195,7 @@ export default function Sidebar({ onLogout }) {
           </li>
 
           <li className="mt-2">
-            <Link to="/invoice" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/invoice/returns" className="nav-link d-flex align-items-center" style={linkStyle}>
               <HiOutlineReceiptRefund className="me-3" size={25} />
               <span className="sidebar-text">Returns</span>
             </Link>
@@ -206,14 +206,14 @@ export default function Sidebar({ onLogout }) {
         <p className="sidebar-header">PROCUREMENT</p>
         <ul className="sidebar-group">
           <li className="mt-2">
-            <Link to="/order" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/purchase" className="nav-link d-flex align-items-center" style={linkStyle}>
               <TbTruckDelivery className="me-3" size={25} />
               <span className="sidebar-text">Purchases</span>
             </Link>
           </li>
 
           <li className="mt-2">
-            <Link to="/invoice" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/purchase-return" className="nav-link d-flex align-items-center" style={linkStyle}>
               <TbTruckReturn className="me-3" size={25} />
               <span className="sidebar-text">Returns</span>
             </Link>

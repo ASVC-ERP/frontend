@@ -17,12 +17,14 @@ import Supplier from "./Components/Supplier/Supplier.jsx";
 import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
 import Customer from "./Components/Customer/Customer.jsx";
 import HomePage from "./Components/Home.jsx";
+import PurchasesPage from "./Components/Purchases/Purchases.jsx";
+import PurchaseDetailsPage from "./Components/Purchases/PurchaseDetails.jsx";
+import CreatePurchase from "./Components/Purchases/CreatePurchase.jsx";
+import ReturnPurchase from "./Components/PurchaseReturns/Returns.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
 import { useAuth } from "./hooks/useAuth";
 import { useOrders } from "./hooks/useOrders";
-import { useInvoices } from "./hooks/useInvoices";
-import { useCustomers } from "./hooks/useCustomers";
 import { usePagination } from "./hooks/usePagination";
 
 function App() {
@@ -81,16 +83,22 @@ function App() {
         {/* Main Content */}
         <div className="flex-grow-1 d-flex flex-column p-0">
           <Routes>
-            <Route path="/unauthorized" element={ <Unauthorized />} />
-            <Route path="/" element={ <HomePage />} />
-            <Route path="/order" element={ <SalesOrder /> } />
-            <Route path="/create-order" element={ <CreateOrder /> } />
-            <Route path="/invoice" element={ <SalesInvoice /> } />
-            <Route path="/products/:itemID" element={<Item />} />
-            <Route path="/products" element={ <Inventory /> } />
-            <Route path="/supplier" element={ <Supplier /> } />
-            <Route path="/supplier/invoices" element={<SupplierInvoicesTable />} />
-            <Route path="/customer" element={ <Customer /> } />
+            <Route path="/unauthorized"       element={ <Unauthorized />} />
+            <Route path="/"                   element={ <HomePage />} />
+            <Route path="/order"              element={ <SalesOrder /> } />
+            <Route path="/create-order"       element={ <CreateOrder /> } />
+            <Route path="/invoice"            element={ <SalesInvoice /> } />
+            <Route path="/products/:itemID"   element={ <Item />} />
+            <Route path="/products"           element={ <Inventory /> } />
+            <Route path="/supplier"           element={ <Supplier /> } />
+            <Route path="/supplier/invoices"  element={ <SupplierInvoicesTable />} />
+            <Route path="/customer"           element={ <Customer /> } />
+
+            <Route path="/purchase"           element={ <PurchasesPage /> } />
+            <Route path="/purchase/:id"       element={ <PurchaseDetailsPage />} />
+            <Route path="/create-purchase"    element={ <CreatePurchase />} />
+            <Route path="/purchase-return"    element={ <ReturnPurchase /> } />
+
           </Routes>
         </div>
 
