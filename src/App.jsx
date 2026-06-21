@@ -13,8 +13,8 @@ import CreateOrder from "./Components/Orders/CreateOrder.jsx";
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
 import Inventory from "./Components/Inventory/Inventory.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
-import Supplier from "./Components/Supplier/Supplier.jsx";
-import SupplierInvoicesTable from "./Components/Supplier/SpecificSupplier/SupplierInvoicesTable.jsx";
+import Suppliers from "./Components/Suppliers/Suppliers.jsx";
+import CreateSupplier from "./Components/Suppliers/CreateSupplier.jsx"
 import Customer from "./Components/Customer/Customer.jsx";
 import HomePage from "./Components/Home.jsx";
 import PurchasesPage from "./Components/Purchases/Purchases.jsx";
@@ -90,8 +90,8 @@ function App() {
             <Route path="/invoice"            element={ <SalesInvoice /> } />
             <Route path="/products/:itemID"   element={ <Item />} />
             <Route path="/products"           element={ <Inventory /> } />
-            <Route path="/supplier"           element={ <Supplier /> } />
-            <Route path="/supplier/invoices"  element={ <SupplierInvoicesTable />} />
+            <Route path="/suppliers"          element={ <Suppliers />} />
+            <Route path="/suppliers/create"   element={ <CreateSupplier />} />
             <Route path="/customer"           element={ <Customer /> } />
 
             <Route path="/purchase"           element={ <PurchasesPage /> } />

@@ -235,7 +235,7 @@ export default function Sidebar({ onLogout }) {
         <p className="sidebar-header">ADMIN</p>
         <ul className="sidebar-group">
           <li className="mt-2">
-            <Link to="/supplier" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/suppliers" className="nav-link d-flex align-items-center" style={linkStyle}>
               <BsPersonGear className="me-3" size={25} />
               <span className="sidebar-text">Suppliers</span>
             </Link>
