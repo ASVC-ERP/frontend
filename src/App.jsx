@@ -11,6 +11,7 @@ import ProfileModal from "./Components/ProfileModal";
 import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
+import SalesInvoices from "./Components/Invoices/Invoices.jsx"
 import Inventory from "./Components/Inventory/Inventory.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import Suppliers from "./Components/Suppliers/Suppliers.jsx";
@@ -93,6 +94,8 @@ function App() {
             <Route path="/suppliers"          element={ <Suppliers />} />
             <Route path="/suppliers/create"   element={ <CreateSupplier />} />
             <Route path="/customer"           element={ <Customer /> } />
+
+            <Route path="/sales-invoice"      element={ <SalesInvoices /> } />
 
             <Route path="/purchase"           element={ <PurchasesPage /> } />
             <Route path="/purchase/:id"       element={ <PurchaseDetailsPage />} />

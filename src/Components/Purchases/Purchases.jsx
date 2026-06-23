@@ -127,15 +127,15 @@ export default function PurchasesPage() {
   const loadingText = search ? "Searching purchases..." : "Loading purchases...";
 
   return (
-    <div className="purchases-page">
+    <div className="page-container">
 
       {/* HEADER BAR */}
-      <div className="purchases-header">
-        <div className="purchases-title">Purchases</div>
+      <div className="page-header">
+        <div className="page-title">Purchases</div>
       </div>
 
       {/* TOOLBAR */}
-      <div className="purchases-toolbar">
+      <div className="page-toolbar">
 
         <div className="search-group">
           <div className="search-input-wrapper">
@@ -152,7 +152,7 @@ export default function PurchasesPage() {
 
           <button
             disabled={tableLoading}
-            className="btn primary-btn"
+            className="btn-primary-custom"
             onClick={async () => {
               if (searchInput !== "") {
                 setSearch(searchInput);
@@ -167,7 +167,7 @@ export default function PurchasesPage() {
 
           <button
             disabled={tableLoading}
-            className="btn secondary-btn"
+            className="btn-secondary-custom"
             onClick={async () => {
               setSearchInput("");
               setSearch("");
@@ -181,14 +181,14 @@ export default function PurchasesPage() {
         </div>
 
         <Link to="/create-purchase">
-          <button className="btn primary-btn">
+          <button className="btn-primary-custom">
             Create
           </button>
         </Link>
       </div>
 
       {/* TABLE WRAPPER */}
-      <div className="purchases-table-wrapper">
+      <div className="custom-data-table-wrapper">
         <DataTable
           columns={columns}
           data={filteredData}
