@@ -43,27 +43,13 @@ function OrdersTable({
   const columns = [
     {
       name: "Status",
-      selector: (row) => row.status,
-      width: "120px",
-      center: true,
-      cell: (row) => {
-        const statusKey = row.status?.trim().toLowerCase();
-        const statusStyle = statusColors[statusKey] || { bg: "#6c757d", text: "#fff", };
-
-        return (
-          <span
-            className="badge px-3 py-2 fw-semibold text-uppercase"
-            style={{
-              backgroundColor: statusStyle.bg,
-              color: statusStyle.text,
-              borderRadius: "20px",
-              letterSpacing: "0.5px",
-            }}
-          >
+        cell: (row) => (
+          <span className={`status-badge status-${row.status?.toLowerCase()}`}>
             {row.status}
           </span>
-        );
-      },
+        ),
+        width: "150px",
+        center: true,
     },
     {
       name: "Order No.",
@@ -100,7 +86,7 @@ function OrdersTable({
           {row?.customer?.address || "N/A"}
         </div>
       ),
-      width: "600px",
+      width: "500px",
       wrap: true,
       center: true
     },
@@ -826,18 +812,6 @@ function OrdersTable({
   
   return (
     <div>
-      <div className="d-flex justify-content-between align-items-center">
-        <Link to="/create-order">
-          <button
-            type="button"
-            className="btn me-5"
-            style={{ backgroundColor: "#1E5A84", color: "white" }}
-          >
-            Add Order
-          </button>
-        </Link>
-      </div>
-
       <DataTable
         columns={columns}
         data={Array.isArray(orders) ? orders : []}
@@ -853,7 +827,7 @@ function OrdersTable({
         }}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="700px"
+        fixedHeaderScrollHeight="650px"
         onRowClicked={handleRowClick}
         className="custom-data-table"
         progressPending={progressPending}

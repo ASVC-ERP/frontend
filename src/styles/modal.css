@@ -1,0 +1,289 @@
+/* ==========================================
+   GLOBAL MODAL
+========================================== */
+
+.app-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: rgba(15, 23, 42, 0.58);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 24px;
+}
+
+.app-modal {
+  width: min(1180px, 100%);
+  max-height: 92vh;
+  position: relative;
+}
+
+.app-modal-md {
+  width: min(850px, 100%);
+}
+
+.app-modal-content {
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
+}
+
+/* ==========================================
+   HEADER
+========================================== */
+
+.app-modal-header {
+  background: linear-gradient(135deg, #1e5a84 0%, #2563eb 100%);
+  color: #ffffff;
+  padding: 20px 24px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  cursor: move;
+  user-select: none;
+}
+
+.app-modal-header.danger {
+  background: linear-gradient(135deg, #991b1b 0%, #dc2626 100%);
+}
+
+.app-modal-header.success {
+  background: linear-gradient(135deg, #166534 0%, #16a34a 100%);
+}
+
+.app-modal-header.warning {
+  background: linear-gradient(135deg, #b45309 0%, #f59e0b 100%);
+}
+
+.app-modal-header h5 {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.app-modal-header span {
+  font-size: 16px;
+  opacity: 0.85;
+}
+
+.app-modal-close {
+  border: none;
+  background: rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.app-modal-close:hover {
+  background: rgba(255, 255, 255, 0.28);
+}
+
+/* ==========================================
+   BODY
+========================================== */
+
+.app-modal-body {
+  padding: 24px;
+  max-height: calc(92vh - 145px);
+  overflow-y: auto;
+  background: #f8fafc;
+}
+
+/* ==========================================
+   FORM
+========================================== */
+
+.modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-form-section {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  padding: 18px;
+}
+
+.modal-form-section-title {
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+
+  border-bottom: 1px solid #e5e7eb;
+
+  font-size: 18px;
+  font-weight: 800;
+  color: #1e5a84;
+
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ==========================================
+   FORM FIELDS
+========================================== */
+
+.app-modal-body .form-label {
+  display: block;
+  margin-bottom: 6px;
+
+  font-size: 16px;
+  font-weight: 700;
+  color: #475569;
+
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.app-modal-body .form-control,
+.app-modal-body .form-select,
+.app-modal-body textarea {
+  height: 44px;
+
+  border: 1px solid #dbe3ef;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #1e293b;
+
+  font-size: 18px;
+  font-weight: 500;
+
+  transition: all 0.2s ease;
+}
+
+.app-modal-body textarea {
+  height: auto;
+  min-height: 100px;
+}
+
+.app-modal-body .form-control:hover,
+.app-modal-body .form-select:hover,
+.app-modal-body textarea:hover {
+  border-color: #cbd5e1;
+}
+
+.app-modal-body .form-control:focus,
+.app-modal-body .form-select:focus,
+.app-modal-body textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.app-modal-body .form-control.is-invalid,
+.app-modal-body .form-select.is-invalid {
+  border-color: #dc2626;
+}
+
+.app-modal-body .form-control.is-invalid:focus,
+.app-modal-body .form-select.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+/* ==========================================
+   FORM TEXT
+========================================== */
+
+.modal-help-text {
+  display: block;
+  margin-top: 4px;
+  text-align: right;
+
+  font-size: 14px;
+  color: #64748b;
+}
+
+.modal-help-text.warning {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+.modal-help-text.danger {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.modal-error-text {
+  display: block;
+  margin-top: 4px;
+
+  font-size: 14px;
+  font-weight: 600;
+  color: #dc2626;
+}
+
+/* ==========================================
+   SUGGESTIONS
+========================================== */
+
+.modal-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  z-index: 1060;
+
+  margin-top: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
+}
+
+.modal-suggestion-item {
+  padding: 10px 14px;
+  font-size: 18px;
+  color: #64748b;
+
+  cursor: pointer;
+  user-select: none;
+
+  transition: background 0.15s ease;
+}
+
+.modal-suggestion-item:hover {
+  background: #f8fafc;
+}
+
+/* ==========================================
+   FOOTER
+========================================== */
+
+.app-modal-footer {
+  background: #ffffff;
+  border-top: 1px solid #e2e8f0;
+  padding: 16px 24px;
+
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ==========================================
+   UTILITIES
+========================================== */
+
+.cursor-move {
+  cursor: move;
+}

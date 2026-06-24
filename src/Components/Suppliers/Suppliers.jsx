@@ -65,7 +65,7 @@ export default function Suppliers() {
           </div>
         ),
         sortable: true,
-        width: "450px",
+        width: "400px",
       },
       {
         name: "Address",
@@ -74,7 +74,7 @@ export default function Suppliers() {
             {row.address || "-"}
           </div>
         ),
-        width: "600px",
+        width: "550px",
       },
       {
         name: "Currency",
@@ -90,12 +90,13 @@ export default function Suppliers() {
           </div>
         ),
         center: true,
+        width: "200px"
       },
       {
         name: "Actions",
         cell: (row) => (
           <button
-            className="btn btn-secondary-custom btn-sm"
+            className="btn-secondary-custom"
             onClick={() => handleEdit(row)}
           >
             Edit
@@ -111,31 +112,31 @@ export default function Suppliers() {
   const loadingText = search ? "Searching suppliers..." : "Loading suppliers...";
 
   return (
-    <div className="supplier-page">
+    <div className="page-container">
       <>
         {/* HEADER */}
-        <div className="supplier-header">
-          <div className="supplier-title">Suppliers</div>
+        <div className="page-header">
+          <div className="page-title">Suppliers</div>
         </div>
     
         {/* TOOLBAR */}
-        <div className="supplier-toolbar">
-          <div className="supplier-search-group">
-            <div className="supplier-search-input-wrapper">
-              <IoIosSearch className="supplier-search-icon" />
+        <div className="page-toolbar">
+          <div className="search-group">
+            <div className="search-input-wrapper">
+              <IoIosSearch className="search-icon" />
     
               <input
                 type="text"
                 placeholder="Search supplier name or code..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                className="supplier-search-input"
+                className="search-input"
               />
             </div>
     
             <button
               disabled={tableLoading}
-              className="btn btn-primary-custom"
+              className="btn-primary-custom"
               onClick={async () => {
                 if (searchInput !== "") {
                   setSearch(searchInput);
@@ -149,7 +150,7 @@ export default function Suppliers() {
             </button>
     
             <button
-              className="btn btn-secondary-custom"
+              className="btn-secondary-custom"
               onClick={async () => {
                 setSearchInput("");
                 setSearch("");
@@ -164,7 +165,7 @@ export default function Suppliers() {
           </div>
 
           <button
-            className="btn btn-primary-custom"
+            className="btn-primary-custom"
             onClick={() => navigate("/suppliers/create")}
           >
             Add
@@ -172,7 +173,7 @@ export default function Suppliers() {
         </div>
     
         {/* TABLE */}
-        <div className="supplier-table-wrapper">
+        <div className="custom-data-table-wrapper">
           <DataTable
             columns={columns}
             data={suppliers}
@@ -188,6 +189,8 @@ export default function Suppliers() {
             pointerOnHover
             responsive
             striped
+            fixedHeader
+            fixedHeaderScrollHeight="650px"
             className="custom-data-table"
             noDataComponent="No suppliers found"
             progressPending={tableLoading}

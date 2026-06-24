@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import InventoryTable from "./InventoryTable";
 import { usePagination } from "../../hooks/usePagination";
+import { IoIosSearch } from "react-icons/io";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -25,6 +26,7 @@ const transformItem = (item) => ({
 });
 
 function Inventory() {
+  const customerTableRef = useRef(null);
   const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination();
   const [items, setItems] = useState([]);
   const [stock, setStock] = useState("");
@@ -52,60 +54,44 @@ function Inventory() {
   const loadingText = search ? "Searching products..." : "Loading products...";
 
   return (
-    <div className="container-fluid mt-3">
+    <div className="page-container">
       {/* Header */}
-      <div className="row align-items-center px-3 px-md-4">
-        <div className="col-12 col-md-6">
-          <p
-            className="fw-bold fs-4 fs-md-2 mb-2"
-            style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
-          >
+      <div className="page-header">
+        <div className="page-title">
             Products
-          </p>
         </div>
       </div>
 
       {/* Search */}
-      <div className="row px-3 px-md-4 mb-3">
-        <div className="col-auto">
-          <input
-            type="text"
-            className="form-control"
-            style={{ width: "450px" }}
-            placeholder="Search Code, Description, Brand, Model or Origin..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
-        <div className="col-auto">
-          <select
-            className="form-select"
-            style={{
-              width: "200px",
-              padding: "6px 12px",
-              borderRadius: "6px",
-              border: "1px solid #ced4da",
-              backgroundColor: "#fff",
-              color: "#495057",
-              fontSize: "14px",
-              height: "38px",
-            }}
-            value={stock}
-            onChange={(e) => setStock(e.target.value)}
-          >
-            <option value="">All</option>
-            <option value="in">In Stock</option>
-            <option value="out">Out of Stock</option>
-          </select>
-        </div>
+      <div className="page-toolbar">
+        <div className="search-group">
+          <div className="search-input-wrapper">
+            <IoIosSearch className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search Code, Description, Brand, Model or Origin..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+          </div>
 
-        {/* Stock filter */}
+          <div className="select-wrapper">
+            <select
+              className="search-select"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+            >
+              <option value="">All</option>
+              <option value="in">In Stock</option>
+              <option value="out">Out of Stock</option>
+            </select>
+          </div>
 
-        <div className="col-auto d-flex gap-2">
           <button
             disabled={tableLoading}
             type="button"
-            className="btn"
+            className="btn-primary-custom"
             onClick={ async () => {
               setPage(1);
               setSearch(searchInput);
@@ -113,18 +99,14 @@ function Inventory() {
               await fetchItems(searchInput, stock);
               setSearchLoading(false);
             }}
-            style={{ backgroundColor: "#1E5A84", color: "white", whiteSpace: "nowrap", }}
           >
-            {searchLoading && (
-              <span className="spinner-border spinner-border-sm"></span>
-            )}
             {searchLoading ? " Searching..." : "Search"}
           </button>
 
           <button
             disabled={tableLoading}
             type="button"
-            className="btn btn-secondary"
+            className="btn-secondary-custom"
             onClick={ async () => {
               setPage(1);
               setSearchInput("");
@@ -133,57 +115,58 @@ function Inventory() {
               await fetchItems();
               setClearLoading(false);
             }}
-            style={{ whiteSpace: "nowrap" }}
           >
-            {clearLoading && (
-              <span className="spinner-border spinner-border-sm"></span>
-            )}
             {clearLoading ? " Clearing..." : "Clear"}
           </button>
         </div>
+
+        <button
+            type="button"
+            className="btn-primary-custom"
+            onClick={() => customerTableRef.current?.openAddModal()}
+          >
+            Create
+          </button>
       </div>
 
-      <div className="row px-3 px-md-4">
-        <div className="col-12">
-          <div className="table-responsive table-responsive-sm">
-            <InventoryTable
-              items={items}
-              onRefreshItems={fetchItems}
-              page={page}
-              setPage={setPage}
-              limit={limit}
-              setLimit={setLimit}
-              totalRows={totalRows}
-              progressPending={tableLoading}
-              progressComponent={
-                <div
-                  style={{
-                    padding: "40px 0",
-                    textAlign: "center",
-                  }}
-                >
-                  <div
-                    className="spinner-border"
-                    style={{
-                      color: "#1E5A84",
-                      width: "2.5rem",
-                      height: "2.5rem",
-                    }}
-                  />
-                  <div
-                    style={{
-                      marginTop: "10px",
-                      color: "#6c757d",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {loadingText}
-                  </div>
-                </div>
-              }
-            />
-          </div>
-        </div>
+      <div className="custom-data-table-wrapper">
+        <InventoryTable
+          ref={customerTableRef}
+          items={items}
+          onRefreshItems={fetchItems}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={setLimit}
+          totalRows={totalRows}
+          progressPending={tableLoading}
+          progressComponent={
+            <div
+              style={{
+                padding: "40px 0",
+                textAlign: "center",
+              }}
+            >
+              <div
+                className="spinner-border"
+                style={{
+                  color: "#1E5A84",
+                  width: "2.5rem",
+                  height: "2.5rem",
+                }}
+              />
+              <div
+                style={{
+                  marginTop: "10px",
+                  color: "#6c757d",
+                  fontWeight: "600",
+                }}
+              >
+                {loadingText}
+              </div>
+            </div>
+          }
+        />
       </div>
     </div>
   );

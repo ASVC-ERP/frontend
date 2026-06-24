@@ -114,14 +114,14 @@ export default function ReturnPurchase() {
   ];
 
   return (
-    <div className="purchases-page">
+    <div className="page-container">
       {/* HEADER */}
-      <div className="purchases-header">
-        <div className="purchases-title">Purchase Returns</div>
+      <div className="page-header">
+        <div className="page-title">Purchase Returns</div>
       </div>
 
       {/* TOOLBAR */}
-      <div className="purchases-toolbar">
+      <div className="page-toolbar">
 
         <div className="search-group">
           <div className="search-input-wrapper">
@@ -138,7 +138,7 @@ export default function ReturnPurchase() {
 
           <button
             disabled={tableLoading}
-            className="btn primary-btn"
+            className="btn-primary-custom"
             onClick={async () => {
               if (searchInput !== "") {
                 setSearch(searchInput);
@@ -153,7 +153,7 @@ export default function ReturnPurchase() {
 
           <button
             disabled={tableLoading}
-            className="btn secondary-btn"
+            className="btn-secondary-custom"
             onClick={async () => {
               setSearchInput("");
               setSearch("");
@@ -168,7 +168,7 @@ export default function ReturnPurchase() {
       </div>
 
       {/* TABLE */}
-      <div className="purchases-table-wrapper">
+      <div className="custom-data-table-wrapper">
         <DataTable
           columns={columns}
           data={returns}
@@ -185,6 +185,8 @@ export default function ReturnPurchase() {
           striped
           responsive
           persistTableHead
+          fixedHeader
+          fixedHeaderScrollHeight="650px"
           onRowClicked={(row) => setSelectedReturn(row)}
           className="custom-data-table"
           noDataComponent="No returns found"

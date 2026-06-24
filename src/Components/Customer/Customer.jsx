@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import CustomerTable from "./CustomerTable.jsx";
 import { usePagination } from "../../hooks/usePagination";
+import { IoIosSearch } from "react-icons/io";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Customer() {
+  const customerTableRef = useRef(null);
   const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination();
   const [customers, setCustomers] = useState([]);
   const [searchInput, setSearchInput] = useState("");
@@ -34,37 +36,32 @@ function Customer() {
   const loadingText = search ? "Searching customers..." : "Loading customers...";
 
   return (
-    <div className="container-fluid mt-3">
+    <div className="page-container">
       {/* Header */}
-      <div className="row align-items-center px-3 px-md-4">
-        <div className="col-12 col-md-6">
-          <p
-            className="fw-bold fs-4 fs-md-2 mb-2"
-            style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
-          >
+      <div className="page-header">
+        <div className="page-title">
             Customers
-          </p>
         </div>
       </div>
 
       {/* Search */}
-      <div className="row px-3 px-md-4 mb-3">
-        <div className="col-auto">
-          <input
-            type="text"
-            className="form-control"
-            style={{ width: "450px" }}
-            placeholder="Search Customer Name..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
+      <div className="page-toolbar">
+        <div className="search-group">
+          <div className="search-input-wrapper">
+            <IoIosSearch className="search-icon" />
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search Customer Name..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+          </div>
 
-        <div className="col-auto d-flex gap-2">
           <button
             disabled={tableLoading}
             type="button"
-            className="btn"
+            className="btn-primary-custom"
             onClick={ async () => {
               setPage(1);
               setSearch(searchInput);
@@ -72,18 +69,14 @@ function Customer() {
               await fetchCustomers(searchInput);
               setSearchLoading(false);
             }}
-            style={{ backgroundColor: "#1E5A84", color: "white", whiteSpace: "nowrap", }}
           >
-            {searchLoading && (
-              <span className="spinner-border spinner-border-sm"></span>
-            )}
             {searchLoading ? " Searching..." : "Search"}
           </button>
 
           <button
             disabled={tableLoading}
             type="button"
-            className="btn btn-secondary"
+            className="btn-secondary-custom"
             onClick={ async () => {
               setPage(1);
               setSearchInput("");
@@ -92,21 +85,24 @@ function Customer() {
               await fetchCustomers();
               setClearLoading(false);
             }}
-            style={{ whiteSpace: "nowrap" }}
           >
-            {clearLoading && (
-              <span className="spinner-border spinner-border-sm"></span>
-            )}
             {clearLoading ? " Clearing..." : "Clear"}
           </button>
         </div>
+
+        <button
+          type="button"
+          className="btn-primary-custom"
+          onClick={() => customerTableRef.current?.openAddModal()}
+        >
+          Create
+        </button>
       </div>
 
       {/* Table Section */}
-      <div className="row px-3 px-md-4">
-        <div className="col-12">
-          <div className="table-responsive table-responsive-sm">
+      <div className="custom-data-table-wrapper">
             <CustomerTable
+              ref={customerTableRef}
               customers={customers}
               onRefreshCustomers={fetchCustomers}
               page={page}
@@ -142,8 +138,6 @@ function Customer() {
                 </div>
               }
             />
-          </div>
-        </div>
       </div>
     </div>
   );

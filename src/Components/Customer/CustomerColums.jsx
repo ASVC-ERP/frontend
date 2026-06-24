@@ -20,7 +20,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.pic || "N/A"}
       </div>
     ),
-    width: "250px",
+    width: "220px",
     wrap: true,
   },
   {
@@ -52,7 +52,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.city || "-"}
       </div>
     ),
-    width: "180px",
+    width: "150px",
   },
   {
     name: "TIN",
@@ -66,37 +66,30 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
   },
   {
     name: "Terms",
-    selector: (row) => row.terms || "N/A",
-    width: "150px",
+    width: "120px",
     center: true,
     cell: (row) => (
       <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
         {row.terms || "N/A"}
       </div>
     ),
+    wrap: true
   },
   {
     name: "Actions",
     cell: (row) => (
       <div className="d-flex gap-2">
         <button
-          className="btn btn-sm btn-outline-primary"
+          className="btn-secondary-custom"
           onClick={() => handleEdit(row)}
         >
-          <FaEdit />
-        </button>
-        <button
-          className="btn btn-sm btn-outline-danger"
-          onClick={() => handleDelete(row.id)}
-        >
-          <FaTrash />
+          Edit
         </button>
       </div>
     ),
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
-    grow: 0,
     width: "120px",
   },
 ];

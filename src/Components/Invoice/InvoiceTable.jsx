@@ -21,9 +21,9 @@ function InvoiceTable({
 
   const columns = [
     {
-      name: "Order No.",
+      name: "Order",
       selector: (row) => `ORD${String(row.order_id).padStart(4, "0")}`,
-      width: "120px",
+      width: "100px",
       center: true,
     },
     {
@@ -76,8 +76,8 @@ function InvoiceTable({
             <input
               type="text"
               placeholder="Invoice #"
-              className="form-control border border-secondary"
-              style={{ width: "170px" }}
+              className="invoice-inline-input"
+              style={{ width: "150px" }}
               value={
                 pendingChanges[`invoice-${row.id}`] ?? row.invoice_number ?? ""
               }
@@ -92,8 +92,8 @@ function InvoiceTable({
             <input
               type="text"
               placeholder="Waybill"
-              className="form-control border border-secondary"
-              style={{ width: "170px" }}
+              className="invoice-inline-input"
+              style={{ width: "150px" }}
               value={
                 pendingChanges[`waybill-${row.id}`] ?? row.waybill_number ?? ""
               }
@@ -109,8 +109,8 @@ function InvoiceTable({
             <input
               type="text"
               placeholder="Courier"
-              className="form-control border border-secondary"
-              style={{ width: "170px" }}
+              className="invoice-inline-input"
+              style={{ width: "150px" }}
               value={pendingChanges[`courier-${row.id}`] ?? row.courier ?? ""}
               onChange={(e) =>
                 setPendingChanges((prev) => ({
@@ -123,12 +123,12 @@ function InvoiceTable({
             {/* Delivery Date */}
             <input
               type="date"
-              className="form-control border border-secondary"
+              className="invoice-inline-input"
               style={{ width: "150px" }}
               value={
                 pendingChanges[`date-${row.id}`] ??
                 (row.shipping_date
-                  ? new Date(row.shipping_date).toISOString().slice(0, 10)
+                  ? row.shipping_date.split("T")[0]
                   : "")
               }
               onChange={(e) =>
@@ -141,25 +141,24 @@ function InvoiceTable({
           </div>
         );
       },
-      width: "750px",
+      width: "650px",
     },
     {
       name: "Actions",
       cell: (row) => (
         <button
-          className="btn btn-sm btn-outline-success"
+          className="btn-primary-custom"
           onClick={(e) => {
             e.stopPropagation();
             handleSave(row);
           }}
           title="Save"
         >
-          <FaSave />
+          Save
         </button>
       ),
-      width: "70px",
+      width: "150px",
       center: true,
-      button: true,
     },
   ];
 
@@ -618,7 +617,7 @@ function InvoiceTable({
             }}
             highlightOnHover
             fixedHeader
-            fixedHeaderScrollHeight="740px"
+            fixedHeaderScrollHeight="650px"
             className="custom-data-table"
             responsive // ensures mobile/responsive behavior
             progressPending={progressPending}

@@ -20,7 +20,7 @@ export const productColumns = (handleDeleteItem) => [
         {row.itemName || row.item_name || "N/A"}
       </div>
     ),
-    width: "450px",
+    width: "400px",
     wrap: true,
   },
   {

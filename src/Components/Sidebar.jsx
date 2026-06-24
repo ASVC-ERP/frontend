@@ -57,103 +57,7 @@ export default function Sidebar({ onLogout }) {
         <img src={logo} alt="Logo" className="sidebar-logo" />
       </div>
 
-      {/* Navigation Links */}
-      {/*
-      <div className="d-flex flex-column flex-grow-1">
-        <ul className="nav flex-column list-unstyled ms-2 mt-2">
-          <li className="mt-2">
-            <Link
-              to="/"
-              className="nav-link d-flex align-items-center"
-              style={{
-                color: "#1E5A84",
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}
-            >
-              <FaTachometerAlt className="me-3" size={25} />
-              <span className="sidebar-text">Dashboard</span>
-            </Link>
-          </li>
-
-          <li className="mt-2">
-            <Link
-              to="/order"
-              className="nav-link d-flex align-items-center"
-              style={{
-                color: "#1E5A84",
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}
-            >
-              <FaCashRegister className="me-3" size={25} />
-              <span className="sidebar-text">Orders</span>
-            </Link>
-          </li>
-
-          <li className="mt-2">
-            <Link
-              to="/invoice"
-              className="nav-link d-flex align-items-center"
-              style={{
-                color: "#1E5A84",
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}
-            >
-              <IoReceipt className="me-3" size={25} />
-              <span className="sidebar-text">Invoices</span>
-            </Link>
-          </li>
-
-          <li className="mt-2">
-            <Link
-              to="/products"
-              className="nav-link d-flex align-items-center"
-              style={{
-                color: "#1E5A84",
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}
-            >
-              <BsBoxSeamFill className="me-3" size={25} />
-              <span className="sidebar-text">Products</span>
-            </Link>
-          </li>
-
-          <li className="mt-2">
-            <Link
-              to="/supplier"
-              className="nav-link d-flex align-items-center"
-              style={{
-                color: "#1E5A84",
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}
-            >
-              <FaTruck className="me-3" size={25} />
-              <span className="sidebar-text">Suppliers</span>
-            </Link>
-          </li>
-
-          <li className="mt-2">
-            <Link
-              to="/customer"
-              className="nav-link d-flex align-items-center"
-              style={{
-                color: "#1E5A84",
-                fontSize: "1.1rem",
-                cursor: "pointer",
-              }}
-            >
-              <FaUser className="me-3" size={25} />
-              <span className="sidebar-text">Customers</span>
-            </Link>
-          </li>
-        </ul>
-      </div>
-      */}
-      
+      {/* Navigation Links */}      
       <div className="sidebar">
 
         {/* ANALYTICS */}
@@ -165,16 +69,6 @@ export default function Sidebar({ onLogout }) {
               <span className="sidebar-text">Dashboard</span>
             </Link>
           </li>
-
-          {/* If you have reports */}
-          {/*
-          <li className="mt-2">
-            <Link to="/reports" className="nav-link d-flex align-items-center" style={linkStyle}>
-              <FaChartBar className="me-3" size={25} />
-              <span className="sidebar-text">Reports</span>
-            </Link>
-          </li>
-          */}
         </ul>
 
         {/* SALES */}
@@ -202,6 +96,17 @@ export default function Sidebar({ onLogout }) {
           </li>
         </ul>
 
+        {/* INVENTORY */}
+        <p className="sidebar-header">INVENTORY</p>
+        <ul className="sidebar-group">
+          <li className="mt-2">
+            <Link to="/products" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <PiGearSixBold className="me-3" size={25} />
+              <span className="sidebar-text">Products</span>
+            </Link>
+          </li>
+        </ul>
+
         {/* PROCUREMENT */}
         <p className="sidebar-header">PROCUREMENT</p>
         <ul className="sidebar-group">
@@ -216,17 +121,6 @@ export default function Sidebar({ onLogout }) {
             <Link to="/purchase-return" className="nav-link d-flex align-items-center" style={linkStyle}>
               <TbTruckReturn className="me-3" size={25} />
               <span className="sidebar-text">Returns</span>
-            </Link>
-          </li>
-        </ul>
-
-        {/* INVENTORY */}
-        <p className="sidebar-header">INVENTORY</p>
-        <ul className="sidebar-group">
-          <li className="mt-2">
-            <Link to="/products" className="nav-link d-flex align-items-center" style={linkStyle}>
-              <PiGearSixBold className="me-3" size={25} />
-              <span className="sidebar-text">Products</span>
             </Link>
           </li>
         </ul>

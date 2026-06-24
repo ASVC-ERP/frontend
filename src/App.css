@@ -5,37 +5,11 @@ body {
   font-family: "Karla", sans-serif;
 }
 
-.custom-data-table {
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.custom-data-table .rdt_TableCell {
-  font-size:15.5px;
-  padding: 12px 16px;
-  transition: background-color 0.15s ease;
-}
-
-.custom-data-table .rdt_TableRow:hover .rdt_TableCell {
-  background-color: rgba(0, 0, 0, 0.02);
-}
-
-.custom-data-table .rdt_TableHeadRow {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  text-transform: uppercase;
-  color: #62686c;
-}
-
-.custom-data-table .rdt_TableHead {
-  border-bottom: 2px solid rgba(98, 104, 108, 0.15);
-}
-
-.transparent-table tr,
-.transparent-table td,
-.transparent-table th {
-  background-color: transparent !important;
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
 }
 
 .custom-border-table {

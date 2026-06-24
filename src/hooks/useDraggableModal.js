@@ -4,12 +4,9 @@ export function useDraggableModal() {
   const dragState = useRef({ isDragging: false, offsetX: 0, offsetY: 0 });
 
   const handleHeaderMouseDown = (e) => {
-    if (e.target.closest('button, .btn-close')) return;
+    if (e.target.closest('button, .app-modal-close')) return;
     
-    const modal = e.currentTarget.closest('.modal-dialog');
-
-    modal.style.maxWidth = "1600px";
-    modal.style.width = "1000px";
+    const modal = e.currentTarget.closest('.app-modal');
     
     const rect = modal.getBoundingClientRect();
     

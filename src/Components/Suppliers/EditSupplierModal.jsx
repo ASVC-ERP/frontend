@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { showLoadingSwal, showSuccessSwal, showErrorSwal, showWarningSwal, showConfirmSwal } from "../../utils/swal";
+import { useDraggableModal } from "../../hooks/useDraggableModal";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -10,6 +11,9 @@ export default function EditSupplierModal({
   onClose,
   onSuccess,
 }) {
+
+  const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
+
   const [form, setForm] = useState({
     sid: "",
     name: "",
@@ -68,6 +72,134 @@ export default function EditSupplierModal({
   };
 
   if (!show) return null;
+
+  return (
+    <div 
+      className="app-modal-backdrop"
+      onMouseMove={handleMouseMove}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseUp}  
+    >
+      <div className="app-modal app-modal-md">
+        <div className="app-modal-content">
+          <div 
+            className="app-modal-header cursor-move"
+            onMouseDown={handleHeaderMouseDown}
+          >
+            <div>
+              <h5>Edit Supplier</h5>
+              <span>Update supplier information</span>
+            </div>
+
+            <button
+              type="button"
+              className="app-modal-close"
+              onClick={onClose}
+              aria-label="Close"
+            >
+              ×
+            </button>
+          </div>
+
+          <div className="app-modal-body">
+            <form className="modal-form">
+              <div className="modal-form-section">
+                <div className="modal-form-section-title">
+                  Supplier Information
+                </div>
+
+                <div className="row g-3">
+                  <div className="col-md-4">
+                    <label className="form-label">
+                      Supplier ID
+                    </label>
+
+                    <input
+                      name="sid"
+                      value={form.sid}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="col-md-8">
+                    <label className="form-label">
+                      Supplier Name
+                    </label>
+
+                    <input
+                      name="name"
+                      value={form.name}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="col-md-12">
+                    <label className="form-label">
+                      Address
+                    </label>
+
+                    <input
+                      name="address"
+                      value={form.address}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="col-md-4">
+                    <label className="form-label">
+                      Currency
+                    </label>
+
+                    <input
+                      name="currency"
+                      value={form.currency}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+
+                  <div className="col-md-8">
+                    <label className="form-label">
+                      Number
+                    </label>
+
+                    <input
+                      name="number"
+                      value={form.number}
+                      onChange={handleChange}
+                      className="form-control"
+                    />
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div className="app-modal-footer">
+            <button
+              type="button"
+              className="btn-secondary-custom"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+
+            <button
+              type="button"
+              className="btn-primary-custom"
+              onClick={handleSave}
+              disabled={saving}
+            >
+              {saving ? "Saving..." : "Save Changes"}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div

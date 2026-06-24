@@ -69,15 +69,11 @@ export default function PurchasesPage() {
       {
         name: "Status",
         cell: (row) => (
-          <span
-            className={`badge ${
-              row.status === "POSTED" ? "bg-success" : "bg-secondary"
-            }`}
-          >
+          <span className={`status-badge status-${row.status?.toLowerCase()}`}>
             {row.status}
           </span>
         ),
-        width: "130px",
+        width: "150px",
         center: true,
       },
       {
@@ -198,16 +194,13 @@ export default function PurchasesPage() {
           paginationRowsPerPageOptions={[1, 50, 100, 150, 200]}
           paginationPerPage={limit}
           paginationDefaultPage={page}
-          onChangePage={(newPage) =>
-            setSearchParams({ page: newPage, limit })
-          }
-          onChangeRowsPerPage={(newLimit) =>
-            setSearchParams({ page, limit: newLimit })
-          }
+          onChangePage={(newPage) => setSearchParams({ page: newPage, limit }) }
+          onChangeRowsPerPage={(newLimit) => setSearchParams({ page, limit: newLimit }) }
+          persistTableHead
           highlightOnHover
           pointerOnHover
           fixedHeader
-          fixedHeaderScrollHeight="700px"
+          fixedHeaderScrollHeight="650px"
           className="custom-data-table"
           onRowClicked={(row) => navigate(`/purchase/${row.id}`)}
           progressPending={tableLoading}

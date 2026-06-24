@@ -39,7 +39,7 @@ export const useProductHandlers = (
         return;
       }
       try { 
-        const response = await axios.get(`${API_URL}/items/check-code?itemCode=${encodeURIComponent( itemCode )}` );
+        const response = await axios.get(`${API_URL}/product/check-code/${encodeURIComponent( itemCode )}` );
         setIsDuplicate(response.data.exists);
       } catch (error) { console.error("Error checking item code:", error); }
     };
@@ -47,7 +47,10 @@ export const useProductHandlers = (
     return () => clearTimeout(delay);
   }, [itemCode]);
 
-  const handleAddItemClick = () => { setShowItemModal(true); };
+  const handleAddItemClick = () => { 
+    console.log("add")
+    setShowItemModal(true); 
+  };
 
   const handleAddItem = async (newItem) => {
     Swal.fire({

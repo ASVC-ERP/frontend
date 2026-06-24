@@ -5,7 +5,7 @@
 .btn-primary-custom,
 .btn-secondary-custom {
   min-width: 100px;
-  height: 44px;
+  height: 38px;
   padding: 0 22px;
 
   display: inline-flex;
@@ -14,7 +14,7 @@
 
   border-radius: 10px;
   font-weight: 700;
-  font-size: 18px;
+  font-size: 16px;
 
   cursor: pointer;
   transition: all 0.2s ease;

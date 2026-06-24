@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import InvoiceTable from "./InvoiceTable";
 import { usePagination } from "../../hooks/usePagination";
+import { IoIosSearch } from "react-icons/io";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -49,37 +50,33 @@ function SalesInvoice() {
   const loadingText = search ? "Searching invoices..." : "Loading invoices...";
 
   return (
-    <div className="container-fluid mt-3">
+    <div className="page-container">
       {/* Header */}
-      <div className="row px-3 px-md-4">
-        <div className="col-12">
-          <p
-            className="fw-bold fs-4 fs-md-2 mb-2"
-            style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
-          >
+      <div className="page-header">
+        <div className="page-title">
             Invoices
-          </p>
         </div>
       </div>
 
       {/* Search */}
-      <div className="row px-3 px-md-4 mb-3">
-        <div className="col-auto">
-          <input
-            type="text"
-            className="form-control"
-            style={{ width: "450px" }}
-            placeholder="Search Customer or Order No..."
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-          />
-        </div>
+      <div className="page-toolbar">
+        <div className="search-group">
+          <div className="search-input-wrapper">
+            <IoIosSearch className="search-icon" />
 
-        <div className="col-auto d-flex gap-2">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Search Customer or Order No..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+              />
+          </div>
+
           <button
             disabled={tableLoading}
             type="button"
-            className="btn"
+            className="btn-primary-custom"
             onClick={ async () => {
               setPage(1);
               setSearch(searchInput);
@@ -87,18 +84,14 @@ function SalesInvoice() {
               await fetchInvoices(searchInput);
               setSearchLoading(false);
             }}
-            style={{ backgroundColor: "#1E5A84", color: "white", whiteSpace: "nowrap", }}
           >
-            {searchLoading && (
-              <span className="spinner-border spinner-border-sm"></span>
-            )}
             {searchLoading ? " Searching..." : "Search"}
           </button>
 
           <button
             disabled={tableLoading}
             type="button"
-            className="btn btn-secondary"
+            className="btn-secondary-custom"
             onClick={ async () => {
               setPage(1);
               setSearchInput("");
@@ -107,59 +100,51 @@ function SalesInvoice() {
               await fetchInvoices("");
               setClearLoading(false);
             }}
-            style={{ whiteSpace: "nowrap" }}
           >
-            {clearLoading && (
-              <span className="spinner-border spinner-border-sm"></span>
-            )}
             {clearLoading ? " Clearing..." : "Clear"}
           </button>
         </div>
       </div>
 
       {/* Table Section */}
-      <div className="row px-3 px-md-4">
-        <div className="col-12">
-          <div className="table-responsive table-responsive-sm">
-            <InvoiceTable
-              invoices={invoices}
-              fetchInvoices={fetchInvoices}
-              customers={customers}
-              page={page}
-              setPage={setPage}
-              limit={limit}
-              setLimit={setLimit}
-              totalRows={totalRows}
-              progressPending={tableLoading}
-              progressComponent={
-                <div
-                  style={{
-                    padding: "40px 0",
-                    textAlign: "center",
-                  }}
-                >
-                  <div
-                    className="spinner-border"
-                    style={{
-                      color: "#1E5A84",
-                      width: "2.5rem",
-                      height: "2.5rem",
-                    }}
-                  />
-                  <div
-                    style={{
-                      marginTop: "10px",
-                      color: "#6c757d",
-                      fontWeight: "600",
-                    }}
-                  >
-                    {loadingText}
-                  </div>
-                </div>
-              }
-            />
-          </div>
-        </div>
+      <div className="custom-data-table-wrapper">
+        <InvoiceTable
+          invoices={invoices}
+          fetchInvoices={fetchInvoices}
+          customers={customers}
+          page={page}
+          setPage={setPage}
+          limit={limit}
+          setLimit={setLimit}
+          totalRows={totalRows}
+          progressPending={tableLoading}
+          progressComponent={
+            <div
+              style={{
+                padding: "40px 0",
+                textAlign: "center",
+              }}
+            >
+              <div
+                className="spinner-border"
+                style={{
+                  color: "#1E5A84",
+                  width: "2.5rem",
+                  height: "2.5rem",
+                }}
+              />
+              <div
+                style={{
+                  marginTop: "10px",
+                  color: "#6c757d",
+                  fontWeight: "600",
+                }}
+              >
+                {loadingText}
+              </div>
+            </div>
+          }
+        />
       </div>
     </div>
   );
