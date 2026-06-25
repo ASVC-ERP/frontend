@@ -272,6 +272,7 @@ export default function CreatePurchase() {
         <div className="create-purchase-header">
           <div>
             <h1>Create Purchase</h1>
+            <p>Create a new purchase order and add supplier details.</p>
           </div>
         </div>
 

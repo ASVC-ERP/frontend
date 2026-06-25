@@ -65,7 +65,8 @@ export default function Suppliers() {
           </div>
         ),
         sortable: true,
-        width: "400px",
+        wrap: true,
+        grow: 2,
       },
       {
         name: "Address",
@@ -74,7 +75,7 @@ export default function Suppliers() {
             {row.address || "-"}
           </div>
         ),
-        width: "550px",
+        grow: 2,
       },
       {
         name: "Currency",
@@ -104,6 +105,9 @@ export default function Suppliers() {
         ),
         width: "120px",
         center: true,
+        ignoreRowClick: true,
+        allowOverflow: true,
+        button: true,
       }
     ],
     []

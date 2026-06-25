@@ -1,0 +1,296 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@200;300;400;500;600;700;800&display=swap");
+
+/* =========================
+   DETAILS PAGE LAYOUT
+========================= */
+
+.details-page {
+  padding: 1.5rem;
+  max-width: none;
+  font-family: "Karla", sans-serif;
+}
+
+.details-page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 16px;
+}
+
+.details-page-title {
+  color: #1e5a84;
+  font-size: 32px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+
+.details-page-subtitle {
+  font-size: 20px;
+  color: #888;
+  margin-top: 4px;
+}
+
+/* =========================
+   STATUS BADGE
+========================= */
+
+.details-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 16px;
+  border-radius: 999px;
+
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.details-status-badge::before {
+  content: "";
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.details-status-badge.success,
+.details-status-badge.posted,
+.details-status-badge.invoiced {
+  background: #eaf3de;
+  color: #006c02;
+}
+
+.details-status-badge.pending {
+  background: #faeeda;
+  color: #633806;
+}
+
+.details-status-badge.danger,
+.details-status-badge.cancelled {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* =========================
+   CARDS
+========================= */
+
+.details-cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+}
+
+.details-main-card {
+  grid-column: 1 / -1;
+  background: #f8f8f7;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+}
+
+.details-info-card {
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-left: 3px solid #185fa5;
+  border-radius: 0 8px 8px 0;
+  padding: 1rem 1.25rem;
+}
+
+.details-card-label {
+  font-size: 12px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 5px;
+}
+
+.details-card-value {
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.details-card-value.mono {
+  font-family: "Karla", sans-serif;
+  font-size: 16px;
+}
+
+/* =========================
+   MAIN ENTITY CARD
+========================= */
+
+.details-entity-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.details-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+
+  background: #b5d4f4;
+  color: #0c447c;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 13px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+
+/* =========================
+   TABLE CARD
+========================= */
+
+.details-table-card {
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.details-table-header {
+  padding: 1rem 1.25rem 0.75rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
+.details-table-title {
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.details-item-count {
+  font-size: 13px;
+  color: #666;
+  background: #f4f4f2;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+/* =========================
+   TABLE
+========================= */
+
+.details-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.details-table thead th {
+  font-size: 12px;
+  color: #999;
+
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  font-weight: 500;
+
+  padding: 11px 1.25rem;
+  text-align: center;
+
+  background: #f8f8f7;
+}
+
+.details-table tbody tr {
+  border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+}
+
+.details-table tbody tr:hover {
+  background: #fafaf9;
+}
+
+.details-table tbody td {
+  padding: 13px 1.25rem;
+  font-size: 16px;
+  text-align: center;
+}
+
+.details-table tbody td:first-child {
+  text-align: left;
+  font-weight: 500;
+}
+
+.details-table tfoot {
+  border-top: 1.5px solid rgba(0, 0, 0, 0.15);
+}
+
+.details-table tfoot td {
+  padding: 14px 1.25rem;
+}
+
+.details-total-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: #999;
+}
+
+.details-total-value {
+  font-family: "Karla", sans-serif;
+  font-size: 30px;
+  font-weight: 500;
+  text-align: right;
+}
+
+.details-subtotal {
+  font-family: "Karla", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.details-num {
+  font-family: "Karla", sans-serif;
+  font-size: 15px;
+  color: #666;
+}
+
+/* =========================
+   VALUE COLORS
+========================= */
+
+.text-success-custom {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.text-danger-custom {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+  .details-page-header {
+    flex-direction: column;
+  }
+
+  .details-cards-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .details-page-title {
+    font-size: 26px;
+  }
+}

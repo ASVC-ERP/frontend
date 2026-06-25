@@ -4,6 +4,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import "./CreateOrder.css"
 
 const MAX_ORDER_ITEMS = 16;
 
@@ -289,6 +290,65 @@ function CreateOrder() {
   const handleCancel = () => {
     navigate("/order"); // Navigate back to SalesOrder page
   };
+
+  return (
+    <form onSubmit={handleSubmit} className="create-order-page">
+      <div className="create-order-card">
+        <div className="create-order-header">
+          <div>
+            <h1>Create Order</h1>
+            <p>Create a new sales order and add customer/product details.</p>
+          </div>
+        </div>
+  
+        <div className="create-order-section">
+          <h5>Customer Information</h5>
+          <div className="create-order-panel">
+            <InfoForm info={info} setInfo={setInfo} />
+          </div>
+        </div>
+  
+        <div className="create-order-section">
+          <h5>Product Details</h5>
+          <div className="create-order-panel">
+            <OrderForm
+              query={query}
+              suggestions={suggestions}
+              orderItems={orderItems}
+              onSearchChange={handleSearchChange}
+              onSelectProduct={handleSelectProduct}
+              onPriceChange={handlePriceChange}
+              onEnableCustomPrice={handleEnableCustomPrice}
+              onDisableCustomPrice={handleDisableCustomPrice}
+              onUpdateOrderItem={updateOrderItem}
+              onCalculateTotal={calculateTotal}
+              onCalculateTotalPrice={calculateTotalPrice}
+              onRemoveProduct={handleRemoveProduct}
+              onDeleteItem={handleDeleteItem}
+            />
+          </div>
+        </div>
+  
+        <div className="create-order-actions">
+          <button
+            type="button"
+            className="order-secondary-btn"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+  
+          <button
+            type="submit"
+            className="order-primary-btn"
+            disabled={calculateTotalPrice() === 0}
+          >
+            Submit
+          </button>
+        </div>
+      </div>
+    </form>
+  );
 
   return (
     <form onSubmit={handleSubmit}>

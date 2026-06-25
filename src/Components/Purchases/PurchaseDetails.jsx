@@ -242,7 +242,7 @@ export default function PurchaseDetailsPage() {
   
       <div className="table-card">
         <div className="table-card-header">
-          <span className="table-title">Products Order List</span>
+          <span className="table-title">Products Purchased List</span>
           <span className="item-count">
             {invoice.supplier_invoice_items.length} items
           </span>

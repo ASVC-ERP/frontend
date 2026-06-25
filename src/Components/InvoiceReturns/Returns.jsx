@@ -8,33 +8,44 @@ import { IoIosSearch } from "react-icons/io";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-export default function ReturnPurchase() {
+export default function ReturnSalesInvoice() {
   const navigate = useNavigate();
+
   const [returns, setReturns] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
+
   const [searchLoading, setSearchLoading] = useState(false);
   const [clearLoading, setClearLoading] = useState(false);
-  const [tableLoading, setTableLoading] = useState(false);
   const [loading, setLoading] = useState(true);
+
   const [searchParams, setSearchParams] = useSearchParams();
+
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 50);
+
   const [totalRows, setTotalRows] = useState(0);
   const [selectedReturn, setSelectedReturn] = useState(null);
 
   useEffect(() => {
     fetchReturns();
-  }, [page, limit, name]);
+  }, [page, limit, search]);
 
   const fetchReturns = async (searchValue = search) => {
     try {
-      const res = await axios.get(`${API_URL}/supplier-invoice/return`, { params: { page, limit, name: searchValue }, });
-      console.log(res.data);
+      setLoading(true);
+      const res = await axios.get(`${API_URL}/invoice/return`, {
+        params: {
+          page,
+          limit,
+          search: searchValue,
+        },
+      });
+
       setReturns(res.data.data || []);
-      setTotalRows(res.data.meta?.total);
+      setTotalRows(res.data.meta?.total || 0);
     } catch (err) {
-      console.error("Failed to fetch supplier returns:", err);
+      console.error("Failed to fetch sales invoice returns:", err);
     } finally {
       setLoading(false);
     }
@@ -53,30 +64,23 @@ export default function ReturnPurchase() {
   const columns = [
     {
       name: "Return No.",
-      selector: (row) => `RET-${String(row.id).padStart(5, "0")}`,
+      selector: (row) => row.return_number,
       sortable: true,
-      width: "140px",
+      center: true,
+      width: "150px",
     },
     {
-      name: "Invoice No.",
-      selector: (row) =>
-        row.supplier_invoices?.invoice_number || "-",
+      name: "Order",
+      selector: (row) => `ORD${String(row.sales_invoices?.order_id).padStart(4, "0")}` || "-",
       sortable: true,
-      width: "140px",
+      center: true,
+      width: "150px",
     },
     {
-      name: "PO No.",
-      selector: (row) =>
-        row.supplier_invoices?.po_number || "-",
+      name: "Customer",
+      selector: (row) => row.sales_invoices?.customers?.name || "-",
       sortable: true,
-      width: "140px",
-    },
-    {
-      name: "Supplier",
-      selector: (row) =>
-        row.supplier_invoices?.suppliers?.name || "-",
-      sortable: true,
-      grow: 2,
+      grow: 1,
       wrap: true,
     },
     {
@@ -93,16 +97,13 @@ export default function ReturnPurchase() {
     },
     {
       name: "Action",
-      width: "140px",
+      width: "150px",
       cell: (row) => (
         <button
           className="primary-btn"
           onClick={(e) => {
             e.stopPropagation();
-    
-            navigate(
-              `/purchase/${row.supplier_invoices.id}`
-            );
+            navigate(`/invoices/${row.invoice_id}`);
           }}
         >
           View Invoice
@@ -116,21 +117,18 @@ export default function ReturnPurchase() {
 
   return (
     <div className="page-container">
-      {/* HEADER */}
       <div className="page-header">
-        <div className="page-title">Purchase Returns</div>
+        <div className="page-title">Sales Invoice Returns</div>
       </div>
 
-      {/* TOOLBAR */}
       <div className="page-toolbar">
-
         <div className="search-group">
           <div className="search-input-wrapper">
             <IoIosSearch className="search-icon" />
 
             <input
               type="text"
-              placeholder="Search supplier name..."
+              placeholder="Search customer name..."
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
               className="search-input"
@@ -138,29 +136,25 @@ export default function ReturnPurchase() {
           </div>
 
           <button
-            disabled={tableLoading}
+            disabled={loading}
             className="btn-primary-custom"
-            onClick={async () => {
-              if (searchInput !== "") {
-                setSearch(searchInput);
-                setSearchLoading(true);
-                await fetchReturns(searchInput);
-                setSearchLoading(false);
-              }
+            onClick={ async() => {
+              if (!searchInput.trim()) return;
+              setSearch(searchInput);
+              setSearchLoading(true);
+              await fetchReturns(searchInput);
+              setSearchLoading(false);
             }}
           >
             {searchLoading ? "Searching..." : "Search"}
           </button>
 
           <button
-            disabled={tableLoading}
+            disabled={loading}
             className="btn-secondary-custom"
-            onClick={async () => {
+            onClick={() => {
               setSearchInput("");
               setSearch("");
-              setClearLoading(true);
-              await fetchReturns("");
-              setClearLoading(false);
             }}
           >
             {clearLoading ? "Clearing..." : "Clear"}
@@ -168,7 +162,6 @@ export default function ReturnPurchase() {
         </div>
       </div>
 
-      {/* TABLE */}
       <div className="custom-data-table-wrapper">
         <DataTable
           columns={columns}
@@ -180,21 +173,47 @@ export default function ReturnPurchase() {
           paginationRowsPerPageOptions={[2, 50, 100, 150, 200]}
           paginationPerPage={limit}
           paginationDefaultPage={page}
-          onChangePage={(newPage) => setSearchParams({ page: newPage, limit }) }
-          onChangeRowsPerPage={(newLimit) => setSearchParams({ page, limit: newLimit }) }
+          onChangePage={(newPage) =>
+            setSearchParams({ page: newPage, limit })
+          }
+          onChangeRowsPerPage={(newLimit) =>
+            setSearchParams({ page: 1, limit: newLimit })
+          }
           highlightOnHover
           striped
           responsive
           persistTableHead
           fixedHeader
           fixedHeaderScrollHeight="650px"
-          onRowClicked={(row) => setSelectedReturn(row)}
+          onRowClicked={(row) => {
+            console.log("row: ",row)
+            setSelectedReturn({
+              id: row.id,
+              reason: row.reason,
+              created_at: row.created_at,
+              invoice_id: row.invoice_id,
+              return_number: row.return_number,
+              sales_invoices: row.sales_invoices,
+              sales_return_items:
+                row.sales_return_items?.map((item) => ({
+                  id: item.id,
+                  return_id: item.return_id,
+                  invoice_item_id: item.invoice_item_id,
+                  return_qty: item.return_qty,
+                  remaining_qty: item.remaining_qty,
+                  products:
+                    item.products ||
+                    item.sales_invoice_items?.products ||
+                    {},
+                })) || [],
+            });
+          }}
           className="custom-data-table"
-          noDataComponent="No returns found"
+          noDataComponent="No sales invoice returns found"
         />
       </div>
 
-      {selectedReturn && (  
+      {selectedReturn && (
         <ReturnDetailsModal
           returnData={selectedReturn}
           onClose={() => setSelectedReturn(null)}

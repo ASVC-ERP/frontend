@@ -1,0 +1,169 @@
+@import url("https://fonts.googleapis.com/css2?family=Karla:wght@200;300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap");
+
+.create-order-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  padding: 28px;
+  font-family: "Karla", sans-serif;
+}
+
+.create-order-card {
+  background: #ffffff;
+  border-radius: 18px;
+  padding: 28px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  overflow: visible;
+}
+
+.create-order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.create-order-header h1 {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e5a84;
+  letter-spacing: -0.5px;
+}
+
+.create-order-header p {
+  margin: 6px 0 0;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.create-order-section {
+  margin-bottom: 28px;
+}
+
+.create-order-section h5 {
+  font-size: 17px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 14px;
+}
+
+.create-order-panel {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  overflow: visible;
+}
+
+.create-order-panel .form-label {
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.create-order-panel .form-control,
+.create-order-panel .form-select {
+  min-height: 42px;
+  border-radius: 10px;
+  border: 1px solid #cbd5e1;
+  color: #1e293b;
+  font-size: 15px;
+}
+
+.create-order-panel .form-control:focus,
+.create-order-panel .form-select:focus {
+  border-color: #1e5a84;
+  box-shadow: 0 0 0 3px rgba(30, 90, 132, 0.12);
+}
+
+.create-order-panel .table-responsive {
+  overflow: visible !important;
+}
+
+.create-order-panel table thead th {
+  background: #eef6fb;
+  color: #475569;
+  font-size: 14px;
+  font-weight: 800;
+  border-bottom: 1px solid #dbeafe;
+}
+
+.create-order-panel table td {
+  vertical-align: middle;
+}
+
+.create-order-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 22px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.order-primary-btn {
+  border: none;
+  background: linear-gradient(135deg, #1e5a84, #2c7cb0);
+  color: white;
+  font-weight: 800;
+  padding: 10px 24px;
+  border-radius: 10px;
+  box-shadow: 0 6px 16px rgba(30, 90, 132, 0.25);
+  transition: all 0.2s ease;
+}
+
+.order-primary-btn:hover {
+  background: linear-gradient(135deg, #174767, #1e5a84);
+  transform: translateY(-1px);
+}
+
+.order-primary-btn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.order-secondary-btn {
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  color: #475569;
+  font-weight: 800;
+  padding: 10px 24px;
+  border-radius: 10px;
+  transition: all 0.2s ease;
+}
+
+.order-secondary-btn:hover {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+@media (max-width: 768px) {
+  .create-order-page {
+    padding: 16px;
+  }
+
+  .create-order-card {
+    padding: 20px;
+    border-radius: 14px;
+  }
+
+  .create-order-header h1 {
+    font-size: 25px;
+  }
+
+  .create-order-panel {
+    padding: 16px;
+  }
+
+  .create-order-actions {
+    flex-direction: column-reverse;
+  }
+
+  .order-primary-btn,
+  .order-secondary-btn {
+    width: 100%;
+  }
+}

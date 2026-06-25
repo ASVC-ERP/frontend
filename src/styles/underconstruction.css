@@ -1,0 +1,96 @@
+.under-construction-page {
+  flex:1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  background: #f6f8fb;
+}
+
+.construction-card {
+  width: 100%;
+  max-width: 650px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 60px 50px;
+  text-align: center;
+  box-shadow:
+    0 20px 40px rgba(0, 0, 0, 0.06),
+    0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.construction-icon {
+  width: 110px;
+  height: 110px;
+  margin: 0 auto 24px;
+  border-radius: 50%;
+  background: rgba(30, 90, 132, 0.08);
+  color: #1e5a84;
+  font-size: 52px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  animation: pulse 2s infinite;
+}
+
+.construction-title {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+  color: #1f2937;
+  font-family: "Karla", sans-serif;
+}
+
+.construction-text {
+  margin-top: 16px;
+  font-size: 17px;
+  color: #6b7280;
+  line-height: 1.7;
+}
+
+.construction-progress {
+  margin: 40px auto 12px;
+  width: 100%;
+  height: 10px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #e5e7eb;
+}
+
+.construction-progress-bar {
+  width: 45%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(
+    90deg,
+    #1e5a84,
+    #2c7db5
+  );
+}
+
+.construction-status {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1e5a84;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.85;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}

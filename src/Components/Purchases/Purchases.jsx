@@ -42,7 +42,7 @@ export default function PurchasesPage() {
   const limit = Number(searchParams.get("limit") || 50);
   const [totalRows, setTotalRows] = useState(0);
 
-  /* FETCH DATA (Bun-compatible) */
+  /* FETCH DATA */
   useEffect(() => {
     fetchData();
   }, [page, limit, name]);

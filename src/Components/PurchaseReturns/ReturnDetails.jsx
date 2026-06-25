@@ -1,4 +1,4 @@
-import "../Purchases/ReturnPurchase.css";
+import "../../styles/details-page.css";
 
 export default function ReturnDetailsModal({ returnData, onClose }) {
   const invoice = returnData.supplier_invoices;
@@ -32,14 +32,14 @@ export default function ReturnDetailsModal({ returnData, onClose }) {
                 <div className="form-control">{invoice?.invoice_number || "-"}</div>
               </div>
 
-              <div className="col-md-3">
+              <div className="col-md-6">
                 <label className="form-label">Supplier</label>
                 <div className="form-control">
                   {invoice?.suppliers?.name || "-"}
                 </div>
               </div>
 
-              <div className="col-md-3">
+              <div className="col-md-12">
                 <label className="form-label">Reason</label>
                 <div className="form-control">{returnData.reason || "-"}</div>
               </div>

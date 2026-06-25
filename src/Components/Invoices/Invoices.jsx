@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import "../../styles/buttons.css"
 const API_URL = import.meta.env.VITE_API_URL;
 
 function SalesInvoices() {
+  const navigate = useNavigate();
   const [invoices, setInvoices] = useState([]);
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -33,6 +34,7 @@ function SalesInvoices() {
         },
       });
 
+      console.log(response.data.data)
       setInvoices(response.data.data);
       setTotalRows(response.data.meta.total);
     } catch (error) {
@@ -55,45 +57,69 @@ function SalesInvoices() {
 
   const loadingText = search ? "Searching invoices..." : "Loading invoices...";
 
-  const columns = [
-    {
-      name: "Invoice No.",
-      selector: (row) => row.invoice_number,
-      sortable: true,
-      center: true,
-    },
-    {
-      name: "Order No.",
-      selector: (row) =>
-        `ORD${String(row.order_id).padStart(4, "0")}`,
-      center: true,
-    },
-    {
-      name: "Date",
-      selector: (row) =>
-        new Date(row.invoice_date).toLocaleDateString(),
-      center: true,
-    },
-    {
-      name: "Customer",
-      selector: (row) => row.customer?.name,
-      sortable: true,
-      grow: 2,
-    },
-    {
-      name: "Amount",
-      selector: (row) =>
-        `₱${Number(row.total_price).toLocaleString("en-PH", {
-          minimumFractionDigits: 2,
-        })}`,
-      right: true,
-    },
-    {
-      name: "PIC",
-      selector: (row) => row.user?.name,
-      center: true,
-    },
-  ];
+  const columns = useMemo(
+    () => [
+      {
+        name: "Order",
+        selector: (row) => `ORD${String(row.order_id).padStart(4, "0")}`,
+        center: true,
+        width: "150px",
+      },
+      {
+        name: "Date",
+        selector: (row) =>
+          new Date(row.invoice_date).toLocaleDateString(),
+        center: true,
+        width: "150px",
+      },
+      {
+        name: "Customer",
+        cell: (row) => (
+          <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
+            {row.customer.name || "N/A"}
+          </div>
+        ),
+        sortable: true,
+        width: "350px",
+        center: true,
+      },
+      {
+        name: "Amount",
+        selector: (row) =>
+          row.total_price != null
+            ? `₱${Number(row.total_price).toLocaleString("en-PH", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}`
+            : "—",
+        width: "200px",
+        center: true,
+      },
+      {
+        name: "Invoice No.",
+        selector: (row) => row.invoice_number,
+        width: "180px",
+        center: true,
+      },
+      {
+        name: "Waybill No.",
+        selector: (row) => row.waybill_number,
+        width: "180px",
+        center: true,
+      },
+      {
+        name: "Courier",
+        selector: (row) => row.courier,
+        width: "180px",
+        center: true,
+      },
+      {
+        name: "Shipping Date",
+        selector: (row) => row.shipping_date,
+        width: "180px",
+        center: true,
+      },
+  ]);
 
   return (
     <div className="page-container">
@@ -150,6 +176,7 @@ function SalesInvoices() {
           onChangeRowsPerPage={(newLimit) =>
             setSearchParams({ page, limit: newLimit })
           }
+          onRowClicked={(row) => navigate(`/invoices/${row.id}`)}
           paginationRowsPerPageOptions={[10, 25, 50, 100]}
           highlightOnHover
           responsive

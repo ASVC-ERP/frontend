@@ -1,9 +1,15 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { LuPackage, LuUsers, LuTruck, LuClipboardList, LuArrowRight, } from "react-icons/lu";
+import "../styles/dashboard.css";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem("user"));
+  const name = "Jiko";
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
   const [totalSuppliers, setTotalSuppliers] = useState(0);
@@ -11,25 +17,22 @@ export default function HomePage() {
   const [totalCustomers, setTotalCustomers] = useState(0);
   const [latestOrders, setLatestOrders] = useState([]);
   const [latestInvoices, setLatestInvoices] = useState([]);
-  const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const [pcountRes, scountRes, ocountRes, ccountRes] = await Promise.all([
-          axios.get(`${API_URL}/product/count`),
-          axios.get(`${API_URL}/supplier/count`),
-          axios.get(`${API_URL}/order/count`),
-          axios.get(`${API_URL}/customer/count`),
-        ]);
+        const [pcountRes, scountRes, ocountRes, ccountRes] =
+          await Promise.all([
+            axios.get(`${API_URL}/product/count`),
+            axios.get(`${API_URL}/supplier/count`),
+            axios.get(`${API_URL}/order/count`),
+            axios.get(`${API_URL}/customer/count`),
+          ]);
 
-        // Adjust according to your backend response
-        // e.g., if backend returns { count: 42 }
         setTotalItems(pcountRes.data.count ?? pcountRes.data);
         setTotalSuppliers(scountRes.data.count ?? scountRes.data);
-        setTotalOrders(ocountRes.data.count ?? ocountRes.data)
-        setTotalCustomers(ccountRes.data.count ?? ccountRes.data)
-
+        setTotalOrders(ocountRes.data.count ?? ocountRes.data);
+        setTotalCustomers(ccountRes.data.count ?? ccountRes.data);
       } catch (error) {
         console.error("Error fetching counts:", error);
       } finally {
@@ -38,126 +41,192 @@ export default function HomePage() {
     };
 
     fetchCounts();
-  }, []);
+  }, [API_URL]);
 
   useEffect(() => {
     const fetchLatest = async () => {
       try {
-        const [ oRes, iRes ] = await Promise.all ([
+        const [oRes, iRes] = await Promise.all([
           axios.get(`${API_URL}/order/latest`),
-          axios.get(`${API_URL}/invoice/latest`)
+          axios.get(`${API_URL}/invoice/latest`),
         ]);
-        setLatestOrders(oRes.data);
-        setLatestInvoices(iRes.data)
+
+        setLatestOrders(oRes.data ?? []);
+        setLatestInvoices(iRes.data ?? []);
       } catch (err) {
         console.error("Failed to fetch latest:", err);
       }
     };
 
     fetchLatest();
-  }, []);
+  }, [API_URL]);
 
-  const StatCard = ({ title, value, colorClass }) => (
-    <div className="col-md-3">
-      <div className={`card shadow-sm border-0 p-3 ${colorClass}`}>
-        <h6>{title}</h6>
-        <h3>{value}</h3>
+  const formatCurrency = (value) =>
+    new Intl.NumberFormat("en-PH", {
+      style: "currency",
+      currency: "PHP",
+    }).format(value ?? 0);
+
+  const StatCard = ({ title, value, icon: Icon, tone }) => (
+    <div className="col-12 col-sm-6 col-xl-3">
+      <div className={`dashboard-stat-card ${tone}`}>
+        <div className="dashboard-stat-icon">
+          <Icon size={24} />
+        </div>
+
+        <div>
+          <p>{title}</p>
+          <h3>{loading ? "..." : value}</h3>
+        </div>
       </div>
     </div>
   );
 
   const quickActions = [
-    { label: "View Products", route: "/products", className: "btn-primary" },
-    { label: "Create Order", route: "/create-order", className: "btn-success" },
-    { label: "Manage Suppliers", route: "/supplier", className: "btn-warning" },
-    { label: "View Invoices", route: "/invoice", className: "btn-dark" },
+    { label: "Create Order", route: "/create-order" },
+    { label: "Create Purchase", route: "create-purchase" },
+    { label: "Manage Suppliers", route: "/suppliers" },
+    { label: "Manage Customers", route: "/customer" },
+    { label: "View Orders", route: "/order" },
+    { label: "View Invoices", route: "/invoice" },
+    { label: "View Products", route: "/products" },
   ];
 
   return (
-    <div className="p-4" style={{ background: "#f6f7fb", minHeight: "100vh" }}>
-      {/* Header */}
-      <div className="mb-4">
-        <h3 style={{ fontWeight: "710", color: "#1E5A84" }}>Dashboard</h3>
+    <div className="dashboard-page">
+      <div className="dashboard-header">
+      <div>
+        <p className="dashboard-eyebrow">Dashboard</p>
+        <h1>Welcome back, {user.name}!</h1>
+        <span>Here's what's happening across your inventory and sales today.</span>
+      </div>
       </div>
 
-      {/* Stats Cards */}
-      <div className="row g-3 mb-4">
-        <StatCard title="Open Orders" value={loading ? "..." : totalOrders} />
-        <StatCard title="Total Items" value={loading ? "..." : totalItems} />
-        <StatCard title="Customers" value={loading ? "..." : totalCustomers} />
-        <StatCard title="Suppliers" value={loading ? "..." : totalSuppliers} />
+      <div className="row g-3 dashboard-stats">
+        <StatCard
+          title="Open Orders"
+          value={totalOrders}
+          icon={LuClipboardList}
+          tone="blue"
+        />
+        <StatCard
+          title="Total Items"
+          value={totalItems}
+          icon={LuPackage}
+          tone="green"
+        />
+        <StatCard
+          title="Customers"
+          value={totalCustomers}
+          icon={LuUsers}
+          tone="purple"
+        />
+        <StatCard
+          title="Suppliers"
+          value={totalSuppliers}
+          icon={LuTruck}
+          tone="orange"
+        />
       </div>
 
-      {/* Quick Actions */}
-      <div className="card shadow-sm border-0 p-4 mb-4">
-        <h5 className="mb-3">Quick Actions</h5>
+      <div className="dashboard-card dashboard-actions-card">
+        <div className="dashboard-section-header">
+          <div>
+            <h2>Quick Actions</h2>
+            <p>Jump directly to commonly used pages.</p>
+          </div>
+        </div>
 
-        <div className="d-flex gap-3 flex-wrap">
-          {quickActions.map((action) => (
-            <button
-              key={action.route}
-              className={`btn ${action.className}`}
-              onClick={() => navigate(action.route)}
-            >
-              {action.label}
-            </button>
-          ))}
+        <div className="dashboard-actions">
+          {quickActions.map((action) => {
+            return (
+              <button
+                key={action.route}
+                className="dashboard-action-btn"
+                onClick={() => navigate(action.route)}
+              >
+                <span>
+                  {action.label}
+                </span>
+                <LuArrowRight size={18} />
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Latest Open Orders */}
-      <div className="card shadow-sm border-0 p-4 mb-4">
-        <h5 className="mb-3">Latest Open Orders</h5>
-        {latestOrders.length === 0 ? (
-          <p style={{ color: "#6c757d" }}>No open orders.</p>
-        ) : (
-          <ul className="list-group list-group-flush">
-            {latestOrders.map((order) => (
-              <li
-                key={order.id}
-                className="list-group-item d-flex flex-column gap-1"
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/order`)}
-              >
-                <div className="d-flex justify-content-between">
-                  <span><strong>Order #{order.id}</strong></span>
-                  <span className="badge bg-success">{order.status}</span>
-                </div>
+      <div className="row g-4">
+        <div className="col-12 col-xl-7">
+          <div className="dashboard-card h-100">
+            <div className="dashboard-section-header">
+              <div>
+                <h2>Latest Open Orders</h2>
+                <p>Recently created or active sales orders.</p>
+              </div>
+            </div>
 
-                <div className="d-flex justify-content-between text-muted" style={{ fontSize: "0.9rem" }}>
-                  <span>Customer: {order.customers.name}</span>
-                  <span>Total: ₱{order.total_price.toLocaleString()}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+            {latestOrders.length === 0 ? (
+              <div className="dashboard-empty">No open orders found.</div>
+            ) : (
+              <div className="dashboard-list">
+                {latestOrders.map((order) => (
+                  <div
+                    key={order.id}
+                    className="dashboard-list-item"
+                    onClick={() => navigate("/order")}
+                  >
+                    <div>
+                      <h4>Order #{order.id}</h4>
+                      <p>{order.customers?.name ?? "No customer name"}</p>
+                    </div>
+
+                    <div className="dashboard-list-right">
+                      <span className="dashboard-badge success">
+                        {order.status}
+                      </span>
+                      <strong>{formatCurrency(order.total_price)}</strong>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+
+        <div className="col-12 col-xl-5">
+          <div className="dashboard-card h-100">
+            <div className="dashboard-section-header">
+              <div>
+                <h2>Latest Invoices</h2>
+                <p>Most recent generated invoices.</p>
+              </div>
+            </div>
+
+            {latestInvoices.length === 0 ? (
+              <div className="dashboard-empty">No invoices found.</div>
+            ) : (
+              <div className="dashboard-list compact">
+                {latestInvoices.map((invoice) => (
+                  <div
+                    key={invoice.id}
+                    className="dashboard-list-item"
+                    onClick={() => navigate("/invoice")}
+                  >
+                    <div>
+                      <h4>
+                        Invoice #{invoice.invoice_number ?? invoice.id}
+                      </h4>
+                      <p>{invoice.customers?.name ?? "No customer name"}</p>
+                    </div>
+
+                    <LuArrowRight className="dashboard-row-arrow" size={18} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
-
-      {/* Latest Invoices */}
-      <div className="card shadow-sm border-0 p-4 mb-4">
-        <h5 className="mb-3">Latest Invoices</h5>
-        {latestInvoices.length === 0 ? (
-          <p style={{ color: "#6c757d" }}>No invoices.</p>
-        ) : (
-          <ul className="list-group list-group-flush">
-            {latestInvoices.map((invoice) => (
-              <li
-                key={invoice.id}
-                className="list-group-item d-flex flex-column gap-1"
-                style={{ cursor: "pointer" }}
-                onClick={() => navigate(`/invoice`)}
-              >
-                <div className="d-flex justify-content-between">
-                  <span><strong>Invoice #{invoice.id}</strong></span>
-                  <span>Customer: {invoice.customers.name}</span>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
     </div>
   );
 }

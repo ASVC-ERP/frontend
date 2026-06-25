@@ -54,12 +54,51 @@
 }
 
 /* =========================
+   TERTIARY
+========================= */
+
+.btn-tertiary-custom {
+  min-width: 100px;
+  height: 38px;
+  padding: 0 22px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  border: none;
+  border-radius: 10px;
+
+  background: linear-gradient(135deg, #639922, #7fb83d);
+  color: #ffffff;
+
+  font-size: 16px;
+  font-weight: 700;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  box-shadow: 0 4px 12px rgba(99, 153, 34, 0.25);
+}
+
+.btn-tertiary-custom:hover {
+  background: linear-gradient(135deg, #4f7d1a, #6ca530);
+  transform: translateY(-1px);
+
+  box-shadow: 0 6px 16px rgba(99, 153, 34, 0.35);
+}
+
+.btn-tertiary-custom:active {
+  transform: translateY(0);
+}
+
+/* =========================
    DANGER
 ========================= */
 
 .btn-danger-custom {
-  min-width: 140px;
-  height: 44px;
+  min-width: 100px;
+  height: 38px;
 
   border: none;
   border-radius: 10px;
@@ -81,6 +120,7 @@
 
 .btn-primary-custom:disabled,
 .btn-secondary-custom:disabled,
+.btn-tertiary-custom:disabled,
 .btn-danger-custom:disabled {
   opacity: 0.7;
   cursor: not-allowed;

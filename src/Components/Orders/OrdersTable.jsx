@@ -53,7 +53,7 @@ function OrdersTable({
     },
     {
       name: "Order No.",
-      selector: (row) => row.id,
+      selector: (row) => `ORD${String(row.id).padStart(4, "0")}`,
       width: "120px",
       center: true
     },

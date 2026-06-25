@@ -2,12 +2,12 @@ import { LiaUserCircle } from "react-icons/lia";
 import { MdOutlinePeopleAlt } from "react-icons/md";
 import { BsPersonGear } from "react-icons/bs";
 import { PiGearSixBold, PiShoppingBagBold } from "react-icons/pi";
-import { TbTruckDelivery, TbTruckReturn } from "react-icons/tb";
+import { TbTruckDelivery, TbTruckReturn, TbReportAnalytics } from "react-icons/tb";
 import { RiReceiptLine } from "react-icons/ri";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
-
 import { useState } from "react";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
@@ -15,33 +15,7 @@ import "./Sidebar.css";
 
 export default function Sidebar({ onLogout }) {
   const user = JSON.parse(localStorage.getItem("user"));
-
   const API_URL = import.meta.env.VITE_API_URL;
-
-  const [pendingCount, setPendingCount] = useState(0);
-
-  /*
-  useEffect(() => {
-    const fetchPendingOrders = async () => {
-      try {
-        const response = await axios.get(
-          `${API_URL}/orders/sales-orders/by-status`,
-          { params: { status: "pending" } }
-        );
-        setPendingCount(response.data.length || 0);
-      } catch (error) {
-        console.error("Error fetching pending orders:", error);
-        setPendingCount(0);
-      }
-    };
-
-    fetchPendingOrders();
-
-    // Optionally refresh every minute
-    const interval = setInterval(fetchPendingOrders, 60000);
-    return () => clearInterval(interval);
-  }, []);
-  */
 
   const linkStyle = {
     color: "#1E5A84",
@@ -49,20 +23,26 @@ export default function Sidebar({ onLogout }) {
     cursor: "pointer",
     textDecoration: "none",
   };
+
+  const [isCollapsed, setIsCollapsed] = useState(false);
  
   return (
-    <div className="sidebar-container d-flex flex-column">
+    <div className={`sidebar-container d-flex flex-column ${isCollapsed ? "collapsed" : ""}`}>
       {/* Logo and Company Name */}
       <div className="logo-container">
         <img src={logo} alt="Logo" className="sidebar-logo" />
+        <button
+          className="sidebar-toggle"
+          onClick={() => setIsCollapsed(!isCollapsed)}
+        >
+          {isCollapsed ? <FiChevronRight /> : <FiChevronLeft />}
+        </button>
       </div>
 
       {/* Navigation Links */}      
       <div className="sidebar">
 
-        {/* ANALYTICS */}
-        <p className="sidebar-header">ANALYTICS</p>
-        <ul className="sidebar-group">
+      <ul className="sidebar-group">
           <li className="mt-2">
             <Link to="/" className="nav-link d-flex align-items-center" style={linkStyle}>
               <LuLayoutDashboard className="me-3" size={25} />
@@ -82,16 +62,16 @@ export default function Sidebar({ onLogout }) {
           </li>
 
           <li className="mt-2">
-            <Link to="/invoice" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/invoices" className="nav-link d-flex align-items-center" style={linkStyle}>
               <RiReceiptLine className="me-3" size={25} />
               <span className="sidebar-text">Invoices</span>
             </Link>
           </li>
 
           <li className="mt-2">
-            <Link to="/invoice/returns" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/invoice-return" className="nav-link d-flex align-items-center" style={linkStyle}>
               <HiOutlineReceiptRefund className="me-3" size={25} />
-              <span className="sidebar-text">Returns</span>
+              <span className="sidebar-text">S. Returns</span>
             </Link>
           </li>
         </ul>
@@ -120,13 +100,13 @@ export default function Sidebar({ onLogout }) {
           <li className="mt-2">
             <Link to="/purchase-return" className="nav-link d-flex align-items-center" style={linkStyle}>
               <TbTruckReturn className="me-3" size={25} />
-              <span className="sidebar-text">Returns</span>
+              <span className="sidebar-text">P. Returns</span>
             </Link>
           </li>
         </ul>
 
         {/* ADMIN */}
-        <p className="sidebar-header">ADMIN</p>
+        <p className="sidebar-header">MASTER DATA</p>
         <ul className="sidebar-group">
           <li className="mt-2">
             <Link to="/suppliers" className="nav-link d-flex align-items-center" style={linkStyle}>
@@ -160,7 +140,7 @@ export default function Sidebar({ onLogout }) {
               className="h6 fw-bolder ms-3 sidebar-text mb-0"
               style={{ color: "#1E5A84" }}
             >
-              Hi, {user.name}!
+              {user.name}
             </p>
           </button>
           <ul

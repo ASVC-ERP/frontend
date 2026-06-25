@@ -10,7 +10,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
       </div>
     ),
     wrap: true,
-    width: "290px",
+    grow: 1,
   },
   {
     name: "PIC",
@@ -20,7 +20,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.pic || "N/A"}
       </div>
     ),
-    width: "220px",
+    grow: 1,
     wrap: true,
   },
   {
@@ -31,7 +31,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.number || "N/A"}
       </div>
     ),
-    width: "170px",
+    grow: 1,
   },
   {
     name: "Address",
@@ -41,7 +41,7 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.address || "N/A"}
       </div>
     ),
-    width: "300px",
+    grow: 2,
     wrap: true,
   },
   {
@@ -57,22 +57,14 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
   {
     name: "TIN",
     center: true,
-    cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
-        {row.tin || "-"}
-      </div>
-    ),
-    width: "180px",
+    selector: (row) => row.tin || "N/A",
+    width: "150px",
   },
   {
     name: "Terms",
-    width: "120px",
+    width: "150px",
     center: true,
-    cell: (row) => (
-      <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
-        {row.terms || "N/A"}
-      </div>
-    ),
+    selector: (row) => row.terms || "N/A",
     wrap: true
   },
   {

@@ -16,23 +16,25 @@
 .page-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 18px;
+  align-items: flex-end;
+  margin-bottom: 24px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .page-title {
-  font-size: 32px;
-  font-weight: 800;
+  font-size: 2rem;
+  font-weight: 900;
   color: #1e5a84;
   margin: 0;
   letter-spacing: -0.5px;
-  text-transform: uppercase;
+  line-height: 1
 }
 
 .page-subtitle {
-  margin-top: 4px;
+  margin-top: 6px;
   color: #6b7280;
-  font-size: 14px;
+  font-size: 0.95rem;
 }
 
 .page-card {

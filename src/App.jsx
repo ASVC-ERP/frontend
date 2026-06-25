@@ -12,6 +12,8 @@ import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
 import SalesInvoices from "./Components/Invoices/Invoices.jsx"
+import SalesInvoiceDetails from "./Components/Invoices/InvoiceDetails.jsx";
+import ReturnSalesInvoice from "./Components/InvoiceReturns/Returns.jsx";
 import Inventory from "./Components/Inventory/Inventory.jsx";
 import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import Suppliers from "./Components/Suppliers/Suppliers.jsx";
@@ -24,6 +26,7 @@ import CreatePurchase from "./Components/Purchases/CreatePurchase.jsx";
 import ReturnPurchase from "./Components/PurchaseReturns/Returns.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
+import UnderConstruction from "./Pages/UnderConstruction.jsx";
 import { useAuth } from "./hooks/useAuth";
 import { useOrders } from "./hooks/useOrders";
 import { usePagination } from "./hooks/usePagination";
@@ -95,12 +98,16 @@ function App() {
             <Route path="/suppliers/create"   element={ <CreateSupplier />} />
             <Route path="/customer"           element={ <Customer /> } />
 
-            <Route path="/sales-invoice"      element={ <SalesInvoices /> } />
+            <Route path="/invoices"           element={ <SalesInvoices /> } />
+            <Route path="/invoices/:id"       element={ <SalesInvoiceDetails />} />
+            <Route path="/invoice-return"     element={ <ReturnSalesInvoice />} />
 
             <Route path="/purchase"           element={ <PurchasesPage /> } />
             <Route path="/purchase/:id"       element={ <PurchaseDetailsPage />} />
             <Route path="/create-purchase"    element={ <CreatePurchase />} />
             <Route path="/purchase-return"    element={ <ReturnPurchase /> } />
+
+            <Route path="/Reports"            element={ <UnderConstruction /> } />
 
           </Routes>
         </div>
