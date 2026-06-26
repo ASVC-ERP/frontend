@@ -3,6 +3,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "./CreatePurchase.css";
+import "../../styles/create-page.css"
 
 const formatCurrency = (value) => Number(value).toLocaleString("en-PH", { style: "currency", currency: "PHP", });
 const API_URL = import.meta.env.VITE_API_URL;
@@ -265,6 +266,229 @@ export default function CreatePurchase() {
       setSaving(false);
     }
   };
+
+  return (
+    <div className="create-page">
+      <div className="create-card">
+        <div className="create-header">
+          <div>
+            <h1>Create Purchase</h1>
+            <p>Create a new purchase order and add supplier details.</p>
+          </div>
+        </div>
+  
+        <div className="create-section">
+          <h5>Purchase Information</h5>
+  
+          <div className="row g-3">
+            <div className="col-md-4">
+              <label className="form-label">Supplier Name</label>
+  
+              <div className="supplier-search">
+                <input
+                  className="form-control"
+                  placeholder="Search supplier..."
+                  value={supplierQuery}
+                  onChange={(e) => handleSupplierSearch(e.target.value)}
+                />
+  
+                {supplierSuggestions.length > 0 && (
+                  <ul className="supplier-suggestions">
+                    {supplierSuggestions.map((supplier) => (
+                      <li
+                        key={supplier.id}
+                        onMouseDown={() => handleSelectSupplier(supplier)}
+                      >
+                        <strong>{supplier.name}</strong>
+                        <span>{supplier.sid}</span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </div>
+  
+            <div className="col-md-2">
+              <label className="form-label">PO Number</label>
+              <input
+                className="form-control"
+                value={form.po_number}
+                onChange={(e) => updateForm("po_number", e.target.value)}
+                placeholder="Input P.O. number"
+              />
+            </div>
+  
+            <div className="col-md-2">
+              <label className="form-label">Invoice Number</label>
+              <input
+                className="form-control"
+                value={form.invoice_number}
+                onChange={(e) => updateForm("invoice_number", e.target.value)}
+                placeholder="Input Invoice Number"
+              />
+            </div>
+  
+            <div className="col-md-2">
+              <label className="form-label">Purchase Date</label>
+              <input
+                type="date"
+                className="form-control"
+                value={form.purchase_date}
+                onChange={(e) => updateForm("purchase_date", e.target.value)}
+              />
+            </div>
+  
+            <div className="col-md-2">
+              <label className="form-label">Conversion Factor</label>
+              <input
+                type="number"
+                className="form-control"
+                value={form.conversion_factor}
+                onChange={(e) =>
+                  updateForm("conversion_factor", e.target.value)
+                }
+              />
+            </div>
+          </div>
+        </div>
+  
+        <div className="create-section">
+          <div className="create-section-header">
+            <h5>Products</h5>
+  
+            <button
+              type="button"
+              className="btn create-add-btn"
+              onClick={addItem}
+            >
+              + Add Product
+            </button>
+          </div>
+  
+          <div className="table-responsive">
+            <table className="table create-table align-middle">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th width="110">Qty</th>
+                  <th width="150">Unit Cost</th>
+                  <th width="100">Unit</th>
+                  <th width="150">Subtotal</th>
+                  <th width="80">Action</th>
+                </tr>
+              </thead>
+  
+              <tbody>
+                {items.map((item, index) => (
+                  <tr key={index}>
+                    <td className="product-cell">
+                      <input
+                        className="form-control"
+                        value={queries[index] ?? item.item_name}
+                        onChange={(e) =>
+                          handleSearchChange(index, e.target.value)
+                        }
+                        placeholder="Search product..."
+                      />
+  
+                      {suggestions[index]?.length > 0 && (
+                        <ul className="product-suggestions">
+                          {suggestions[index].map((product) => (
+                            <li
+                              key={product.id}
+                              onClick={() =>
+                                handleSelectProduct(index, product)
+                              }
+                            >
+                              <strong>{product.item_name}</strong>
+                              <span>{product.item_code}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </td>
+  
+                    <td>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={item.quantity}
+                        onChange={(e) =>
+                          updateItem(index, "quantity", e.target.value)
+                        }
+                      />
+                    </td>
+  
+                    <td>
+                      <input
+                        type="number"
+                        className="form-control"
+                        value={item.unit_cost}
+                        onChange={(e) =>
+                          updateItem(index, "unit_cost", e.target.value)
+                        }
+                      />
+                    </td>
+  
+                    <td>
+                      <input
+                        className="form-control"
+                        value={item.unit || ""}
+                        disabled
+                      />
+                    </td>
+  
+                    <td>
+                      <input
+                        className="form-control"
+                        value={formatCurrency(item.subtotal)}
+                        disabled
+                      />
+                    </td>
+  
+                    <td className="text-center">
+                      <button
+                        type="button"
+                        className="btn btn-sm btn-danger"
+                        onClick={() => removeItem(index)}
+                        disabled={items.length === 1}
+                      >
+                        -
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+  
+          <div className="create-total">
+            <span>Total</span>
+            <strong>{formatCurrency(total)}</strong>
+          </div>
+        </div>
+  
+        <div className="create-actions">
+          <button
+            type="button"
+            className="btn create-secondary-btn"
+            onClick={() => navigate("/purchase")}
+          >
+            Cancel
+          </button>
+  
+          <button
+            type="button"
+            className="btn create-primary-btn"
+            onClick={handleSave}
+            disabled={saving}
+          >
+            {saving ? "Saving..." : "Save Purchase"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <div className="create-purchase-page">

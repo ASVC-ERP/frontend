@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, } from "../../utils/swal";
 
 export const useCustomerHandlers = (customers, onRefreshCustomers) => {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -51,39 +52,15 @@ export const useCustomerHandlers = (customers, onRefreshCustomers) => {
         terms: customerTerms,
       };
 
-      Swal.fire({
-        title: "Adding Customer",
-        text: "Please wait while we add a new customer...",
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        didOpen: () => {
-          Swal.showLoading();
-        },
-      });
+      showLoadingSwal("Adding Customer", "Please wait while we add a new customer...",)
 
       await axios.post(`${API_URL}/customer`, newCustomer);
 
-      Swal.close();
-
-      Swal.fire({
-        icon: "success",
-        title: "Customer Added",
-        text: "The customer has been added successfully!",
-        showConfirmButton: false,
-        timer: 1000,
-      });
-
+      showSuccessSwal("Customer Added", "The customer has been added successfully!")
       onRefreshCustomers();
       handleCloseCustomerModal();
     } catch (error) {
-      Swal.close();
-
-      Swal.fire({
-        icon: "error",
-        title: "Failed",
-        text: error.response?.data?.message || "Something went wrong",
-        confirmButtonColor: "#d33",
-      });
+      showErrorSwal("Something went wrong", "Failed to add customer. Please try again later or contact your administrator.");
     }
   };
 

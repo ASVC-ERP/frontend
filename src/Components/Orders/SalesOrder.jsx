@@ -79,8 +79,10 @@ function SalesOrder() {
             >
               <option value="">All Statuses</option>
               <option value="Open">Open</option>
+              <option value="For Approval">For Approval</option>
               <option value="Served">Served</option>
               <option value="Invoiced">Invoiced</option>
+              
             </select>
           </div>
 

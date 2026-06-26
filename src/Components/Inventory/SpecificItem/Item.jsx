@@ -23,24 +23,13 @@ function Item() {
   }, [item?.itemCode]);
   
   return (
-    <>
-      <div className="row mt-3 mx-3">
-        <div
-          className="border rounded-3"
-          style={{ minHeight: "528px", backgroundColor: "#E8E7EC" }}
-          >
-            <ItemDetails item={item} onUpdate={fetchItem} />
-        </div>
+    <div className="details-page">
+      <ItemDetails item={item} onUpdate={fetchItem} />
+  
+      <div className="item-tabs-wrapper">
+        <Tabs item={item} />
       </div>
-      <div className="row mt-3 mx-3">
-        <div
-          className="border rounded-3"
-          style={{ minHeight: "510px", backgroundColor: "#E8E7EC" }}
-        >
-          <Tabs item={item} />
-        </div>
-      </div>
-    </>
+    </div>
   );
 }
 

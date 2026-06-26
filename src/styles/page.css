@@ -105,7 +105,7 @@
   border-radius: 8px;
   background: #fff;
 
-  font-size: 16px;
+  font-size: 18px;
   color: #374151;
   cursor: pointer;
 }
@@ -155,11 +155,11 @@
 
 .custom-data-table .rdt_TableHead {
   font-weight: 700;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 .custom-data-table .rdt_TableRow {
-  font-size: 16px;
+  font-size: 18px;
   min-height: 54px;
 }
 
@@ -212,9 +212,8 @@
 
 /* YELLOW - Attention */
 .status-open,
-.status-pending,
-
-.status-for-approval {
+.status-pending
+{
   background: #ffc107;
   color: #000;
 }
@@ -258,7 +257,8 @@
 .status-cancelled,
 .status-rejected,
 .status-failed,
-.status-overdue {
+.status-overdue,
+.status-forapproval {
   background: #dc3545;
   color: #fff;
 }
@@ -299,7 +299,7 @@
 
   background: #fff;
 
-  font-size: 16px;
+  font-size: 18px;
   font-family: "Karla", sans-serif;
   color: #374151;
 

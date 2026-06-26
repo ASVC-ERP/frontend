@@ -41,7 +41,7 @@
   gap: 7px;
   padding: 7px 16px;
   border-radius: 999px;
-
+  text-transform: uppercase;
   font-size: 14px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -55,13 +55,24 @@
   background: currentColor;
 }
 
-.details-status-badge.success,
-.details-status-badge.posted,
 .details-status-badge.invoiced {
+  background: #e8f1ff;
+  color: #1E5A84;
+}
+
+.details-status-badge.success,
+.details-status-badge.served,
+.details-status-badge.posted {
   background: #eaf3de;
   color: #006c02;
 }
 
+.details-status-badge.partial-served {
+  background: #fed7aa;
+  color: #9a3412;
+}
+
+.details-status-badge.for-approval,
 .details-status-badge.pending {
   background: #faeeda;
   color: #633806;
@@ -292,5 +303,211 @@
 
   .details-page-title {
     font-size: 26px;
+  }
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+.item-details-card {
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.item-details-header {
+  padding: 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
+.item-details-kicker,
+.item-field label,
+.item-price-card span {
+  font-size: 16px;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.item-details-title {
+  margin: 4px 0 0;
+  color: #1e5a84;
+  font-size: 30px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.item-details-subtitle {
+  margin: 3px 0 0;
+  color: #888;
+  font-size: 16px;
+}
+
+.item-details-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.item-save-btn {
+  border: none;
+  background: #1e5a84;
+  color: #fff;
+  padding: 9px 18px;
+  border-radius: 7px;
+  font-weight: 600;
+}
+
+.item-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  padding: 1.25rem;
+}
+
+.item-form-grid.top {
+  grid-template-columns: 180px 1fr 120px;
+}
+
+.item-field.span-2 {
+  grid-column: span 1;
+}
+
+.item-field input {
+  width: 100%;
+  height: 38px;
+  border: 0.5px solid rgba(0, 0, 0, 0.16);
+  border-radius: 7px;
+  padding: 0 11px;
+  font-family: "Karla", sans-serif;
+  font-size: 20px;
+}
+
+.item-field input:read-only {
+  background: #f8f8f7;
+  color: #666;
+  font-size: 20px;
+}
+
+.item-section-header {
+  padding: 1rem 1.25rem 0.75rem;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+}
+
+.item-section-header h3 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.item-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  padding: 1.25rem;
+}
+
+.item-price-card {
+  min-height: 105px;
+  background: #f8f8f7;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  padding: 1rem;
+  position: relative;
+}
+
+.item-price-card strong {
+  display: block;
+  margin-top: 9px;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.item-price-card button {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  width: 30px;
+  height: 30px;
+  border: 0.5px solid rgba(0, 0, 0, 0.15);
+  background: #fff;
+  border-radius: 6px;
+  color: #1e5a84;
+}
+
+.item-price-card.stock {
+  background: #e8f1ff;
+  border-color: #b5d4f4;
+}
+
+.item-price-card.stock small {
+  display: inline-block;
+  margin-top: 10px;
+  color: #006c02;
+  background: #eaf3de;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 20px;
+}
+
+/* TABS */
+.item-tabs-wrapper {
+  background: #fff;
+  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.item-tabs-wrapper .nav-tabs {
+  background: #f8f8f7;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  padding: 0.5rem 0.75rem 0;
+}
+
+.item-tabs-wrapper .nav-tabs .nav-link {
+  color: #1e5a84;
+  font-weight: 500;
+  border: 0.5px solid transparent;
+  border-radius: 8px 8px 0 0;
+  padding: 12px 22px;
+}
+
+.item-tabs-wrapper .nav-tabs .nav-link.active {
+  background: #1e5a84;
+  color: #fff;
+  border-color: #1e5a84;
+}
+
+.item-tabs-wrapper table {
+  margin-bottom: 0;
+}
+
+@media (max-width: 992px) {
+  .item-pricing-grid,
+  .item-form-grid,
+  .item-form-grid.top {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .item-details-header {
+    flex-direction: column;
+  }
+
+  .item-details-actions {
+    flex-direction: column;
+  }
+
+  .item-pricing-grid,
+  .item-form-grid,
+  .item-form-grid.top {
+    grid-template-columns: 1fr;
   }
 }

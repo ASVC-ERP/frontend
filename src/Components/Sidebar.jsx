@@ -51,6 +51,17 @@ export default function Sidebar({ onLogout }) {
           </li>
         </ul>
 
+        {/* ADMIN */}
+        <p className="sidebar-header">ANALYTICS</p>
+        <ul className="sidebar-group">
+          <li className="mt-2">
+            <Link to="/reports" className="nav-link d-flex align-items-center" style={linkStyle}>
+              <TbReportAnalytics className="me-3" size={25} />
+              <span className="sidebar-text">Reports</span>
+            </Link>
+          </li>
+        </ul>
+
         {/* SALES */}
         <p className="sidebar-header">SALES</p>
         <ul className="sidebar-group">

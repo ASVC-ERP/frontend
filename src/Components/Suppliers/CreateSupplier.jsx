@@ -96,6 +96,7 @@ export default function CreateSupplier() {
                   onChange={handleChange}
                   className={`form-control ${sidExists ? "is-invalid" : ""}`}
                   placeholder="Supplier ID"
+                  maxLength={50}
                 />
 
                 {sidExists && (
@@ -113,6 +114,7 @@ export default function CreateSupplier() {
                   onChange={handleChange}
                   className="form-control"
                   placeholder="Supplier name"
+                  maxLength={50}
                 />
               </div>
   
@@ -140,6 +142,7 @@ export default function CreateSupplier() {
                   onChange={handleChange}
                   className="form-control"
                   placeholder="Contact number"
+                  maxLength={50}
                 />
               </div>
   
@@ -151,6 +154,7 @@ export default function CreateSupplier() {
                   onChange={handleChange}
                   className="form-control"
                   placeholder="Supplier address"
+                  maxLength={250}
                 />
               </div>
             </div>

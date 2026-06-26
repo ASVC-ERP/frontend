@@ -302,67 +302,89 @@ function ItemDetails({ item, onUpdate }) {
     }
   };
 
-  return (
-    <div className="product-details">
-      <div className="pd-card">
-        <div className="header-row">
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <span className="section-title">Product Details</span>
-            <span className="code-chip">{itemData.itemCode || itemData.item_code}</span>
-          </div>
-          {isAdmin && (
-            <button className="save-btn" onClick={handleSave}>Save changes</button>
-          )}
-        </div>
-        <div className="divider" />
 
-        <div className="pd-grid grid-top">
-          <div className="field-group">
-            <span className="field-label">Product code</span>
-            <input className="field-input" readOnly value={itemData.itemCode || itemData.item_code} />
+  const minStock = Number(itemData.minStock || itemData.min_stock || 0);
+  const stock = Number(itemData.stock || 0);
+  
+  const stockStatusClass =
+    stock === 0 ? "danger" : stock <= minStock ? "pending" : "success";
+  
+  const stockStatusText =
+    stock === 0 ? "Out of Stock" : stock <= minStock ? "Low Stock" : "In Stock";
+  
+  return (
+    <>
+      <div className="item-details-card">
+        <div className="item-details-header">
+          <div>
+            <div className="item-details-kicker">Product Details</div>
+            <h2 className="item-details-title">
+              {itemData.itemCode || itemData.item_code}
+            </h2>
+            <p className="item-details-subtitle">
+              {itemData.itemName || itemData.item_name}
+            </p>
           </div>
-          <div className="field-group">
-            <span className="field-label">Product name</span>
+  
+          <div className="item-details-actions">
+            {isAdmin && (
+              <button className="btn-primary-custom" onClick={handleSave}>
+                Save Changes
+              </button>
+            )}
+          </div>
+        </div>
+  
+        <div className="item-form-grid top">
+          <div className="item-field">
+            <label>Product Code</label>
             <input
-              className="field-input"
+              readOnly
+              value={itemData.itemCode || itemData.item_code || ""}
+            />
+          </div>
+  
+          <div className="item-field span-2">
+            <label>Product Name</label>
+            <input
               id="itemName"
-              value={formData.itemName || formData.item_name}
+              value={formData.itemName || formData.item_name || ""}
               onChange={handleChange}
               readOnly={!isAdmin}
             />
           </div>
-          <div className="field-group">
-            <span className="field-label">Unit</span>
+  
+          <div className="item-field">
+            <label>Unit</label>
             <input
-              className="field-input"
               id="unit"
-              value={formData.unit}
+              value={formData.unit || ""}
               onChange={handleChange}
               readOnly={!isAdmin}
             />
           </div>
         </div>
       </div>
-      <div className="pd-card">
-        <div className="section-header">
-          <span className="section-title">Metadata</span>
+  
+      <div className="item-details-card">
+        <div className="item-section-header">
+          <h3>Metadata</h3>
         </div>
-        <div className="divider" />
-        <div className="pd-grid grid-meta">
+  
+        <div className="item-form-grid">
           {[
-            { label: 'Part no.',        id: 'partNum',  value: formData.partNum  || formData.part_num },
-            { label: 'Model',           id: 'model',    value: formData.model },
-            { label: 'Interchange no.', id: 'interNum', value: formData.interNum || formData.internal_num },
-            { label: 'Brand',           id: 'brand',    value: formData.brand },
-            { label: 'Origin',          id: 'origin',   value: formData.origin },
-            { label: 'Min. stock',      id: 'minStock', value: formData.minStock || formData.min_stock },
+            { label: "Part No.", id: "partNum", value: formData.partNum || formData.part_num },
+            { label: "Model", id: "model", value: formData.model },
+            { label: "Interchange No.", id: "interNum", value: formData.interNum || formData.internal_num },
+            { label: "Brand", id: "brand", value: formData.brand },
+            { label: "Origin", id: "origin", value: formData.origin },
+            { label: "Min. Stock", id: "minStock", value: formData.minStock || formData.min_stock },
           ].map(({ label, id, value }) => (
-            <div className="field-group" key={id}>
-              <span className="field-label">{label}</span>
+            <div className="item-field" key={id}>
+              <label>{label}</label>
               <input
-                className="field-input"
                 id={id}
-                value={value}
+                value={value || ""}
                 onChange={handleChange}
                 readOnly={!isAdmin}
               />
@@ -370,366 +392,216 @@ function ItemDetails({ item, onUpdate }) {
           ))}
         </div>
       </div>
-
-      <div className="pd-card">
-        <div className="section-header">
-          <span className="section-title">Pricing & Inventory</span>
+  
+      <div className="item-details-card">
+        <div className="item-section-header">
+          <h3>Pricing & Inventory</h3>
         </div>
-        <div className="divider" />
-        <div className="pd-grid grid-pricing">
-          <div className="price-card">
-            <span className="price-label">Cost</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span className="price-value">₱ {itemData.cost}</span>
-              {user?.role === 'admin' && (
-                <button className="edit-btn-sm" onClick={() => handleEditCostClick(item.cost)}>
-                  <FaEdit size={15} />
-                </button>
-              )}
-            </div>
+  
+        <div className="item-pricing-grid">
+          <div className="item-price-card">
+            <span>Cost</span>
+            <strong>₱ {itemData.cost || 0}</strong>
+  
+            {isAdmin && (
+              <button onClick={handleEditCostClick}>
+                <FaEdit size={14} />
+              </button>
+            )}
           </div>
-
+  
           {[
-            { label: 'Price 1', value: itemData.price1 },
-            { label: 'Price 2', value: itemData.price2 },
-            { label: 'Price 3', value: itemData.price3 },
+            { label: "Price 1", value: itemData.price1 },
+            { label: "Price 2", value: itemData.price2 },
+            { label: "Price 3", value: itemData.price3 },
           ].map(({ label, value }) => (
-            <div className="price-card" key={label}>
-              <span className="price-label">{label}</span>
-              <span className="price-value">₱ {value}</span>
+            <div className="item-price-card" key={label}>
+              <span>{label}</span>
+              <strong>₱ {value || 0}</strong>
             </div>
           ))}
-
-          <div className="price-card">
-            <span className="price-label">Price 4</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span className="price-value">₱ {itemData.price4}</span>
-              {user?.role === 'admin' && (
-                <button className="edit-btn-sm" onClick={() => handleEditSpecialPriceClick(item.price4)}>
-                  <FaEdit size={15} />
-                </button>
-              )}
-            </div>
-          </div>
-
-          <div className="price-card price-card--stock">
-            <span className="price-label" style={{ color: 'var(--color-text-info)' }}>Stock</span>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span className="price-value" style={{ color: 'var(--color-text-info)' }}>
-                {itemData.stock} {itemData.unit}/s
-              </span>
-              <button className="edit-btn-sm" onClick={handleEditStockClick}>
-                <FaEdit size={15} />
+  
+          <div className="item-price-card">
+            <span>Price 4</span>
+            <strong>₱ {itemData.price4 || 0}</strong>
+  
+            {isAdmin && (
+              <button onClick={handleEditSpecialPriceClick}>
+                <FaEdit size={14} />
               </button>
-            </div>
-            <span
-              className={`stock-badge ${
-                itemData.stock === 0
-                  ? "stock-badge--danger"
-                  : itemData.stock <= ( itemData.minStock || itemData.min_stock )
-                  ? "stock-badge--warning"
-                  : ""
-              }`}
-            >
+            )}
+          </div>
+  
+          <div className="item-price-card stock">
+            <span>Stock</span>
+            <strong>
+              {itemData.stock || 0} {itemData.unit}/s
+            </strong>
+  
+            {isAdmin && (
+              <button onClick={handleEditStockClick}>
+                <FaEdit size={14} />
+              </button>
+            )}
+  
+            <small>
               {itemData.stock === 0
-                ? "❌ Out of stock"
-                : itemData.stock <= ( itemData.minStock || itemData.min_stock )
-                ? "⚠️ Low stock"
-                : "✔ In stock"}
-            </span>
+                ? "Out of stock"
+                : itemData.stock <= (itemData.minStock || itemData.min_stock)
+                ? "Low stock"
+                : "In stock"}
+            </small>
           </div>
         </div>
       </div>
 
       {showStockModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div
-            className="modal-dialog modal-dialog-centered modal-lg w-50"
-            role="document"
-          >
-            <div className="modal-content shadow-lg border-0">
-              {/* Header with gradient background */}
-              <div
-                className="modal-header text-white position-relative overflow-hidden"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
-                  borderRadius: "0.5rem 0.5rem 0 0",
-                }}
-              >
-                <div className="d-flex align-items-center">
-                  <div>
-                    <h5 className="modal-title mb-0">Update Stock Count</h5>
-                    <small className="opacity-75">
-                      Modify inventory stock levels
-                    </small>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white p-4"
-                  onClick={() => setShowStockModal(false)}
-                  aria-label="Close"
-                ></button>
+        <div className="app-modal-backdrop">
+          <div className="app-modal app-modal-md">
+            <div className="app-modal-content">
 
-                {/* Decorative elements */}
-                <div
-                  className="position-absolute"
-                  style={{
-                    top: "-50px",
-                    right: "-50px",
-                    width: "100px",
-                    height: "100px",
-                    background: "rgba(255, 255, 255, 0.1)",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-                <div
-                  className="position-absolute"
-                  style={{
-                    bottom: "-30px",
-                    left: "-30px",
-                    width: "60px",
-                    height: "60px",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    borderRadius: "50%",
-                  }}
-                ></div>
+              {/* Header */}
+              <div className="app-modal-header">
+                <div>
+                  <h5>Update Stock Count</h5>
+                  <span>Modify inventory stock levels</span>
+                </div>
+
+                <button
+                  className="app-modal-close"
+                  onClick={() => setShowStockModal(false)}
+                >
+                  ×
+                </button>
               </div>
 
-              <div className="modal-body p-4">
-                <div className="row g-3">
-                  {/* Current Stock (Read-only) */}
-                  <div className="col-12">
-                    <label className="form-label fw-semibold text-muted small">
-                      <i
-                        className="fas fa-boxes me-2"
-                        style={{ color: "#1E5A84" }}
-                      ></i>
-                      Current Stock Count
-                    </label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Current Stock"
-                      value={stockData.currentCount}
-                      disabled
-                      style={{
-                        backgroundColor: "#f8f9fa",
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
-                        fontWeight: "500",
-                      }}
-                    />
+              {/* Body */}
+              <div className="app-modal-body">
+                <form className="modal-form">
+
+                  <div className="modal-form-section">
+                    <div className="modal-form-section-title">
+                      Stock Information
+                    </div>
+
+                    <div className="row g-3">
+
+                      <div className="col-12">
+                        <label className="form-label">
+                          Current Stock Count
+                        </label>
+
+                        <input
+                          className="form-control"
+                          value={stockData.currentCount}
+                          disabled
+                        />
+                      </div>
+
+                      <div className="col-12">
+                        <label className="form-label">
+                          New Stock Count
+                        </label>
+
+                        <input
+                          type="number"
+                          onWheel={(e) => e.target.blur()}
+                          className="form-control"
+                          value={stockData.newCount}
+                          onChange={(e) =>
+                            setStockData({
+                              ...stockData,
+                              newCount: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                      <div className="col-12">
+                        <label className="form-label">
+                          Reason for Stock Change
+                        </label>
+
+                        <textarea
+                          className="form-control"
+                          rows={4}
+                          placeholder="Enter reason..."
+                          value={stockData.remarks}
+                          onChange={(e) =>
+                            setStockData({
+                              ...stockData,
+                              remarks: e.target.value,
+                            })
+                          }
+                        />
+                      </div>
+
+                    </div>
                   </div>
 
-                  {/* New Stock Count */}
-                  <div className="col-12">
-                    <label className="form-label fw-semibold text-muted small">
-                      <i
-                        className="fas fa-edit me-2"
-                        style={{ color: "#1E5A84" }}
-                      ></i>
-                      New Stock Count
-                    </label>
-                    <input
-                      type="number"
-                      onWheel={(e) => e.target.blur()}
-                      className="form-control"
-                      placeholder="Enter new stock count"
-                      value={stockData.newCount}
-                      onChange={(e) =>
-                        setStockData({ ...stockData, newCount: e.target.value })
-                      }
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
-                        transition: "border-color 0.3s ease",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
-                  </div>
+                  {stockData.newCount && stockData.currentCount && (
+                    <div className="modal-form-section">
+                      <div className="modal-form-section-title">
+                        Stock Summary
+                      </div>
 
-                  {/* Remarks/Reason */}
-                  <div className="col-12">
-                    <label className="form-label fw-semibold text-muted small">
-                      <i
-                        className="fas fa-comment-alt me-2"
-                        style={{ color: "#1E5A84" }}
-                      ></i>
-                      Reason for Stock Change{" "}
-                    </label>
-                    <textarea
-                      className="form-control"
-                      rows="4"
-                      placeholder="Enter reason for stock change (e.g., damaged goods, recount, sales adjustment, etc.)"
-                      value={stockData.remarks}
-                      onChange={(e) =>
-                        setStockData({ ...stockData, remarks: e.target.value })
-                      }
-                      style={{
-                        border: "1px solid #e9ecef",
-                        borderRadius: "0.5rem",
-                        fontSize: "0.95rem",
-                        resize: "vertical",
-                        transition: "border-color 0.3s ease",
-                      }}
-                      onFocus={(e) => (e.target.style.borderColor = "#1E5A84")}
-                      onBlur={(e) => (e.target.style.borderColor = "#e9ecef")}
-                    />
-                  </div>
-                </div>
-
-                {/* Stock Difference Indicator */}
-                {stockData.newCount && stockData.currentCount && (
-                  <div
-                    className="mt-4 p-3 rounded-3"
-                    style={{
-                      backgroundColor:
-                        parseInt(stockData.newCount) >
-                        parseInt(stockData.currentCount)
-                          ? "rgba(25, 135, 84, 0.1)"
-                          : parseInt(stockData.newCount) <
-                              parseInt(stockData.currentCount)
-                            ? "rgba(220, 53, 69, 0.1)"
-                            : "rgba(12, 29, 97, 0.05)",
-                      border: `1px solid ${
-                        parseInt(stockData.newCount) >
-                        parseInt(stockData.currentCount)
-                          ? "rgba(25, 135, 84, 0.2)"
-                          : parseInt(stockData.newCount) <
-                              parseInt(stockData.currentCount)
-                            ? "rgba(220, 53, 69, 0.2)"
-                            : "rgba(12, 29, 97, 0.1)"
-                      }`,
-                    }}
-                  >
-                    <div className="d-flex align-items-center">
-                      <i
-                        className={`fas ${
-                          parseInt(stockData.newCount) >
-                          parseInt(stockData.currentCount)
-                            ? "fa-arrow-up text-success"
-                            : parseInt(stockData.newCount) <
-                                parseInt(stockData.currentCount)
-                              ? "fa-arrow-down text-danger"
-                              : "fa-equals"
-                        } me-2`}
-                      ></i>
-                      <small className="text-muted">
-                        <strong>Stock Change: </strong>
-                        {parseInt(stockData.newCount) -
-                          parseInt(stockData.currentCount) >
+                      <p className="mb-0">
+                        <strong>Stock Change:</strong>{" "}
+                        {Number(stockData.newCount) -
+                          Number(stockData.currentCount) >
                         0
                           ? "+"
                           : ""}
-                        {parseInt(stockData.newCount) -
-                          parseInt(stockData.currentCount)}{" "}
-                        units
-                        {parseInt(stockData.newCount) >
-                          parseInt(stockData.currentCount) &&
-                          " (Stock Increase)"}
-                        {parseInt(stockData.newCount) <
-                          parseInt(stockData.currentCount) &&
-                          " (Stock Decrease)"}
-                        {parseInt(stockData.newCount) ===
-                          parseInt(stockData.currentCount) && " (No Change)"}
+                        {Number(stockData.newCount) -
+                          Number(stockData.currentCount)}
+                      </p>
+
+                      <small className="text-muted">
+                        {Number(stockData.newCount) >
+                        Number(stockData.currentCount)
+                          ? "Stock Increase"
+                          : Number(stockData.newCount) <
+                              Number(stockData.currentCount)
+                          ? "Stock Decrease"
+                          : "No Change"}
                       </small>
                     </div>
-                  </div>
-                )}
+                  )}
 
-                {/* Info card */}
-                <div
-                  className="mt-3 p-3 rounded-3"
-                  style={{
-                    backgroundColor: "rgba(12, 29, 97, 0.05)",
-                    border: "1px solid rgba(12, 29, 97, 0.1)",
-                  }}
-                >
-                  <div className="d-flex align-items-center">
-                    <i
-                      className="fas fa-info-circle me-2"
-                      style={{ color: "#1E5A84" }}
-                    ></i>
+                  <div className="modal-form-section">
+                    <div className="modal-form-section-title">
+                      Note
+                    </div>
+
                     <small className="text-muted">
                       Stock updates will be logged with timestamp and user
                       information for audit purposes.
                     </small>
                   </div>
-                </div>
+
+                </form>
               </div>
 
-              <div className="modal-footer bg-light border-0 rounded-bottom">
+              {/* Footer */}
+              <div className="app-modal-footer">
                 <button
                   type="button"
-                  className="btn px-4 py-2 me-2"
+                  className="btn-secondary-custom"
                   onClick={() => setShowStockModal(false)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    fontWeight: "500",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#c82333";
-                    e.target.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "#dc3545";
-                    e.target.style.transform = "translateY(0)";
-                  }}
                 >
-                  <i className="fas fa-times me-2"></i>
                   Cancel
                 </button>
+
                 <button
                   type="button"
-                  className="btn px-4 py-2"
+                  className="btn-primary-custom"
                   onClick={handleStockUpdate}
                   disabled={!stockData.newCount || !stockData.remarks}
-                  style={{
-                    backgroundColor:
-                      !stockData.newCount || !stockData.remarks
-                        ? "#6c757d"
-                        : "#1E5A84",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    fontWeight: "500",
-                    transition: "all 0.3s ease",
-                    cursor:
-                      !stockData.newCount || !stockData.remarks
-                        ? "not-allowed"
-                        : "pointer",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (stockData.newCount && stockData.remarks) {
-                      e.target.style.backgroundColor = "#1e3c72";
-                      e.target.style.transform = "translateY(-1px)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (stockData.newCount && stockData.remarks) {
-                      e.target.style.backgroundColor = "#1E5A84";
-                      e.target.style.transform = "translateY(0)";
-                    }
-                  }}
                 >
-                  <i className="fas fa-save me-2"></i>
                   Update Stock
                 </button>
               </div>
+
             </div>
           </div>
         </div>
@@ -737,190 +609,87 @@ function ItemDetails({ item, onUpdate }) {
 
       {/* Edit Special Price Modal */}
       {showEditSpecialPriceModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div
-            className="modal-dialog modal-dialog-centered modal-lg w-50"
-            role="document"
-          >
-            <div className="modal-content shadow-lg border-0">
-              {/* Header with gradient background */}
-              <div
-                className="modal-header text-white position-relative overflow-hidden"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
-                  borderRadius: "0.5rem 0.5rem 0 0",
-                }}
-              >
-                <div className="d-flex align-items-center">
-                  <div>
-                    <h5 className="modal-title mb-0">Edit Price 4</h5>
-                    <small className="opacity-75">
-                      Modify pricing 4 for item
-                    </small>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white p-4"
-                  onClick={handleCloseSpecialPriceModal}
-                  aria-label="Close"
-                ></button>
+        <div className="app-modal-backdrop">
+          <div className="app-modal app-modal-md">
+            <div className="app-modal-content">
 
-                {/* Decorative elements */}
-                <div
-                  className="position-absolute"
-                  style={{
-                    top: "-50px",
-                    right: "-50px",
-                    width: "100px",
-                    height: "100px",
-                    background: "rgba(255, 255, 255, 0.1)",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-                <div
-                  className="position-absolute"
-                  style={{
-                    bottom: "-30px",
-                    left: "-30px",
-                    width: "60px",
-                    height: "60px",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    borderRadius: "50%",
-                  }}
-                ></div>
+              {/* Header */}
+              <div className="app-modal-header">
+                <div>
+                  <h5>Edit Price 4</h5>
+                  <span>Modify Price 4 for this item</span>
+                </div>
+
+                <button
+                  className="app-modal-close"
+                  onClick={handleCloseSpecialPriceModal}
+                >
+                  ×
+                </button>
               </div>
 
-              <div className="modal-body p-4">
-                <form>
-                  <div className="row g-3">
-                    {/* Current Special Price (Read-only) */}
-                    <div className="col-12">
-                      <label className="form-label fw-semibold text-muted small">
-                        <i
-                          className="fas fa-tag me-2"
-                          style={{ color: "#1E5A84" }}
-                        ></i>
-                        Current Price 4
-                      </label>
-                      <div className="input-group">
-                        <span
-                          className="input-group-text"
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            color: "#495057",
-                          }}
-                        >
-                          ₱
-                        </span>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={currentSpecialPrice}
-                          disabled
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            border: "1px solid #e9ecef",
-                            fontSize: "0.95rem",
-                            fontWeight: "500",
-                          }}
-                        />
-                      </div>
+              {/* Body */}
+              <div className="app-modal-body">
+                <form className="modal-form">
+
+                  <div className="modal-form-section">
+                    <div className="modal-form-section-title">
+                      Price Information
                     </div>
 
-                    {/* New Special Price */}
-                    <div className="col-12">
-                      <label
-                        htmlFor="newSpecialPrice"
-                        className="form-label fw-semibold text-muted small"
-                      >
-                        <i
-                          className="fas fa-star me-2"
-                          style={{ color: "#1E5A84" }}
-                        ></i>
-                        New Price 4
-                      </label>
-                      <div className="input-group">
-                        <span
-                          className="input-group-text"
-                          style={{ backgroundColor: "#fff", color: "#495057" }}
-                        >
-                          ₱
-                        </span>
-                        <input
-                          type="number"
-                          step="0.01"
-                          id="newSpecialPrice"
-                          className="form-control"
-                          placeholder="0.00"
-                          value={newSpecialPrice}
-                          onWheel={(e) => e.target.blur()}
-                          onChange={(e) => setNewSpecialPrice(e.target.value)}
-                          style={{
-                            border: "1px solid #e9ecef",
-                            fontSize: "0.95rem",
-                            transition: "border-color 0.3s ease",
-                          }}
-                          onFocus={(e) =>
-                            (e.target.style.borderColor = "#1E5A84")
-                          }
-                          onBlur={(e) =>
-                            (e.target.style.borderColor = "#e9ecef")
-                          }
-                        />
+                    <div className="row g-3">
+
+                      <div className="col-12">
+                        <label className="form-label">
+                          Current Price 4
+                        </label>
+
+                        <div className="input-group">
+                          <span className="input-group-text">₱</span>
+
+                          <input
+                            className="form-control"
+                            value={currentSpecialPrice}
+                            disabled
+                          />
+                        </div>
                       </div>
+
+                      <div className="col-12">
+                        <label className="form-label">
+                          New Price 4
+                        </label>
+
+                        <div className="input-group">
+                          <span className="input-group-text">₱</span>
+
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="form-control"
+                            placeholder="0.00"
+                            value={newSpecialPrice}
+                            onWheel={(e) => e.target.blur()}
+                            onChange={(e) =>
+                              setNewSpecialPrice(e.target.value)
+                            }
+                          />
+                        </div>
+                      </div>
+
                     </div>
                   </div>
-                </form>
 
-                {/* Price Change Indicator */}
-                { currentSpecialPrice !== null &&
-                  currentSpecialPrice !== undefined &&
-                  newSpecialPrice !== null &&
-                  newSpecialPrice !== undefined &&
-                  currentSpecialPrice !== newSpecialPrice && (
-                    <div
-                      className="mt-4 p-3 rounded-3"
-                      style={{
-                        backgroundColor:
-                          parseFloat(newSpecialPrice) <
-                          parseFloat(currentSpecialPrice)
-                            ? "rgba(25, 135, 84, 0.1)"
-                            : parseFloat(newSpecialPrice) >
-                                parseFloat(currentSpecialPrice)
-                              ? "rgba(255, 193, 7, 0.1)"
-                              : "rgba(12, 29, 97, 0.05)",
-                        border: `1px solid ${
-                          parseFloat(newSpecialPrice) <
-                          parseFloat(currentSpecialPrice)
-                            ? "rgba(25, 135, 84, 0.2)"
-                            : parseFloat(newSpecialPrice) >
-                                parseFloat(currentSpecialPrice)
-                              ? "rgba(255, 193, 7, 0.2)"
-                              : "rgba(12, 29, 97, 0.1)"
-                        }`,
-                      }}
-                    >
-                      <div className="d-flex align-items-center">
-                        <i
-                          className={`fas ${
-                            parseFloat(newSpecialPrice) <
-                            parseFloat(currentSpecialPrice)
-                              ? "fa-arrow-down text-success"
-                              : parseFloat(newSpecialPrice) >
-                                  parseFloat(currentSpecialPrice)
-                                ? "fa-arrow-up text-warning"
-                                : "fa-equals text-secondary"
-                          } me-2`}
-                        ></i>
-                        <small className="text-muted">
-                          <strong>Price Change: </strong>
+                  {currentSpecialPrice != null &&
+                    newSpecialPrice != null &&
+                    currentSpecialPrice !== newSpecialPrice && (
+                      <div className="modal-form-section">
+                        <div className="modal-form-section-title">
+                          Price Summary
+                        </div>
+
+                        <p className="mb-1">
+                          <strong>Price Change:</strong>{" "}
                           {parseFloat(newSpecialPrice) >
                           parseFloat(currentSpecialPrice)
                             ? "+"
@@ -930,94 +699,56 @@ function ItemDetails({ item, onUpdate }) {
                             parseFloat(newSpecialPrice) -
                             parseFloat(currentSpecialPrice)
                           ).toFixed(2)}
+                        </p>
+
+                        <small className="text-muted">
                           {parseFloat(newSpecialPrice) <
-                            parseFloat(currentSpecialPrice) &&
-                            " (Price Decrease)"}
-                          {parseFloat(newSpecialPrice) >
-                            parseFloat(currentSpecialPrice) &&
-                            " (Price Increase)"}
+                          parseFloat(currentSpecialPrice)
+                            ? "Price Decrease"
+                            : parseFloat(newSpecialPrice) >
+                              parseFloat(currentSpecialPrice)
+                            ? "Price Increase"
+                            : "No Change"}
                         </small>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                {/* Info card */}
-                <div
-                  className="mt-4 p-3 rounded-3"
-                  style={{
-                    backgroundColor: "rgba(12, 29, 97, 0.05)",
-                    border: "1px solid rgba(12, 29, 97, 0.1)",
-                  }}
-                >
-                  <div className="d-flex align-items-center">
-                    <i
-                      className="fas fa-info-circle me-2"
-                      style={{ color: "#1E5A84" }}
-                    ></i>
+                  <div className="modal-form-section">
+                    <div className="modal-form-section-title">
+                      Note
+                    </div>
+
                     <small className="text-muted">
                       Changes will be applied immediately. Make sure the new
                       price is accurate before saving.
                     </small>
                   </div>
-                </div>
+
+                </form>
               </div>
 
-              <div className="modal-footer bg-light border-0 rounded-bottom">
+              {/* Footer */}
+              <div className="app-modal-footer">
                 <button
                   type="button"
-                  className="btn px-4 py-2 me-2"
-                  onClick={() => setShowEditSpecialPriceModal(false)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    fontWeight: "500",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#c82333";
-                    e.target.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "#dc3545";
-                    e.target.style.transform = "translateY(0)";
-                  }}
+                  className="btn-secondary-custom"
+                  onClick={() =>
+                    setShowEditSpecialPriceModal(false)
+                  }
                 >
-                  <i className="fas fa-times me-2"></i>
                   Cancel
                 </button>
+
                 <button
                   type="button"
-                  className="btn px-4 py-2"
+                  className="btn-primary-custom"
                   onClick={handleSubmitSpecialPrice}
                   disabled={!newSpecialPrice}
-                  style={{
-                    backgroundColor: !newSpecialPrice ? "#6c757d" : "#1E5A84",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    fontWeight: "500",
-                    transition: "all 0.3s ease",
-                    cursor: !newSpecialPrice ? "not-allowed" : "pointer",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (newSpecialPrice) {
-                      e.target.style.backgroundColor = "#1e3c72";
-                      e.target.style.transform = "translateY(-1px)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (newSpecialPrice) {
-                      e.target.style.backgroundColor = "#1E5A84";
-                      e.target.style.transform = "translateY(0)";
-                    }
-                  }}
                 >
-                  <i className="fas fa-save me-2"></i>
                   Update Price 4
                 </button>
               </div>
+
             </div>
           </div>
         </div>
@@ -1025,188 +756,85 @@ function ItemDetails({ item, onUpdate }) {
 
       {/* Edit Cost Modal */}
       {showEditCostModal && (
-        <div
-          className="modal fade show d-block"
-          tabIndex="-1"
-          role="dialog"
-          style={{ backgroundColor: "rgba(0, 0, 0, 0.5)" }}
-        >
-          <div
-            className="modal-dialog modal-dialog-centered modal-lg w-50"
-            role="document"
-          >
-            <div className="modal-content shadow-lg border-0">
-              {/* Header with gradient background */}
-              <div
-                className="modal-header text-white position-relative overflow-hidden"
-                style={{
-                  background:
-                    "linear-gradient(135deg, #1E5A84 0%, #1e3c72 100%)",
-                  borderRadius: "0.5rem 0.5rem 0 0",
-                }}
-              >
-                <div className="d-flex align-items-center">
-                  <div>
-                    <h5 className="modal-title mb-0">Edit Cost</h5>
-                    <small className="opacity-75">
-                      Modify Cost for item
-                    </small>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  className="btn-close btn-close-white p-4"
-                  onClick={handleCloseCostModal}
-                  aria-label="Close"
-                ></button>
+        <div className="app-modal-backdrop">
+          <div className="app-modal app-modal-md">
+            <div className="app-modal-content">
 
-                {/* Decorative elements */}
-                <div
-                  className="position-absolute"
-                  style={{
-                    top: "-50px",
-                    right: "-50px",
-                    width: "100px",
-                    height: "100px",
-                    background: "rgba(255, 255, 255, 0.1)",
-                    borderRadius: "50%",
-                  }}
-                ></div>
-                <div
-                  className="position-absolute"
-                  style={{
-                    bottom: "-30px",
-                    left: "-30px",
-                    width: "60px",
-                    height: "60px",
-                    background: "rgba(255, 255, 255, 0.05)",
-                    borderRadius: "50%",
-                  }}
-                ></div>
+              {/* Header */}
+              <div className="app-modal-header">
+                <div>
+                  <h5>Edit Cost</h5>
+                  <span>Modify cost for this item</span>
+                </div>
+
+                <button
+                  className="app-modal-close"
+                  onClick={handleCloseCostModal}
+                >
+                  ×
+                </button>
               </div>
 
-              <div className="modal-body p-4">
-                <form>
-                  <div className="row g-3">
-                    {/* Current Special Price (Read-only) */}
-                    <div className="col-12">
-                      <label className="form-label fw-semibold text-muted small">
-                        <i
-                          className="fas fa-tag me-2"
-                          style={{ color: "#1E5A84" }}
-                        ></i>
-                        Current Cost
-                      </label>
-                      <div className="input-group">
-                        <span
-                          className="input-group-text"
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            color: "#495057",
-                          }}
-                        >
-                          ₱
-                        </span>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={currentCost}
-                          disabled
-                          style={{
-                            backgroundColor: "#f8f9fa",
-                            border: "1px solid #e9ecef",
-                            fontSize: "0.95rem",
-                            fontWeight: "500",
-                          }}
-                        />
-                      </div>
+              {/* Body */}
+              <div className="app-modal-body">
+                <form className="modal-form">
+
+                  <div className="modal-form-section">
+                    <div className="modal-form-section-title">
+                      Cost Information
                     </div>
 
-                    {/* New Cost */}
-                    <div className="col-12">
-                      <label
-                        htmlFor="newCost"
-                        className="form-label fw-semibold text-muted small"
-                      >
-                        <i
-                          className="fas fa-star me-2"
-                          style={{ color: "#1E5A84" }}
-                        ></i>
-                        New Cost
-                      </label>
-                      <div className="input-group">
-                        <span
-                          className="input-group-text"
-                          style={{ backgroundColor: "#fff", color: "#495057" }}
-                        >
-                          ₱
-                        </span>
-                        <input
-                          type="number"
-                          step="0.01"
-                          id="newCost"
-                          className="form-control"
-                          placeholder="0.00"
-                          value={newCost}
-                          onWheel={(e) => e.target.blur()}
-                          onChange={(e) => setNewCost(e.target.value)}
-                          style={{
-                            border: "1px solid #e9ecef",
-                            fontSize: "0.95rem",
-                            transition: "border-color 0.3s ease",
-                          }}
-                          onFocus={(e) =>
-                            (e.target.style.borderColor = "#1E5A84")
-                          }
-                          onBlur={(e) =>
-                            (e.target.style.borderColor = "#e9ecef")
-                          }
-                        />
+                    <div className="row g-3">
+
+                      <div className="col-12">
+                        <label className="form-label">
+                          Current Cost
+                        </label>
+
+                        <div className="input-group">
+                          <span className="input-group-text">₱</span>
+
+                          <input
+                            className="form-control"
+                            value={currentCost}
+                            disabled
+                          />
+                        </div>
                       </div>
+
+                      <div className="col-12">
+                        <label className="form-label">
+                          New Cost
+                        </label>
+
+                        <div className="input-group">
+                          <span className="input-group-text">₱</span>
+
+                          <input
+                            type="number"
+                            step="0.01"
+                            className="form-control"
+                            placeholder="0.00"
+                            value={newCost}
+                            onWheel={(e) => e.target.blur()}
+                            onChange={(e) => setNewCost(e.target.value)}
+                          />
+                        </div>
+                      </div>
+
                     </div>
                   </div>
-                </form>
 
-                {/* Price Change Indicator */}
-                {currentCost &&
-                  newCost &&
-                  currentCost !== newCost && (
-                    <div
-                      className="mt-4 p-3 rounded-3"
-                      style={{
-                        backgroundColor:
-                          parseFloat(newCost) <
-                          parseFloat(currentCost)
-                            ? "rgba(25, 135, 84, 0.1)"
-                            : parseFloat(newCost) >
-                                parseFloat(currentCost)
-                              ? "rgba(255, 193, 7, 0.1)"
-                              : "rgba(12, 29, 97, 0.05)",
-                        border: `1px solid ${
-                          parseFloat(newCost) <
-                          parseFloat(currentCost)
-                            ? "rgba(25, 135, 84, 0.2)"
-                            : parseFloat(newCost) >
-                                parseFloat(currentCost)
-                              ? "rgba(255, 193, 7, 0.2)"
-                              : "rgba(12, 29, 97, 0.1)"
-                        }`,
-                      }}
-                    >
-                      <div className="d-flex align-items-center">
-                        <i
-                          className={`fas ${
-                            parseFloat(newCost) <
-                            parseFloat(currentCost)
-                              ? "fa-arrow-down text-success"
-                              : parseFloat(newCost) >
-                                  parseFloat(currentCost)
-                                ? "fa-arrow-up text-warning"
-                                : "fa-equals text-secondary"
-                          } me-2`}
-                        ></i>
-                        <small className="text-muted">
-                          <strong>Price Change: </strong>
+                  {currentCost != null &&
+                    newCost != null &&
+                    currentCost !== newCost && (
+                      <div className="modal-form-section">
+                        <div className="modal-form-section-title">
+                          Cost Summary
+                        </div>
+
+                        <p className="mb-1">
+                          <strong>Cost Change:</strong>{" "}
                           {parseFloat(newCost) >
                           parseFloat(currentCost)
                             ? "+"
@@ -1216,99 +844,59 @@ function ItemDetails({ item, onUpdate }) {
                             parseFloat(newCost) -
                             parseFloat(currentCost)
                           ).toFixed(2)}
+                        </p>
+
+                        <small className="text-muted">
                           {parseFloat(newCost) <
-                            parseFloat(currentCost) &&
-                            " (Price Decrease)"}
-                          {parseFloat(newCost) >
-                            parseFloat(currentCost) &&
-                            " (Price Increase)"}
+                          parseFloat(currentCost)
+                            ? "Cost Decrease"
+                            : parseFloat(newCost) >
+                              parseFloat(currentCost)
+                            ? "Cost Increase"
+                            : "No Change"}
                         </small>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                {/* Info card */}
-                <div
-                  className="mt-4 p-3 rounded-3"
-                  style={{
-                    backgroundColor: "rgba(12, 29, 97, 0.05)",
-                    border: "1px solid rgba(12, 29, 97, 0.1)",
-                  }}
-                >
-                  <div className="d-flex align-items-center">
-                    <i
-                      className="fas fa-info-circle me-2"
-                      style={{ color: "#1E5A84" }}
-                    ></i>
+                  <div className="modal-form-section">
+                    <div className="modal-form-section-title">
+                      Note
+                    </div>
+
                     <small className="text-muted">
                       Changes will be applied immediately. Make sure the new
                       cost is accurate before saving.
                     </small>
                   </div>
-                </div>
+
+                </form>
               </div>
 
-              <div className="modal-footer bg-light border-0 rounded-bottom">
+              {/* Footer */}
+              <div className="app-modal-footer">
                 <button
                   type="button"
-                  className="btn px-4 py-2 me-2"
+                  className="btn-secondary-custom"
                   onClick={() => setShowEditCostModal(false)}
-                  style={{
-                    backgroundColor: "#dc3545",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    fontWeight: "500",
-                    transition: "all 0.3s ease",
-                  }}
-                  onMouseEnter={(e) => {
-                    e.target.style.backgroundColor = "#c82333";
-                    e.target.style.transform = "translateY(-1px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    e.target.style.backgroundColor = "#dc3545";
-                    e.target.style.transform = "translateY(0)";
-                  }}
                 >
-                  <i className="fas fa-times me-2"></i>
                   Cancel
                 </button>
+
                 <button
                   type="button"
-                  className="btn px-4 py-2"
+                  className="btn-primary-custom"
                   onClick={handleSubmitCost}
                   disabled={!newCost}
-                  style={{
-                    backgroundColor: !newCost ? "#6c757d" : "#1E5A84",
-                    color: "white",
-                    border: "none",
-                    borderRadius: "0.5rem",
-                    fontWeight: "500",
-                    transition: "all 0.3s ease",
-                    cursor: !newCost ? "not-allowed" : "pointer",
-                  }}
-                  onMouseEnter={(e) => {
-                    if (newCost) {
-                      e.target.style.backgroundColor = "#1e3c72";
-                      e.target.style.transform = "translateY(-1px)";
-                    }
-                  }}
-                  onMouseLeave={(e) => {
-                    if (newCost) {
-                      e.target.style.backgroundColor = "#1E5A84";
-                      e.target.style.transform = "translateY(0)";
-                    }
-                  }}
                 >
-                  <i className="fas fa-save me-2"></i>
                   Update Cost
                 </button>
               </div>
+
             </div>
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }
 

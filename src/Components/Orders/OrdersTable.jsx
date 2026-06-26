@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo, React } from "react";
 import DataTable from "react-data-table-component";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import { IoChevronDown } from "react-icons/io5";
 import axios from "axios";
@@ -30,6 +30,8 @@ function OrdersTable({
   progressComponent, 
 }) {
 
+  const navigate = useNavigate();
+  
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const customerNameMap = useMemo(() => {
@@ -44,7 +46,7 @@ function OrdersTable({
     {
       name: "Status",
         cell: (row) => (
-          <span className={`status-badge status-${row.status?.toLowerCase()}`}>
+          <span className={`text-center status-badge status-${row.status?.toLowerCase().replace(/\s+/g, "")}`}>
             {row.status}
           </span>
         ),
@@ -75,7 +77,7 @@ function OrdersTable({
           {row?.customer?.name || "N/A"}
         </div>
       ),
-      width: "300px",
+      grow: 1,
       wrap: true,
       center: true,
     },
@@ -86,7 +88,7 @@ function OrdersTable({
           {row?.customer?.address || "N/A"}
         </div>
       ),
-      width: "500px",
+      grow: 2,
       wrap: true,
       center: true
     },
@@ -113,7 +115,7 @@ function OrdersTable({
       cell: (row) => (
         row.status === "Open" ? (
           <button
-            className="btn btn-sm btn-outline-danger"
+            className="btn-remove"
             onClick={(e) => {
               e.stopPropagation();
               handleDelete(row);
@@ -124,7 +126,7 @@ function OrdersTable({
           </button>
         ) : null
       ),
-      width: "70px",
+      width: "100px",
       ignoreRowClick: true,
       center: true,
       button: true
@@ -305,7 +307,7 @@ function OrdersTable({
     try {
       const res = await axios.get(`${API_URL}/order/id/${row.id}`);
       const orderData = res.data;
-      //console.log("Fetched orders:", orderData);
+      console.log("Fetched orders:", orderData);
 
       setSelectedRow(orderData);
       setEditableRow(orderData);
@@ -314,6 +316,10 @@ function OrdersTable({
     } catch (err) {
       console.error("Error fetching served orders:", err);
     }
+  };
+
+  const handleRowSelect = (row) => {
+    navigate(`/order/${row.id}`);
   };
 
   const handleInputChange = (e) => {
@@ -444,9 +450,8 @@ function OrdersTable({
   
       // 🔹 Send patch request to update the order
       await axios.put(`${API_URL}/order/id/${editableRow.id}`, payload);
-  
       // 🔹 Refetch orders to get the updated data with new IDs
-      await fetchOrders();
+      fetchOrders();
   
       setIsEditing(false);
       setShowEditModal(false);
@@ -828,13 +833,14 @@ function OrdersTable({
         highlightOnHover
         fixedHeader
         fixedHeaderScrollHeight="650px"
-        onRowClicked={handleRowClick}
+        //onRowClicked={handleRowClick}
+        onRowClicked={handleRowSelect}
         className="custom-data-table"
         progressPending={progressPending}
         progressComponent={progressComponent}
       />
 
-      {showRowModal && selectedRow && (
+{showRowModal && selectedRow && (
         <>
           {/* Backdrop */}
           <div className="modal-backdrop fade show"></div>

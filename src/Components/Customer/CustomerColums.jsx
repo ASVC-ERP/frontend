@@ -52,13 +52,14 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         {row.city || "-"}
       </div>
     ),
-    width: "150px",
+    grow: 1,
   },
   {
     name: "TIN",
     center: true,
     selector: (row) => row.tin || "N/A",
     width: "150px",
+    wrap: true
   },
   {
     name: "Terms",
@@ -72,10 +73,10 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
     cell: (row) => (
       <div className="d-flex gap-2">
         <button
-          className="btn-secondary-custom"
+          className="btn-edit"
           onClick={() => handleEdit(row)}
         >
-          Edit
+          <FaEdit />
         </button>
       </div>
     ),

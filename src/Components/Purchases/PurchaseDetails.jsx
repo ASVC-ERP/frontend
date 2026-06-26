@@ -1,33 +1,38 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
-import { useParams } from "react-router-dom";
+import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, showConfirmSwal, } from "../../utils/swal";
+import { useParams, useNavigate } from "react-router-dom";
 import EditPurchaseModal from "./EditPurchase";
 import ReturnPurchaseModal from "./ReturnPurchase";
-import "./PurchaseDetails.css"
+import "../../styles/details-page.css";
+import "./PurchaseDetails.css";
 
-export const imsSwal = Swal.mixin({
-  customClass: { popup: "ims-swal", confirmButton: "ims-swal-confirm", cancelButton: "ims-swal-cancel", },
-  buttonsStyling: false,
-});
-
-const formatCurrency = (value) => Number(value).toLocaleString("en-PH", { style: "currency", currency: "PHP", });
 const API_URL = import.meta.env.VITE_API_URL;
+
+const formatCurrency = (value) => Number(value || 0)
+  .toLocaleString("en-PH", {
+    style: "currency",
+    currency: "PHP",
+});
 
 export default function PurchaseDetailsPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+
   const [invoice, setInvoice] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showReturnModal, setShowReturnModal] = useState(false);
   const [invoiceForm, setInvoiceForm] = useState(null);
 
-  useEffect(() => { fetchInvoice(); }, [id]);
+  useEffect(() => {
+    fetchInvoice();
+  }, [id]);
 
   const fetchInvoice = async () => {
     try {
       const res = await axios.get(`${API_URL}/supplier-invoice/id/${id}`);
-      console.log(res.data)
       setInvoice(res.data);
     } catch (err) {
       console.error("Failed to fetch invoice:", err);
@@ -36,9 +41,6 @@ export default function PurchaseDetailsPage() {
     }
   };
 
-  if (loading) return <div className="m-3">Loading...</div>;
-  if (!invoice) return <div className="m-3">Invoice not found</div>;
-
   const openEditModal = () => {
     setInvoiceForm({
       invoice_number: invoice.invoice_number,
@@ -46,7 +48,7 @@ export default function PurchaseDetailsPage() {
       purchase_date: invoice.purchase_date,
       supplier_id: invoice.supplier_id,
       conversion_factor: invoice.conversion_factor,
-  
+
       items: invoice.supplier_invoice_items.map((item) => ({
         id: item.id,
         product_id: item.product_id,
@@ -57,20 +59,13 @@ export default function PurchaseDetailsPage() {
         unit_cost: Number(item.unit_cost),
       })),
     });
-  
+
     setShowEditModal(true);
   };
 
   const handleUpdateInvoice = async () => {
     try {
-
-      imsSwal.fire({
-        title: "Editing Invoice",
-        text: "Please wait while we edit your invoice...",
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        didOpen: () => imsSwal.showLoading(),
-      });
+      showLoadingSwal("Editing Invoice", "Please wait while we edit your invoice...");
 
       const payload = {
         invoice_number: invoiceForm.invoice_number,
@@ -78,50 +73,36 @@ export default function PurchaseDetailsPage() {
         purchase_date: invoiceForm.purchase_date,
         supplier_id: invoiceForm.supplier_id,
         conversion_factor: Number(invoiceForm.conversion_factor),
-  
+
         items: invoiceForm.items.map((item) => ({
           product_id: item.product_id,
           quantity: Number(item.quantity),
           unit_cost: Number(item.unit_cost),
         })),
       };
-  
-      await axios.put(
-        `${API_URL}/supplier-invoice/${invoice.id}`,
-        payload
-      );
+
+      await axios.put(`${API_URL}/supplier-invoice/${invoice.id}`, payload);
+
       setShowEditModal(false);
 
-      imsSwal.fire({
-        icon: "success",
-        iconColor: "#1E5A84",
-        title: "Invoice Edited",
-        text: `Invoice has been successfully edited.`,
-        confirmButtonColor: "#1E5A84",
-      }).then(() => {
+      showSuccessSwal("Invoice Edited", "Invoice has been successfully edited.")
+      .then(() => {
         window.location.reload();
       });
-  
+
       await fetchInvoice();
     } catch (err) {
       console.error(err);
-      imsSwal.fire({
-        icon: "error",
-        iconColor: "#dc3545",
-        title: "Posting Failed",
-        text:
-          err.response?.data?.message ||
-          "Failed to edit invoice. Please try again.",
-        confirmButtonColor: "#1E5A84",
-      });
+      showErrorSwal("Editing Failed", err.response?.data?.message || "Failed to edit invoice. Please try again.");
     }
   };
 
   const handlePostInvoice = async () => {
-    const result = await imsSwal.fire({
-      icon: "warning",
+
+    const result = await showConfirmSwal({
       title: "Post Invoice?",
-      html: `
+      html: 
+      `
         <div class="post-warning">
           <p>This action will:</p>
           <ul>
@@ -133,76 +114,62 @@ export default function PurchaseDetailsPage() {
             This action cannot be easily reversed.
           </p>
         </div>
-      `,
-      showCancelButton: true,
+      `, 
       confirmButtonText: "Yes, Post",
       cancelButtonText: "Cancel",
-      confirmButtonColor: "#639922",
-      cancelButtonColor: "#6c757d",
-    });
-  
+      confirmColor: "green",
+  })
+
     if (!result.isConfirmed) return;
-  
+
     try {
-      imsSwal.fire({
-        title: "Posting Invoice",
-        text: "Please wait while we post your invoice...",
-        allowOutsideClick: false,
-        showConfirmButton: false,
-        didOpen: () => imsSwal.showLoading(),
-      });
-  
+      showLoadingSwal("Posting Invoice", "Please wait while we post your invoice...");
       await axios.patch(`${API_URL}/supplier-invoice/${invoice.id}/post`);
-  
-      imsSwal.fire({
-        icon: "success",
-        iconColor: "#639922",
-        title: "Invoice Posted",
-        text: "Invoice has been successfully posted.",
-        confirmButtonColor: "#639922",
-      });
-  
+      showSuccessSwal("Invoice Posted", "Invoice has been successfully posted.");
       await fetchInvoice();
     } catch (err) {
       console.error(err);
-  
-      imsSwal.fire({
-        icon: "error",
-        iconColor: "#dc3545",
-        title: "Posting Failed",
-        text:
-          err.response?.data?.message ||
-          "Failed to post invoice. Please try again.",
-        confirmButtonColor: "#1E5A84",
-      });
+      showErrorSwal("Posting Failed", err.response?.data?.message || "Failed to post invoice. Please try again.")
     }
   };
 
+  if (loading) return <div className="m-3">Loading...</div>;
+  if (!invoice) return <div className="m-3">Invoice not found</div>;
+
+  const totalAmount = invoice.supplier_invoice_items.reduce(
+    (sum, item) => sum + Number(item.subtotal || 0),
+    0
+  );
+
   return (
-    <div className="page">
-      <div className="page-header">
-        <div className="d-flex align-items-center gap-3">
-          <div className="po-number">Purchase Order {invoice.po_number}</div>
-          <span className={`status-badge ${invoice.status.toLowerCase()}`}>
-            {invoice.status}
-          </span>
+    <div className="details-page">
+      <div className="details-page-header">
+        <div>
+          <div className="d-flex align-items-center gap-3">
+            <div className="details-page-title">
+              Purchase Order {invoice.po_number}
+            </div>
+
+            <span
+              className={`details-status-badge ${invoice.status?.toLowerCase()}`}
+            >
+              {invoice.status}
+            </span>
+          </div>
+
+          <div className="details-page-subtitle">
+            Supplier invoice details and purchased items
+          </div>
         </div>
 
-        {/* RIGHT: Actions */}
         <div className="d-flex align-items-center gap-2">
           {invoice.status?.toUpperCase() !== "POSTED" && (
             <>
-              <button
-                className="btn edit-btn"
-                onClick={openEditModal}
-              >
+              <button className="btn-primary-custom" onClick={openEditModal}>
                 Edit
               </button>
 
-              <button
-                className="btn post-btn"
-                onClick={handlePostInvoice}
-              >
+              <button className="btn-tertiary-custom" onClick={handlePostInvoice}>
                 Post
               </button>
             </>
@@ -217,103 +184,99 @@ export default function PurchaseDetailsPage() {
             </button>
           )}
 
+          <button
+            type="button"
+            className="btn-secondary-custom"
+            onClick={() => navigate(-1)}
+          >
+            Back
+          </button>
         </div>
       </div>
-  
-      <div className="cards-grid">
-        <div className="supplier-card">
-          <div className="supplier-label">Supplier</div>
-          <div className="supplier-name">
-            <span className="supplier-avatar">
-              {invoice.suppliers.name.slice(0, 2).toUpperCase()}
+
+      <div className="details-cards-grid">
+        <div className="details-main-card">
+          <div className="details-card-label">Supplier</div>
+
+          <div className="details-entity-name">
+            <span className="details-avatar">
+              {invoice.suppliers?.name?.slice(0, 2).toUpperCase()}
             </span>
-            {invoice.suppliers.name}
+
+            {invoice.suppliers?.name}
           </div>
         </div>
-        <div className="info-card" style={{ borderLeftColor: "#639922" }}>
-          <div className="card-label">Invoice number</div>
-          <div className="card-value mono">{invoice.invoice_number}</div>
+
+        <div
+          className="details-info-card"
+          style={{ "--accent": "#639922" }}
+        >
+          <div className="details-card-label">Invoice Number</div>
+          <div className="details-card-value mono">
+            {invoice.invoice_number}
+          </div>
         </div>
-        <div className="info-card">
-          <div className="card-label">Purchase date</div>
-          <div className="card-value">{invoice.purchase_date}</div>
+
+        <div className="details-info-card">
+          <div className="details-card-label">Purchase Date</div>
+          <div className="details-card-value">{invoice.purchase_date}</div>
         </div>
       </div>
-  
-      <div className="table-card">
-        <div className="table-card-header">
-          <span className="table-title">Products Purchased List</span>
-          <span className="item-count">
+
+      <div className="details-table-card">
+        <div className="details-table-header">
+          <span className="details-table-title">Products Purchased List</span>
+
+          <span className="details-item-count">
             {invoice.supplier_invoice_items.length} items
           </span>
         </div>
-        <table className="items-table">
+
+        <table className="details-table">
           <thead>
             <tr>
-              <th className="text-center" style={{ width: "24%" }}>Item name</th>
-              <th className="text-center" style={{ width: "14%" }}>Item code</th>
-              <th className="text-center" style={{ width: "12%" }}>Unit cost</th>
-              <th className="text-center" style={{ width: "8%" }}>Unit</th>
-              <th className="text-center" style={{ width: "8%" }}>Qty</th>
-              <th className="text-center" style={{ width: "10%" }}>Returned</th>
-              <th className="text-center" style={{ width: "10%" }}>Remaining</th>
-              <th className="text-center" style={{ width: "14%" }}>Subtotal</th>
+              <th style={{ width: "24%" }}>Item Name</th>
+              <th style={{ width: "14%" }}>Item Code</th>
+              <th style={{ width: "12%" }}>Unit Cost</th>
+              <th style={{ width: "8%" }}>Unit</th>
+              <th style={{ width: "8%" }}>Qty</th>
+              <th style={{ width: "10%" }}>Returned</th>
+              <th style={{ width: "10%" }}>Remaining</th>
+              <th style={{ width: "14%" }}>Subtotal</th>
             </tr>
           </thead>
 
           <tbody>
             {invoice.supplier_invoice_items.map((item) => {
               const returnedQty = Number(item.ret_qty || 0);
-              const remainingQty = Number(item.quantity) - returnedQty;
+              const quantity = Number(item.quantity || 0);
+              const remainingQty = quantity - returnedQty;
 
               return (
                 <tr key={item.id}>
-                  <td>{item.products.item_name}</td>
-
-                  <td className="text-center">
-                    {item.products.item_code}
-                  </td>
-
-                  <td className="text-center">
-                    {formatCurrency(item.unit_cost)}
-                  </td>
-
-                  <td className="text-center">
-                    {item.products.unit}
-                  </td>
-
-                  <td className="text-center">
-                    {item.quantity}
-                  </td>
-
-                  <td className="returned-qty text-center">
-                    {returnedQty}
-                  </td>
-
-                  <td className="remaining-qty text-center">
-                    {remainingQty}
-                  </td>
-
-                  <td className="subtotal text-center">
+                  <td>{item.products?.item_name}</td>
+                  <td>{item.products?.item_code}</td>
+                  <td>{formatCurrency(item.unit_cost)}</td>
+                  <td>{item.products?.unit}</td>
+                  <td>{quantity}</td>
+                  <td className="text-danger-custom">{returnedQty}</td>
+                  <td className="text-success-custom">{remainingQty}</td>
+                  <td className="details-subtotal">
                     {formatCurrency(item.subtotal)}
                   </td>
                 </tr>
               );
             })}
           </tbody>
+
           <tfoot>
             <tr>
-              <td colSpan={7} className="total-label">
-                Total
+              <td colSpan={7}>
+                <div className="details-total-label">Total</div>
               </td>
 
-              <td className="total-value">
-                {formatCurrency(
-                  invoice.supplier_invoice_items.reduce(
-                    (sum, i) => sum + Number(i.subtotal),
-                    0
-                  )
-                )}
+              <td className="details-total-value">
+                {formatCurrency(totalAmount)}
               </td>
             </tr>
           </tfoot>

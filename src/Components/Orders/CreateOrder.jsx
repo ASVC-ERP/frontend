@@ -2,6 +2,7 @@ import OrderForm from "./OrderForm";
 import InfoForm from "./InfoForm";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, } from "../../utils/swal";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import "./CreateOrder.css"
@@ -95,13 +96,7 @@ function CreateOrder() {
     );
   
     if (alreadyExists) {
-      Swal.fire({
-        icon: "warning",
-        iconColor: "#1E5A84",
-        title: "Duplicate Product",
-        text: `${itemName} is already in the order list.`,
-        confirmButtonColor: "#1E5A84",
-      });
+      showWarningSwal("Duplicate Product", `${itemName} is already in the order list.`)
       return true;
     }
     return false;
@@ -109,13 +104,7 @@ function CreateOrder() {
 
   const handleSelectProduct = (items) => {
     if (orderItems.length >= MAX_ORDER_ITEMS) {
-      Swal.fire({
-        icon: "warning",
-        iconColor: "#950606",
-        title: "Item Limit Reached",
-        text: `You can only add up to ${MAX_ORDER_ITEMS} products per order.`,
-        confirmButtonColor: "#1E5A84",
-      });
+      showWarningSwal("Item Limit Reached",`You can only add up to ${MAX_ORDER_ITEMS} products per order.`)
       setQuery("");
       setSuggestions([]);
       return;
@@ -209,17 +198,17 @@ function CreateOrder() {
     //console.log("user:", user);
 
     if (!user) {
-      Swal.fire("Error", "User not logged in.", "error");
+      showErrorSwal("User not logged in.", "error");
       return;
     }
 
     if (!info.customerID) {
-      Swal.fire("Error", "Please select a customer.", "error");
+      showErrorSwal("Please select a customer.", "error")
       return;
     }
 
     if (orderItems.length === 0) {
-      Swal.fire("Error", "Please add at least one item to the order.", "error");
+      showErrorSwal("Please add at least one item to the order.", "error");
       return;
     }
 
@@ -227,13 +216,7 @@ function CreateOrder() {
     const submitButton = e.target.querySelector("button[type='submit']");
     if (submitButton) submitButton.disabled = true;
 
-    Swal.fire({
-      title: "Creating Order",
-      text: "Please wait while we process the order...",
-      allowOutsideClick: false,
-      showConfirmButton: false,
-      didOpen: () => Swal.showLoading(),
-    });
+    showLoadingSwal("Creating Order","Please wait while we process the order...");
 
     // Prepare DTO for backend
     const orderDto = {
@@ -266,18 +249,10 @@ function CreateOrder() {
       // Update UI locally
       handleAddOrder(createdOrder)
 
-      Swal.fire({
-        title: "Success!",
-        text: "Order has been created.",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      }).then(() => {
-        navigate("/order");
-      });
+      showSuccessSwal("Order Confirmed", "Order has been successfully placed.").then(() => { navigate("/order"); })
     } catch (err) {
       console.error(err);
-      Swal.fire("Error", "Failed to create order.", "error");
+      showErrorSwal("Failed to create order.", "Something went wrong. Try again or contact your administrator.");
     } finally {
       if (submitButton) submitButton.disabled = false;
     }
@@ -292,47 +267,45 @@ function CreateOrder() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="create-order-page">
-      <div className="create-order-card">
-        <div className="create-order-header">
+    <form onSubmit={handleSubmit} className="create-page">
+      <div className="create-card">
+        <div className="create-header">
           <div>
             <h1>Create Order</h1>
             <p>Create a new sales order and add customer/product details.</p>
           </div>
         </div>
   
-        <div className="create-order-section">
+        <div className="create-section">
           <h5>Customer Information</h5>
-          <div className="create-order-panel">
-            <InfoForm info={info} setInfo={setInfo} />
-          </div>
+  
+          <InfoForm info={info} setInfo={setInfo} />
         </div>
   
-        <div className="create-order-section">
-          <h5>Product Details</h5>
-          <div className="create-order-panel">
-            <OrderForm
-              query={query}
-              suggestions={suggestions}
-              orderItems={orderItems}
-              onSearchChange={handleSearchChange}
-              onSelectProduct={handleSelectProduct}
-              onPriceChange={handlePriceChange}
-              onEnableCustomPrice={handleEnableCustomPrice}
-              onDisableCustomPrice={handleDisableCustomPrice}
-              onUpdateOrderItem={updateOrderItem}
-              onCalculateTotal={calculateTotal}
-              onCalculateTotalPrice={calculateTotalPrice}
-              onRemoveProduct={handleRemoveProduct}
-              onDeleteItem={handleDeleteItem}
-            />
-          </div>
+        <div className="create-section">
+          <h5>Products</h5>
+  
+          <OrderForm
+            query={query}
+            suggestions={suggestions}
+            orderItems={orderItems}
+            onSearchChange={handleSearchChange}
+            onSelectProduct={handleSelectProduct}
+            onPriceChange={handlePriceChange}
+            onEnableCustomPrice={handleEnableCustomPrice}
+            onDisableCustomPrice={handleDisableCustomPrice}
+            onUpdateOrderItem={updateOrderItem}
+            onCalculateTotal={calculateTotal}
+            onCalculateTotalPrice={calculateTotalPrice}
+            onRemoveProduct={handleRemoveProduct}
+            onDeleteItem={handleDeleteItem}
+          />
         </div>
   
-        <div className="create-order-actions">
+        <div className="create-actions">
           <button
             type="button"
-            className="order-secondary-btn"
+            className="btn create-secondary-btn"
             onClick={handleCancel}
           >
             Cancel
@@ -340,7 +313,7 @@ function CreateOrder() {
   
           <button
             type="submit"
-            className="order-primary-btn"
+            className="btn create-primary-btn"
             disabled={calculateTotalPrice() === 0}
           >
             Submit

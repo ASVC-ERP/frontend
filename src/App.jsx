@@ -10,6 +10,7 @@ import Sidebar from "./Components/Sidebar.jsx";
 import ProfileModal from "./Components/ProfileModal";
 import SalesOrder from "./Components/Orders/SalesOrder.jsx";
 import CreateOrder from "./Components/Orders/CreateOrder.jsx";
+import SalesOrderDetails from "./Components/Orders/OrderDetails.jsx";
 import SalesInvoice from "./Components/Invoice/SalesInvoice.jsx";
 import SalesInvoices from "./Components/Invoices/Invoices.jsx"
 import SalesInvoiceDetails from "./Components/Invoices/InvoiceDetails.jsx";
@@ -91,6 +92,7 @@ function App() {
             <Route path="/"                   element={ <HomePage />} />
             <Route path="/order"              element={ <SalesOrder /> } />
             <Route path="/create-order"       element={ <CreateOrder /> } />
+            <Route path="/order/:id"          element={ <SalesOrderDetails />} />
             <Route path="/invoice"            element={ <SalesInvoice /> } />
             <Route path="/products/:itemID"   element={ <Item />} />
             <Route path="/products"           element={ <Inventory /> } />

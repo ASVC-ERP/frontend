@@ -98,7 +98,7 @@ export default function SalesInvoiceDetails() {
             className="btn-tertiary-custom"
             onClick={() => setShowPrintModal(true)}
           >
-            Save
+            Save as PDF
           </button>
           
           <button
@@ -168,29 +168,19 @@ export default function SalesInvoiceDetails() {
         <table className="items-table">
           <thead>
             <tr>
-              <th className="text-center" style={{ width: "28%" }}>
-                Item name
-              </th>
-              <th className="text-center" style={{ width: "16%" }}>
-                Item code
-              </th>
-              <th className="text-center" style={{ width: "12%" }}>
-                Unit
-              </th>
-              <th className="text-center" style={{ width: "12%" }}>
-                Qty
-              </th>
-              <th className="text-center" style={{ width: "16%" }}>
-                Price
-              </th>
-              <th className="text-center" style={{ width: "16%" }}>
-                Subtotal
-              </th>
+              <th className="text-center" style={{ width: "28%" }}>Item Name</th>
+              <th className="text-center" style={{ width: "16%" }}>Item Code</th>
+              <th className="text-center" style={{ width: "10%" }}>Unit</th>
+              <th className="text-center" style={{ width: "10%" }}>Qty</th>
+              <th className="text-center" style={{ width: "10%" }}>Returned</th>
+              <th className="text-center" style={{ width: "13%" }}>Price</th>
+              <th className="text-center" style={{ width: "13%" }}>Subtotal</th>
             </tr>
           </thead>
 
           <tbody>
             {items.map((item) => {
+              console.log("show:", item)
               const product = item.products || item.product || item.item || {};
               const subtotal = Number(item.quantity || 0) * Number(item.price || 0);
 
@@ -208,6 +198,10 @@ export default function SalesInvoiceDetails() {
 
                   <td className="text-center">
                     {item.quantity}
+                  </td>
+
+                  <td className="text-center text-danger-custom">
+                    {item.return_qty}
                   </td>
 
                   <td className="text-center">
@@ -272,11 +266,8 @@ export default function SalesInvoiceDetails() {
         <div className="print-modal-overlay" onClick={() => setShowPrintModal(false)}>
           <div className="print-modal" onClick={(e) => e.stopPropagation()}>
             <div className="print-modal-header">
-              <h3>Save as PDF</h3>
-              <button
-                className="btn-secondary-custom"
-                onClick={() => setShowPrintModal(false)}
-              >
+              <h3>Select Option:</h3>
+              <button className="app-modal-close-white" onClick={() => setShowPrintModal(false)}>
                 ×
               </button>
             </div>
