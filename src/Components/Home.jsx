@@ -173,7 +173,10 @@ export default function HomePage() {
                   <div
                     key={order.id}
                     className="dashboard-list-item"
-                    onClick={() => navigate("/order")}
+                    onClick={() => {
+                      console.log(order.id);
+                      navigate(`/order/${order.id}`);
+                    }}
                   >
                     <div>
                       <h4>Order #{order.id}</h4>
@@ -210,7 +213,7 @@ export default function HomePage() {
                   <div
                     key={invoice.id}
                     className="dashboard-list-item"
-                    onClick={() => navigate("/invoice")}
+                    onClick={() => navigate(`/invoices/${invoice.id}`)}
                   >
                     <div>
                       <h4>
