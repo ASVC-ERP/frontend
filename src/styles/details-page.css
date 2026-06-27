@@ -60,6 +60,12 @@
   color: #1E5A84;
 }
 
+.details-status-badge.purple,
+.details-status-badge.partialinvoiced {
+  background: #f3e8ff;
+  color: #6b21a8;
+}
+
 .details-status-badge.success,
 .details-status-badge.served,
 .details-status-badge.posted {

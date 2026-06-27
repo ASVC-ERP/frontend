@@ -38,7 +38,8 @@ function CostHistoryTab({ item }) {
         const costRes = await axios.get(
           `${API_URL}/supplier-invoice/costs/${itemID}`
         );
-        const costData = costRes.data;
+        const costData = costRes.data || [];
+        console.log(costData)
         setData(costData);
       } catch (error) {
         console.error("❌ Error fetching cost history:", error);

@@ -45,14 +45,22 @@ function SalesInvoices() {
   };
 
   const handleSearch = () => {
-    setPage(1);
     setSearch(searchInput);
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set("page", "1");
+      return params;
+    });
   };
 
   const handleClear = () => {
-    setPage(1);
     setSearchInput("");
     setSearch("");
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set("page", "1");
+      return params;
+    });
   };
 
   const loadingText = search ? "Searching invoices..." : "Loading invoices...";
@@ -177,7 +185,7 @@ function SalesInvoices() {
             setSearchParams({ page, limit: newLimit })
           }
           onRowClicked={(row) => navigate(`/invoices/${row.id}`)}
-          paginationRowsPerPageOptions={[10, 25, 50, 100]}
+          paginationRowsPerPageOptions={[1, 10, 25, 50, 100]}
           highlightOnHover
           responsive
           fixedHeader

@@ -180,7 +180,7 @@ export default function SalesInvoiceDetails() {
 
           <tbody>
             {items.map((item) => {
-              console.log("show:", item)
+              //console.log("show:", item)
               const product = item.products || item.product || item.item || {};
               const subtotal = Number(item.quantity || 0) * Number(item.price || 0);
 

@@ -266,7 +266,8 @@
 /* PURPLE - Special */
 .status-returned,
 .status-refunded,
-.status-adjusted {
+.status-adjusted,
+.status-partialinvoiced {
   background: #6f42c1;
   color: #fff;
 }

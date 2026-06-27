@@ -176,13 +176,14 @@ export default function SalesOrderDetails() {
 
   const getStatusClass = (status) => {
     const key = status?.trim().toLowerCase();
-    //console.log(key)
+    console.log(key)
 
     if (key === "served") return "success";
     if (key === "open") return "pending";
     if (key === "partial served") return "partial-served";
     if (key === "rejected" || key === "cancelled" || key === "for approval") return "danger";
     if (key === "invoiced") return "invoiced";
+    if (key === "partial invoiced") return "purple";
     return "pending";
   };
 
@@ -236,7 +237,7 @@ export default function SalesOrderDetails() {
             className={
               isServed ? "btn-danger-custom" : "btn-tertiary-custom"
             }
-            disabled={(isApprove && !canApprove) || order.status === "Invoiced"}
+            disabled={(isApprove && !canApprove) || order.status === "Invoiced" || order.status === "Partial Invoiced"}
             onClick={
               isApprove
                 ? canApprove

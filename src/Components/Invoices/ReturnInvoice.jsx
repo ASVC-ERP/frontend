@@ -169,7 +169,7 @@ export default function SalesInvoiceReturnModal({
 
                 <tbody>
                   {items.map((item) => {
-                    console.log("show: ", item)
+                    //console.log("show: ", item)
                     const remaining = item.quantity - item.already_returned;
 
                     return (

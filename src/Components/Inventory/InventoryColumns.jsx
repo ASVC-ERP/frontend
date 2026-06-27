@@ -35,15 +35,12 @@ export const productColumns = (handleDeleteItem) => [
       let icon = "";
 
       if (!isNaN(stock) && !isNaN(minStock)) {
-        if (stock < minStock) {
+        if (stock === 0) {
           color = "#dc3545"; // red
-          icon = "⛔"; // danger
-        } else if (stock === minStock) {
+        } else if (stock <= minStock) {
           color = "#ffc107"; // yellow
-          icon = "⚠️"; // warning
         } else {
-          color = "#198754"; // optional green
-          icon = ""; // or "✔️"
+          color = "#198754"; // green
         }
       }
 
