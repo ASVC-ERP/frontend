@@ -133,6 +133,24 @@ export default function PurchaseDetailsPage() {
     }
   };
 
+  const openPdf = async (url) => {
+    try {
+      const response = await axios.get(url, { responseType: "blob", });
+      const blob = new Blob([response.data], { type: "application/pdf", });
+      const blobUrl = window.URL.createObjectURL(blob);
+      const newWindow = window.open(blobUrl, "_blank");
+      if (!newWindow) { showWarningSwal("Popup Blocked","Please allow popups to view the PDF.") }
+      setTimeout(() => { window.URL.revokeObjectURL(blobUrl); }, 10000);
+    } catch (err) {
+      console.error("Failed to generate PDF:", err);
+      showErrorSwal("Print Failed","Failed to generate PDF. See console for details.");
+    }
+  };
+
+  const handlePrintPO = async (type) => {
+    await openPdf(`${API_URL}/print/purchase-order/${invoice.id}`);
+  };
+
   if (loading) return <div className="m-3">Loading...</div>;
   if (!invoice) return <div className="m-3">Invoice not found</div>;
 
@@ -175,9 +193,16 @@ export default function PurchaseDetailsPage() {
             </>
           )}
 
+          <button
+            className="btn-primary-custom"
+            onClick={() => { handlePrintPO(); }}
+          >
+            Save as PDF
+          </button>
+
           {invoice.status?.toUpperCase() === "POSTED" && (
             <button
-              className="btn return-btn"
+              className="btn-danger-custom"
               onClick={() => setShowReturnModal(true)}
             >
               Return Items

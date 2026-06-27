@@ -52,6 +52,7 @@ export default function Sidebar({ onLogout }) {
         </ul>
 
         {/* ADMIN */}
+        {/*
         <p className="sidebar-header">ANALYTICS</p>
         <ul className="sidebar-group">
           <li className="mt-2">
@@ -61,6 +62,7 @@ export default function Sidebar({ onLogout }) {
             </Link>
           </li>
         </ul>
+        */}
 
         {/* SALES */}
         <p className="sidebar-header">SALES</p>

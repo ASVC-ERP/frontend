@@ -23,6 +23,7 @@ const InventoryTable = forwardRef(function CustomerTable(
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showNameSuggestions, setShowNameSuggestions] = useState(false);
 
   const {
     itemCode, setItemCode,
