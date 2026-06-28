@@ -29,39 +29,9 @@ import LoginPage from "./Pages/LoginPage.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
 import UnderConstruction from "./Pages/UnderConstruction.jsx";
 import { useAuth } from "./hooks/useAuth";
-import { useOrders } from "./hooks/useOrders";
-import { usePagination } from "./hooks/usePagination";
 
 function App() {
   const { isAuthenticated, user, handleLoginSuccess, handleLogout } = useAuth();
-
-  // Orders pagination
-  const ordersPagination = usePagination();
-
-  const {
-    orders,
-    setOrders,
-    info,
-    setInfo,
-    query,
-    suggestions,
-    orderItems,
-    setOrderItems,
-    handleAddOrder,
-    handleSearchChange,
-    handleSelectProduct,
-    handlePriceChange,
-    handleEnableCustomPrice,
-    handleDisableCustomPrice,
-    updateOrderItem,
-    calculateTotal,
-    calculateTotalPrice,
-    handleRemoveProduct,
-  } = useOrders(
-    ordersPagination.page,
-    ordersPagination.limit,
-    ordersPagination.setTotalRows,
-  );
 
   if (!isAuthenticated) {
     return (
@@ -88,6 +58,7 @@ function App() {
         {/* Main Content */}
         <div className="flex-grow-1 d-flex flex-column p-0">
           <Routes>
+            <Route path="/login"              element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/unauthorized"       element={ <Unauthorized />} />
             <Route path="/"                   element={ <HomePage />} />
             <Route path="/order"              element={ <SalesOrder /> } />

@@ -2,17 +2,21 @@ import { useState } from "react";
 import axios from "axios";
 import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
+import "../styles/login.css";
 
 function LoginPage({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+    setLoading(true);
 
     try {
       const response = await axios.post(`${API_URL}/authenticate/login`, {
@@ -21,8 +25,7 @@ function LoginPage({ onLoginSuccess }) {
       });
 
       const token = response.data.access_token;
-
-      localStorage.setItem('access_token', token);
+      localStorage.setItem("access_token", token);
 
       const user = await axios.get(`${API_URL}/authenticate/profile`, {
         headers: {
@@ -31,77 +34,59 @@ function LoginPage({ onLoginSuccess }) {
       });
 
       const profile = user.data;
-      console.log("User profile:", profile);
 
-      localStorage.setItem('isAuthenticated', 'true');
-      localStorage.setItem('user', JSON.stringify(profile));
-
-      console.log("Login successful:", user);
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("user", JSON.stringify(profile));
 
       onLoginSuccess();
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div
-      className="d-flex vh-100 justify-content-center align-items-center"
-      style={{ backgroundColor: "#1E5A84" }}
-    >
-      <form
-        onSubmit={handleLogin}
-        className="p-5 pt-2 bg-light rounded shadow w-25"
-      >
-        <img
-          src={logo}
-          alt="companyLogo"
-          className="d-flex mx-auto mt-0 pt-0"
-          style={{ width: "100px" }}
-        />
-
-        <div className="mb-3">
-          <label
-            className="form-label fw-semibold"
-            style={{ color: "#1E5A84" }}
-          >
-            Username
-          </label>
-          <input
-            type="text"
-            className="form-control"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-3">
-          <label
-            className="form-label fw-semibold"
-            style={{ color: "#1E5A84" }}
-          >
-            Password
-          </label>
-          <input
-            type="password"
-            className="form-control"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-logo-box">
+          <img src={logo} alt="Company Logo" className="login-logo" />
         </div>
 
-        {error && <div className="alert alert-danger mt-3">{error}</div>}
+        <h2 className="login-title">Welcome Back</h2>
+        <p className="login-subtitle">Sign in to continue to your account</p>
 
-        <button
-          type="submit"
-          className="btn w-100 text-white"
-          style={{ backgroundColor: "#1E5A84" }}
-        >
-          LOGIN
-        </button>
-      </form>
+        <form onSubmit={handleLogin}>
+          <div className="login-field">
+            <label>Username</label>
+            <input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              placeholder="Enter username"
+              required
+            />
+          </div>
+
+          <div className="login-field">
+            <label>Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter password"
+              required
+            />
+          </div>
+
+          {error && <div className="login-error">{error}</div>}
+
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? "Logging in..." : "Login"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
