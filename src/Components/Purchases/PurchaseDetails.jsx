@@ -43,20 +43,21 @@ export default function PurchaseDetailsPage() {
 
   const openEditModal = () => {
     setInvoiceForm({
-      invoice_number: invoice.invoice_number,
-      po_number: invoice.po_number,
-      purchase_date: invoice.purchase_date,
-      supplier_id: invoice.supplier_id,
-      conversion_factor: invoice.conversion_factor,
+      invoice_number:     invoice.invoice_number,
+      po_number:          invoice.po_number,
+      purchase_date:      invoice.purchase_date,
+      supplier_id:        invoice.supplier_id,
+      conversion_factor:  invoice.conversion_factor,
+      notes:              invoice.notes,
 
       items: invoice.supplier_invoice_items.map((item) => ({
-        id: item.id,
-        product_id: item.product_id,
-        itemName: item.products.item_name,
-        itemCode: item.products.item_code,
-        unit: item.products.unit,
-        quantity: Number(item.quantity),
-        unit_cost: Number(item.unit_cost),
+        id:               item.id,
+        product_id:       item.product_id,
+        itemName:         item.products.item_name,
+        itemCode:         item.products.item_code,
+        unit:             item.products.unit,
+        quantity:         Number(item.quantity),
+        unit_cost:        Number(item.unit_cost),
       })),
     });
 
@@ -68,20 +69,21 @@ export default function PurchaseDetailsPage() {
       showLoadingSwal("Editing Invoice", "Please wait while we edit your invoice...");
 
       const payload = {
-        invoice_number: invoiceForm.invoice_number,
-        po_number: invoiceForm.po_number,
-        purchase_date: invoiceForm.purchase_date,
-        supplier_id: invoiceForm.supplier_id,
-        conversion_factor: Number(invoiceForm.conversion_factor),
+        invoice_number:     invoiceForm.invoice_number,
+        po_number:          invoiceForm.po_number,
+        purchase_date:      invoiceForm.purchase_date,
+        supplier_id:        invoiceForm.supplier_id,
+        conversion_factor:  Number(invoiceForm.conversion_factor),
+        notes:              invoiceForm.notes,
 
         items: invoiceForm.items.map((item) => ({
-          product_id: item.product_id,
-          quantity: Number(item.quantity),
-          unit_cost: Number(item.unit_cost),
+          product_id:   item.product_id,
+          quantity:     Number(item.quantity),
+          unit_cost:    Number(item.unit_cost),
         })),
       };
 
-      await axios.put(`${API_URL}/supplier-invoice/${invoice.id}`, payload);
+      await axios.put(`${API_URL}/supplier-invoice/v2/${invoice.id}`, payload);
 
       setShowEditModal(false);
 
@@ -236,15 +238,21 @@ export default function PurchaseDetailsPage() {
           className="details-info-card"
           style={{ "--accent": "#639922" }}
         >
-          <div className="details-card-label">Invoice Number</div>
-          <div className="details-card-value mono">
-            {invoice.invoice_number}
+          <div className="details-card-label">Invoice Number and Date</div>
+          <div className="details-card-row">
+            <span className="details-title">No.</span>
+            <span className="details-value">{invoice.invoice_number || "—"}</span>
+          </div>
+
+          <div className="details-card-row">
+            <span className="details-title">Date</span>
+            <span className="details-value">{invoice.purchase_date || "—"}</span>
           </div>
         </div>
 
         <div className="details-info-card">
-          <div className="details-card-label">Purchase Date</div>
-          <div className="details-card-value">{invoice.purchase_date}</div>
+          <div className="details-card-label">Notes</div>
+          <div className="details-card-value">{invoice.notes}</div>
         </div>
       </div>
 

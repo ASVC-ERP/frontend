@@ -4,6 +4,8 @@ import axios from "axios";
 import EditOrderModal from "./EditOrder";
 import ServeOrderModal from "./ServeOrder";
 import "../../styles/details-page.css";
+import Modal from "react-bootstrap/Modal";
+import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, showConfirmSwal } from "../../utils/swal";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -19,6 +21,8 @@ export default function SalesOrderDetails() {
   const [loading, setLoading] = useState(true);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showServeModal, setShowServeModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [showCostModal, setShowCostModal] = useState(false);
 
   useEffect(() => {
     fetchOrder();
@@ -297,6 +301,18 @@ export default function SalesOrderDetails() {
         </div>
 
         <div className="details-info-card">
+          <div className="details-card-label">Address</div>
+          <div className="details-card-value">{order.customer?.address || "—"}</div>
+        </div>
+
+        <div className="details-info-card">
+          <div className="details-card-label">Contact Number</div>
+          <div className="details-card-value mono">
+            {order.customer?.number || "—"}
+          </div>
+        </div>
+        
+        <div className="details-info-card">
           <div className="details-card-label">Order Date</div>
           <div className="details-card-value">
             {order.order_date
@@ -308,18 +324,6 @@ export default function SalesOrderDetails() {
         <div className="details-info-card">
           <div className="details-card-label">PIC</div>
           <div className="details-card-value">{order.sales_agent?.name || "—"}</div>
-        </div>
-
-        <div className="details-info-card">
-          <div className="details-card-label">Address</div>
-          <div className="details-card-value">{order.customer?.address || "—"}</div>
-        </div>
-
-        <div className="details-info-card">
-          <div className="details-card-label">Contact Number</div>
-          <div className="details-card-value mono">
-            {order.customer?.number || "—"}
-          </div>
         </div>
       </div>
 
@@ -349,14 +353,28 @@ export default function SalesOrderDetails() {
                   : Number(item.quantity || 0);
 
               return (
-                <tr key={item.id}>
-                  <td>{item.products?.item_name || "—"}</td>
+                <tr
+                  key={item.id}
+                  className="details-clickable-row"
+                  onClick={() => {
+                    setSelectedItem(item);
+                    setShowCostModal(true);
+                  }}
+                >
+                  <td>
+                    <div className="item-click-wrap">
+                      <span className="item-name-link">
+                        {item.products?.item_name || "—"}
+                      </span>
+                      <small className="item-code-muted">
+                        {item.products?.item_code || ""}
+                      </small>
+                    </div>
+                  </td>
                   <td className="details-num">{item.quantity || 0}</td>
                   <td className="details-num">{item.serve_qty || 0}</td>
                   <td className="details-num">{formatCurrency(price)}</td>
-                  <td className="details-subtotal">
-                    {formatCurrency(price * qty)}
-                  </td>
+                  <td className="details-subtotal">{formatCurrency(price * qty)}</td>
                 </tr>
               );
             })}
@@ -374,6 +392,31 @@ export default function SalesOrderDetails() {
           </tfoot>
         </table>
       </div>
+
+      {showCostModal && (
+        <Modal
+          show={showCostModal}
+          onHide={() => setShowCostModal(false)}
+          size="xl"
+          centered
+          dialogClassName="cost-history-modal"
+        >
+          <Modal.Header closeButton className="cost-history-header">
+            <div>
+              <Modal.Title className="cost-history-title">
+                Cost History
+              </Modal.Title>
+              <div className="cost-history-subtitle">
+                {selectedItem?.products?.item_name}
+              </div>
+            </div>
+          </Modal.Header>
+
+          <Modal.Body className="cost-history-body">
+            {selectedItem && <CostHistoryTab item={selectedItem.products} />}
+          </Modal.Body>
+        </Modal>
+      )}
 
       {/* EDIT MODAL */}
       {showEditModal && (

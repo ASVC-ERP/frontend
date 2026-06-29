@@ -16,6 +16,7 @@ const emptyItem = {
   quantity: 1,
   unit_cost: 0,
   subtotal: 0,
+  notes: "",
 };
 
 export default function CreatePurchase() {
@@ -28,6 +29,7 @@ export default function CreatePurchase() {
     invoice_number: "",
     purchase_date: new Date().toISOString().split("T")[0],
     conversion_factor: 1,
+    notes: "",
   });
 
   const [supplierQuery, setSupplierQuery] = useState("");
@@ -234,6 +236,7 @@ export default function CreatePurchase() {
         quantity: Number(item.quantity),
         unit_cost: Number(item.unit_cost),
       })),
+      notes: form.notes,
     };
   
     console.log(payload);
@@ -347,6 +350,21 @@ export default function CreatePurchase() {
                 onChange={(e) =>
                   updateForm("conversion_factor", e.target.value)
                 }
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="create-section">
+          <div className="row">
+            <div className="col-12">
+              <label className="form-label">Notes</label>
+              <textarea
+                className="form-control"
+                rows={5}
+                value={form.notes || ""}
+                onChange={(e) => updateForm("notes", e.target.value)}
+                placeholder="Input any additional information here"
               />
             </div>
           </div>
@@ -480,230 +498,6 @@ export default function CreatePurchase() {
           <button
             type="button"
             className="btn create-primary-btn"
-            onClick={handleSave}
-            disabled={saving}
-          >
-            {saving ? "Saving..." : "Save Purchase"}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-
-  return (
-    <div className="create-purchase-page">
-      <div className="create-purchase-card">
-        <div className="create-purchase-header">
-          <div>
-            <h1>Create Purchase</h1>
-            <p>Create a new purchase order and add supplier details.</p>
-          </div>
-        </div>
-
-        <div className="create-section">
-          <h5>Purchase Information</h5>
-
-          <div className="row g-3">
-            <div className="col-md-4">
-              <label className="form-label">Supplier Name</label>
-              <div className="supplier-search">
-                <input
-                  className="form-control"
-                  placeholder="Search supplier..."
-                  value={supplierQuery}
-                  onChange={(e) =>
-                    handleSupplierSearch(e.target.value)
-                  }
-                />
-
-                {supplierSuggestions.length > 0 && (
-                  <ul className="supplier-suggestions">
-                    {supplierSuggestions.map((supplier) => (
-                      <li
-                        key={supplier.id}
-                        onMouseDown={() =>
-                          handleSelectSupplier(supplier)
-                        }
-                      >
-                        <strong>{supplier.name}</strong>
-
-                        <span>
-                          {supplier.sid}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                )}
-              </div>
-            </div>
-
-            <div className="col-md-2">
-              <label className="form-label">PO Number</label>
-              <input
-                className="form-control"
-                value={form.po_number}
-                onChange={(e) => updateForm("po_number", e.target.value)}
-                placeholder="Input P.O. number"
-              />
-            </div>
-
-            <div className="col-md-2">
-              <label className="form-label">Invoice Number</label>
-              <input
-                className="form-control"
-                value={form.invoice_number}
-                onChange={(e) => updateForm("invoice_number", e.target.value)}
-                placeholder="Input Invoice Number"
-              />
-            </div>
-
-            <div className="col-md-2">
-              <label className="form-label">Purchase Date</label>
-              <input
-                type="date"
-                className="form-control"
-                value={form.purchase_date}
-                onChange={(e) => updateForm("purchase_date", e.target.value)}
-              />
-            </div>
-
-            <div className="col-md-2">
-              <label className="form-label">Conversion Factor</label>
-              <input
-                type="number"
-                className="form-control"
-                value={form.conversion_factor}
-                onChange={(e) =>
-                  updateForm("conversion_factor", e.target.value)
-                }
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="create-section">
-          <div className="products-header">
-            <h5>Products</h5>
-
-            <button className="btn add-row-btn" onClick={addItem}>
-              + Add Product
-            </button>
-          </div>
-
-          <div className="table-responsive">
-            <table className="table purchase-table align-middle">
-              <thead>
-                <tr>
-                  <th>Product</th>
-                  <th width="110">Qty</th>
-                  <th width="150">Unit Cost</th>
-                  <th width="100">Unit</th>
-                  <th width="150">Subtotal</th>
-                  <th width="80">Action</th>
-                </tr>
-              </thead>
-
-              <tbody>
-                {items.map((item, index) => (
-                  <tr key={index}>
-                    <td className="product-cell">
-                      <input
-                        className="form-control"
-                        value={queries[index] ?? item.item_name}
-                        onChange={(e) =>
-                          handleSearchChange(index, e.target.value)
-                        }
-                        placeholder="Search product..."
-                      />
-
-                      {suggestions[index]?.length > 0 && (
-                        <ul className="product-suggestions">
-                          {suggestions[index].map((product) => (
-                            <li
-                              key={product.id}
-                              onClick={() =>
-                                handleSelectProduct(index, product)
-                              }
-                            >
-                              <strong>{product.item_name}</strong>
-                              <span>{product.item_code}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </td>
-
-                    <td>
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={item.quantity}
-                        onChange={(e) =>
-                          updateItem(index, "quantity", e.target.value)
-                        }
-                      />
-                    </td>
-
-                    <td>
-                      <input
-                        type="number"
-                        className="form-control"
-                        value={item.unit_cost}
-                        onChange={(e) =>
-                          updateItem(index, "unit_cost", e.target.value)
-                        }
-                      />
-                    </td>
-
-                    <td>
-                      <input
-                        className="form-control"
-                        value={item.unit || ""}
-                        disabled
-                      />
-                    </td>
-
-                    <td>
-                      <input
-                        className="form-control"
-                        value={formatCurrency(item.subtotal)}
-                        disabled
-                      />
-                    </td>
-
-                    <td className="text-center">
-                      <button
-                        className="btn btn-sm btn-danger"
-                        onClick={() => removeItem(index)}
-                        disabled={items.length === 1}
-                      >
-                        -
-                      </button>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="purchase-total">
-            <span>Total</span>
-            <strong>
-              {formatCurrency(total)}
-            </strong>
-          </div>
-        </div>
-
-        <div className="create-actions">
-          <button
-            className="btn purchase-secondary-btn"
-            onClick={() => navigate("/purchase")}
-          >
-            Cancel
-          </button>
-
-          <button
-            className="btn save-purchase-btn"
             onClick={handleSave}
             disabled={saving}
           >

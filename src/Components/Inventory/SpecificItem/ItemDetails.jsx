@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { FaEdit } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import showAlert from "../../Swal";
@@ -9,6 +10,7 @@ function ItemDetails({ item, onUpdate }) {
   const API_URL = import.meta.env.VITE_API_URL;
   const user = JSON.parse(localStorage.getItem("user"));
   const isAdmin = user?.role === "admin";
+  const navigate = useNavigate();
   const [showStockModal, setShowStockModal] = useState(false);
   const [stockData, setStockData] = useState();
   const [itemData, setItemData] = useState(item);

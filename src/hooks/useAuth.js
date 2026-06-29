@@ -16,7 +16,7 @@ export const useAuth = () => {
     setIsAuthenticated(false);
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("user");
-    navigate("/login");
+    localStorage.removeItem("access_token");
   };
 
   return {

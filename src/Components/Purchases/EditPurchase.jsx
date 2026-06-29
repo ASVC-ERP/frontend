@@ -223,6 +223,21 @@ export default function EditPurchaseModal({
                         }
                       />
                     </div>
+
+                    <div className="col-md-12">
+                      <label className="form-label">Notes</label>
+                      <textarea
+                        rows={5}
+                        className="form-control"
+                        value={invoiceForm.notes || ""}
+                        onChange={(e) =>
+                          setInvoiceForm({
+                            ...invoiceForm,
+                            notes: e.target.value,
+                          })
+                        }
+                      />
+                    </div>
                   </div>
                 </div>
 

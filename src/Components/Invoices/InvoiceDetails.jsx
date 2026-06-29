@@ -124,38 +124,57 @@ export default function SalesInvoiceDetails() {
         </div>
       </div>
 
-      <div className="cards-grid">
-        <div className="supplier-card">
-          <div className="supplier-label">Customer</div>
+      <div className="details-cards-grid">
+        <div className="details-main-card">
+          <div className="details-main-label">Customer</div>
 
-          <div className="supplier-name">
-            <span className="supplier-avatar">
+          <div className="details-entity-name">
+            <span className="details-avatar">
               {(invoice.customer?.name || "NA").slice(0, 2).toUpperCase()}
             </span>
             {invoice.customer?.name || "N/A"}
           </div>
         </div>
 
-        <div className="info-card">
-          <div className="card-label">Invoice date</div>
-          <div className="card-value">{invoice.invoice_date || "—"}</div>
-        </div>
+        <div className="details-info-card">
+          <div className="details-card-label">Invoice</div>
 
-        <div className="info-card">
-          <div className="card-label">Waybill number</div>
-          <div className="card-value mono">
-            {invoice.waybill_number || "—"}
+          <div className="details-card-row">
+            <span className="details-title">No.</span>
+            <span className="details-value">{invoice.invoice_number || "—"}</span>
+          </div>
+
+          <div className="details-card-row">
+            <span className="details-title">Date</span>
+            <span className="details-value">{invoice.invoice_date || "—"}</span>
           </div>
         </div>
 
-        <div className="info-card">
-          <div className="card-label">Courier</div>
-          <div className="card-value">{invoice.courier || "—"}</div>
-        </div>
+        <div className="details-info-card">
+          <div className="details-card-label">Shipping Details</div>
 
-        <div className="info-card">
-          <div className="card-label">Shipping date</div>
-          <div className="card-value">{invoice.shipping_date || "—"}</div>
+          <div className="details-card">
+            <div className="details-card-row">
+              <span className="details-title">Waybill No.</span>
+              <span className="details-value mono">
+                {invoice.waybill_number || "—"}
+              </span>
+            </div>
+
+            <div className="details-card-row">
+              <span className="details-title">Courier</span>
+              <span className="details-value">
+                {invoice.courier || "—"}
+              </span>
+            </div>
+
+            <div className="details-card-row">
+              <span className="details-title">Shipping Date</span>
+              <span className="details-value">
+                {invoice.shipping_date || "—"}
+              </span>
+            </div>
+          </div>
         </div>
       </div>
 

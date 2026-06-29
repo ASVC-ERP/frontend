@@ -118,21 +118,53 @@
 }
 
 .details-card-label {
-  font-size: 12px;
-  color: #999;
+  font-size: 16px;
+  color: #7a7a7a;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 5px;
 }
 
 .details-card-value {
-  font-size: 17px;
+  font-size: 18px;
   font-weight: 500;
 }
 
 .details-card-value.mono {
   font-family: "Karla", sans-serif;
-  font-size: 16px;
+  font-size: 18px;
+}
+
+.detatils-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.details-card-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+}
+
+.details-card-row:not(:last-child) {
+  padding-bottom: 8px;
+  border-bottom: 1px dashed #e5e7eb;
+}
+
+.details-title {
+  font-size: 1.2rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.details-value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #0f172a;
+  text-align: right;
 }
 
 /* =========================
@@ -187,12 +219,12 @@
 }
 
 .details-table-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: 500;
 }
 
 .details-item-count {
-  font-size: 13px;
+  font-size: 18px;
   color: #666;
   background: #f4f4f2;
   padding: 3px 10px;
@@ -516,4 +548,71 @@
   .item-form-grid.top {
     grid-template-columns: 1fr;
   }
+}
+
+
+/* ==========================
+   COST HISTORY ON ORDERS
+========================== */
+.details-clickable-row {
+  transition: background 0.18s ease, transform 0.12s ease;
+}
+
+.details-clickable-row:hover {
+  background: #f3f8fc;
+}
+
+.item-click-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.item-name-link {
+  color: #1e5a84;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.item-name-link:hover {
+  text-decoration: underline;
+}
+
+.item-code-muted {
+  color: #8a94a6;
+  font-size: 0.85rem;
+}
+
+.cost-history-modal .modal-content {
+  border: none;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.3);
+}
+
+.cost-history-header {
+  background: linear-gradient(135deg, #1e5a84, #2563eb);
+  color: white;
+  padding: 20px 24px;
+}
+
+.cost-history-header .btn-close {
+  filter: invert(1);
+  opacity: 0.85;
+}
+
+.cost-history-title {
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+
+.cost-history-subtitle {
+  margin-top: 4px;
+  font-size: 0.95rem;
+  opacity: 0.85;
+}
+
+.cost-history-body {
+  background: #f8fafc;
+  padding: 24px;
 }
