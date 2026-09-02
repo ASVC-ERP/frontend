@@ -235,15 +235,9 @@ function CreateOrder() {
     //console.log("Order DTO to send:", orderDto);
 
     try {
-      const response = await fetch(`${API_URL}/order`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderDto),
-      });
+      const response = await axios.post(`${API_URL}/order`, orderDto);
 
-      if (!response.ok) throw new Error("Failed to create order");
-
-      const createdOrder = await response.json();
+      const createdOrder = response.data;
       //console.log("Order created successfully:", createdOrder);
 
       // Update UI locally

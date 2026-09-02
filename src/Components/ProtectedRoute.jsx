@@ -2,13 +2,15 @@ import { Navigate } from "react-router-dom";
 
 function ProtectedRoute({ user, requiredRole, children }) {
   if (!user) {
-    // not logged in
+    // not logged in (or a stale session with no valid user)
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && user.role !== requiredRole) {
-    // logged in but not an admin → redirect or show error
-    return <Navigate to="/unauthorized" replace />;
+  if (requiredRole) {
+    const allowed = Array.isArray(requiredRole) ? requiredRole : [requiredRole];
+    if (!allowed.includes(user.role)) {
+      return <Navigate to="/unauthorized" replace />;
+    }
   }
 
   return children;

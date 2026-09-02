@@ -1,11 +1,24 @@
 import { useState } from "react";
 
-export const useAuth = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    return localStorage.getItem("isAuthenticated") === "true";
-  });
+const readUser = () => {
+  try {
+    const raw = localStorage.getItem("user");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+};
 
-  const user = JSON.parse(localStorage.getItem("user"));
+export const useAuth = () => {
+  // Authenticated only when the flag, the token, and a parseable user all agree.
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () =>
+      localStorage.getItem("isAuthenticated") === "true" &&
+      !!localStorage.getItem("access_token") &&
+      readUser() !== null,
+  );
+
+  const user = readUser();
 
   const handleLoginSuccess = () => {
     setIsAuthenticated(true);
