@@ -7,6 +7,7 @@ import "../../styles/details-page.css";
 import Modal from "react-bootstrap/Modal";
 import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, showConfirmSwal } from "../../utils/swal";
+import { debug } from "../../utils/log";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -32,7 +33,7 @@ export default function SalesOrderDetails() {
     try {
       setLoading(true);
       const res = await axios.get(`${API_URL}/order/id/${id}`);
-      console.log(res.data)
+      debug(res.data)
       setOrder(res.data);
     } catch (err) {
       console.error("Error fetching order:", err);
@@ -180,7 +181,7 @@ export default function SalesOrderDetails() {
 
   const getStatusClass = (status) => {
     const key = status?.trim().toLowerCase();
-    console.log(key)
+    debug(key)
 
     if (key === "served") return "success";
     if (key === "open") return "pending";
@@ -208,7 +209,7 @@ export default function SalesOrderDetails() {
 
   const isServed = order.status === "Served" || order.status === "Partial Served";
   const isApprove = order.status === "For Approval";
-  console.log(isServed, isApprove)
+  debug(isServed, isApprove)
 
   return (
     <div className="details-page">
@@ -219,7 +220,7 @@ export default function SalesOrderDetails() {
               ORD{String(order.id).padStart(4, "0")}
             </div>
             <span className={`details-status-badge ${getStatusClass(order.status)}`}>
-              {console.log(getStatusClass(order.status))}
+              {debug(getStatusClass(order.status))}
               {order.status || "Unknown"}
             </span>
           </div>

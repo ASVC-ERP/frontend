@@ -1,4 +1,5 @@
 import { FaTrash } from "react-icons/fa";
+import { debug } from "../../utils/log";
 
 export const productColumns = (handleDeleteItem) => [
   {
@@ -113,7 +114,7 @@ export const productColumns = (handleDeleteItem) => [
         <button
           className="btn btn-sm btn-outline-danger"
           onClick={() => {
-            console.log("Row data:", row);
+            debug("Row data:", row);
             handleDeleteItem( row.itemID );
           }}
         >

@@ -5,6 +5,7 @@ import {
   showSuccessSwal,
   showWarningSwal,
 } from "../../utils/swal";
+import { debug } from "../../utils/log";
 import "../../styles/modal.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -23,14 +24,14 @@ export default function SalesInvoiceReturnModal({
 
     setReason("");
 
-    console.log("invoice: ", invoice);
+    debug("invoice: ", invoice);
 
     const invoiceItems = invoice.items || invoice.sales_invoice_items || [];
 
     setItems(
       invoiceItems.map((item) => {
         const product = item.products || item.product || item.item || {};
-        console.log("item: ", item);
+        debug("item: ", item);
 
         return {
           item_id: item.id,

@@ -5,6 +5,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
+import { debug } from "../../utils/log";
 
 function SupplierTable({ 
   suppliers  = [], 
@@ -200,7 +201,7 @@ function SupplierTable({
   */
  
   const handleRowClick = (row) => {
-    console.log("CLICKED", row);
+    debug("CLICKED", row);
     navigate("/supplier/invoices", { state: { row } });
   };
 

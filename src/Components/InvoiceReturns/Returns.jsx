@@ -5,6 +5,7 @@ import DataTable from "react-data-table-component";
 import ReturnDetailsModal from "./ReturnDetails";
 import "../Purchases/Purchases.css";
 import { IoIosSearch } from "react-icons/io";
+import { debug } from "../../utils/log";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -186,7 +187,7 @@ export default function ReturnSalesInvoice() {
           fixedHeader
           fixedHeaderScrollHeight="650px"
           onRowClicked={(row) => {
-            console.log("row: ",row)
+            debug("row: ",row)
             setSelectedReturn({
               id: row.id,
               reason: row.reason,

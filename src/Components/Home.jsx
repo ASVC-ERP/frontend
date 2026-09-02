@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LuPackage, LuUsers, LuTruck, LuClipboardList, LuArrowRight, } from "react-icons/lu";
 import "../styles/dashboard.css";
+import { debug } from "../utils/log";
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -174,7 +175,7 @@ export default function HomePage() {
                     key={order.id}
                     className="dashboard-list-item"
                     onClick={() => {
-                      console.log(order.id);
+                      debug(order.id);
                       navigate(`/order/${order.id}`);
                     }}
                   >

@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { debug } from "../../../utils/log";
 
 function AddItem({ onAddItem }) {
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ function AddItem({ onAddItem }) {
     };
     
 
-    console.log("Final Item Data:", newItem);
+    debug("Final Item Data:", newItem);
     // you can send it to the backend here
 
     onAddItem(newItem); 

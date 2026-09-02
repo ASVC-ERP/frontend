@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
+import { debug } from "../../utils/log";
 
 export const useProductHandlers = (
   onRefreshItems = () => {},
@@ -48,7 +49,7 @@ export const useProductHandlers = (
   }, [itemCode]);
 
   const handleAddItemClick = () => { 
-    console.log("add")
+    debug("add")
     setShowItemModal(true); 
   };
 
@@ -157,9 +158,9 @@ export const useProductHandlers = (
     };
 
     try {
-      console.log("New Item:", newItem);
+      debug("New Item:", newItem);
       const success = await handleAddItem(newItem);
-      console.log("onAddItem returned:", success);
+      debug("onAddItem returned:", success);
 
       if (success) {
         handleCloseItemModal();
@@ -226,7 +227,7 @@ export const useProductHandlers = (
   };
 
   const handleRowClick = (row) => {
-    console.log("CLICKED", row);
+    debug("CLICKED", row);
     navigate(`/products/${row.itemID}`, { state: { row } });
   };
 

@@ -5,6 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import showAlert from "../../Swal";
 import "./ItemDetails.css"
+import { debug } from "../../../utils/log";
 
 function ItemDetails({ item, onUpdate }) {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -137,7 +138,7 @@ function ItemDetails({ item, onUpdate }) {
         payload
       );
 
-      console.log("Stock adjusted successfully:", response.data);
+      debug("Stock adjusted successfully:", response.data);
       Swal.fire({
         text: "Stock updated successfully!",
         icon: "success",
@@ -214,7 +215,7 @@ function ItemDetails({ item, onUpdate }) {
         },
       );
 
-      console.log("Price 4 updated successfully:", response.data);
+      debug("Price 4 updated successfully:", response.data);
       showAlert("success", "Price 4 updated successfully!");
       handleCloseSpecialPriceModal();
 
@@ -274,7 +275,7 @@ function ItemDetails({ item, onUpdate }) {
         },
       );
 
-      console.log("Cost updated successfully:", response.data);
+      debug("Cost updated successfully:", response.data);
       showAlert("success", "Cost updated successfully!");
       handleCloseCostModal();
 
