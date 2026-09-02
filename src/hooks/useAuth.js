@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { logoutRequest } from "../api/http";
 
 const readUser = () => {
   try {
@@ -10,12 +11,11 @@ const readUser = () => {
 };
 
 export const useAuth = () => {
-  // Authenticated only when the flag, the token, and a parseable user all agree.
+  // The access token now lives in memory (see api/http.js) and is restored from
+  // the refresh cookie at startup, so the gate keys off the flag + a parseable user.
   const [isAuthenticated, setIsAuthenticated] = useState(
     () =>
-      localStorage.getItem("isAuthenticated") === "true" &&
-      !!localStorage.getItem("access_token") &&
-      readUser() !== null,
+      localStorage.getItem("isAuthenticated") === "true" && readUser() !== null,
   );
 
   const user = readUser();
@@ -25,11 +25,9 @@ export const useAuth = () => {
     localStorage.setItem("isAuthenticated", "true");
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await logoutRequest(); // revoke the refresh token server-side + clear local
     setIsAuthenticated(false);
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("user");
-    localStorage.removeItem("access_token");
   };
 
   return {
