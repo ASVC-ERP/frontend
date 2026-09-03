@@ -2,6 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import logo from "../assets/logo.svg";
 import { useNavigate } from "react-router-dom";
+import { setAccessToken } from "../api/http";
 import "../styles/login.css";
 
 function LoginPage({ onLoginSuccess }) {
@@ -24,19 +25,13 @@ function LoginPage({ onLoginSuccess }) {
         password,
       });
 
-      const token = response.data.access_token;
-      localStorage.setItem("access_token", token);
+      // Access token stays in memory; the refresh token is set as an httpOnly cookie.
+      setAccessToken(response.data.access_token);
 
-      const user = await axios.get(`${API_URL}/authenticate/profile`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      const profile = user.data;
+      const profile = await axios.get(`${API_URL}/authenticate/profile`);
 
       localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("user", JSON.stringify(profile));
+      localStorage.setItem("user", JSON.stringify(profile.data));
 
       onLoginSuccess();
       navigate("/");

@@ -9,6 +9,7 @@ import { useDraggableModal } from "../../../hooks/useDraggableModal";
 import { usePagination } from "../../../hooks/usePagination";
 import SuggestionList from "./SuggestionList";
 import "./supplierInvoices.css";
+import { debug } from "../../../utils/log";
 
 function SupplierInvoicesTable({ allItems }) {
   const { page, setPage, limit, setLimit, totalRows, setTotalRows } =
@@ -57,7 +58,7 @@ function SupplierInvoicesTable({ allItems }) {
 
   const handleSearchChange = async (index, value) => {
     setQueries((prev) => ({ ...prev, [index]: value }));
-    console.log(index, value);
+    debug(index, value);
 
     if (value.length > 0) {
       try {
@@ -74,7 +75,7 @@ function SupplierInvoicesTable({ allItems }) {
           itemCode: item.item_code,
         }));
 
-        console.log("Filtered suggestions:", filtered);
+        debug("Filtered suggestions:", filtered);
         setSuggestions((prev) => ({ ...prev, [index]: filtered }));
       } catch (err) {
         console.error("Search failed:", err);
@@ -87,8 +88,8 @@ function SupplierInvoicesTable({ allItems }) {
 
   const handleSelectSuggestion = (index, suggestion) => {
     // Check if this itemID already exists in the invoiceForm items (excluding current index)
-    console.log("Selected itemName:", suggestion.itemName);
-    console.log("Selected itemID:", suggestion.id);
+    debug("Selected itemName:", suggestion.itemName);
+    debug("Selected itemID:", suggestion.id);
 
     const isDuplicate = invoiceForm.items.some(
       (item, i) => i !== index && item.itemID === suggestion.itemID,
@@ -196,7 +197,7 @@ function SupplierInvoicesTable({ allItems }) {
         })),
       };
 
-      console.log("📤 Submitting invoice data:", payload);
+      debug("📤 Submitting invoice data:", payload);
 
       Swal.fire({
         title: "Submitting Invoice",
@@ -315,7 +316,7 @@ function SupplierInvoicesTable({ allItems }) {
   };
 
   const handleEditModal = (selectedInvoice) => {
-    console.log("Selected Invoice for Editing:", selectedInvoice);
+    debug("Selected Invoice for Editing:", selectedInvoice);
     setInvoiceForm({
       invoice_number: selectedInvoice.invoice_number,
       po_number: selectedInvoice.po_number,
@@ -331,7 +332,7 @@ function SupplierInvoicesTable({ allItems }) {
       })),
     });
 
-    console.log("Editing Invoice Form Data:", invoiceForm);
+    debug("Editing Invoice Form Data:", invoiceForm);
 
     // Pre-fill queries so autocomplete input shows existing names
     setQueries(
@@ -374,7 +375,7 @@ function SupplierInvoicesTable({ allItems }) {
     if (!result.isConfirmed) return;
 
     try {
-      console.log("📤 Updating invoice with payload:", payload);
+      debug("📤 Updating invoice with payload:", payload);
       // 🔄 Loading state
       Swal.fire({
         title: "Updating...",
@@ -603,7 +604,7 @@ function SupplierInvoicesTable({ allItems }) {
             fixedHeaderScrollHeight="700px"
             className="custom-data-table"
             onRowClicked={(row) => {
-              console.log("Selected Invoice:", row);
+              debug("Selected Invoice:", row);
               setSelectedInvoice(row);
               setShowModal(true);
             }}

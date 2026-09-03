@@ -10,6 +10,7 @@ import { useDraggableModal } from "../../hooks/useDraggableModal";
 import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 import { checkDuplicateProduct } from "../../hooks/useOrderHelpers";
 import { FaTrash } from "react-icons/fa";
+import { debug } from "../../utils/log";
 
 const userApprove = JSON.parse(localStorage.getItem("user"));
 const roleApprove = userApprove?.role || "";
@@ -302,12 +303,12 @@ function OrdersTable({
   };
 
   const handleRowClick = async (row) => {
-    console.log("Row clicked:", row);
+    debug("Row clicked:", row);
 
     try {
       const res = await axios.get(`${API_URL}/order/id/${row.id}`);
       const orderData = res.data;
-      console.log("Fetched orders:", orderData);
+      debug("Fetched orders:", orderData);
 
       setSelectedRow(orderData);
       setEditableRow(orderData);
@@ -381,11 +382,11 @@ function OrdersTable({
   const updateItem = (index, field, value) => {
     setEditableRow((prev) => {
       /*
-      console.log("=== updateItem called ===");
-      console.log("index:", index);
-      console.log("field:", field);
-      console.log("value:", value);
-      console.log("PREV ITEM:", prev.items[index]);
+      debug("=== updateItem called ===");
+      debug("index:", index);
+      debug("field:", field);
+      debug("value:", value);
+      debug("PREV ITEM:", prev.items[index]);
       */
 
       const items = prev.items.map((item, i) => {
@@ -1700,11 +1701,11 @@ function OrdersTable({
                             })),
                         };
 
-                        console.log("Serve payload:", servePayload);
+                        debug("Serve payload:", servePayload);
 
                         // ✅ 4. Submit serve request
                         const isAdmin = roleApprove?.toLowerCase() === "admin";
-                        console.log(isAdmin);
+                        debug(isAdmin);
 
                         if (isAdmin) {
                           await axios.post(

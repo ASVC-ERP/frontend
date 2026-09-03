@@ -7,14 +7,23 @@ import { RiReceiptLine } from "react-icons/ri";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
 import { useState } from "react";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import "./Sidebar.css";
 
+function readUser() {
+  try {
+    const raw = localStorage.getItem("user");
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
 export default function Sidebar({ onLogout }) {
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = readUser();
   const API_URL = import.meta.env.VITE_API_URL;
 
   const linkStyle = {
@@ -136,6 +145,20 @@ export default function Sidebar({ onLogout }) {
           </li>
         </ul>
 
+        {user?.role === "admin" && (
+          <>
+            <p className="sidebar-header">ADMIN</p>
+            <ul className="sidebar-group">
+              <li className="mt-2">
+                <Link to="/users" className="nav-link d-flex align-items-center" style={linkStyle}>
+                  <FiUsers className="me-3" size={25} />
+                  <span className="sidebar-text">Users</span>
+                </Link>
+              </li>
+            </ul>
+          </>
+        )}
+
       </div>
 
       {/* Profile Section at the Bottom */}
@@ -153,7 +176,7 @@ export default function Sidebar({ onLogout }) {
               className="h6 fw-bolder ms-3 sidebar-text mb-0"
               style={{ color: "#1E5A84" }}
             >
-              {user.name}
+              {user?.name}
             </p>
           </button>
           <ul

@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import ItemDetails from "./ItemDetails";
 import Tabs from "../InventoryTabs/Tabs";
 import axios from "axios";
+import { debug } from "../../../utils/log";
 
 function Item() {
   const location = useLocation();
@@ -16,7 +17,7 @@ function Item() {
     try {
       const response = await axios.get( `${API_URL}/product/id/${item.itemID}` );
       setItem(response.data);
-      console.log("fetch: ",response.data)
+      debug("fetch: ",response.data)
     } catch (error) {
       console.error("Failed to fetch updated item data:", error);
     }

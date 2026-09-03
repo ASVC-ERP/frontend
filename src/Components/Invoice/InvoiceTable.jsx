@@ -5,6 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import { FaSave } from "react-icons/fa";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
+import { debug } from "../../utils/log";
 
 function InvoiceTable({
   invoices = [],
@@ -180,21 +181,21 @@ function InvoiceTable({
   */
  
   const handleRowClick = async (row) => {
-    console.log("Clicked row:", row);
+    debug("Clicked row:", row);
     setSelectedRow(row);
 
     const orderId = row.order_id;
-    console.log("Extracted orderId:", orderId);
+    debug("Extracted orderId:", orderId);
 
     try {
       // 1️⃣ Get invoiced order-items
       const responseInvoice = await axios.get(`${API_URL}/invoice/${row.id}`);
       const invoiceData = responseInvoice.data;
 
-      console.log("Invoice:", invoiceData);
+      debug("Invoice:", invoiceData);
 
       const servedItems = invoiceData.items || [];
-      console.log("Served Items from Invoice:", servedItems);
+      debug("Served Items from Invoice:", servedItems);
 
       if (servedItems.length === 0) {
         setSelectedRow((prev) => ({
@@ -210,7 +211,7 @@ function InvoiceTable({
       const serveItemsWithDetails = await Promise.all(
         servedItems.map(async (serve) => {
           if (!serve.item_code) {
-            console.log("Serve item missing item_code:", serve.id);
+            debug("Serve item missing item_code:", serve.id);
             return { ...serve };
           }
           try {
@@ -223,13 +224,13 @@ function InvoiceTable({
 
             return { ...serve };
           } catch (err) {
-            console.log(`Failed to fetch product ${serve.item_code}:`, err);
+            debug(`Failed to fetch product ${serve.item_code}:`, err);
             return { ...serve };
           }
         }),
       );
 
-      console.log("Served Items with Product Details:", serveItemsWithDetails);
+      debug("Served Items with Product Details:", serveItemsWithDetails);
 
       // 4️⃣ Update selectedRow with servedItems + totalPrice
       setSelectedRow((prev) => ({
@@ -238,7 +239,7 @@ function InvoiceTable({
         totalPrice: getInvoiceTotal(serveItemsWithDetails),
       }));
 
-      console.log("Final selectedRow:", {
+      debug("Final selectedRow:", {
         ...row,
         servedItems: serveItemsWithDetails,
       });
@@ -256,7 +257,7 @@ function InvoiceTable({
   const handlePrint = async () => {
     if (!selectedRow) return;
 
-    console.log("selectedRow: ", selectedRow);
+    debug("selectedRow: ", selectedRow);
 
     try {
       // ✅ Get PDF as blob
@@ -295,7 +296,7 @@ function InvoiceTable({
   const handlePrintDR = async (type, selectedRow) => {
     if (!selectedRow) return;
 
-    console.log("selectedRow: ", selectedRow);
+    debug("selectedRow: ", selectedRow);
 
     try {
       // ✅ Get PDF as blob
@@ -360,7 +361,7 @@ function InvoiceTable({
       !changed.courierChanged &&
       !changed.shipDateChanged
     ) {
-      console.log("⚪ No changes detected → save skipped");
+      debug("⚪ No changes detected → save skipped");
       return;
     }
 
@@ -371,7 +372,7 @@ function InvoiceTable({
       shipping_date: shipDate,
     };
 
-    console.log("📤 JSON Payload SENT to backend:", payload);
+    debug("📤 JSON Payload SENT to backend:", payload);
 
     axios
       .patch(`${API_URL}/invoice/${row.id}`, payload)

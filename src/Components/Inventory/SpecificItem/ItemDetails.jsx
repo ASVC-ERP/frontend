@@ -5,6 +5,7 @@ import axios from "axios";
 import Swal from "sweetalert2";
 import showAlert from "../../Swal";
 import "./ItemDetails.css"
+import { debug } from "../../../utils/log";
 
 function ItemDetails({ item, onUpdate }) {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -67,56 +68,49 @@ function ItemDetails({ item, onUpdate }) {
         return;
       }
 
-      const response = await fetch(`${API_URL}/product/${formData.id}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          item_code: formData.itemCode,
-          item_name: formData.itemName,
-          brand: formData.brand,
-          min_stock: Number(formData.minStock),
-          part_num: formData.partNum,
-          internal_num: formData.interNum,
-          unit: formData.unit,
-          model: formData.model,
-          origin: formData.origin,
-        }),
+      await axios.put(`${API_URL}/product/${formData.id}`, {
+        item_code: formData.itemCode,
+        item_name: formData.itemName,
+        brand: formData.brand,
+        min_stock: Number(formData.minStock),
+        part_num: formData.partNum,
+        internal_num: formData.interNum,
+        unit: formData.unit,
+        model: formData.model,
+        origin: formData.origin,
       });
 
-      if (response.ok) {
-        Swal.fire({
-          text: "Item updated successfully!",
-          icon: "success",
-          confirmButtonColor: "#1E5A84",
-        });
+      Swal.fire({
+        text: "Item updated successfully!",
+        icon: "success",
+        confirmButtonColor: "#1E5A84",
+      });
 
-        const updatedItem = {
-          ...item,
-          itemCode: formData.itemCode,
-          itemName: formData.itemName,
-          brand: formData.brand,
-          minStock: Number(formData.minStock),
-          partNum: formData.partNum,
-          interNum: formData.interNum,
-          unit: formData.unit,
-          model: formData.model,
-          origin: formData.origin,
-        };
-        setItemData(updatedItem);
-        setFormData(normalizeItem(updatedItem));
+      const updatedItem = {
+        ...item,
+        itemCode: formData.itemCode,
+        itemName: formData.itemName,
+        brand: formData.brand,
+        minStock: Number(formData.minStock),
+        partNum: formData.partNum,
+        interNum: formData.interNum,
+        unit: formData.unit,
+        model: formData.model,
+        origin: formData.origin,
+      };
+      setItemData(updatedItem);
+      setFormData(normalizeItem(updatedItem));
 
-        if (onUpdate) {
-          onUpdate();
-        }
-      } else {
-        Swal.fire({
-          text: "Failed to update item.",
-          icon: "error",
-          confirmButtonColor: "#1E5A84",
-        });
+      if (onUpdate) {
+        onUpdate();
       }
     } catch (error) {
       console.error("Error updating item:", error);
+      Swal.fire({
+        text: "Failed to update item.",
+        icon: "error",
+        confirmButtonColor: "#1E5A84",
+      });
     }
   };
 
@@ -144,7 +138,7 @@ function ItemDetails({ item, onUpdate }) {
         payload
       );
 
-      console.log("Stock adjusted successfully:", response.data);
+      debug("Stock adjusted successfully:", response.data);
       Swal.fire({
         text: "Stock updated successfully!",
         icon: "success",
@@ -221,7 +215,7 @@ function ItemDetails({ item, onUpdate }) {
         },
       );
 
-      console.log("Price 4 updated successfully:", response.data);
+      debug("Price 4 updated successfully:", response.data);
       showAlert("success", "Price 4 updated successfully!");
       handleCloseSpecialPriceModal();
 
@@ -281,7 +275,7 @@ function ItemDetails({ item, onUpdate }) {
         },
       );
 
-      console.log("Cost updated successfully:", response.data);
+      debug("Cost updated successfully:", response.data);
       showAlert("success", "Cost updated successfully!");
       handleCloseCostModal();
 

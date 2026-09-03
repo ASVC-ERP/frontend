@@ -4,6 +4,7 @@ import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
 import "./CreatePurchase.css";
 import "../../styles/create-page.css"
+import { debug } from "../../utils/log";
 
 const formatCurrency = (value) => Number(value).toLocaleString("en-PH", { style: "currency", currency: "PHP", });
 const API_URL = import.meta.env.VITE_API_URL;
@@ -239,7 +240,7 @@ export default function CreatePurchase() {
       notes: form.notes,
     };
   
-    console.log(payload);
+    debug(payload);
 
     try {
       setSaving(true);

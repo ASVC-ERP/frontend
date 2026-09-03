@@ -20,6 +20,7 @@ import Item from "./Components/Inventory/SpecificItem/Item.jsx";
 import Suppliers from "./Components/Suppliers/Suppliers.jsx";
 import CreateSupplier from "./Components/Suppliers/CreateSupplier.jsx"
 import Customer from "./Components/Customer/Customer.jsx";
+import Users from "./Components/Users/Users.jsx";
 import HomePage from "./Components/Home.jsx";
 import PurchasesPage from "./Components/Purchases/Purchases.jsx";
 import PurchaseDetailsPage from "./Components/Purchases/PurchaseDetails.jsx";
@@ -28,6 +29,7 @@ import ReturnPurchase from "./Components/PurchaseReturns/Returns.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
 import UnderConstruction from "./Pages/UnderConstruction.jsx";
+import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 import { useAuth } from "./hooks/useAuth";
 
 function App() {
@@ -57,6 +59,7 @@ function App() {
 
         {/* Main Content */}
         <div className="flex-grow-1 d-flex flex-column p-0">
+         <ProtectedRoute user={user}>
           <Routes>
             <Route path="/login"              element={<LoginPage onLoginSuccess={handleLoginSuccess} />} />
             <Route path="/unauthorized"       element={ <Unauthorized />} />
@@ -70,6 +73,7 @@ function App() {
             <Route path="/suppliers"          element={ <Suppliers />} />
             <Route path="/suppliers/create"   element={ <CreateSupplier />} />
             <Route path="/customer"           element={ <Customer /> } />
+            <Route path="/users"              element={ <ProtectedRoute user={user} requiredRole="admin"><Users /></ProtectedRoute> } />
 
             <Route path="/invoices"           element={ <SalesInvoices /> } />
             <Route path="/invoices/:id"       element={ <SalesInvoiceDetails />} />
@@ -83,6 +87,7 @@ function App() {
             <Route path="/Reports"            element={ <UnderConstruction /> } />
 
           </Routes>
+         </ProtectedRoute>
         </div>
 
         <ProfileModal user={user} />

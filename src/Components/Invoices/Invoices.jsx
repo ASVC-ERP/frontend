@@ -4,6 +4,7 @@ import DataTable from "react-data-table-component";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import "../../styles/page.css";
 import "../../styles/buttons.css"
+import { debug } from "../../utils/log";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,7 +35,7 @@ function SalesInvoices() {
         },
       });
 
-      console.log(response.data.data)
+      debug(response.data.data)
       setInvoices(response.data.data);
       setTotalRows(response.data.meta.total);
     } catch (error) {

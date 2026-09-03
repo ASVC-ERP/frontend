@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
 import axios from "axios";
+import { debug } from "../../../utils/log";
 
 function CostHistoryTab({ item }) {
   const [data, setData] = useState([]);
@@ -39,7 +40,7 @@ function CostHistoryTab({ item }) {
           `${API_URL}/supplier-invoice/costs/${itemID}`
         );
         const costData = costRes.data || [];
-        console.log(costData)
+        debug(costData)
         setData(costData);
       } catch (error) {
         console.error("❌ Error fetching cost history:", error);

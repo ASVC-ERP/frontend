@@ -5,6 +5,7 @@ import DataTable from "react-data-table-component";
 import ReturnDetailsModal from "./ReturnDetails";
 import "../Purchases/Purchases.css";
 import { IoIosSearch } from "react-icons/io";
+import { debug } from "../../utils/log";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -30,7 +31,7 @@ export default function ReturnPurchase() {
   const fetchReturns = async (searchValue = search) => {
     try {
       const res = await axios.get(`${API_URL}/supplier-invoice/return`, { params: { page, limit, name: searchValue }, });
-      console.log(res.data);
+      debug(res.data);
       setReturns(res.data.data || []);
       setTotalRows(res.data.meta?.total);
     } catch (err) {

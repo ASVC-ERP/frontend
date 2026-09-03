@@ -6,6 +6,7 @@ import "../Purchases/Purchases.css";
 import "../../styles/modal.css"
 import { showErrorSwal, showWarningSwal } from "../../utils/swal";
 import SalesInvoiceReturnModal from "./ReturnInvoice";
+import { debug } from "../../utils/log";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -34,7 +35,7 @@ export default function SalesInvoiceDetails() {
   const fetchInvoice = async () => {
     try {
       const res = await axios.get(`${API_URL}/invoice/${id}`);
-      console.log(res.data);
+      debug(res.data);
       setInvoice(res.data);
     } catch (err) {
       console.error("Failed to fetch invoice:", err);
