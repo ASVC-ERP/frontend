@@ -21,6 +21,8 @@ import Suppliers from "./Components/Suppliers/Suppliers.jsx";
 import CreateSupplier from "./Components/Suppliers/CreateSupplier.jsx"
 import Customer from "./Components/Customer/Customer.jsx";
 import Users from "./Components/Users/Users.jsx";
+import SalesReport from "./Components/Reports/SalesReport.jsx";
+import PurchaseReport from "./Components/Reports/PurchaseReport.jsx";
 import HomePage from "./Components/Home.jsx";
 import PurchasesPage from "./Components/Purchases/Purchases.jsx";
 import PurchaseDetailsPage from "./Components/Purchases/PurchaseDetails.jsx";
@@ -28,7 +30,6 @@ import CreatePurchase from "./Components/Purchases/CreatePurchase.jsx";
 import ReturnPurchase from "./Components/PurchaseReturns/Returns.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
-import UnderConstruction from "./Pages/UnderConstruction.jsx";
 import ProtectedRoute from "./Components/ProtectedRoute.jsx";
 import { useAuth } from "./hooks/useAuth";
 
@@ -84,7 +85,9 @@ function App() {
             <Route path="/create-purchase"    element={ <CreatePurchase />} />
             <Route path="/purchase-return"    element={ <ReturnPurchase /> } />
 
-            <Route path="/Reports"            element={ <UnderConstruction /> } />
+            <Route path="/reports"            element={ <Navigate to="/reports/sales" replace /> } />
+            <Route path="/reports/sales"      element={ <ProtectedRoute user={user} requiredRole="admin"><SalesReport /></ProtectedRoute> } />
+            <Route path="/reports/purchases"  element={ <ProtectedRoute user={user} requiredRole="admin"><PurchaseReport /></ProtectedRoute> } />
 
           </Routes>
          </ProtectedRoute>
