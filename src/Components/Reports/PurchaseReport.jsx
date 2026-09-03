@@ -2,8 +2,13 @@ import { useState } from "react";
 import ReportToolbar from "./ReportToolbar";
 import { useReportData } from "./useReportData";
 import { presetRange } from "./dateRange";
+import { peso } from "./format";
+import KpiCard from "./parts/KpiCard";
+import Panel from "./parts/Panel";
+import RankedTable from "./parts/RankedTable";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
+import "./reports.css";
 
 export default function PurchaseReport() {
   const [range, setRange] = useState(() => {
@@ -26,13 +31,52 @@ export default function PurchaseReport() {
         </div>
       )}
 
-      {/* R5 replaces this dump with the KPI + ranked tables */}
-      {data && (
-        <div className="page-card">
-          <pre style={{ margin: 0, fontSize: 12, overflowX: "auto" }}>
-            {JSON.stringify(data, null, 2)}
-          </pre>
-        </div>
+      {!error && (!data || loading) && (
+        <div className="page-card" style={{ color: "#64748b" }}>Loading report…</div>
+      )}
+
+      {!error && data && !loading && (
+        <>
+          <div style={{ maxWidth: 280, marginBottom: 16 }}>
+            <KpiCard
+              label="Total Purchases"
+              value={peso(data.kpis.total_purchases)}
+              accent="#1E5A84"
+            />
+          </div>
+
+          <div className="report-row-2">
+            <Panel
+              title="Top Purchased Products"
+              empty={!data.top_products.length && "No purchases in this range."}
+            >
+              <RankedTable
+                labelHeader="Product"
+                valueHeader="Total Purchases"
+                rows={data.top_products.map((r) => ({
+                  key: r.product_id,
+                  label: r.description,
+                  value: r.total,
+                }))}
+              />
+            </Panel>
+
+            <Panel
+              title="Top Suppliers"
+              empty={!data.top_suppliers.length && "No purchases in this range."}
+            >
+              <RankedTable
+                labelHeader="Supplier"
+                valueHeader="Purchases"
+                rows={data.top_suppliers.map((r) => ({
+                  key: r.supplier_id,
+                  label: r.name,
+                  value: r.total,
+                }))}
+              />
+            </Panel>
+          </div>
+        </>
       )}
     </div>
   );
