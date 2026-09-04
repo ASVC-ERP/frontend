@@ -11,6 +11,7 @@ import RankedTable from "./parts/RankedTable";
 import BrandPnlTable from "./parts/BrandPnlTable";
 import CityPie from "./parts/CityPie";
 import SlowMovingCards from "./parts/SlowMovingCards";
+import ViewFullLink from "./parts/ViewFullLink";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
 import "./reports.css";
@@ -93,7 +94,11 @@ export default function SalesReport() {
           </div>
 
           <div className="report-row-3">
-            <Panel title="Best-Selling Products" empty={!data.best_selling.length && "No sales in this range."}>
+            <Panel
+              title="Best-Selling Products"
+              action={<ViewFullLink report="sales" panel="best_selling" range={range} />}
+              empty={!data.best_selling.length && "No sales in this range."}
+            >
               <RankedTable
                 labelHeader="Product"
                 valueHeader="Total Sales"
@@ -105,7 +110,11 @@ export default function SalesReport() {
               />
             </Panel>
 
-            <Panel title="Top Customers" empty={!data.top_customers.length && "No sales in this range."}>
+            <Panel
+              title="Top Customers"
+              action={<ViewFullLink report="sales" panel="top_customers" range={range} />}
+              empty={!data.top_customers.length && "No sales in this range."}
+            >
               <RankedTable
                 labelHeader="Customer"
                 valueHeader="Sales"
@@ -127,7 +136,10 @@ export default function SalesReport() {
               <BrandPnlTable rows={data.pnl_by_brand} />
             </Panel>
 
-            <Panel title="Slow-Moving Products">
+            <Panel
+              title="Slow-Moving Products"
+              action={<ViewFullLink report="sales" panel="slow_moving" range={range} />}
+            >
               <SlowMovingCards items={data.slow_moving} />
             </Panel>
           </div>

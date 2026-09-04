@@ -35,6 +35,7 @@ const Users = lazy(() => import("./Components/Users/Users.jsx"));
 const ChangePassword = lazy(() => import("./Components/Account/ChangePassword.jsx"));
 const SalesReport = lazy(() => import("./Components/Reports/SalesReport.jsx"));
 const PurchaseReport = lazy(() => import("./Components/Reports/PurchaseReport.jsx"));
+const ReportListPage = lazy(() => import("./Components/Reports/ReportListPage.jsx"));
 const PurchasesPage = lazy(() => import("./Components/Purchases/Purchases.jsx"));
 const PurchaseDetailsPage = lazy(() => import("./Components/Purchases/PurchaseDetails.jsx"));
 const CreatePurchase = lazy(() => import("./Components/Purchases/CreatePurchase.jsx"));
@@ -95,9 +96,11 @@ function App() {
               <Route path="/create-purchase"    element={ <CreatePurchase />} />
               <Route path="/purchase-return"    element={ <ReturnPurchase /> } />
 
-              <Route path="/reports"            element={ <Navigate to="/reports/sales" replace /> } />
-              <Route path="/reports/sales"      element={ <ProtectedRoute user={user} requiredRole="admin"><SalesReport /></ProtectedRoute> } />
-              <Route path="/reports/purchases"  element={ <ProtectedRoute user={user} requiredRole="admin"><PurchaseReport /></ProtectedRoute> } />
+              <Route path="/reports"                 element={ <Navigate to="/reports/sales" replace /> } />
+              <Route path="/reports/sales"           element={ <ProtectedRoute user={user} requiredRole="admin"><SalesReport /></ProtectedRoute> } />
+              <Route path="/reports/purchases"       element={ <ProtectedRoute user={user} requiredRole="admin"><PurchaseReport /></ProtectedRoute> } />
+              <Route path="/reports/sales/:panel"     element={ <ProtectedRoute user={user} requiredRole="admin"><ReportListPage /></ProtectedRoute> } />
+              <Route path="/reports/purchases/:panel" element={ <ProtectedRoute user={user} requiredRole="admin"><ReportListPage /></ProtectedRoute> } />
 
             </Routes>
            </Suspense>
