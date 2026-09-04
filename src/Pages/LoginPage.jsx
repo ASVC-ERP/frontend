@@ -25,15 +25,12 @@ function LoginPage({ onLoginSuccess }) {
         password,
       });
 
-      // Access token stays in memory; the refresh token is set as an httpOnly cookie.
+      // Access token stays in memory; the refresh token is set as an httpOnly
+      // cookie. Identity + role are read from this token (see api/http.js),
+      // so there's no profile call or localStorage.user to keep in sync.
       setAccessToken(response.data.access_token);
 
-      const profile = await axios.get(`${API_URL}/authenticate/profile`);
-
-      localStorage.setItem("isAuthenticated", "true");
-      localStorage.setItem("user", JSON.stringify(profile.data));
-
-      onLoginSuccess();
+      onLoginSuccess(); // persists the "isAuthenticated" reload hint
       navigate("/");
     } catch (err) {
       setError(err.response?.data?.message || "Login failed");

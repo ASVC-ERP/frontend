@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, } from "../../utils/swal";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { getUser } from "../../api/http";
 import "./CreateOrder.css"
 
 const MAX_ORDER_ITEMS = 16;
@@ -193,9 +194,7 @@ function CreateOrder() {
 
     //console.log("info: ", info);
 
-    const user = JSON.parse(localStorage.getItem("user"));
-
-    //console.log("user:", user);
+    const user = getUser(); // from the signed access token
 
     if (!user) {
       showErrorSwal("User not logged in.", "error");

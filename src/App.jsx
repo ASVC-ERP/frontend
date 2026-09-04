@@ -56,7 +56,7 @@ function App() {
       <div className="container-fluid vh-100 d-flex p-0">
         {/* Sidebar */}
         <div className="d-flex flex-column" >
-          <Sidebar onLogout={handleLogout} />
+          <Sidebar user={user} onLogout={handleLogout} />
         </div>
 
         {/* Main Content */}

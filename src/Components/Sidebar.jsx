@@ -13,17 +13,9 @@ import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
 import "./Sidebar.css";
 
-function readUser() {
-  try {
-    const raw = localStorage.getItem("user");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
-export default function Sidebar({ onLogout }) {
-  const user = readUser();
+// `user` comes from App (useAuth -> the signed access token). Role gating
+// below is cosmetic; the backend enforces @Roles on every admin route.
+export default function Sidebar({ user, onLogout }) {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const linkStyle = {

@@ -8,14 +8,14 @@ import Modal from "react-bootstrap/Modal";
 import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, showConfirmSwal } from "../../utils/swal";
 import { debug } from "../../utils/log";
+import { getUser } from "../../api/http";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 export default function SalesOrderDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const userApprove = JSON.parse(localStorage.getItem("user"));
-  const roleApprove = userApprove?.role || "";
+  const roleApprove = getUser()?.role || ""; // from the signed access token
   const canApprove = roleApprove === "admin";
 
   const [order, setOrder] = useState(null);

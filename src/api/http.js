@@ -7,8 +7,57 @@ const API_URL = import.meta.env.VITE_API_URL;
 // written to localStorage.
 let accessToken = null;
 
+// ---- auth store: the token IS the source of truth for identity/role -------
+// Role gating (routes, menus) reads getUser() below, which decodes the
+// server-signed access token. localStorage is never trusted for role — a
+// user editing it in DevTools changes nothing.
+const authListeners = new Set();
+let cachedToken = null;
+let cachedUser = null;
+
+export function subscribeAuth(listener) {
+  authListeners.add(listener);
+  return () => authListeners.delete(listener);
+}
+function notifyAuth() {
+  for (const l of authListeners) l();
+}
+
+function decodeJwt(token) {
+  try {
+    const part = token.split(".")[1];
+    const b64 = part.replace(/-/g, "+").replace(/_/g, "/").padEnd(
+      part.length + ((4 - (part.length % 4)) % 4),
+      "=",
+    );
+    const bytes = Uint8Array.from(atob(b64), (c) => c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  } catch {
+    return null;
+  }
+}
+
+// The signed-in user, derived from the in-memory access token. Returns a
+// stable reference while the token is unchanged (safe for useSyncExternalStore).
+export function getUser() {
+  if (!accessToken) {
+    cachedToken = null;
+    cachedUser = null;
+    return null;
+  }
+  if (accessToken !== cachedToken) {
+    cachedToken = accessToken;
+    const p = decodeJwt(accessToken);
+    cachedUser = p
+      ? { userId: p.sub, username: p.username, name: p.name, role: p.role }
+      : null;
+  }
+  return cachedUser;
+}
+
 export function setAccessToken(token) {
   accessToken = token || null;
+  notifyAuth();
 }
 export function getAccessToken() {
   return accessToken;
@@ -18,9 +67,9 @@ export function getAccessToken() {
 axios.defaults.withCredentials = true;
 
 function clearSessionLocal() {
-  accessToken = null;
+  setAccessToken(null); // clears the in-memory token + notifies the auth store
   localStorage.removeItem("isAuthenticated");
-  localStorage.removeItem("user");
+  localStorage.removeItem("user"); // legacy key cleanup (no longer written)
   localStorage.removeItem("access_token"); // legacy key cleanup
 }
 

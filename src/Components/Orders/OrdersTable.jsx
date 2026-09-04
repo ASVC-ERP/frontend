@@ -11,10 +11,7 @@ import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 import { checkDuplicateProduct } from "../../hooks/useOrderHelpers";
 import { FaTrash } from "react-icons/fa";
 import { debug } from "../../utils/log";
-
-const userApprove = JSON.parse(localStorage.getItem("user"));
-const roleApprove = userApprove?.role || "";
-//console.log("User role for approvals:", roleApprove);
+import { getUser } from "../../api/http";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -32,7 +29,8 @@ function OrdersTable({
 }) {
 
   const navigate = useNavigate();
-  
+  const roleApprove = getUser()?.role || ""; // from the signed access token
+
   const { handleHeaderMouseDown, handleMouseMove, handleMouseUp } = useDraggableModal();
 
   const customerNameMap = useMemo(() => {
