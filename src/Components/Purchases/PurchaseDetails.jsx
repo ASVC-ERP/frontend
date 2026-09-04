@@ -6,7 +6,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import EditPurchaseModal from "./EditPurchase";
 import ReturnPurchaseModal from "./ReturnPurchase";
 import "../../styles/details-page.css";
-import "./PurchaseDetails.css";
+import "../../styles/buttons.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

@@ -3,6 +3,8 @@ import { forwardRef, useImperativeHandle } from "react";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
 import { createCustomerColumns } from "./CustomerColums";
 import { useCustomerHandlers } from "./CustomerHandler";
+import "../../styles/modal.css";
+import "../../styles/page.css";
 
 const CustomerTable = forwardRef(function CustomerTable(
   {

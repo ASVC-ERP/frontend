@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { showLoadingSwal, showSuccessSwal, showErrorSwal, showWarningSwal, showConfirmSwal } from "../../utils/swal";
 import { useDraggableModal } from "../../hooks/useDraggableModal";
+import "../../styles/modal.css";
+import "../../styles/buttons.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

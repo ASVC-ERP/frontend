@@ -1,4 +1,5 @@
 import "../../styles/details-page.css";
+import "../../styles/modal.css";
 
 export default function ReturnDetailsModal({ returnData, onClose }) {
   const invoice = returnData.supplier_invoices;

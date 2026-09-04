@@ -3,6 +3,8 @@ import axios from "axios";
 import InvoiceTable from "./InvoiceTable";
 import { usePagination } from "../../hooks/usePagination";
 import { IoIosSearch } from "react-icons/io";
+import "../../styles/page.css";
+import "../../styles/buttons.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

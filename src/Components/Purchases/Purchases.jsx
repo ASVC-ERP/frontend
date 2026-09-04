@@ -3,7 +3,8 @@ import DataTable from "react-data-table-component";
 import axios from "axios";
 import { useSearchParams, Link, useNavigate } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
-import "./Purchases.css"
+import "../../styles/page.css";
+import "../../styles/buttons.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

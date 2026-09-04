@@ -4,6 +4,7 @@ import axios from "axios";
 import EditOrderModal from "./EditOrder";
 import ServeOrderModal from "./ServeOrder";
 import "../../styles/details-page.css";
+import "../../styles/buttons.css";
 import Modal from "react-bootstrap/Modal";
 import CostHistoryTab from "../Inventory/InventoryTabs/CostHistoryTab";
 import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, showConfirmSwal } from "../../utils/swal";

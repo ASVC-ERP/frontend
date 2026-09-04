@@ -4,6 +4,9 @@ import ItemDetails from "./ItemDetails";
 import Tabs from "../InventoryTabs/Tabs";
 import axios from "axios";
 import { debug } from "../../../utils/log";
+import "../../../styles/details-page.css";
+import "../../../styles/modal.css";
+import "../../../styles/buttons.css";
 
 function Item() {
   const location = useLocation();

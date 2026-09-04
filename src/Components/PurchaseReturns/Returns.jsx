@@ -3,7 +3,8 @@ import axios from "axios";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import DataTable from "react-data-table-component";
 import ReturnDetailsModal from "./ReturnDetails";
-import "../Purchases/Purchases.css";
+import "../../styles/page.css";
+import "../../styles/buttons.css";
 import { IoIosSearch } from "react-icons/io";
 import { debug } from "../../utils/log";
 
@@ -97,7 +98,7 @@ export default function ReturnPurchase() {
       width: "140px",
       cell: (row) => (
         <button
-          className="primary-btn"
+          className="btn-primary-custom"
           onClick={(e) => {
             e.stopPropagation();
     

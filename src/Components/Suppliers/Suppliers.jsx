@@ -6,6 +6,7 @@ import { IoIosSearch } from "react-icons/io";
 import EditSupplierModal from "./EditSupplierModal";
 import { showLoadingSwal, showSuccessSwal, showErrorSwal, showWarningSwal, showConfirmSwal } from "../../utils/swal";
 import "../../styles/buttons.css";
+import "../../styles/page.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 

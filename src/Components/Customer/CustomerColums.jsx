@@ -1,4 +1,5 @@
 import { FaEdit, FaTrash } from "react-icons/fa";
+import "../../styles/buttons.css";
 
 export const createCustomerColumns = (handleEdit, handleDelete) => [
   {

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import EditSalesInvoiceModal from "./EditInvoice";
-import "../Purchases/Purchases.css";
-import "../../styles/modal.css"
+import "../Purchases/PurchaseDetails.css";
+import "../../styles/modal.css";
+import "../../styles/details-page.css";
+import "../../styles/buttons.css";
 import { showErrorSwal, showWarningSwal } from "../../utils/swal";
 import SalesInvoiceReturnModal from "./ReturnInvoice";
 import { debug } from "../../utils/log";
@@ -127,7 +129,7 @@ export default function SalesInvoiceDetails() {
 
       <div className="details-cards-grid">
         <div className="details-main-card">
-          <div className="details-main-label">Customer</div>
+          <div className="details-card-label">Customer</div>
 
           <div className="details-entity-name">
             <span className="details-avatar">
