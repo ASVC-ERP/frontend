@@ -6,6 +6,7 @@ import {
   showSuccessSwal,
   showErrorSwal,
   showWarningSwal,
+  showConfirmSwal,
 } from "../../utils/swal";
 import "../../styles/create-page.css";
 import "../../styles/page.css";
@@ -41,6 +42,29 @@ export default function Users() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const toggleActive = async (u) => {
+    const disabling = u.active !== false;
+    const res = await showConfirmSwal({
+      title: disabling ? `Disable ${u.username}?` : `Enable ${u.username}?`,
+      text: disabling
+        ? "They'll be signed out shortly and can't log in until re-enabled."
+        : "They'll be able to log in again.",
+      confirmButtonText: disabling ? "Disable" : "Enable",
+      confirmColor: disabling ? "red" : "green",
+    });
+    if (!res.isConfirmed) return;
+    try {
+      await axios.put(`${API_URL}/user/${u.id}`, { active: !disabling });
+      fetchUsers();
+      showSuccessSwal(
+        disabling ? "User disabled" : "User enabled",
+        `${u.username} has been updated.`,
+      );
+    } catch (err) {
+      showErrorSwal("Update failed", err.response?.data?.message || "Please try again.");
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -99,12 +123,38 @@ export default function Users() {
         center: true,
       },
       {
-        name: "Created",
-        selector: (r) => (r.created_at ? new Date(r.created_at).toLocaleDateString() : "-"),
-        width: "160px",
+        name: "Status",
+        cell: (r) => (
+          <span className={`badge ${r.active === false ? "bg-secondary" : "bg-success"}`}>
+            {r.active === false ? "Disabled" : "Active"}
+          </span>
+        ),
+        width: "120px",
         center: true,
       },
+      {
+        name: "Created",
+        selector: (r) => (r.created_at ? new Date(r.created_at).toLocaleDateString() : "-"),
+        width: "150px",
+        center: true,
+      },
+      {
+        name: "",
+        cell: (r) => (
+          <button
+            className="btn-secondary-custom"
+            style={{ padding: "4px 12px", fontSize: 13 }}
+            onClick={() => toggleActive(r)}
+          >
+            {r.active === false ? "Enable" : "Disable"}
+          </button>
+        ),
+        width: "120px",
+        center: true,
+        ignoreRowClick: true,
+      },
     ],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [],
   );
 
