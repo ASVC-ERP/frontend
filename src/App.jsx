@@ -21,6 +21,7 @@ import Suppliers from "./Components/Suppliers/Suppliers.jsx";
 import CreateSupplier from "./Components/Suppliers/CreateSupplier.jsx"
 import Customer from "./Components/Customer/Customer.jsx";
 import Users from "./Components/Users/Users.jsx";
+import ChangePassword from "./Components/Account/ChangePassword.jsx";
 import SalesReport from "./Components/Reports/SalesReport.jsx";
 import PurchaseReport from "./Components/Reports/PurchaseReport.jsx";
 import HomePage from "./Components/Home.jsx";
@@ -74,6 +75,7 @@ function App() {
             <Route path="/suppliers"          element={ <Suppliers />} />
             <Route path="/suppliers/create"   element={ <CreateSupplier />} />
             <Route path="/customer"           element={ <Customer /> } />
+            <Route path="/change-password"    element={ <ChangePassword /> } />
             <Route path="/users"              element={ <ProtectedRoute user={user} requiredRole="admin"><Users /></ProtectedRoute> } />
 
             <Route path="/invoices"           element={ <SalesInvoices /> } />

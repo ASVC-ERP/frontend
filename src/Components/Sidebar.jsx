@@ -203,6 +203,12 @@ export default function Sidebar({ onLogout }) {
               </button>
             </li>
             <li>
+              <Link className="dropdown-item" to="/change-password">
+                <i className="bi bi-key me-2"></i>
+                Change password
+              </Link>
+            </li>
+            <li>
               <hr className="dropdown-divider" />
             </li>
             <li>
