@@ -126,13 +126,20 @@ export default function SalesReport() {
               />
             </Panel>
 
-            <Panel title="Sales By City">
+            <Panel
+              title="Sales By City"
+              action={<ViewFullLink report="sales" panel="sales_by_city" range={range} />}
+            >
               <CityPie data={data.sales_by_city} />
             </Panel>
           </div>
 
           <div className="report-row-2">
-            <Panel title="P&L Summary by Brand" empty={!data.pnl_by_brand.length && "No sales in this range."}>
+            <Panel
+              title="P&L Summary by Brand"
+              action={<ViewFullLink report="sales" panel="pnl_by_brand" range={range} />}
+              empty={!data.pnl_by_brand.length && "No sales in this range."}
+            >
               <BrandPnlTable rows={data.pnl_by_brand} />
             </Panel>
 

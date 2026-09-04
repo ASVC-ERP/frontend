@@ -63,6 +63,32 @@ const PANELS = {
       },
     ],
   },
+  sales_by_city: {
+    report: "Sales",
+    back: "/reports/sales",
+    title: "Sales by City",
+    columns: [
+      { name: "City", selector: (r) => r.city || "—", sortable: true, grow: 2, wrap: true },
+      { ...money(null, "total"), name: "Sales" },
+    ],
+  },
+  pnl_by_brand: {
+    report: "Sales",
+    back: "/reports/sales",
+    title: "P&L Summary by Brand",
+    columns: [
+      { name: "Brand", selector: (r) => r.brand || "—", sortable: true, grow: 2, wrap: true },
+      { ...money(null, "revenue"), name: "Revenue" },
+      { ...money(null, "profit"), name: "Profit" },
+      {
+        name: "Margin %",
+        selector: (r) => Number(r.margin_pct) || 0,
+        format: (r) => `${Number(r.margin_pct) || 0}%`,
+        sortable: true,
+        right: true,
+      },
+    ],
+  },
   top_products: {
     report: "Purchase",
     back: "/reports/purchases",
