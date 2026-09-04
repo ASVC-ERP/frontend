@@ -8,6 +8,7 @@ import { showErrorSwal } from "../../utils/swal";
 import KpiCard from "./parts/KpiCard";
 import Panel from "./parts/Panel";
 import RankedTable from "./parts/RankedTable";
+import ViewFullLink from "./parts/ViewFullLink";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
 import "./reports.css";
@@ -72,6 +73,7 @@ export default function PurchaseReport() {
           <div className="report-row-2">
             <Panel
               title="Top Purchased Products"
+              action={<ViewFullLink report="purchases" panel="top_products" range={range} />}
               empty={!data.top_products.length && "No purchases in this range."}
             >
               <RankedTable
@@ -87,6 +89,7 @@ export default function PurchaseReport() {
 
             <Panel
               title="Top Suppliers"
+              action={<ViewFullLink report="purchases" panel="top_suppliers" range={range} />}
               empty={!data.top_suppliers.length && "No purchases in this range."}
             >
               <RankedTable
