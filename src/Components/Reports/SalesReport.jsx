@@ -35,6 +35,7 @@ export default function SalesReport() {
   };
 
   const k = data?.kpis;
+  const kp = data?.kpis_prev;
 
   return (
     <div className="page-container">
@@ -63,10 +64,32 @@ export default function SalesReport() {
       {!error && data && !loading && (
         <>
           <div className="report-kpis">
-            <KpiCard label="Total Revenue" value={peso(k.revenue)} accent="#1E5A84" />
-            <KpiCard label="COGS" value={peso(k.cogs)} accent="#dc2626" valueColor="#dc2626" />
-            <KpiCard label="Gross Profit" value={peso(k.gross_profit)} accent="#16a34a" valueColor="#16a34a" />
-            <KpiCard label="Gross Margin" value={pct(k.margin_pct)} accent="#d97706" />
+            <KpiCard
+              label="Total Revenue"
+              value={peso(k.revenue)}
+              accent="#1E5A84"
+              delta={{ cur: k.revenue, prev: kp?.revenue }}
+            />
+            <KpiCard
+              label="COGS"
+              value={peso(k.cogs)}
+              accent="#dc2626"
+              valueColor="#dc2626"
+              delta={{ cur: k.cogs, prev: kp?.cogs, goodDirection: "down" }}
+            />
+            <KpiCard
+              label="Gross Profit"
+              value={peso(k.gross_profit)}
+              accent="#16a34a"
+              valueColor="#16a34a"
+              delta={{ cur: k.gross_profit, prev: kp?.gross_profit }}
+            />
+            <KpiCard
+              label="Gross Margin"
+              value={pct(k.margin_pct)}
+              accent="#d97706"
+              delta={{ cur: k.margin_pct, prev: kp?.margin_pct, mode: "points" }}
+            />
           </div>
 
           <div className="report-row-3">

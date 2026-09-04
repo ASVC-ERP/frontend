@@ -62,6 +62,10 @@ export default function PurchaseReport() {
               label="Total Purchases"
               value={peso(data.kpis.total_purchases)}
               accent="#1E5A84"
+              delta={{
+                cur: data.kpis.total_purchases,
+                prev: data.kpis_prev?.total_purchases,
+              }}
             />
           </div>
 
