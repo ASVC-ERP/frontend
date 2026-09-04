@@ -3,7 +3,8 @@ import { presetRange, RANGE_PRESETS } from "./dateRange";
 
 // Range picker shared by the Sales and Purchase report pages.
 // Calls onApply({ from, to }) on preset change and on the Apply button.
-export default function ReportToolbar({ range, onApply, loading }) {
+// If onExport is passed, shows an Export button (xlsx download).
+export default function ReportToolbar({ range, onApply, loading, onExport, exporting }) {
   const [preset, setPreset] = useState("this-month");
   const [from, setFrom] = useState(range.from);
   const [to, setTo] = useState(range.to);
@@ -67,6 +68,16 @@ export default function ReportToolbar({ range, onApply, loading }) {
         >
           {loading ? "Loading..." : dirty ? "Apply" : "Refresh"}
         </button>
+
+        {onExport && (
+          <button
+            className="btn-secondary-custom"
+            disabled={loading || exporting || !range.from || !range.to}
+            onClick={onExport}
+          >
+            {exporting ? "Exporting..." : "Export"}
+          </button>
+        )}
       </div>
     </div>
   );
