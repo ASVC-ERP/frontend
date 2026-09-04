@@ -16,6 +16,21 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const EMPTY_FORM = { username: "", name: "", password: "", role: "agent" };
 
+const PW_HINT = "At least 8 characters, with a letter and a number.";
+
+// Mirrors the server policy in is-valid-password.decorator.ts. The server
+// is still the source of truth; this is just for a friendlier message.
+function passwordProblem(pw) {
+  if (pw.length < 8) return "Password must be at least 8 characters.";
+  if (pw.length > 72) return "Password must be at most 72 characters.";
+  if (!/[A-Za-z]/.test(pw)) return "Password must contain a letter.";
+  if (!/\d/.test(pw)) return "Password must contain a number.";
+  return null;
+}
+
+const isLocked = (u) =>
+  !!u.locked_until && new Date(u.locked_until).getTime() > Date.now();
+
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [tableLoading, setTableLoading] = useState(false);
@@ -67,6 +82,23 @@ export default function Users() {
     }
   };
 
+  const unlockUser = async (u) => {
+    const res = await showConfirmSwal({
+      title: `Unlock ${u.username}?`,
+      text: "Clears the lockout so they can try signing in again right away.",
+      confirmButtonText: "Unlock",
+      confirmColor: "green",
+    });
+    if (!res.isConfirmed) return;
+    try {
+      await axios.put(`${API_URL}/user/${u.id}`, { unlock: true });
+      fetchUsers();
+      showSuccessSwal("User unlocked", `${u.username} can sign in again.`);
+    } catch (err) {
+      showErrorSwal("Unlock failed", err.response?.data?.message || "Please try again.");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -74,8 +106,9 @@ export default function Users() {
       showWarningSwal("Missing fields", "Username and name are required.");
       return;
     }
-    if (form.password.length < 6) {
-      showWarningSwal("Weak password", "Password must be at least 6 characters.");
+    const pwProblem = passwordProblem(form.password);
+    if (pwProblem) {
+      showWarningSwal("Weak password", pwProblem);
       return;
     }
 
@@ -124,11 +157,13 @@ export default function Users() {
       },
       {
         name: "Status",
-        cell: (r) => (
-          <span className={`badge ${r.active === false ? "bg-secondary" : "bg-success"}`}>
-            {r.active === false ? "Disabled" : "Active"}
-          </span>
-        ),
+        cell: (r) => {
+          if (r.active === false)
+            return <span className="badge bg-secondary">Disabled</span>;
+          if (isLocked(r))
+            return <span className="badge bg-warning text-dark">Locked</span>;
+          return <span className="badge bg-success">Active</span>;
+        },
         width: "120px",
         center: true,
       },
@@ -141,15 +176,26 @@ export default function Users() {
       {
         name: "",
         cell: (r) => (
-          <button
-            className="btn-secondary-custom"
-            style={{ padding: "4px 12px", fontSize: 13 }}
-            onClick={() => toggleActive(r)}
-          >
-            {r.active === false ? "Enable" : "Disable"}
-          </button>
+          <div style={{ display: "flex", gap: 6 }}>
+            <button
+              className="btn-secondary-custom"
+              style={{ padding: "4px 12px", fontSize: 13 }}
+              onClick={() => toggleActive(r)}
+            >
+              {r.active === false ? "Enable" : "Disable"}
+            </button>
+            {isLocked(r) && (
+              <button
+                className="btn-secondary-custom"
+                style={{ padding: "4px 12px", fontSize: 13 }}
+                onClick={() => unlockUser(r)}
+              >
+                Unlock
+              </button>
+            )}
+          </div>
         ),
-        width: "120px",
+        width: "190px",
         center: true,
         ignoreRowClick: true,
       },
@@ -207,9 +253,10 @@ export default function Users() {
                   value={form.password}
                   onChange={handleChange}
                   className="form-control"
-                  placeholder="At least 6 characters"
+                  placeholder="At least 8 characters"
                   autoComplete="new-password"
                 />
+                <div className="form-text">{PW_HINT}</div>
               </div>
 
               <div className="col-md-3">
