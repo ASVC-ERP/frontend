@@ -1,33 +1,21 @@
-import { useState } from "react";
-import { logoutRequest } from "../api/http";
-
-const readUser = () => {
-  try {
-    const raw = localStorage.getItem("user");
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-};
+import { useSyncExternalStore } from "react";
+import { subscribeAuth, getUser, logoutRequest } from "../api/http";
 
 export const useAuth = () => {
-  // The access token now lives in memory (see api/http.js) and is restored from
-  // the refresh cookie at startup, so the gate keys off the flag + a parseable user.
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () =>
-      localStorage.getItem("isAuthenticated") === "true" && readUser() !== null,
-  );
-
-  const user = readUser();
+  // Identity + role come from the in-memory access token (server-signed),
+  // via the auth store in api/http.js. localStorage is not trusted here.
+  const user = useSyncExternalStore(subscribeAuth, getUser, getUser);
+  const isAuthenticated = user !== null;
 
   const handleLoginSuccess = () => {
-    setIsAuthenticated(true);
+    // The token is already in memory (LoginPage called setAccessToken), which
+    // is what flips isAuthenticated. Persist a hint so a hard reload knows to
+    // trade the refresh cookie for a new token before rendering.
     localStorage.setItem("isAuthenticated", "true");
   };
 
   const handleLogout = async () => {
     await logoutRequest(); // revoke the refresh token server-side + clear local
-    setIsAuthenticated(false);
   };
 
   return {

@@ -6,10 +6,11 @@ import Swal from "sweetalert2";
 import showAlert from "../../Swal";
 import "./ItemDetails.css"
 import { debug } from "../../../utils/log";
+import { getUser } from "../../../api/http";
 
 function ItemDetails({ item, onUpdate }) {
   const API_URL = import.meta.env.VITE_API_URL;
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = getUser(); // from the signed access token
   const isAdmin = user?.role === "admin";
   const navigate = useNavigate();
   const [showStockModal, setShowStockModal] = useState(false);

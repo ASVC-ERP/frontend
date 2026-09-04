@@ -4,10 +4,11 @@ import axios from "axios";
 import { LuPackage, LuUsers, LuTruck, LuClipboardList, LuArrowRight, } from "react-icons/lu";
 import "../styles/dashboard.css";
 import { debug } from "../utils/log";
+import { getUser } from "../api/http";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("user"));
+  const user = getUser(); // from the signed access token
   const name = "Jiko";
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -98,7 +99,7 @@ export default function HomePage() {
       <div className="dashboard-header">
       <div>
         <p className="dashboard-eyebrow">Dashboard</p>
-        <h1>Welcome back, {user.name}!</h1>
+        <h1>Welcome back, {user?.name}!</h1>
         <span>Here's what's happening across your inventory and sales today.</span>
       </div>
       </div>
