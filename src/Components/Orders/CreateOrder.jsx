@@ -6,7 +6,7 @@ import { showSuccessSwal, showErrorSwal, showWarningSwal, showLoadingSwal, } fro
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getUser } from "../../api/http";
-import "./CreateOrder.css"
+import "../../styles/create-page.css";
 
 const MAX_ORDER_ITEMS = 16;
 
@@ -311,84 +311,6 @@ function CreateOrder() {
           >
             Submit
           </button>
-        </div>
-      </div>
-    </form>
-  );
-
-  return (
-    <form onSubmit={handleSubmit}>
-      <div className="container-fluid mt-3">
-        {/* Header */}
-        <div className="row px-3 px-md-4">
-          <div className="col-12">
-            <p
-              className="fw-bold fs-4 fs-md-2 mb-2"
-              style={{ color: "#1E5A84", fontFamily: "'Outfit', sans-serif" }}
-            >
-              Create Order
-            </p>
-          </div>
-        </div>
-
-        {/* Customer Info */}
-        <div className="row px-3 px-md-4">
-          <div className="col-12">
-            <div
-              className="border rounded-3 p-3 bg-light"
-              style={{ backgroundColor: "#E8E7EC" }}
-            >
-              <InfoForm info={info} setInfo={setInfo} />
-            </div>
-          </div>
-        </div>
-
-        {/* Product Details */}
-        <div className="row mt-3 px-2 px-md-4">
-          <div className="col-12">
-            <div
-              className="border rounded-3 p-3 bg-light"
-              style={{ backgroundColor: "#E8E7EC" }}
-            >
-              <OrderForm
-                query={query}
-                suggestions={suggestions}
-                orderItems={orderItems}
-                onSearchChange={handleSearchChange}
-                onSelectProduct={handleSelectProduct}
-                onPriceChange={handlePriceChange}
-                onEnableCustomPrice={handleEnableCustomPrice}
-                onDisableCustomPrice={handleDisableCustomPrice}
-                onUpdateOrderItem={updateOrderItem}
-                onCalculateTotal={calculateTotal}
-                onCalculateTotalPrice={calculateTotalPrice}
-                onRemoveProduct={handleRemoveProduct}
-                onDeleteItem={handleDeleteItem}
-              />
-            </div>
-          </div>
-        </div>
-
-        {/* Buttons */}
-        <div className="row mt-3 px-3 px-md-4">
-          <div className="col-12 d-flex justify-content-end gap-2 flex-wrap">
-            <button
-              type="button"
-              className="btn"
-              style={{ backgroundColor: "#B64345", color: "white" }}
-              onClick={handleCancel}
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="btn"
-              style={{ backgroundColor: "#1E5A84", color: "white" }}
-              disabled={calculateTotalPrice() === 0}
-            >
-              Submit
-            </button>
-          </div>
         </div>
       </div>
     </form>

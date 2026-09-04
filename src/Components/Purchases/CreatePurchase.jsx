@@ -37,9 +37,9 @@ export default function CreatePurchase() {
   const [supplierSuggestions, setSupplierSuggestions] = useState([]);
   const [selectedSupplier, setSelectedSupplier] = useState(null);
 
-  const [items, setItems] = useState([{ ...emptyItem }]);
-  const [queries, setQueries] = useState({});
-  const [suggestions, setSuggestions] = useState({});
+  const [items, setItems] = useState([]);
+  const [productQuery, setProductQuery] = useState("");
+  const [productSuggestions, setProductSuggestions] = useState([]);
   const [saving, setSaving] = useState(false);
 
   const total = items.reduce((sum, item) => sum + Number(item.subtotal || 0), 0);
@@ -49,10 +49,6 @@ export default function CreatePurchase() {
       ...prev,
       [field]: value,
     }));
-  };
-
-  const addItem = () => {
-    setItems((prev) => [...prev, { ...emptyItem }]);
   };
 
   const removeItem = (index) => {
@@ -104,31 +100,11 @@ export default function CreatePurchase() {
     setSupplierSuggestions([]);
   };
 
-  const handleSearchChange = async (index, value) => {
-    setQueries((prev) => ({
-      ...prev,
-      [index]: value,
-    }));
-
-    setItems((prev) => {
-      const updated = [...prev];
-
-      updated[index] = {
-        ...updated[index],
-        product_id: null,
-        item_name: value,
-        item_code: "",
-        unit: "",
-      };
-
-      return updated;
-    });
+  const handleSearchChange = async (value) => {
+    setProductQuery(value);
 
     if (!value.trim()) {
-      setSuggestions((prev) => ({
-        ...prev,
-        [index]: [],
-      }));
+      setProductSuggestions([]);
       return;
     }
 
@@ -140,23 +116,15 @@ export default function CreatePurchase() {
         },
       });
 
-      setSuggestions((prev) => ({
-        ...prev,
-        [index]: res.data || [],
-      }));
+      setProductSuggestions(res.data || []);
     } catch (err) {
       console.error(err);
-      setSuggestions((prev) => ({
-        ...prev,
-        [index]: [],
-      }));
+      setProductSuggestions([]);
     }
   };
 
-  const handleSelectProduct = (index, product) => {
-    const duplicate = items.some(
-      (item, i) => i !== index && item.product_id === product.id
-    );
+  const handleSelectProduct = (product) => {
+    const duplicate = items.some((item) => item.product_id === product.id);
 
     if (duplicate) {
       Swal.fire({
@@ -165,32 +133,24 @@ export default function CreatePurchase() {
         text: `${product.item_name} is already added.`,
         confirmButtonColor: "#1E5A84",
       });
+      setProductQuery("");
+      setProductSuggestions([]);
       return;
     }
 
-    setItems((prev) => {
-      const updated = [...prev];
-
-      updated[index] = {
-        ...updated[index],
+    setItems((prev) => [
+      ...prev,
+      {
+        ...emptyItem,
         product_id: product.id,
         item_name: product.item_name,
         item_code: product.item_code,
         unit: product.unit,
-      };
+      },
+    ]);
 
-      return updated;
-    });
-
-    setQueries((prev) => ({
-      ...prev,
-      [index]: product.item_name,
-    }));
-
-    setSuggestions((prev) => ({
-      ...prev,
-      [index]: [],
-    }));
+    setProductQuery("");
+    setProductSuggestions([]);
   };
 
   const validateForm = () => {
@@ -198,6 +158,7 @@ export default function CreatePurchase() {
     if (!form.po_number.trim()) return "PO number is required.";
     if (!form.invoice_number.trim()) return "Invoice number is required.";
     if (!form.purchase_date) return "Purchase date is required.";
+    if (items.length === 0) return "Please add at least one product.";
 
     const invalidItem = items.find(
       (item) =>
@@ -374,16 +335,31 @@ export default function CreatePurchase() {
         <div className="create-section">
           <div className="create-section-header">
             <h5>Products</h5>
-  
-            <button
-              type="button"
-              className="btn create-add-btn"
-              onClick={addItem}
-            >
-              + Add Product
-            </button>
           </div>
-  
+
+          <div className="product-cell" style={{ marginBottom: "16px" }}>
+            <input
+              className="form-control"
+              value={productQuery}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              placeholder="Search product..."
+            />
+
+            {productSuggestions.length > 0 && (
+              <ul className="product-suggestions">
+                {productSuggestions.map((product) => (
+                  <li
+                    key={product.id}
+                    onClick={() => handleSelectProduct(product)}
+                  >
+                    <strong>{product.item_name}</strong>
+                    <span>{product.item_code}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
           <div className="table-responsive">
             <table className="table create-table align-middle">
               <thead>
@@ -396,37 +372,15 @@ export default function CreatePurchase() {
                   <th width="80">Action</th>
                 </tr>
               </thead>
-  
+
               <tbody>
                 {items.map((item, index) => (
                   <tr key={index}>
-                    <td className="product-cell">
-                      <input
-                        className="form-control"
-                        value={queries[index] ?? item.item_name}
-                        onChange={(e) =>
-                          handleSearchChange(index, e.target.value)
-                        }
-                        placeholder="Search product..."
-                      />
-  
-                      {suggestions[index]?.length > 0 && (
-                        <ul className="product-suggestions">
-                          {suggestions[index].map((product) => (
-                            <li
-                              key={product.id}
-                              onClick={() =>
-                                handleSelectProduct(index, product)
-                              }
-                            >
-                              <strong>{product.item_name}</strong>
-                              <span>{product.item_code}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      )}
+                    <td>
+                      <div className="fw-semibold">{item.item_name}</div>
+                      <small className="text-muted">{item.item_code}</small>
                     </td>
-  
+
                     <td>
                       <input
                         type="number"
@@ -470,7 +424,6 @@ export default function CreatePurchase() {
                         type="button"
                         className="btn btn-sm btn-danger"
                         onClick={() => removeItem(index)}
-                        disabled={items.length === 1}
                       >
                         -
                       </button>
