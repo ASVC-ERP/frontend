@@ -7,7 +7,9 @@ import {
   showErrorSwal,
   showWarningSwal,
   showConfirmSwal,
+  imsSwal,
 } from "../../utils/swal";
+import { PW_HINT, passwordProblem, generatePassword } from "../../utils/password";
 import "../../styles/create-page.css";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
@@ -15,18 +17,6 @@ import "../../styles/buttons.css";
 const API_URL = import.meta.env.VITE_API_URL;
 
 const EMPTY_FORM = { username: "", name: "", password: "", role: "agent" };
-
-const PW_HINT = "At least 8 characters, with a letter and a number.";
-
-// Mirrors the server policy in is-valid-password.decorator.ts. The server
-// is still the source of truth; this is just for a friendlier message.
-function passwordProblem(pw) {
-  if (pw.length < 8) return "Password must be at least 8 characters.";
-  if (pw.length > 72) return "Password must be at most 72 characters.";
-  if (!/[A-Za-z]/.test(pw)) return "Password must contain a letter.";
-  if (!/\d/.test(pw)) return "Password must contain a number.";
-  return null;
-}
 
 const isLocked = (u) =>
   !!u.locked_until && new Date(u.locked_until).getTime() > Date.now();
@@ -96,6 +86,42 @@ export default function Users() {
       showSuccessSwal("User unlocked", `${u.username} can sign in again.`);
     } catch (err) {
       showErrorSwal("Unlock failed", err.response?.data?.message || "Please try again.");
+    }
+  };
+
+  const resetPassword = async (u) => {
+    const { value: newPw, isConfirmed } = await imsSwal.fire({
+      title: `Reset password for ${u.username}`,
+      input: "text",
+      inputValue: generatePassword(),
+      inputLabel: "New password — use the generated one or type your own",
+      inputAttributes: { autocapitalize: "off", autocorrect: "off", spellcheck: "false" },
+      showCancelButton: true,
+      confirmButtonText: "Reset password",
+      inputValidator: (v) => passwordProblem(v || "") || undefined,
+      customClass: {
+        popup: "ims-swal",
+        title: "ims-swal-title",
+        confirmButton: "ims-swal-confirm",
+        cancelButton: "ims-swal-cancel",
+      },
+      buttonsStyling: false,
+    });
+    if (!isConfirmed || !newPw) return;
+    try {
+      await axios.put(`${API_URL}/user/${u.id}`, { password: newPw });
+      fetchUsers();
+      await imsSwal.fire({
+        icon: "success",
+        iconColor: "#639922",
+        title: "Password reset",
+        html: `Give this to <b>${u.username}</b> — they'll be signed out and must use it to log in:<br><br><code style="font-size:1.1rem;user-select:all">${newPw}</code>`,
+        confirmButtonText: "OK",
+        customClass: { popup: "ims-swal", confirmButton: "ims-swal-confirm" },
+        buttonsStyling: false,
+      });
+    } catch (err) {
+      showErrorSwal("Reset failed", err.response?.data?.message || "Please try again.");
     }
   };
 
@@ -193,9 +219,16 @@ export default function Users() {
                 Unlock
               </button>
             )}
+            <button
+              className="btn-secondary-custom"
+              style={{ padding: "4px 12px", fontSize: 13 }}
+              onClick={() => resetPassword(r)}
+            >
+              Reset PW
+            </button>
           </div>
         ),
-        width: "190px",
+        width: "280px",
         center: true,
         ignoreRowClick: true,
       },
