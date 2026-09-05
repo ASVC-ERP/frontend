@@ -3,6 +3,7 @@ import axios from "axios";
 import DataTable from "react-data-table-component";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
+import { FaEdit } from "react-icons/fa";
 import EditSupplierModal from "./EditSupplierModal";
 import { showLoadingSwal, showSuccessSwal, showErrorSwal, showWarningSwal, showConfirmSwal } from "../../utils/swal";
 import "../../styles/buttons.css";
@@ -98,10 +99,10 @@ export default function Suppliers() {
         name: "Actions",
         cell: (row) => (
           <button
-            className="btn-secondary-custom"
+            className="btn-edit"
             onClick={() => handleEdit(row)}
           >
-            Edit
+            <FaEdit />
           </button>
         ),
         width: "120px",
