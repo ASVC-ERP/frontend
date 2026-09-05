@@ -2,7 +2,7 @@ import { LiaUserCircle } from "react-icons/lia";
 import { MdOutlinePeopleAlt } from "react-icons/md";
 import { BsPersonGear } from "react-icons/bs";
 import { PiGearSixBold, PiShoppingBagBold } from "react-icons/pi";
-import { TbTruckDelivery, TbTruckReturn, TbReportAnalytics } from "react-icons/tb";
+import { TbTruckDelivery, TbTruckReturn, TbReportAnalytics, TbShoppingCart } from "react-icons/tb";
 import { RiReceiptLine } from "react-icons/ri";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
@@ -65,7 +65,7 @@ export default function Sidebar({ user, onLogout }) {
               </li>
               <li className="mt-2">
                 <Link to="/reports/purchases" className="nav-link d-flex align-items-center" style={linkStyle}>
-                  <TbReportAnalytics className="me-3" size={25} />
+                  <TbShoppingCart className="me-3" size={25} />
                   <span className="sidebar-text">Purchase</span>
                 </Link>
               </li>

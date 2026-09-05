@@ -18,7 +18,41 @@ export default function EditPurchaseModal({
   const [activeIndex, setActiveIndex] = useState(null);
   const [dropdownPos, setDropdownPos] = useState(null);
 
+  const [supplierQuery, setSupplierQuery] = useState(null);
+  const [supplierSuggestions, setSupplierSuggestions] = useState([]);
+
   if (!show || !invoiceForm) return null;
+
+  const searchSuppliers = async (value) => {
+    setSupplierQuery(value);
+
+    if (value.trim().length < 2) {
+      setSupplierSuggestions([]);
+      return;
+    }
+
+    try {
+      const res = await axios.get(`${API_URL}/supplier`, {
+        params: { search: value, limit: 20 },
+      });
+
+      setSupplierSuggestions(res.data.data || []);
+    } catch (err) {
+      console.error("Supplier search failed:", err);
+      setSupplierSuggestions([]);
+    }
+  };
+
+  const selectSupplier = (supplier) => {
+    setInvoiceForm({
+      ...invoiceForm,
+      supplier_id: supplier.id,
+      supplier_name: supplier.name,
+    });
+
+    setSupplierQuery(supplier.name);
+    setSupplierSuggestions([]);
+  };
 
   const updateItem = (index, field, value) => {
     const updated = [...invoiceForm.items];
@@ -166,7 +200,31 @@ export default function EditPurchaseModal({
                   </div>
 
                   <div className="row g-3">
-                    <div className="col-md-3">
+                    <div className="col-md-4 position-relative">
+                      <label className="form-label">Supplier</label>
+                      <input
+                        className="form-control"
+                        placeholder="Search supplier..."
+                        value={supplierQuery ?? invoiceForm.supplier_name ?? ""}
+                        onChange={(e) => searchSuppliers(e.target.value)}
+                      />
+
+                      {supplierSuggestions.length > 0 && (
+                        <div className="modal-suggestions">
+                          {supplierSuggestions.map((supplier) => (
+                            <div
+                              key={supplier.id}
+                              className="modal-suggestion-item"
+                              onClick={() => selectSupplier(supplier)}
+                            >
+                              {supplier.name}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="col-md-2">
                       <label className="form-label">PO Number</label>
                       <input
                         className="form-control"
@@ -180,7 +238,7 @@ export default function EditPurchaseModal({
                       />
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-2">
                       <label className="form-label">Invoice Number</label>
                       <input
                         className="form-control"
@@ -194,7 +252,7 @@ export default function EditPurchaseModal({
                       />
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-2">
                       <label className="form-label">Purchase Date</label>
                       <input
                         type="date"
@@ -209,7 +267,7 @@ export default function EditPurchaseModal({
                       />
                     </div>
 
-                    <div className="col-md-3">
+                    <div className="col-md-2">
                       <label className="form-label">Conversion Factor</label>
                       <input
                         type="number"

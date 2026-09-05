@@ -47,6 +47,7 @@ export default function PurchaseDetailsPage() {
       po_number:          invoice.po_number,
       purchase_date:      invoice.purchase_date,
       supplier_id:        invoice.supplier_id,
+      supplier_name:      invoice.suppliers?.name,
       conversion_factor:  invoice.conversion_factor,
       notes:              invoice.notes,
 
