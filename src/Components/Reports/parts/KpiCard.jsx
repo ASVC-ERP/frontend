@@ -37,13 +37,23 @@ function DeltaLine({ delta }) {
   );
 }
 
-export default function KpiCard({ label, value, accent, valueColor, sub, delta }) {
-  return (
-    <div className="kpi-card" style={accent ? { borderTopColor: accent } : undefined}>
-      <div className="kpi-label">{label}</div>
-      <div className="kpi-value" style={valueColor ? { color: valueColor } : undefined}>
-        {value}
+export default function KpiCard({ label, value, sub, delta, wide }) {
+  if (wide) {
+    return (
+      <div className="kpi-card kpi-card--wide">
+        <div>
+          <div className="kpi-label">{label}</div>
+          <div className="kpi-value">{value}</div>
+          {sub != null && <div className="kpi-sub">{sub}</div>}
+        </div>
+        <DeltaLine delta={delta} />
       </div>
+    );
+  }
+  return (
+    <div className="kpi-card">
+      <div className="kpi-label">{label}</div>
+      <div className="kpi-value">{value}</div>
       <DeltaLine delta={delta} />
       {sub != null && <div className="kpi-sub">{sub}</div>}
     </div>
