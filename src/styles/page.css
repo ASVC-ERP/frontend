@@ -13,6 +13,22 @@
   overflow-x: hidden;
 }
 
+/* Opt-in modifier for pages built around one .custom-data-table-wrapper
+   table (Products, Orders, Customers, Suppliers, Purchases, Invoices,
+   both Returns pages): fills exactly the height App.jsx's flex column
+   already allotted instead of growing past the viewport, so the table's
+   own internal scroll (fixedHeaderScrollHeight="100%") is the only
+   scrollbar. Kept off the base .page-container so pages that stack plain
+   content directly (e.g. the Reports pages' KPI cards and charts) keep
+   normal block flow and aren't squeezed by flex-shrink. */
+.page-container--fixed-table {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+}
+
 .page-header {
   display: flex;
   justify-content: space-between;
@@ -20,6 +36,7 @@
   margin-bottom: 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid #e5e7eb;
+  flex-shrink: 0;
 }
 
 .page-title {
@@ -57,6 +74,7 @@
   padding: 14px;
   border-radius: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  flex-shrink: 0;
 }
 
 .search-group {
@@ -143,7 +161,12 @@
 
 .custom-data-table {
   border-radius: 12px;
-  overflow: hidden;
+  /* Only clip horizontally for the rounded corners. A blanket `overflow:
+     hidden` here has the same specificity as react-data-table-component's
+     own .rdt_responsiveWrapperFixed { overflow-y: auto } rule on this same
+     element, and ours loads later in <head> — so it was winning and
+     silently disabling the library's internal vertical scroll. */
+  overflow-x: hidden;
 }
 
 .custom-data-table-wrapper {
@@ -151,6 +174,52 @@
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+
+  /* Fills whatever's left below the header/toolbar so the table (given
+     fixedHeaderScrollHeight="100%") scrolls internally instead of the
+     page growing taller than the viewport. Deliberately not a flex
+     container itself — the DataTable root is a plain block child here,
+     so its max-height:100% resolves against this element's own
+     flex-resolved height instead of falling back to content-sized "auto"
+     the way an unsized flex item would. */
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Some pages (Products, Orders, Customers, the singular Invoice page) route
+   through a *Table.jsx child that wraps <DataTable> in its own plain <div>
+   (so a modal can render alongside it). That div has no height of its own,
+   which breaks the percentage-height chain below — unlike pages that render
+   <DataTable> directly inside .custom-data-table-wrapper. This targets only
+   that specific wrapper (a direct child of the table wrapper that itself
+   directly contains .custom-data-table) so both cases end up identical. */
+.custom-data-table-wrapper > div:has(.custom-data-table) {
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* react-data-table-component wraps the scrollable table AND the pagination
+   footer together in one otherwise-unstyled .rdt_headSeparator div, stacked
+   as plain block children. Making it a flex column and letting only the
+   table grow/shrink (flex: 1 1 auto) reserves room for the pagination
+   footer (flex-shrink: 0) instead of the table claiming the full height
+   and pushing pagination out past the wrapper's overflow:hidden. */
+.custom-data-table-wrapper .rdt_headSeparator {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-data-table-wrapper .rdt_headSeparator > .custom-data-table {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.custom-data-table-wrapper .rdt_headSeparator > div:has(> .rdt_pagination) {
+  flex-shrink: 0;
 }
 
 .custom-data-table .rdt_TableHead {

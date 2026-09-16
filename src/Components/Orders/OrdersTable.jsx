@@ -821,9 +821,10 @@ function OrdersTable({
         data={Array.isArray(orders) ? orders : []}
         pagination
         paginationServer
-        paginationRowsPerPageOptions={[10, 50, 100, 250, 500,]}
+        paginationRowsPerPageOptions={[10, 25, 50, 100]}
         paginationPerPage={limit}
         paginationTotalRows={totalRows}
+        paginationDefaultPage={page}
         onChangePage={(page) => setPage(page)}
         onChangeRowsPerPage={(newLimit, page) => {
           setLimit(newLimit);
@@ -831,7 +832,7 @@ function OrdersTable({
         }}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="650px"
+        fixedHeaderScrollHeight="100%"
         //onRowClicked={handleRowClick}
         onRowClicked={handleRowSelect}
         className="custom-data-table"

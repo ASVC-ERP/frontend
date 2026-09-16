@@ -124,7 +124,7 @@ export default function PurchasesPage() {
   const loadingText = search ? "Searching purchases..." : "Loading purchases...";
 
   return (
-    <div className="page-container">
+    <div className="page-container page-container--fixed-table">
 
       {/* HEADER BAR */}
       <div className="page-header">
@@ -192,7 +192,7 @@ export default function PurchasesPage() {
           pagination
           paginationServer
           paginationTotalRows={totalRows}
-          paginationRowsPerPageOptions={[1, 50, 100, 150, 200]}
+          paginationRowsPerPageOptions={[10, 25, 50, 100]}
           paginationPerPage={limit}
           paginationDefaultPage={page}
           onChangePage={(newPage) => setSearchParams({ page: newPage, limit }) }
@@ -201,7 +201,7 @@ export default function PurchasesPage() {
           highlightOnHover
           pointerOnHover
           fixedHeader
-          fixedHeaderScrollHeight="650px"
+          fixedHeaderScrollHeight="100%"
           className="custom-data-table"
           onRowClicked={(row) => navigate(`/purchase/${row.id}`)}
           progressPending={tableLoading}

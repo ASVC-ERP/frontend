@@ -55,9 +55,10 @@ const InventoryTable = forwardRef(function CustomerTable(
         data={items}
         pagination
         paginationServer
-        paginationRowsPerPageOptions={[10, 25, 50, 100, 200]}
+        paginationRowsPerPageOptions={[10, 25, 50, 100]}
         paginationPerPage={limit}
         paginationTotalRows={totalRows}
+        paginationDefaultPage={page}
         onChangePage={(page) => setPage(page)}
         onChangeRowsPerPage={(newLimit, page) => {
           setLimit(newLimit);
@@ -65,7 +66,7 @@ const InventoryTable = forwardRef(function CustomerTable(
         }}
         highlightOnHover
         fixedHeader
-        fixedHeaderScrollHeight="700px"
+        fixedHeaderScrollHeight="100%"
         onRowClicked={handleRowClick}
         className="custom-data-table"
         progressPending={progressPending}

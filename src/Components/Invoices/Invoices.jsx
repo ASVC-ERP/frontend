@@ -131,7 +131,7 @@ function SalesInvoices() {
   ]);
 
   return (
-    <div className="page-container">
+    <div className="page-container page-container--fixed-table">
       <div className="page-header">
           <div className="page-title">Invoices</div>
       </div>
@@ -186,11 +186,11 @@ function SalesInvoices() {
             setSearchParams({ page, limit: newLimit })
           }
           onRowClicked={(row) => navigate(`/invoices/${row.id}`)}
-          paginationRowsPerPageOptions={[1, 10, 25, 50, 100]}
+          paginationRowsPerPageOptions={[10, 25, 50, 100]}
           highlightOnHover
           responsive
           fixedHeader
-          fixedHeaderScrollHeight="700px"
+          fixedHeaderScrollHeight="100%"
           progressPending={tableLoading}
           progressComponent={
             <div className="table-loader">

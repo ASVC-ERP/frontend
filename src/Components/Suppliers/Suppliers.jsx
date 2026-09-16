@@ -118,7 +118,7 @@ export default function Suppliers() {
   const loadingText = search ? "Searching suppliers..." : "Loading suppliers...";
 
   return (
-    <div className="page-container">
+    <div className="page-container page-container--fixed-table">
       <>
         {/* HEADER */}
         <div className="page-header">
@@ -186,7 +186,7 @@ export default function Suppliers() {
             pagination
             paginationServer
             paginationTotalRows={totalRows}
-            paginationRowsPerPageOptions={[1, 50, 100, 150, 200]}
+            paginationRowsPerPageOptions={[10, 25, 50, 100]}
             paginationPerPage={limit}
             paginationDefaultPage={page}
             onChangePage={(newPage) => setSearchParams({ page: newPage, limit }) }
@@ -196,7 +196,7 @@ export default function Suppliers() {
             responsive
             striped
             fixedHeader
-            fixedHeaderScrollHeight="650px"
+            fixedHeaderScrollHeight="100%"
             className="custom-data-table"
             noDataComponent="No suppliers found"
             progressPending={tableLoading}
