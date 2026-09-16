@@ -89,13 +89,26 @@ axios.interceptors.request.use((config) => {
 });
 
 // ---- response: on 401, refresh once and retry -----------------------------
-// Single-flight: parallel 401s share one refresh call.
+// Single-flight within a tab: parallel 401s share one refresh call. Across
+// tabs, the refresh cookie is single-use (server rotates it), so two tabs
+// refreshing at the same instant would race — one wins, the other gets 401
+// and is wrongly treated as "session over". navigator.locks.request serializes
+// the actual network call across every tab on this origin, so a losing tab
+// simply waits its turn and then refreshes against the now-current cookie
+// instead of racing against it. Falls back to unlocked (pre-existing) behavior
+// where the Locks API isn't available.
+function withRefreshLock(fn) {
+  if (typeof navigator !== "undefined" && navigator.locks) {
+    return navigator.locks.request("ims-refresh-token", fn);
+  }
+  return fn();
+}
+
 let refreshPromise = null;
 
 function refreshAccessToken() {
   if (!refreshPromise) {
-    refreshPromise = axios
-      .post(`${API_URL}/authenticate/refresh`)
+    refreshPromise = withRefreshLock(() => axios.post(`${API_URL}/authenticate/refresh`))
       .then((res) => {
         setAccessToken(res.data.access_token);
         return res.data.access_token;
@@ -147,10 +160,12 @@ axios.interceptors.response.use(
 export async function bootstrapAuth() {
   if (localStorage.getItem("isAuthenticated") !== "true") return;
   try {
-    const res = await fetch(`${API_URL}/authenticate/refresh`, {
-      method: "POST",
-      credentials: "include",
-    });
+    const res = await withRefreshLock(() =>
+      fetch(`${API_URL}/authenticate/refresh`, {
+        method: "POST",
+        credentials: "include",
+      }),
+    );
     if (!res.ok) throw new Error("refresh failed");
     const data = await res.json();
     setAccessToken(data.access_token);
