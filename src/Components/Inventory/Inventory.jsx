@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
+import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import InventoryTable from "./InventoryTable";
-import { usePagination } from "../../hooks/usePagination";
 import { IoIosSearch } from "react-icons/io";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
@@ -29,7 +29,27 @@ const transformItem = (item) => ({
 
 function Inventory() {
   const customerTableRef = useRef(null);
-  const { page, setPage, limit, setLimit, totalRows, setTotalRows } = usePagination();
+  // Page/limit live in the URL (not local state) so returning via the browser
+  // Back button from a product's detail page restores the page you were on.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const page = Number(searchParams.get("page") || 1);
+  const limit = Number(searchParams.get("limit") || 50);
+  // Reads window.location.search (not the "prev" argument) because
+  // onChangeRowsPerPage fires setLimit and setPage back-to-back — the
+  // functional-updater's "prev" lags a render behind, so the second call
+  // would silently undo the first. The browser URL itself is already
+  // up to date by then (history updates are synchronous), so this isn't.
+  const setPage = (newPage) => {
+    const next = new URLSearchParams(window.location.search);
+    next.set("page", String(newPage));
+    setSearchParams(next);
+  };
+  const setLimit = (newLimit) => {
+    const next = new URLSearchParams(window.location.search);
+    next.set("limit", String(newLimit));
+    setSearchParams(next);
+  };
+  const [totalRows, setTotalRows] = useState(0);
   const [items, setItems] = useState([]);
   const [stock, setStock] = useState("");
   const [searchInput, setSearchInput] = useState("");
@@ -56,7 +76,7 @@ function Inventory() {
   const loadingText = search ? "Searching products..." : "Loading products...";
 
   return (
-    <div className="page-container">
+    <div className="page-container page-container--fixed-table">
       {/* Header */}
       <div className="page-header">
         <div className="page-title">

@@ -117,7 +117,7 @@ export default function ReturnPurchase() {
   ];
 
   return (
-    <div className="page-container">
+    <div className="page-container page-container--fixed-table">
       {/* HEADER */}
       <div className="page-header">
         <div className="page-title">Purchase Returns</div>
@@ -179,7 +179,7 @@ export default function ReturnPurchase() {
           pagination
           paginationServer
           paginationTotalRows={totalRows}
-          paginationRowsPerPageOptions={[2, 50, 100, 150, 200]}
+          paginationRowsPerPageOptions={[10, 25, 50, 100]}
           paginationPerPage={limit}
           paginationDefaultPage={page}
           onChangePage={(newPage) => setSearchParams({ page: newPage, limit }) }
@@ -189,7 +189,7 @@ export default function ReturnPurchase() {
           responsive
           persistTableHead
           fixedHeader
-          fixedHeaderScrollHeight="650px"
+          fixedHeaderScrollHeight="100%"
           onRowClicked={(row) => setSelectedReturn(row)}
           className="custom-data-table"
           noDataComponent="No returns found"

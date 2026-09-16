@@ -118,7 +118,7 @@ export default function ReturnSalesInvoice() {
   ];
 
   return (
-    <div className="page-container">
+    <div className="page-container page-container--fixed-table">
       <div className="page-header">
         <div className="page-title">Sales Invoice Returns</div>
       </div>
@@ -172,7 +172,7 @@ export default function ReturnSalesInvoice() {
           pagination
           paginationServer
           paginationTotalRows={totalRows}
-          paginationRowsPerPageOptions={[2, 50, 100, 150, 200]}
+          paginationRowsPerPageOptions={[10, 25, 50, 100]}
           paginationPerPage={limit}
           paginationDefaultPage={page}
           onChangePage={(newPage) =>
@@ -186,7 +186,7 @@ export default function ReturnSalesInvoice() {
           responsive
           persistTableHead
           fixedHeader
-          fixedHeaderScrollHeight="650px"
+          fixedHeaderScrollHeight="100%"
           onRowClicked={(row) => {
             debug("row: ",row)
             setSelectedReturn({
