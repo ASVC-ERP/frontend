@@ -58,11 +58,11 @@ export default function PurchaseReport() {
 
       {!error && data && !loading && (
         <>
-          <div style={{ maxWidth: 280, marginBottom: 16 }}>
+          <div className="report-kpis">
             <KpiCard
               label="Total Purchases"
               value={peso(data.kpis.total_purchases)}
-              accent="#1E5A84"
+              wide
               delta={{
                 cur: data.kpis.total_purchases,
                 prev: data.kpis_prev?.total_purchases,

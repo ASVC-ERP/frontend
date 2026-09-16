@@ -1,9 +1,9 @@
 import { peso } from "../format";
 
 const COLORS = ["#1E5A84", "#2C7CB0", "#5AA9D6", "#93C7E6", "#C7E0F0", "#94a3b8"];
-const SIZE = 180;
-const R_OUT = 84;
-const R_IN = 48;
+const SIZE = 230;
+const R_OUT = 108;
+const R_IN = 62;
 
 const polar = (cx, cy, r, deg) => {
   const a = ((deg - 90) * Math.PI) / 180;
