@@ -14,17 +14,14 @@ export default function ReturnSalesInvoice() {
   const navigate = useNavigate();
 
   const [returns, setReturns] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [clearLoading, setClearLoading] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const [searchParams, setSearchParams] = useSearchParams();
 
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 50);
+  const search = searchParams.get("search") || "";
+  const [searchInput, setSearchInput] = useState(search);
 
   const [totalRows, setTotalRows] = useState(0);
   const [selectedReturn, setSelectedReturn] = useState(null);
@@ -140,15 +137,20 @@ export default function ReturnSalesInvoice() {
           <button
             disabled={loading}
             className="btn-primary-custom"
-            onClick={ async() => {
-              if (!searchInput.trim()) return;
-              setSearch(searchInput);
-              setSearchLoading(true);
-              await fetchReturns(searchInput);
-              setSearchLoading(false);
+            onClick={() => {
+              setSearchParams((prev) => {
+                const params = new URLSearchParams(prev);
+                if (searchInput.trim()) {
+                  params.set("search", searchInput);
+                } else {
+                  params.delete("search");
+                }
+                params.set("page", "1");
+                return params;
+              });
             }}
           >
-            {searchLoading ? "Searching..." : "Search"}
+            Search
           </button>
 
           <button
@@ -156,10 +158,15 @@ export default function ReturnSalesInvoice() {
             className="btn-secondary-custom"
             onClick={() => {
               setSearchInput("");
-              setSearch("");
+              setSearchParams((prev) => {
+                const params = new URLSearchParams(prev);
+                params.delete("search");
+                params.set("page", "1");
+                return params;
+              });
             }}
           >
-            {clearLoading ? "Clearing..." : "Clear"}
+            Clear
           </button>
         </div>
       </div>
@@ -176,10 +183,19 @@ export default function ReturnSalesInvoice() {
           paginationPerPage={limit}
           paginationDefaultPage={page}
           onChangePage={(newPage) =>
-            setSearchParams({ page: newPage, limit })
+            setSearchParams((prev) => {
+              const params = new URLSearchParams(prev);
+              params.set("page", newPage);
+              return params;
+            })
           }
           onChangeRowsPerPage={(newLimit) =>
-            setSearchParams({ page: 1, limit: newLimit })
+            setSearchParams((prev) => {
+              const params = new URLSearchParams(prev);
+              params.set("page", "1");
+              params.set("limit", newLimit);
+              return params;
+            })
           }
           highlightOnHover
           striped

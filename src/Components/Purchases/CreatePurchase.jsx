@@ -44,6 +44,39 @@ export default function CreatePurchase() {
 
   const total = items.reduce((sum, item) => sum + Number(item.subtotal || 0), 0);
 
+  const normalizeCode = (value) => value.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+
+  const partNumberKey = (product) => {
+    if (product.part_num) return normalizeCode(product.part_num);
+    if (!product.item_code) return null;
+    return normalizeCode(product.item_code).replace(/[a-z]+$/, "");
+  };
+
+  const BRAND_COLORS = [
+    { bg: "#dbeafe", text: "#1e40af" },
+    { bg: "#dcfce7", text: "#166534" },
+    { bg: "#fce7f3", text: "#9d174d" },
+    { bg: "#ede9fe", text: "#5b21b6" },
+    { bg: "#ffedd5", text: "#9a3412" },
+    { bg: "#cffafe", text: "#155e75" },
+  ];
+
+  const brandColor = (brand) => {
+    let hash = 0;
+    for (let i = 0; i < brand.length; i++) hash = (hash * 31 + brand.charCodeAt(i)) >>> 0;
+    return BRAND_COLORS[hash % BRAND_COLORS.length];
+  };
+
+  const partNumberCounts = productSuggestions.reduce((counts, product) => {
+    const key = partNumberKey(product);
+    if (key) counts[key] = (counts[key] || 0) + 1;
+    return counts;
+  }, {});
+
+  const hasAmbiguousMatches = Object.values(partNumberCounts).some(
+    (count) => count > 1
+  );
+
   const updateForm = (field, value) => {
     setForm((prev) => ({
       ...prev,
@@ -335,6 +368,9 @@ export default function CreatePurchase() {
         <div className="create-section">
           <div className="create-section-header">
             <h5>Products</h5>
+            <span className="text-muted">
+              {items.length} item{items.length === 1 ? "" : "s"} encoded
+            </span>
           </div>
 
           <div className="product-cell" style={{ marginBottom: "16px" }}>
@@ -346,17 +382,50 @@ export default function CreatePurchase() {
             />
 
             {productSuggestions.length > 0 && (
-              <ul className="product-suggestions">
-                {productSuggestions.map((product) => (
-                  <li
-                    key={product.id}
-                    onClick={() => handleSelectProduct(product)}
-                  >
-                    <strong>{product.item_name}</strong>
-                    <span>{product.item_code}</span>
-                  </li>
-                ))}
-              </ul>
+              <div className="product-suggestions-panel">
+                {hasAmbiguousMatches && (
+                  <div className="product-suggestions-warning">
+                    ⚠ Multiple items share this part number — check the brand/code before selecting.
+                  </div>
+                )}
+
+                <ul className="product-suggestions">
+                  {productSuggestions.map((product) => {
+                    const key = partNumberKey(product);
+                    const isAmbiguous = key && partNumberCounts[key] > 1;
+
+                    const color = product.brand ? brandColor(product.brand) : null;
+
+                    return (
+                      <li
+                        key={product.id}
+                        className={isAmbiguous ? "is-ambiguous" : undefined}
+                        onClick={() => handleSelectProduct(product)}
+                      >
+                        <div className="suggestion-row">
+                          <div className="suggestion-text">
+                            <strong>{product.item_name}</strong>
+                            <span>{product.item_code}</span>
+                          </div>
+
+                          {product.brand && (
+                            <span
+                              className="brand-pill"
+                              style={{ backgroundColor: color.bg, color: color.text }}
+                            >
+                              {product.brand}
+                            </span>
+                          )}
+                        </div>
+
+                        {isAmbiguous && (
+                          <span className="ambiguous-badge">⚠ multiple matches — check brand</span>
+                        )}
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
             )}
           </div>
 

@@ -3,6 +3,29 @@ import { IoIosSearch } from "react-icons/io";
 import { FaTrashAlt } from "react-icons/fa";
 import { IoChevronDown } from "react-icons/io5";
 
+const normalizeCode = (value) => value.trim().toLowerCase().replace(/[^a-z0-9]/g, "");
+
+const partNumberKey = (product) => {
+  if (product.part_num) return normalizeCode(product.part_num);
+  if (!product.item_code) return null;
+  return normalizeCode(product.item_code).replace(/[a-z]+$/, "");
+};
+
+const BRAND_COLORS = [
+  { bg: "#dbeafe", text: "#1e40af" },
+  { bg: "#dcfce7", text: "#166534" },
+  { bg: "#fce7f3", text: "#9d174d" },
+  { bg: "#ede9fe", text: "#5b21b6" },
+  { bg: "#ffedd5", text: "#9a3412" },
+  { bg: "#cffafe", text: "#155e75" },
+];
+
+const brandColor = (brand) => {
+  let hash = 0;
+  for (let i = 0; i < brand.length; i++) hash = (hash * 31 + brand.charCodeAt(i)) >>> 0;
+  return BRAND_COLORS[hash % BRAND_COLORS.length];
+};
+
 function OrderForm({
   query,
   suggestions,
@@ -17,6 +40,16 @@ function OrderForm({
   onCalculateTotalPrice,
   onDeleteItem,
 }) {
+  const partNumberCounts = suggestions.reduce((counts, product) => {
+    const key = partNumberKey(product);
+    if (key) counts[key] = (counts[key] || 0) + 1;
+    return counts;
+  }, {});
+
+  const hasAmbiguousMatches = Object.values(partNumberCounts).some(
+    (count) => count > 1
+  );
+
   return (
     <div>
       {/* Search Input */}
@@ -31,43 +64,113 @@ function OrderForm({
             className="form-control form-control-sm ps-5 border-2 rounded-3"
           />
           {suggestions.length > 0 && (
-            <ul
+            <div
               style={{
                 position: "absolute",
                 top: "40px",
                 left: 0,
                 right: 0,
-                backgroundColor: "#fff",
-                border: "2px solid #6c757d",
-                borderTop: "none",
-                listStyleType: "none",
-                margin: 0,
                 marginLeft: "10px",
-                padding: 0,
-                zIndex: 1000,
-                maxHeight: "400px",
-                overflowY: "auto",
-                borderRadius: "0.5rem",
                 width: "98%",
-                boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)", // Add shadow
+                zIndex: 1000,
               }}
             >
-              {suggestions.map((items, index) => (
-                <li
-                  key={index}
-                  onClick={() => onSelectProduct(items)}
+              {hasAmbiguousMatches && (
+                <div
                   style={{
-                    padding: "10px",
-                    cursor: "pointer",
-                    borderBottom: "1px solid #eee",
+                    background: "#fff7e6",
+                    border: "1px solid #f5c451",
+                    color: "#8a5a00",
+                    borderRadius: "8px",
+                    padding: "8px 12px",
+                    marginBottom: "6px",
+                    fontSize: "12.5px",
+                    fontWeight: 600,
                   }}
                 >
-                  <IoIosSearch className="me-2" />
-                  <strong>{items.itemName}</strong> <br />
-                  Stock: {items.stock}
-                </li>
-              ))}
-            </ul>
+                  ⚠ Multiple items share this part number — check the brand/code before selecting.
+                </div>
+              )}
+
+              <ul
+                style={{
+                  backgroundColor: "#fff",
+                  border: "2px solid #6c757d",
+                  listStyleType: "none",
+                  margin: 0,
+                  padding: 0,
+                  maxHeight: "400px",
+                  overflowY: "auto",
+                  borderRadius: "0.5rem",
+                  boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                }}
+              >
+                {suggestions.map((items, index) => {
+                  const key = partNumberKey(items);
+                  const isAmbiguous = key && partNumberCounts[key] > 1;
+                  const color = items.brand ? brandColor(items.brand) : null;
+
+                  return (
+                    <li
+                      key={index}
+                      onClick={() => onSelectProduct(items)}
+                      style={{
+                        padding: "10px",
+                        cursor: "pointer",
+                        borderBottom: "1px solid #eee",
+                        background: isAmbiguous ? "#fffaf0" : undefined,
+                      }}
+                    >
+                      <div className="d-flex align-items-center justify-content-between gap-2">
+                        <span>
+                          <IoIosSearch className="me-2" />
+                          <strong>{items.itemName}</strong>
+                        </span>
+
+                        {items.brand && (
+                          <span
+                            style={{
+                              flexShrink: 0,
+                              fontSize: "12.5px",
+                              fontWeight: 700,
+                              padding: "5px 12px",
+                              borderRadius: "999px",
+                              backgroundColor: color.bg,
+                              color: color.text,
+                            }}
+                          >
+                            {items.brand}
+                          </span>
+                        )}
+                      </div>
+
+                      <div>
+                        {items.item_code} • Stock: {items.stock}
+                      </div>
+
+                      {isAmbiguous && (
+                        <span
+                          style={{
+                            display: "inline-block",
+                            marginTop: "4px",
+                            fontSize: "10.5px",
+                            fontWeight: 700,
+                            color: "#8a5a00",
+                            background: "#ffe9b3",
+                            borderRadius: "999px",
+                            padding: "2px 8px",
+                            textTransform: "uppercase",
+                            letterSpacing: "0.02em",
+                          }}
+                        >
+                          ⚠ multiple matches — check brand
+                        </span>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
           )}
         </div>
       </div>
