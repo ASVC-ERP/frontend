@@ -7,6 +7,7 @@ import { RiReceiptLine } from "react-icons/ri";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
@@ -227,11 +228,18 @@ export default function Sidebar({ user, onLogout }) {
         </div>
       </div>
 
-      {tooltip && (
-        <div className="sidebar-tooltip" style={{ top: tooltip.top }}>
-          {tooltip.label}
-        </div>
-      )}
+      {/* Portaled to body: .sidebar-container's position:sticky (needed
+          for the sidebar itself) creates a stacking context, which would
+          otherwise trap this fixed-position tooltip's z-index inside it —
+          the whole sidebar then paints behind whatever page content
+          (tables, cards) comes later in the DOM, tooltip included. */}
+      {tooltip &&
+        createPortal(
+          <div className="sidebar-tooltip" style={{ top: tooltip.top }}>
+            {tooltip.label}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
