@@ -21,9 +21,10 @@ const compactPeso = (n) => {
 };
 
 // data: [{ month: 'YYYY-MM-DD', total }], ascending by month. Last bar is highlighted.
-export default function MonthlyRevenueChart({ data }) {
+// metricLabel customizes the aria-label/empty text for non-revenue uses (e.g. supplier spend).
+export default function MonthlyRevenueChart({ data, metricLabel = "revenue" }) {
   if (!data?.length) {
-    return <div className="report-panel-empty">No revenue in the last 12 months.</div>;
+    return <div className="report-panel-empty">No {metricLabel} in the last 12 months.</div>;
   }
 
   const max = Math.max(...data.map((d) => Number(d.total) || 0), 1);
@@ -33,7 +34,7 @@ export default function MonthlyRevenueChart({ data }) {
 
   return (
     <div className="revenue-chart">
-      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label="Monthly revenue, last 12 months">
+      <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`Monthly ${metricLabel}, last 12 months`}>
         <line x1={PAD_L} y1={BASE_Y} x2={W - PAD_R} y2={BASE_Y} className="axis" />
         {data.map((d, i) => {
           const val = Number(d.total) || 0;

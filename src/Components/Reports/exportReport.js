@@ -42,3 +42,12 @@ export async function exportCustomerDetail(customerId, range) {
   });
   download(res.data, `customer-${customerId}_${range.from}_${range.to}.xlsx`);
 }
+
+// One supplier's profile + order history: /reports/suppliers/:id/export.
+export async function exportSupplierDetail(supplierId, range) {
+  const res = await axios.get(`${API_URL}/reports/suppliers/${supplierId}/export`, {
+    params: { from: range.from, to: range.to },
+    responseType: "blob",
+  });
+  download(res.data, `supplier-${supplierId}_${range.from}_${range.to}.xlsx`);
+}
