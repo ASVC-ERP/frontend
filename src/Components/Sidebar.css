@@ -4,9 +4,10 @@
   width: 230px;
   min-width: 230px;
   height: 100vh;
-  background: #ffffff;
-  border-right: 1px solid #e5edf3;
-  transition: width 0.35s ease, min-width 0.35s ease;
+  background: var(--sidebar-bg);
+  border-right: 1px solid var(--sidebar-border);
+  transition: width 0.35s ease, min-width 0.35s ease, background 0.2s ease,
+    border-color 0.2s ease;
   position: sticky;
   top: 0;
   font-family: "Karla", sans-serif;
@@ -17,7 +18,8 @@
   min-width: 78px;
 }
 
-/* Logo */
+/* Logo — Sidebar.jsx swaps in logo-dark.svg for dark mode, so this can
+   just match the sidebar itself instead of forcing a white plate. */
 .logo-container {
   position: relative;
   display: flex;
@@ -25,7 +27,8 @@
   justify-content: center;
   height: 82px;
   padding: 14px;
-  border-bottom: 1px solid #e5e7eb;
+  background: var(--sidebar-bg);
+  border-bottom: 1px solid var(--sidebar-border);
 }
 
 .sidebar-logo {
@@ -45,10 +48,10 @@
   top: 27px;
   width: 28px;
   height: 28px;
-  border: 1px solid #dbe5ee;
+  border: 1px solid var(--sidebar-border);
   border-radius: 50%;
-  background: #ffffff;
-  color: #1e5a84;
+  background: var(--sidebar-bg);
+  color: var(--sidebar-icon);
   display: grid;
   place-items: center;
   cursor: pointer;
@@ -74,7 +77,7 @@
   margin: 16px 10px 10px;
   font-size: 0.72rem;
   font-weight: 800;
-  color: #94a3b8;
+  color: var(--sidebar-text-muted);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   white-space: nowrap;
@@ -89,7 +92,7 @@
   min-height: 44px;
   padding: 9px 14px;
   border-radius: 14px;
-  color: #334155 !important;
+  color: var(--sidebar-text) !important;
   font-weight: 700;
   text-decoration: none;
   transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease,
@@ -98,7 +101,7 @@
 
 .sidebar-container .nav-link svg {
   flex-shrink: 0;
-  color: #1e5a84;
+  color: var(--sidebar-icon);
   margin-right: 0 !important;
 }
 
@@ -112,10 +115,10 @@
 
 /* Hover */
 .sidebar-container .nav-link:hover {
-  background: #eaf3f8;
-  color: #1e5a84 !important;
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-icon) !important;
   transform: translateX(2px);
-  box-shadow: inset 3px 0 0 #1e5a84;
+  box-shadow: inset 3px 0 0 var(--sidebar-icon);
 }
 
 /* Active */
@@ -162,12 +165,44 @@
   pointer-events: none;
 }
 
+/* Tooltip shown on hover while collapsed, since the label text is hidden.
+   Rendered as a fixed-position element (see Sidebar.jsx) rather than a
+   pseudo-element on the link itself, because .sidebar's overflow-y:auto
+   (needed for scrolling long nav lists) forces overflow-x to clip too —
+   there's no pure-CSS way to keep one axis scrollable and the other
+   visible on the same box. position:fixed escapes that clipping. */
+.sidebar-tooltip {
+  position: fixed;
+  left: 92px;
+  transform: translateY(-50%);
+  background: #1e293b;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+  pointer-events: none;
+  z-index: 1050;
+}
+
+.sidebar-tooltip::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #1e293b;
+}
+
 /* Profile */
 .profile-section {
   margin-top: auto;
   padding: 14px 12px;
-  border-top: 1px solid #e5e7eb;
-  background: #ffffff;
+  border-top: 1px solid var(--sidebar-border);
+  background: var(--sidebar-bg);
 }
 
 .profile-section .dropdown {
@@ -178,15 +213,15 @@
   width: 100%;
   padding: 10px 12px;
   border-radius: 14px;
-  background: #f8fafc !important;
-  color: #334155;
+  background: var(--sidebar-chip-bg) !important;
+  color: var(--sidebar-text);
   font-weight: 700;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
 .profile-section .dropdown button:hover {
-  background: #eaf3f8 !important;
-  color: #1e5a84;
+  background: var(--sidebar-hover-bg) !important;
+  color: var(--sidebar-icon);
 }
 
 .sidebar-container.collapsed .profile-section {
@@ -204,7 +239,8 @@
 
 /* Dropdown */
 .profile-section .dropdown-menu {
-  border: 1px solid #e5e7eb;
+  background: var(--sidebar-bg);
+  border: 1px solid var(--sidebar-border);
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.12);
   border-radius: 12px;
   padding: 8px;
@@ -214,11 +250,12 @@
   border-radius: 8px;
   padding: 9px 12px;
   font-weight: 600;
+  color: var(--sidebar-text);
 }
 
 .profile-section .dropdown-item:hover {
-  background: #eaf3f8;
-  color: #1e5a84;
+  background: var(--sidebar-hover-bg);
+  color: var(--sidebar-icon);
 }
 
 .profile-section .dropdown-item.text-danger:hover {
@@ -236,10 +273,10 @@
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--sidebar-scrollbar-thumb);
   border-radius: 999px;
 }
 
 .sidebar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--sidebar-scrollbar-thumb-hover);
 }

@@ -81,8 +81,9 @@ function Inventory() {
     <div className="page-container page-container--fixed-table">
       {/* Header */}
       <div className="page-header">
-        <div className="page-title">
-            Products
+        <div>
+          <div className="page-title">Products</div>
+          <p className="page-subtitle">Manage your product catalog and stock levels.</p>
         </div>
       </div>
 

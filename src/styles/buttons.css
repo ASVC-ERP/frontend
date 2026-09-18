@@ -43,14 +43,14 @@
 ========================= */
 
 .btn-secondary-custom {
-  border: 1px solid #cbd5e1;
-  background: #ffffff;
-  color: #475569;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-bg);
+  color: var(--text-secondary);
 }
 
 .btn-secondary-custom:hover {
-  background: #f1f5f9;
-  color: #1e293b;
+  background: var(--surface-hover-bg);
+  color: var(--text-primary);
 }
 
 /* =========================
@@ -165,8 +165,8 @@
 /* GRAY */
 .btn-edit-gray {
   border: none;
-  background: #f3f4f6;
-  color: #4b5563;
+  background: var(--surface-hover-bg);
+  color: var(--text-secondary);
   padding: 6px 12px;
   border-radius: 8px;
   font-size: 13px;
@@ -175,6 +175,6 @@
 }
 
 .btn-edit-gray:hover {
-  background: #e5e7eb;
-  color: #374151;
+  background: var(--surface-border);
+  color: var(--text-primary);
 }

@@ -40,7 +40,10 @@ export default function SalesReport() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <div className="page-title">Sales Report Analysis</div>
+        <div>
+          <div className="page-title">Sales Report Analysis</div>
+          <p className="page-subtitle">Analyze your sales performance and trends.</p>
+        </div>
       </div>
 
       <ReportToolbar

@@ -35,7 +35,10 @@ export default function PurchaseReport() {
   return (
     <div className="page-container">
       <div className="page-header">
-        <div className="page-title">Purchase Report Analysis</div>
+        <div>
+          <div className="page-title">Purchase Report Analysis</div>
+          <p className="page-subtitle">Analyze your purchasing activity and trends.</p>
+        </div>
       </div>
 
       <ReportToolbar

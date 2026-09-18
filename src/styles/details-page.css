@@ -4,10 +4,20 @@
    DETAILS PAGE LAYOUT
 ========================= */
 
+/* flex:1 1 auto + min-height:0 + overflow-y:auto keeps this page's own
+   content area the only thing that scrolls, instead of growing the whole
+   app shell (sidebar included) past 100vh and relying on the sidebar's
+   position:sticky to hold it in place through that — which it wasn't
+   doing reliably. Matches .page-container--fixed-table's approach on the
+   list pages (Orders, Invoices, etc). Shared by Item, OrderDetails and
+   PurchaseDetails, so all three get a stationary sidebar from this. */
 .details-page {
   padding: 1.5rem;
   max-width: none;
   font-family: "Karla", sans-serif;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .details-page-header {
@@ -19,7 +29,7 @@
 }
 
 .details-page-title {
-  color: #1e5a84;
+  color: var(--text-heading);
   font-size: 32px;
   font-weight: 600;
   letter-spacing: -0.3px;
@@ -27,7 +37,7 @@
 
 .details-page-subtitle {
   font-size: 20px;
-  color: #888;
+  color: var(--text-secondary);
   margin-top: 4px;
 }
 
@@ -103,15 +113,15 @@
 
 .details-main-card {
   grid-column: 1 / -1;
-  background: #f8f8f7;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--surface-hover-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   padding: 1rem 1.25rem;
 }
 
 .details-info-card {
-  background: #fff;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-left: 3px solid #185fa5;
   border-radius: 0 8px 8px 0;
   padding: 1rem 1.25rem;
@@ -119,7 +129,7 @@
 
 .details-card-label {
   font-size: 16px;
-  color: #7a7a7a;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-bottom: 5px;
@@ -128,6 +138,7 @@
 .details-card-value {
   font-size: 18px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .details-card-value.mono {
@@ -151,19 +162,19 @@
 
 .details-card-row:not(:last-child) {
   padding-bottom: 8px;
-  border-bottom: 1px dashed #e5e7eb;
+  border-bottom: 1px dashed var(--surface-border);
 }
 
 .details-title {
   font-size: 1.2rem;
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .details-value {
   font-size: 18px;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--text-primary);
   text-align: right;
 }
 
@@ -202,8 +213,8 @@
 ========================= */
 
 .details-table-card {
-  background: #fff;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -215,18 +226,19 @@
   align-items: center;
   justify-content: space-between;
 
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .details-table-title {
   font-size: 18px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .details-item-count {
   font-size: 18px;
-  color: #666;
-  background: #f4f4f2;
+  color: var(--text-secondary);
+  background: var(--surface-hover-bg);
   padding: 3px 10px;
   border-radius: 999px;
 }
@@ -241,9 +253,20 @@
   table-layout: fixed;
 }
 
+/* Wrap a wider table (more columns than Order Items' original 5, e.g.
+   the history tabs) in this to scroll horizontally instead of squeezing
+   every column into equal, overlapping slivers under table-layout:fixed. */
+.details-table-scroll {
+  overflow-x: auto;
+}
+
+.details-table-scroll .details-table {
+  min-width: 780px;
+}
+
 .details-table thead th {
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
 
   text-transform: uppercase;
   letter-spacing: 0.07em;
@@ -252,21 +275,22 @@
   padding: 11px 1.25rem;
   text-align: center;
 
-  background: #f8f8f7;
+  background: var(--surface-hover-bg);
 }
 
 .details-table tbody tr {
-  border-top: 0.5px solid rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--surface-border);
 }
 
 .details-table tbody tr:hover {
-  background: #fafaf9;
+  background: var(--surface-hover-bg);
 }
 
 .details-table tbody td {
   padding: 13px 1.25rem;
   font-size: 16px;
   text-align: center;
+  color: var(--text-primary);
 }
 
 .details-table tbody td:first-child {
@@ -275,18 +299,25 @@
 }
 
 .details-table tfoot {
-  border-top: 1.5px solid rgba(0, 0, 0, 0.15);
+  border-top: 1.5px solid var(--surface-border);
 }
 
 .details-table tfoot td {
   padding: 14px 1.25rem;
 }
 
+.details-table-empty {
+  padding: 2rem 1.25rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 15px;
+}
+
 .details-total-label {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .details-total-value {
@@ -294,18 +325,20 @@
   font-size: 30px;
   font-weight: 500;
   text-align: right;
+  color: var(--text-primary);
 }
 
 .details-subtotal {
   font-family: "Karla", sans-serif;
   font-size: 15px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .details-num {
   font-family: "Karla", sans-serif;
   font-size: 15px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 /* =========================
@@ -349,8 +382,8 @@
 ========================= */
 
 .item-details-card {
-  background: #fff;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   margin-bottom: 1rem;
   overflow: hidden;
@@ -361,21 +394,21 @@
   display: flex;
   justify-content: space-between;
   gap: 16px;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .item-details-kicker,
 .item-field label,
 .item-price-card span {
   font-size: 16px;
-  color: #999;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
 
 .item-details-title {
   margin: 4px 0 0;
-  color: #1e5a84;
+  color: var(--text-heading);
   font-size: 30px;
   font-weight: 800;
   text-transform: uppercase;
@@ -383,7 +416,7 @@
 
 .item-details-subtitle {
   margin: 3px 0 0;
-  color: #888;
+  color: var(--text-secondary);
   font-size: 16px;
 }
 
@@ -420,28 +453,31 @@
 .item-field input {
   width: 100%;
   height: 38px;
-  border: 0.5px solid rgba(0, 0, 0, 0.16);
+  border: 1px solid var(--input-border);
   border-radius: 7px;
   padding: 0 11px;
   font-family: "Karla", sans-serif;
   font-size: 20px;
+  background: var(--input-bg);
+  color: var(--input-text);
 }
 
 .item-field input:read-only {
-  background: #f8f8f7;
-  color: #666;
+  background: var(--surface-hover-bg);
+  color: var(--text-secondary);
   font-size: 20px;
 }
 
 .item-section-header {
   padding: 1rem 1.25rem 0.75rem;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .item-section-header h3 {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
+  color: var(--text-primary);
 }
 
 .item-pricing-grid {
@@ -453,8 +489,8 @@
 
 .item-price-card {
   min-height: 105px;
-  background: #f8f8f7;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--surface-hover-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   padding: 1rem;
   position: relative;
@@ -465,6 +501,7 @@
   margin-top: 9px;
   font-size: 20px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .item-price-card button {
@@ -473,15 +510,23 @@
   bottom: 12px;
   width: 30px;
   height: 30px;
-  border: 0.5px solid rgba(0, 0, 0, 0.15);
-  background: #fff;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-bg);
   border-radius: 6px;
-  color: #1e5a84;
+  color: var(--text-heading);
 }
 
 .item-price-card.stock {
   background: #e8f1ff;
   border-color: #b5d4f4;
+}
+
+/* Unlike small badge/chip accents (left as-is everywhere else — they read
+   fine as light pills on a dark card), this is a full card-sized surface,
+   so the light tint stands out as a stray bright box in dark mode. */
+[data-theme="dark"] .item-price-card.stock {
+  background: #16233a;
+  border-color: #26456e;
 }
 
 .item-price-card.stock small {
@@ -496,20 +541,20 @@
 
 /* TABS */
 .item-tabs-wrapper {
-  background: #fff;
-  border: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   overflow: hidden;
 }
 
 .item-tabs-wrapper .nav-tabs {
-  background: #f8f8f7;
-  border-bottom: 0.5px solid rgba(0, 0, 0, 0.12);
+  background: var(--surface-hover-bg);
+  border-bottom: 1px solid var(--surface-border);
   padding: 0.5rem 0.75rem 0;
 }
 
 .item-tabs-wrapper .nav-tabs .nav-link {
-  color: #1e5a84;
+  color: var(--text-heading);
   font-weight: 500;
   border: 0.5px solid transparent;
   border-radius: 8px 8px 0 0;
@@ -540,8 +585,8 @@
 }
 
 .item-tabs-wrapper .nav-tabs .nav-link:hover:not(.active) {
-  background-color: #f8f9fa;
-  color: #144968;
+  background-color: var(--surface-hover-bg);
+  color: var(--text-heading);
   border-color: #1e5a84;
   transform: translateY(-2px);
   box-shadow: 0 4px 8px rgba(30, 90, 132, 0.15);
@@ -618,7 +663,7 @@
 }
 
 .details-clickable-row:hover {
-  background: #f3f8fc;
+  background: var(--surface-hover-bg);
 }
 
 .item-click-wrap {
@@ -628,7 +673,7 @@
 }
 
 .item-name-link {
-  color: #1e5a84;
+  color: var(--text-heading);
   font-weight: 600;
   cursor: pointer;
 }
@@ -638,7 +683,7 @@
 }
 
 .item-code-muted {
-  color: #8a94a6;
+  color: var(--text-secondary);
   font-size: 0.85rem;
 }
 
@@ -672,6 +717,6 @@
 }
 
 .cost-history-body {
-  background: #f8fafc;
+  background: var(--surface-hover-bg);
   padding: 24px;
 }

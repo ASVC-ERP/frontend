@@ -126,7 +126,10 @@ export default function PurchasesPage() {
 
       {/* HEADER BAR */}
       <div className="page-header">
-        <div className="page-title">Purchases</div>
+        <div>
+          <div className="page-title">Purchases</div>
+          <p className="page-subtitle">Track and manage purchase orders placed with your suppliers.</p>
+        </div>
       </div>
 
       {/* TOOLBAR */}

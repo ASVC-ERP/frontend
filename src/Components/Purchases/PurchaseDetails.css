@@ -14,15 +14,15 @@
 }
 
 .po-number {
-  color: #1E5A84;
+  color: var(--text-heading);
   font-size: 32px;
   font-weight: 600;
   letter-spacing: -0.3px;
 }
 
 .table-card {
-  background: #fff;
-  border: 0.5px solid rgba(0,0,0,0.12);
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -32,18 +32,19 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 0.5px solid rgba(0,0,0,0.12);
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .table-card-header .table-title {
   font-size: 16px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .item-count {
   font-size: 13px;
-  color: #666;
-  background: #f4f4f2;
+  color: var(--text-secondary);
+  background: var(--surface-hover-bg);
   padding: 3px 10px;
   border-radius: 999px;
 }
@@ -56,29 +57,30 @@
 
 .items-table thead th {
   font-size: 12px;
-  color: #999;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.07em;
   font-weight: 500;
   padding: 11px 1.25rem;
   text-align: right;
-  background: #f8f8f7;
+  background: var(--surface-hover-bg);
 }
 
 .items-table thead th:first-child { text-align: left; }
 
 .items-table tbody tr {
-  border-top: 0.5px solid rgba(0,0,0,0.08);
+  border-top: 1px solid var(--surface-border);
 }
 
 .items-table tbody tr:hover {
-  background: #fafaf9;
+  background: var(--surface-hover-bg);
 }
 
 .items-table tbody td {
   padding: 13px 1.25rem;
   font-size: 16px;
   text-align: right;
+  color: var(--text-primary);
 }
 
 .items-table tbody td:first-child {
@@ -89,17 +91,18 @@
 .items-table .num {
   font-family: "Karla", sans-serif;
   font-size: 15px;
-  color: #666;
+  color: var(--text-secondary);
 }
 
 .items-table .subtotal {
   font-family: "Karla", sans-serif;
   font-size: 15px;
   font-weight: 500;
+  color: var(--text-primary);
 }
 
 .items-table tfoot {
-  border-top: 1.5px solid rgba(0,0,0,0.15);
+  border-top: 1.5px solid var(--surface-border);
 }
 
 .items-table tfoot td {
@@ -110,7 +113,7 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.07em;
-  color: #999;
+  color: var(--text-secondary);
 }
 
 .items-table .total-value {
@@ -118,6 +121,7 @@
   font-size: 30px;
   font-weight: 500;
   text-align: right;
+  color: var(--text-primary);
 }
 
 .items-table thead th {

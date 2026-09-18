@@ -7,15 +7,17 @@ import { RiReceiptLine } from "react-icons/ri";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import { FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
+import logoDark from "../assets/logo-dark.svg";
 import "./Sidebar.css";
 
 // `user` comes from App (useAuth -> the signed access token). Role gating
 // below is cosmetic; the backend enforces @Roles on every admin route.
-export default function Sidebar({ user, onLogout }) {
+export default function Sidebar({ user, onLogout, theme, onToggleTheme }) {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const linkStyle = {
@@ -26,12 +28,24 @@ export default function Sidebar({ user, onLogout }) {
   };
 
   const [isCollapsed, setIsCollapsed] = useState(false);
- 
+  const [tooltip, setTooltip] = useState(null);
+
+  const showTooltip = (e) => {
+    if (!isCollapsed) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({ label: e.currentTarget.dataset.tooltip, top: rect.top + rect.height / 2 });
+  };
+  const hideTooltip = () => setTooltip(null);
+
   return (
     <div className={`sidebar-container d-flex flex-column ${isCollapsed ? "collapsed" : ""}`}>
       {/* Logo and Company Name */}
       <div className="logo-container">
-        <img src={logo} alt="Logo" className="sidebar-logo" />
+        <img
+          src={theme === "dark" ? logoDark : logo}
+          alt="Logo"
+          className="sidebar-logo"
+        />
         <button
           className="sidebar-toggle"
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -45,7 +59,7 @@ export default function Sidebar({ user, onLogout }) {
 
       <ul className="sidebar-group">
           <li className="mt-2">
-            <Link to="/" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Dashboard" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <LuLayoutDashboard className="me-3" size={25} />
               <span className="sidebar-text">Dashboard</span>
             </Link>
@@ -58,13 +72,13 @@ export default function Sidebar({ user, onLogout }) {
             <p className="sidebar-header">ANALYTICS</p>
             <ul className="sidebar-group">
               <li className="mt-2">
-                <Link to="/reports/sales" className="nav-link d-flex align-items-center" style={linkStyle}>
+                <Link to="/reports/sales" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Sales" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
                   <TbReportAnalytics className="me-3" size={25} />
                   <span className="sidebar-text">Sales</span>
                 </Link>
               </li>
               <li className="mt-2">
-                <Link to="/reports/purchases" className="nav-link d-flex align-items-center" style={linkStyle}>
+                <Link to="/reports/purchases" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Purchase" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
                   <TbShoppingCart className="me-3" size={25} />
                   <span className="sidebar-text">Purchase</span>
                 </Link>
@@ -77,21 +91,21 @@ export default function Sidebar({ user, onLogout }) {
         <p className="sidebar-header">SALES</p>
         <ul className="sidebar-group">
           <li className="mt-2">
-            <Link to="/order" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/order" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Orders" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <PiShoppingBagBold className="me-3" size={25} />
               <span className="sidebar-text">Orders</span>
             </Link>
           </li>
 
           <li className="mt-2">
-            <Link to="/invoices" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/invoices" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Invoices" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <RiReceiptLine className="me-3" size={25} />
               <span className="sidebar-text">Invoices</span>
             </Link>
           </li>
 
           <li className="mt-2">
-            <Link to="/invoice-return" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/invoice-return" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="S. Returns" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <HiOutlineReceiptRefund className="me-3" size={25} />
               <span className="sidebar-text">S. Returns</span>
             </Link>
@@ -102,7 +116,7 @@ export default function Sidebar({ user, onLogout }) {
         <p className="sidebar-header">INVENTORY</p>
         <ul className="sidebar-group">
           <li className="mt-2">
-            <Link to="/products" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/products" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Products" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <PiGearSixBold className="me-3" size={25} />
               <span className="sidebar-text">Products</span>
             </Link>
@@ -113,14 +127,14 @@ export default function Sidebar({ user, onLogout }) {
         <p className="sidebar-header">PROCUREMENT</p>
         <ul className="sidebar-group">
           <li className="mt-2">
-            <Link to="/purchase" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/purchase" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Purchases" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <TbTruckDelivery className="me-3" size={25} />
               <span className="sidebar-text">Purchases</span>
             </Link>
           </li>
 
           <li className="mt-2">
-            <Link to="/purchase-return" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/purchase-return" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="P. Returns" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <TbTruckReturn className="me-3" size={25} />
               <span className="sidebar-text">P. Returns</span>
             </Link>
@@ -131,14 +145,14 @@ export default function Sidebar({ user, onLogout }) {
         <p className="sidebar-header">MASTER DATA</p>
         <ul className="sidebar-group">
           <li className="mt-2">
-            <Link to="/suppliers" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/suppliers" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Suppliers" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <BsPersonGear className="me-3" size={25} />
               <span className="sidebar-text">Suppliers</span>
             </Link>
           </li>
 
           <li className="mt-2">
-            <Link to="/customer" className="nav-link d-flex align-items-center" style={linkStyle}>
+            <Link to="/customer" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Customers" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
               <MdOutlinePeopleAlt className="me-3" size={25} />
               <span className="sidebar-text">Customers</span>
             </Link>
@@ -150,7 +164,7 @@ export default function Sidebar({ user, onLogout }) {
             <p className="sidebar-header">ADMIN</p>
             <ul className="sidebar-group">
               <li className="mt-2">
-                <Link to="/users" className="nav-link d-flex align-items-center" style={linkStyle}>
+                <Link to="/users" className="nav-link d-flex align-items-center" style={linkStyle} data-tooltip="Users" onMouseEnter={showTooltip} onMouseLeave={hideTooltip}>
                   <FiUsers className="me-3" size={25} />
                   <span className="sidebar-text">Users</span>
                 </Link>
@@ -201,6 +215,15 @@ export default function Sidebar({ user, onLogout }) {
               </Link>
             </li>
             <li>
+              <button
+                className="dropdown-item"
+                onClick={onToggleTheme}
+              >
+                <i className={`bi ${theme === "dark" ? "bi-sun" : "bi-moon-stars"} me-2`}></i>
+                {theme === "dark" ? "Light mode" : "Dark mode"}
+              </button>
+            </li>
+            <li>
               <hr className="dropdown-divider" />
             </li>
             <li>
@@ -218,6 +241,19 @@ export default function Sidebar({ user, onLogout }) {
           </ul>
         </div>
       </div>
+
+      {/* Portaled to body: .sidebar-container's position:sticky (needed
+          for the sidebar itself) creates a stacking context, which would
+          otherwise trap this fixed-position tooltip's z-index inside it —
+          the whole sidebar then paints behind whatever page content
+          (tables, cards) comes later in the DOM, tooltip included. */}
+      {tooltip &&
+        createPortal(
+          <div className="sidebar-tooltip" style={{ top: tooltip.top }}>
+            {tooltip.label}
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
