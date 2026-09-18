@@ -1,31 +1,12 @@
-import DataTable from "react-data-table-component";
 import { useState, useEffect } from "react";
 import axios from "axios";
 
 function PhysicalCountTab({ item }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const itemCode = item?.itemCode || "";
   const itemId = item?.id || 0;
 
   const API_URL = import.meta.env.VITE_API_URL;
-
-  const customStyles = {
-    headCells: {
-      style: {
-        fontSize: "1rem",
-        fontWeight: "600",
-        color: "#1E5A84",
-        paddingLeft: "8px",
-        paddingRight: "8px",
-      },
-    },
-    cells: {
-      style: {
-        fontSize: "1rem",
-      },
-    },
-  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -42,7 +23,6 @@ function PhysicalCountTab({ item }) {
             params: { itemId },
           }
         );
-        //console.log("Physical Count Data:", response.data);
         setData(response.data);
       } catch (error) {
         console.error("Error fetching Physical Count:", error);
@@ -55,73 +35,62 @@ function PhysicalCountTab({ item }) {
     fetchData();
   }, [itemId]);
 
-  // Define table columns
- const columns = [
-  {
-    name: "From Quantity",
-    selector: (row) => row.from_quantity,
-    sortable: true,
-    width: "200px", // fixed width
-  },
-  {
-    name: "To Quantity",
-    selector: (row) => row.to_quantity,
-    sortable: true,
-    width: "200px",
-  },
-  {
-    name: "Adjusted Quantity",
-    selector: (row) => row.adjusted_quantity,
-    sortable: true,
-    width: "200px",
-  },
-  {
-    name: "Date",
-    selector: (row) => row.created_at,
-    sortable: true,
-    width: "200px",
-  },
-  {
-    name: "PIC",
-    selector: (row) => row.pic,
-    sortable: true,
-    width: "200px",
-  },
-  {
-    name: "Remarks",
-    selector: (row) => row.remarks,
-    sortable: true,
-    cell: (row) => (
-      <div
-        style={{
-          whiteSpace: "nowrap",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-        }}
-        title={row.remarks} // full text on hover
-      >
-        {row.remarks}
-      </div>
-    ),
-  },
-];
-
-
   return (
-    <div>
-      <DataTable
-        columns={columns}
-        data={data}
-        progressPending={loading}
-        pagination
-        paginationRowsPerPageOptions={[50, 100]}
-        paginationPerPage={50}
-        highlightOnHover
-        fixedHeader
-        fixedHeaderScrollHeight="430px"
-        customStyles={customStyles}
-        dense={true}
-      />
+    <div className="details-table-card">
+      <div className="details-table-header">
+        <div className="details-table-title">Physical Count</div>
+        <div className="details-item-count">
+          {data.length} adjustment{data.length === 1 ? "" : "s"}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="details-table-empty">Loading…</div>
+      ) : data.length === 0 ? (
+        <div className="details-table-empty">
+          No stock adjustments for this item.
+        </div>
+      ) : (
+        <div className="details-table-scroll">
+          <table className="details-table">
+            <thead>
+              <tr>
+                <th>From Quantity</th>
+                <th>To Quantity</th>
+                <th>Adjusted Quantity</th>
+                <th>Date</th>
+                <th>PIC</th>
+                <th>Remarks</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {data.map((row, i) => (
+                <tr key={row.id ?? i}>
+                  <td className="details-num">{row.from_quantity}</td>
+                  <td className="details-num">{row.to_quantity}</td>
+                  <td className="details-num">{row.adjusted_quantity}</td>
+                  <td>{row.created_at}</td>
+                  <td>{row.pic}</td>
+                  <td>
+                    <div
+                      style={{
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "220px",
+                      }}
+                      title={row.remarks}
+                    >
+                      {row.remarks}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }

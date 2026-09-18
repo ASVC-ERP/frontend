@@ -4,10 +4,20 @@
    DETAILS PAGE LAYOUT
 ========================= */
 
+/* flex:1 1 auto + min-height:0 + overflow-y:auto keeps this page's own
+   content area the only thing that scrolls, instead of growing the whole
+   app shell (sidebar included) past 100vh and relying on the sidebar's
+   position:sticky to hold it in place through that — which it wasn't
+   doing reliably. Matches .page-container--fixed-table's approach on the
+   list pages (Orders, Invoices, etc). Shared by Item, OrderDetails and
+   PurchaseDetails, so all three get a stationary sidebar from this. */
 .details-page {
   padding: 1.5rem;
   max-width: none;
   font-family: "Karla", sans-serif;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .details-page-header {
@@ -241,6 +251,17 @@
   table-layout: fixed;
 }
 
+/* Wrap a wider table (more columns than Order Items' original 5, e.g.
+   the history tabs) in this to scroll horizontally instead of squeezing
+   every column into equal, overlapping slivers under table-layout:fixed. */
+.details-table-scroll {
+  overflow-x: auto;
+}
+
+.details-table-scroll .details-table {
+  min-width: 780px;
+}
+
 .details-table thead th {
   font-size: 12px;
   color: #999;
@@ -280,6 +301,13 @@
 
 .details-table tfoot td {
   padding: 14px 1.25rem;
+}
+
+.details-table-empty {
+  padding: 2rem 1.25rem;
+  text-align: center;
+  color: #999;
+  font-size: 15px;
 }
 
 .details-total-label {

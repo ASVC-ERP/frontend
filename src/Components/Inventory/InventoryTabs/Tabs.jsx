@@ -1,5 +1,6 @@
 import CostHistoryTab from "./CostHistoryTab";
 import SalesOrderHistoryTab from "./SalesOrderHistoryTab";
+import SalesInvoiceHistoryTab from "./SalesInvoiceHistoryTab";
 import PhysicalCountTab from "./PhysicalCountTab";
 
 import { useEffect, useState } from "react";
@@ -59,6 +60,19 @@ function Tabs({ item }) {
             role="tab"
             onClick={() => setActiveTab("tab3")}
           >
+            Sales Invoice History
+          </button>
+        </li>
+        <li className="nav-item" role="presentation">
+          <button
+            className={`nav-link ${activeTab === "tab4" ? "active" : ""}`}
+            id="tab4-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#tab4"
+            type="button"
+            role="tab"
+            onClick={() => setActiveTab("tab4")}
+          >
             Physical Count
           </button>
         </li>
@@ -72,6 +86,9 @@ function Tabs({ item }) {
           <SalesOrderHistoryTab item={normalizeItem(item)} />
         </div>
         <div className={`tab-pane fade ${activeTab === "tab3" ? "show active" : ""}`}>
+          <SalesInvoiceHistoryTab item={normalizeItem(item)} />
+        </div>
+        <div className={`tab-pane fade ${activeTab === "tab4" ? "show active" : ""}`}>
           <PhysicalCountTab item={normalizeItem(item)} />
         </div>
       </div>
