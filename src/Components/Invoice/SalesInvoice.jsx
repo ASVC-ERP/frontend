@@ -76,8 +76,9 @@ function SalesInvoice() {
     <div className="page-container page-container--fixed-table">
       {/* Header */}
       <div className="page-header">
-        <div className="page-title">
-            Invoices
+        <div>
+          <div className="page-title">Invoices</div>
+          <p className="page-subtitle">View and manage invoices generated from your sales orders.</p>
         </div>
       </div>
 

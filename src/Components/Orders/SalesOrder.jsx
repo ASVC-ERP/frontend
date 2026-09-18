@@ -74,8 +74,9 @@ function SalesOrder() {
     <div className="page-container page-container--fixed-table">
       {/* Header */}
       <div className="page-header">
-        <div className="page-title">
-          Orders
+        <div>
+          <div className="page-title">Orders</div>
+          <p className="page-subtitle">Track and manage all your sales orders in one place.</p>
         </div>
       </div>
 

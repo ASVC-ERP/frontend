@@ -134,7 +134,10 @@ export default function Suppliers() {
       <>
         {/* HEADER */}
         <div className="page-header">
-          <div className="page-title">Suppliers</div>
+          <div>
+            <div className="page-title">Suppliers</div>
+            <p className="page-subtitle">Manage your supplier information and contacts.</p>
+          </div>
         </div>
     
         {/* TOOLBAR */}

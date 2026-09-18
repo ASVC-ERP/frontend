@@ -117,7 +117,10 @@ export default function ReturnSalesInvoice() {
   return (
     <div className="page-container page-container--fixed-table">
       <div className="page-header">
-        <div className="page-title">Sales Invoice Returns</div>
+        <div>
+          <div className="page-title">Sales Invoice Returns</div>
+          <p className="page-subtitle">Track and manage items returned by your customers.</p>
+        </div>
       </div>
 
       <div className="page-toolbar">

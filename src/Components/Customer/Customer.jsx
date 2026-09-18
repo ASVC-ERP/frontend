@@ -65,8 +65,9 @@ function Customer() {
     <div className="page-container page-container--fixed-table">
       {/* Header */}
       <div className="page-header">
-        <div className="page-title">
-            Customers
+        <div>
+          <div className="page-title">Customers</div>
+          <p className="page-subtitle">Manage your customer information and contacts.</p>
         </div>
       </div>
 

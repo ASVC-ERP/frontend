@@ -137,7 +137,10 @@ function SalesInvoices() {
   return (
     <div className="page-container page-container--fixed-table">
       <div className="page-header">
-          <div className="page-title">Invoices</div>
+          <div>
+            <div className="page-title">Invoices</div>
+            <p className="page-subtitle">View and manage invoices generated from your sales orders.</p>
+          </div>
       </div>
 
       <div className="page-toolbar">

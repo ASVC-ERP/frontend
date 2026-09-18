@@ -118,7 +118,10 @@ export default function ReturnPurchase() {
     <div className="page-container page-container--fixed-table">
       {/* HEADER */}
       <div className="page-header">
-        <div className="page-title">Purchase Returns</div>
+        <div>
+          <div className="page-title">Purchase Returns</div>
+          <p className="page-subtitle">Track and manage items returned to your suppliers.</p>
+        </div>
       </div>
 
       {/* TOOLBAR */}
