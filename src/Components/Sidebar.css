@@ -162,6 +162,38 @@
   pointer-events: none;
 }
 
+/* Tooltip shown on hover while collapsed, since the label text is hidden.
+   Rendered as a fixed-position element (see Sidebar.jsx) rather than a
+   pseudo-element on the link itself, because .sidebar's overflow-y:auto
+   (needed for scrolling long nav lists) forces overflow-x to clip too —
+   there's no pure-CSS way to keep one axis scrollable and the other
+   visible on the same box. position:fixed escapes that clipping. */
+.sidebar-tooltip {
+  position: fixed;
+  left: 92px;
+  transform: translateY(-50%);
+  background: #1e293b;
+  color: #ffffff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  white-space: nowrap;
+  padding: 6px 12px;
+  border-radius: 8px;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.18);
+  pointer-events: none;
+  z-index: 1050;
+}
+
+.sidebar-tooltip::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-right-color: #1e293b;
+}
+
 /* Profile */
 .profile-section {
   margin-top: auto;
