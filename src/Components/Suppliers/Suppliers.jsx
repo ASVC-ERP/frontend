@@ -1,11 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "axios";
 import DataTable from "react-data-table-component";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
 import { IoIosSearch } from "react-icons/io";
-import { FaEdit } from "react-icons/fa";
+import { FaEdit, FaChartLine } from "react-icons/fa";
 import EditSupplierModal from "./EditSupplierModal";
 import { showLoadingSwal, showSuccessSwal, showErrorSwal, showWarningSwal, showConfirmSwal } from "../../utils/swal";
+import { useAuth } from "../../hooks/useAuth";
 import "../../styles/buttons.css";
 import "../../styles/page.css";
 
@@ -13,6 +14,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 export default function Suppliers() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
   const [suppliers, setSuppliers] = useState([]);
   const [tableLoading, setTableLoading] = useState(false);
 
@@ -96,21 +99,32 @@ export default function Suppliers() {
       {
         name: "Actions",
         cell: (row) => (
-          <button
-            className="btn-edit"
-            onClick={() => handleEdit(row)}
-          >
-            <FaEdit />
-          </button>
+          <div className="d-flex gap-2">
+            <button
+              className="btn-edit"
+              onClick={() => handleEdit(row)}
+            >
+              <FaEdit />
+            </button>
+            {isAdmin && (
+              <Link
+                to={`/reports/suppliers/detail/${row.id}`}
+                className="btn-edit-gray"
+                title="View supplier report"
+              >
+                <FaChartLine />
+              </Link>
+            )}
+          </div>
         ),
-        width: "120px",
+        width: isAdmin ? "160px" : "120px",
         center: true,
         ignoreRowClick: true,
         allowOverflow: true,
         button: true,
       }
     ],
-    []
+    [isAdmin]
   );
 
   const loadingText = search ? "Searching suppliers..." : "Loading suppliers...";

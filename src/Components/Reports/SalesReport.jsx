@@ -9,7 +9,6 @@ import KpiCard from "./parts/KpiCard";
 import Panel from "./parts/Panel";
 import RankedTable from "./parts/RankedTable";
 import BrandPnlTable from "./parts/BrandPnlTable";
-import CityPie from "./parts/CityPie";
 import SlowMovingCards from "./parts/SlowMovingCards";
 import ViewFullLink from "./parts/ViewFullLink";
 import "../../styles/page.css";
@@ -87,7 +86,7 @@ export default function SalesReport() {
             />
           </div>
 
-          <div className="report-row-3">
+          <div className="report-row-2">
             <Panel
               title="Best-Selling Products"
               action={<ViewFullLink report="sales" panel="best_selling" range={range} />}
@@ -106,7 +105,9 @@ export default function SalesReport() {
 
             <Panel
               title="Top Customers"
-              action={<ViewFullLink report="sales" panel="top_customers" range={range} />}
+              action={
+                <ViewFullLink to={`/reports/customers?from=${range.from}&to=${range.to}`} />
+              }
               empty={!data.top_customers.length && "No sales in this range."}
             >
               <RankedTable
@@ -118,13 +119,6 @@ export default function SalesReport() {
                   value: r.total,
                 }))}
               />
-            </Panel>
-
-            <Panel
-              title="Sales By City"
-              action={<ViewFullLink report="sales" panel="sales_by_city" range={range} />}
-            >
-              <CityPie data={data.sales_by_city} />
             </Panel>
           </div>
 

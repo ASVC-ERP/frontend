@@ -98,28 +98,6 @@ const PANELS = {
       },
     ],
   },
-  sales_by_city: {
-    report: "Sales",
-    back: "/reports/sales",
-    title: "Sales by City",
-    isCityPanel: true,
-    columns: [
-      {
-        name: "Rank",
-        selector: (r) => r.__rank,
-        width: "80px",
-      },
-      { name: "City", selector: (r) => r.city || "—", sortable: true, grow: 2, wrap: true },
-      {
-        name: "Market Share %",
-        selector: (r) => r.__sharePct || 0,
-        format: (r) => `${r.__sharePct}%`,
-        sortable: true,
-        right: true,
-      },
-      { ...money(null, "total"), name: "Sales" },
-    ],
-  },
   pnl_by_brand: {
     report: "Sales",
     back: "/reports/sales",
@@ -156,6 +134,28 @@ const PANELS = {
         sortable: true,
         right: true,
       },
+    ],
+  },
+  customers_by_city: {
+    report: "Customer",
+    back: "/reports/customers",
+    title: "Revenue by City",
+    isCityPanel: true,
+    columns: [
+      {
+        name: "Rank",
+        selector: (r) => r.__rank,
+        width: "80px",
+      },
+      { name: "City", selector: (r) => r.city || "—", sortable: true, grow: 2, wrap: true },
+      {
+        name: "Market Share %",
+        selector: (r) => r.__sharePct || 0,
+        format: (r) => `${r.__sharePct}%`,
+        sortable: true,
+        right: true,
+      },
+      { ...money(null, "total"), name: "Revenue" },
     ],
   },
   top_products: {
@@ -203,6 +203,30 @@ const PANELS = {
         right: true,
       },
       { ...money(null, "total"), name: "Total Purchases" },
+    ],
+  },
+  suppliers_by_currency: {
+    report: "Supplier",
+    back: "/reports/suppliers",
+    title: "Spend by Currency",
+    isCityPanel: true,
+    groupKey: "currency",
+    metricLabel: "spend",
+    columns: [
+      {
+        name: "Rank",
+        selector: (r) => r.__rank,
+        width: "80px",
+      },
+      { name: "Currency", selector: (r) => r.currency || "—", sortable: true, grow: 2, wrap: true },
+      {
+        name: "Market Share %",
+        selector: (r) => r.__sharePct || 0,
+        format: (r) => `${r.__sharePct}%`,
+        sortable: true,
+        right: true,
+      },
+      { ...money(null, "total"), name: "Spend" },
     ],
   },
 };
@@ -256,6 +280,8 @@ export default function ReportListPage() {
     return sorted.map((r, i) => ({ ...r, __rank: i + 1 }));
   })();
 
+  const groupKey = cfg?.groupKey || "city";
+  const metricLabel = cfg?.metricLabel || "revenue";
   const topCity = cfg?.isCityPanel ? displayRows[0] : null;
 
   useEffect(() => {
@@ -323,16 +349,16 @@ export default function ReportListPage() {
           <div className="kpi-card" style={{ borderTopColor: "#1e5a84" }}>
             <div className="kpi-label">Top Performer</div>
             <div className="kpi-value" style={{ fontSize: "2.2rem" }}>
-              {topCity.city}
+              {topCity[groupKey]}
             </div>
             <div className="kpi-sub">
-              Largest market share at {topCity.__sharePct}% of total sales in this range.
+              Largest share at {topCity.__sharePct}% of total {metricLabel} in this range.
             </div>
           </div>
 
           <div className="report-panel">
             <div className="report-panel-title">Market Share</div>
-            <CityPie data={displayRows} />
+            <CityPie data={displayRows} labelKey={groupKey} />
           </div>
         </div>
       )}

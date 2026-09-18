@@ -89,7 +89,9 @@ export default function PurchaseReport() {
 
             <Panel
               title="Top Suppliers"
-              action={<ViewFullLink report="purchases" panel="top_suppliers" range={range} />}
+              action={
+                <ViewFullLink to={`/reports/suppliers?from=${range.from}&to=${range.to}`} />
+              }
               empty={!data.top_suppliers.length && "No purchases in this range."}
             >
               <RankedTable

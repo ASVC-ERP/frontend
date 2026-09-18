@@ -36,6 +36,10 @@ const ChangePassword = lazy(() => import("./Components/Account/ChangePassword.js
 const SalesReport = lazy(() => import("./Components/Reports/SalesReport.jsx"));
 const PurchaseReport = lazy(() => import("./Components/Reports/PurchaseReport.jsx"));
 const ReportListPage = lazy(() => import("./Components/Reports/ReportListPage.jsx"));
+const CustomerReport = lazy(() => import("./Components/Reports/CustomerReport.jsx"));
+const CustomerDetailReport = lazy(() => import("./Components/Reports/CustomerDetailReport.jsx"));
+const SupplierReport = lazy(() => import("./Components/Reports/SupplierReport.jsx"));
+const SupplierDetailReport = lazy(() => import("./Components/Reports/SupplierDetailReport.jsx"));
 const PurchasesPage = lazy(() => import("./Components/Purchases/Purchases.jsx"));
 const PurchaseDetailsPage = lazy(() => import("./Components/Purchases/PurchaseDetails.jsx"));
 const CreatePurchase = lazy(() => import("./Components/Purchases/CreatePurchase.jsx"));
@@ -101,6 +105,12 @@ function App() {
               <Route path="/reports/purchases"       element={ <ProtectedRoute user={user} requiredRole="admin"><PurchaseReport /></ProtectedRoute> } />
               <Route path="/reports/sales/:panel"     element={ <ProtectedRoute user={user} requiredRole="admin"><ReportListPage /></ProtectedRoute> } />
               <Route path="/reports/purchases/:panel" element={ <ProtectedRoute user={user} requiredRole="admin"><ReportListPage /></ProtectedRoute> } />
+              <Route path="/reports/customers"           element={ <ProtectedRoute user={user} requiredRole="admin"><CustomerReport /></ProtectedRoute> } />
+              <Route path="/reports/customers/detail/:id" element={ <ProtectedRoute user={user} requiredRole="admin"><CustomerDetailReport /></ProtectedRoute> } />
+              <Route path="/reports/customers/:panel"     element={ <ProtectedRoute user={user} requiredRole="admin"><ReportListPage /></ProtectedRoute> } />
+              <Route path="/reports/suppliers"           element={ <ProtectedRoute user={user} requiredRole="admin"><SupplierReport /></ProtectedRoute> } />
+              <Route path="/reports/suppliers/detail/:id" element={ <ProtectedRoute user={user} requiredRole="admin"><SupplierDetailReport /></ProtectedRoute> } />
+              <Route path="/reports/suppliers/:panel"     element={ <ProtectedRoute user={user} requiredRole="admin"><ReportListPage /></ProtectedRoute> } />
 
             </Routes>
            </Suspense>

@@ -15,9 +15,11 @@ function download(blob, filename) {
 }
 
 // Whole dashboard: /reports/<path>/export -> a workbook with a sheet per panel.
-export async function exportReport(path, range) {
+// extraParams (optional): merged into the query string, e.g. { limit: 100 } --
+// keep this in sync with whatever the on-screen dashboard requested.
+export async function exportReport(path, range, extraParams) {
   const res = await axios.get(`${API_URL}/reports/${path}/export`, {
-    params: { from: range.from, to: range.to },
+    params: { from: range.from, to: range.to, ...extraParams },
     responseType: "blob",
   });
   download(res.data, `${path}-report_${range.from}_${range.to}.xlsx`);
@@ -30,4 +32,22 @@ export async function exportDetailList(panel, range) {
     responseType: "blob",
   });
   download(res.data, `${panel}_${range.from}_${range.to}.xlsx`);
+}
+
+// One customer's profile + order history: /reports/customers/:id/export.
+export async function exportCustomerDetail(customerId, range) {
+  const res = await axios.get(`${API_URL}/reports/customers/${customerId}/export`, {
+    params: { from: range.from, to: range.to },
+    responseType: "blob",
+  });
+  download(res.data, `customer-${customerId}_${range.from}_${range.to}.xlsx`);
+}
+
+// One supplier's profile + order history: /reports/suppliers/:id/export.
+export async function exportSupplierDetail(supplierId, range) {
+  const res = await axios.get(`${API_URL}/reports/suppliers/${supplierId}/export`, {
+    params: { from: range.from, to: range.to },
+    responseType: "blob",
+  });
+  download(res.data, `supplier-${supplierId}_${range.from}_${range.to}.xlsx`);
 }
