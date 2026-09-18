@@ -16,7 +16,7 @@
 }
 
 .edit-purchase-content {
-  background: #ffffff;
+  background: var(--surface-bg);
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0 24px 70px rgba(15, 23, 42, 0.35);
@@ -62,20 +62,22 @@
   padding: 24px;
   max-height: calc(92vh - 145px);
   overflow-y: auto;
-  background: #f8fafc;
+  background: var(--surface-hover-bg);
 }
 
 .edit-purchase-body .form-label {
   font-size: 12px;
   font-weight: 700;
-  color: #475569;
+  color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.04em;
 }
 
 .edit-purchase-body .form-control {
   border-radius: 10px;
-  border: 1px solid #dbe3ef;
+  border: 1px solid var(--input-border);
+  background: var(--input-bg);
+  color: var(--input-text);
 }
 
 .edit-purchase-body .form-control:focus {
@@ -84,10 +86,10 @@
 }
 
 .edit-items-table {
-  background: white;
+  background: var(--surface-bg);
   border-radius: 14px;
   overflow: visible;
-  border: 1px solid #e2e8f0;
+  border: 1px solid var(--surface-border);
 }
 
 .edit-items-table table {
@@ -95,12 +97,12 @@
 }
 
 .edit-items-table thead th {
-  background: #f1f5f9;
-  color: #334155;
+  background: var(--surface-hover-bg);
+  color: var(--text-primary);
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--surface-border);
 }
 
 .edit-items-table tbody td {
@@ -115,38 +117,38 @@
   overflow-y: auto;
   margin-top: 6px;
   border-radius: 12px;
-  border: 1px solid #dbe3ef;
-  background: white;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-bg);
   box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
 }
 
 .product-suggestion-item {
   padding: 10px 12px;
   border: none;
-  border-bottom: 1px solid #eef2f7;
+  border-bottom: 1px solid var(--surface-border);
   width: 100%;
   text-align: left;
-  background: white;
+  background: var(--surface-bg);
   cursor: pointer;
 }
 
 .product-suggestion-item:hover {
-  background: #f1f7fb;
+  background: var(--surface-hover-bg);
 }
 
 .product-suggestion-name {
   font-weight: 700;
-  color: #1e293b;
+  color: var(--text-primary);
 }
 
 .product-suggestion-meta {
   font-size: 12px;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .edit-subtotal {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--text-primary);
   white-space: nowrap;
 }
 
@@ -158,8 +160,8 @@
 
 .edit-total-card {
   min-width: 280px;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 14px;
   padding: 16px 18px;
   display: flex;
@@ -168,19 +170,19 @@
 }
 
 .edit-total-label {
-  color: #64748b;
+  color: var(--text-secondary);
   font-weight: 600;
 }
 
 .edit-total-value {
   font-size: 22px;
   font-weight: 800;
-  color: #1e5a84;
+  color: var(--text-heading);
 }
 
 .edit-purchase-footer {
-  background: white;
-  border-top: 1px solid #e2e8f0;
+  background: var(--surface-bg);
+  border-top: 1px solid var(--surface-border);
   padding: 16px 24px;
   display: flex;
   justify-content: flex-end;

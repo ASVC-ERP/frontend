@@ -3,6 +3,11 @@
 
 body {
   font-family: "Karla", sans-serif;
+  /* Pages with their own opaque canvas (.page-container, .dashboard-page)
+     cover this regardless; it's what shows through on pages without one
+     (e.g. .details-page), so dark mode reaches them without needing a
+     background rule added to every page's own stylesheet. */
+  background: var(--shell-bg);
 }
 
 html,

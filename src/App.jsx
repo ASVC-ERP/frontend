@@ -15,6 +15,7 @@ import PageLoader from "./Components/PageLoader.jsx";
 import LoginPage from "./Pages/LoginPage.jsx";
 import Unauthorized from "./Pages/Unauthorized.jsx";
 import { useAuth } from "./hooks/useAuth";
+import { useTheme } from "./hooks/useTheme";
 
 // Route screens are code-split: each loads its own JS chunk on first visit,
 // so the initial bundle stays small.
@@ -47,6 +48,7 @@ const ReturnPurchase = lazy(() => import("./Components/PurchaseReturns/Returns.j
 
 function App() {
   const { isAuthenticated, user, handleLoginSuccess, handleLogout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
 
   if (!isAuthenticated) {
     return (
@@ -67,7 +69,7 @@ function App() {
       <div className="container-fluid vh-100 d-flex p-0">
         {/* Sidebar */}
         <div className="d-flex flex-column" >
-          <Sidebar user={user} onLogout={handleLogout} />
+          <Sidebar user={user} onLogout={handleLogout} theme={theme} onToggleTheme={toggleTheme} />
         </div>
 
         {/* Main Content */}

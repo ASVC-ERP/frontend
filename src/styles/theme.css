@@ -1,0 +1,90 @@
+/* App-wide theme. Toggled via data-theme="dark" on <html>, set by
+   useTheme and persisted to localStorage; see src/hooks/useTheme.js.
+   Light values match the colors already hardcoded across the app, so
+   light mode is unchanged — dark mode overrides them below. */
+
+:root {
+  --shell-bg: #f6f8fb;
+  --sidebar-bg: #ffffff;
+  --sidebar-border: #e5edf3;
+  --sidebar-text: #334155;
+  --sidebar-text-muted: #94a3b8;
+  --sidebar-hover-bg: #eaf3f8;
+  --sidebar-icon: #1e5a84;
+  --sidebar-chip-bg: #f8fafc;
+  --sidebar-scrollbar-thumb: #cbd5e1;
+  --sidebar-scrollbar-thumb-hover: #94a3b8;
+
+  /* Cards, tables, toolbars, modals */
+  --surface-bg: #ffffff;
+  --surface-border: #e5e7eb;
+  --surface-hover-bg: #f8fafc;
+
+  /* Text */
+  --text-heading: #1e5a84;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #94a3b8;
+
+  /* Inputs */
+  --input-bg: #ffffff;
+  --input-border: #d0d7de;
+  --input-text: #374151;
+  --input-placeholder: #9ca3af;
+  --input-disabled-bg: #f8fafc;
+}
+
+[data-theme="dark"] {
+  --shell-bg: #0f1420;
+  --sidebar-bg: #151c28;
+  --sidebar-border: #232c3a;
+  --sidebar-text: #cbd5e1;
+  --sidebar-text-muted: #64748b;
+  --sidebar-hover-bg: #1f2937;
+  --sidebar-icon: #5b9bd0;
+  --sidebar-chip-bg: #1a2230;
+  --sidebar-scrollbar-thumb: #334155;
+  --sidebar-scrollbar-thumb-hover: #475569;
+
+  --surface-bg: #1a2230;
+  --surface-border: #2a3340;
+  --surface-hover-bg: #212b3a;
+
+  --text-heading: #5b9bd0;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --input-bg: #141b26;
+  --input-border: #2a3340;
+  --input-text: #e2e8f0;
+  --input-placeholder: #64748b;
+  --input-disabled-bg: #1a2230;
+}
+
+/* Bootstrap's own .table sets these as local variables (defaulting to
+   white via --bs-body-bg), so every plain <table class="table"> in the
+   app — including ones this pass never touched directly, like the
+   Create Order product grid — picks this up automatically instead of
+   needing its own override. */
+[data-theme="dark"] .table {
+  --bs-table-bg: var(--surface-bg);
+  --bs-table-color: var(--text-primary);
+  --bs-table-border-color: var(--surface-border);
+  --bs-table-striped-bg: var(--surface-hover-bg);
+  --bs-table-striped-color: var(--text-primary);
+  --bs-table-hover-bg: var(--surface-hover-bg);
+  --bs-table-hover-color: var(--text-primary);
+}
+
+/* Same idea for plain Bootstrap .modal instances (react-bootstrap or
+   bootstrap.bundle.js driven) that don't go through the app's own
+   .app-modal-content system in modal.css — e.g. the supplier invoice
+   view/edit modals, which only carry their own font-size overrides. */
+[data-theme="dark"] .modal-content {
+  --bs-modal-bg: var(--surface-bg);
+  --bs-modal-color: var(--text-primary);
+  --bs-modal-border-color: var(--surface-border);
+  --bs-modal-header-border-color: var(--surface-border);
+  --bs-modal-footer-border-color: var(--surface-border);
+}

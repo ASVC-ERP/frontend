@@ -12,11 +12,12 @@ import { FiChevronLeft, FiChevronRight, FiUsers } from "react-icons/fi";
 
 import { Link } from "react-router-dom";
 import logo from "../assets/logo.svg";
+import logoDark from "../assets/logo-dark.svg";
 import "./Sidebar.css";
 
 // `user` comes from App (useAuth -> the signed access token). Role gating
 // below is cosmetic; the backend enforces @Roles on every admin route.
-export default function Sidebar({ user, onLogout }) {
+export default function Sidebar({ user, onLogout, theme, onToggleTheme }) {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const linkStyle = {
@@ -40,7 +41,11 @@ export default function Sidebar({ user, onLogout }) {
     <div className={`sidebar-container d-flex flex-column ${isCollapsed ? "collapsed" : ""}`}>
       {/* Logo and Company Name */}
       <div className="logo-container">
-        <img src={logo} alt="Logo" className="sidebar-logo" />
+        <img
+          src={theme === "dark" ? logoDark : logo}
+          alt="Logo"
+          className="sidebar-logo"
+        />
         <button
           className="sidebar-toggle"
           onClick={() => setIsCollapsed(!isCollapsed)}
@@ -208,6 +213,15 @@ export default function Sidebar({ user, onLogout }) {
                 <i className="bi bi-key me-2"></i>
                 Change password
               </Link>
+            </li>
+            <li>
+              <button
+                className="dropdown-item"
+                onClick={onToggleTheme}
+              >
+                <i className={`bi ${theme === "dark" ? "bi-sun" : "bi-moon-stars"} me-2`}></i>
+                {theme === "dark" ? "Light mode" : "Dark mode"}
+              </button>
             </li>
             <li>
               <hr className="dropdown-divider" />

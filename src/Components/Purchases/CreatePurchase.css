@@ -14,8 +14,8 @@
   right: 0;
   z-index: 9999;
 
-  background: white;
-  border: 1px solid #dbe3ef;
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 10px;
 
   max-height: 250px;
@@ -36,16 +36,17 @@
 }
 
 .supplier-suggestions li:hover {
-  background: #eef6fb;
+  background: var(--surface-hover-bg);
 }
 
 .supplier-suggestions strong {
   display: block;
+  color: var(--text-primary);
 }
 
 .supplier-suggestions span {
   font-size: 12px;
-  color: #64748b;
+  color: var(--text-secondary);
 }
 
 .product-suggestions-panel {
@@ -68,8 +69,8 @@
 }
 
 .product-suggestions {
-  background: #ffffff;
-  border: 1px solid #dbe3ef;
+  background: var(--surface-bg);
+  border: 1px solid var(--surface-border);
   border-radius: 10px;
   padding: 6px;
   margin: 0;
@@ -104,7 +105,7 @@
 }
 
 .product-suggestions li:hover {
-  background: #eef6fb;
+  background: var(--surface-hover-bg);
 }
 
 .suggestion-row {
@@ -120,13 +121,13 @@
 
 .product-suggestions strong {
   display: block;
-  color: #1e293b;
+  color: var(--text-primary);
   font-size: 14px;
 }
 
 .product-suggestions span {
   display: block;
-  color: #64748b;
+  color: var(--text-secondary);
   font-size: 12px;
   margin-top: 2px;
 }
