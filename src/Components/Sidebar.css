@@ -10,6 +10,12 @@
     border-color 0.2s ease;
   position: sticky;
   top: 0;
+  /* position:sticky already creates a stacking context (regardless of
+     z-index), but with no z-index set it still loses paint order to its
+     sibling — the routed page content — which is why the profile
+     dropdown (and anything else that pops out of the sidebar) could
+     render behind a page's table instead of on top of it. */
+  z-index: 10;
   font-family: "Karla", sans-serif;
 }
 
