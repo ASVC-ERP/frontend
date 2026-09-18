@@ -29,33 +29,35 @@ const transformItem = (item) => ({
 
 function Inventory() {
   const customerTableRef = useRef(null);
-  // Page/limit live in the URL (not local state) so returning via the browser
-  // Back button from a product's detail page restores the page you were on.
+  // Page/limit/search/stock all live in the URL (not local state) so
+  // returning via the browser Back button from a product's detail page
+  // restores the page, search text, and filter you were on.
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 50);
+  const search = searchParams.get("search") || "";
+  const stock = searchParams.get("stock") || "";
   // Reads window.location.search (not the "prev" argument) because
-  // onChangeRowsPerPage fires setLimit and setPage back-to-back — the
-  // functional-updater's "prev" lags a render behind, so the second call
-  // would silently undo the first. The browser URL itself is already
-  // up to date by then (history updates are synchronous), so this isn't.
-  const setPage = (newPage) => {
+  // callers sometimes fire two updates back-to-back — the functional
+  // updater's "prev" lags a render behind, so the second call would
+  // silently undo the first. The browser URL itself is already up to
+  // date by then (history updates are synchronous), so this isn't.
+  const updateParams = (updates) => {
     const next = new URLSearchParams(window.location.search);
-    next.set("page", String(newPage));
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === "" || value === null || value === undefined) {
+        next.delete(key);
+      } else {
+        next.set(key, String(value));
+      }
+    });
     setSearchParams(next);
   };
-  const setLimit = (newLimit) => {
-    const next = new URLSearchParams(window.location.search);
-    next.set("limit", String(newLimit));
-    setSearchParams(next);
-  };
+  const setPage = (newPage) => updateParams({ page: newPage });
+  const setLimit = (newLimit) => updateParams({ limit: newLimit });
   const [totalRows, setTotalRows] = useState(0);
   const [items, setItems] = useState([]);
-  const [stock, setStock] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [clearLoading, setClearLoading] = useState(false);
+  const [searchInput, setSearchInput] = useState(search);
   const [tableLoading, setTableLoading] = useState(false);
 
   useEffect(() => {
@@ -102,7 +104,7 @@ function Inventory() {
             <select
               className="search-select"
               value={stock}
-              onChange={(e) => setStock(e.target.value)}
+              onChange={(e) => updateParams({ stock: e.target.value })}
             >
               <option value="">All</option>
               <option value="in">In Stock</option>
@@ -114,31 +116,21 @@ function Inventory() {
             disabled={tableLoading}
             type="button"
             className="btn-primary-custom"
-            onClick={ async () => {
-              setPage(1);
-              setSearch(searchInput);
-              setSearchLoading(true);
-              await fetchItems(searchInput, stock);
-              setSearchLoading(false);
-            }}
+            onClick={() => updateParams({ page: 1, search: searchInput })}
           >
-            {searchLoading ? " Searching..." : "Search"}
+            Search
           </button>
 
           <button
             disabled={tableLoading}
             type="button"
             className="btn-secondary-custom"
-            onClick={ async () => {
-              setPage(1);
+            onClick={() => {
               setSearchInput("");
-              setSearch("");
-              setClearLoading(true);
-              await fetchItems();
-              setClearLoading(false);
+              updateParams({ page: 1, search: "", stock: "" });
             }}
           >
-            {clearLoading ? " Clearing..." : "Clear"}
+            Clear
           </button>
         </div>
 

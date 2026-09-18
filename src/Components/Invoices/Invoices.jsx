@@ -11,12 +11,12 @@ const API_URL = import.meta.env.VITE_API_URL;
 function SalesInvoices() {
   const navigate = useNavigate();
   const [invoices, setInvoices] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [tableLoading, setTableLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 50);
+  const search = searchParams.get("search") || "";
+  const [searchInput, setSearchInput] = useState(search);
+  const [tableLoading, setTableLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
 
   useEffect(() => {
@@ -46,9 +46,13 @@ function SalesInvoices() {
   };
 
   const handleSearch = () => {
-    setSearch(searchInput);
     setSearchParams((prev) => {
       const params = new URLSearchParams(prev);
+      if (searchInput.trim()) {
+        params.set("search", searchInput);
+      } else {
+        params.delete("search");
+      }
       params.set("page", "1");
       return params;
     });
@@ -56,9 +60,9 @@ function SalesInvoices() {
 
   const handleClear = () => {
     setSearchInput("");
-    setSearch("");
     setSearchParams((prev) => {
       const params = new URLSearchParams(prev);
+      params.delete("search");
       params.set("page", "1");
       return params;
     });
@@ -180,10 +184,19 @@ function SalesInvoices() {
           paginationPerPage={limit}
           paginationTotalRows={totalRows}
           onChangePage={(newPage) =>
-            setSearchParams({ page: newPage, limit })
+            setSearchParams((prev) => {
+              const params = new URLSearchParams(prev);
+              params.set("page", newPage);
+              return params;
+            })
           }
           onChangeRowsPerPage={(newLimit) =>
-            setSearchParams({ page, limit: newLimit })
+            setSearchParams((prev) => {
+              const params = new URLSearchParams(prev);
+              params.set("page", page);
+              params.set("limit", newLimit);
+              return params;
+            })
           }
           onRowClicked={(row) => navigate(`/invoices/${row.id}`)}
           paginationRowsPerPageOptions={[10, 25, 50, 100]}

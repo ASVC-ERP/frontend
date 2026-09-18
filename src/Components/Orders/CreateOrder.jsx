@@ -276,8 +276,13 @@ function CreateOrder() {
         </div>
   
         <div className="create-section">
-          <h5>Products</h5>
-  
+          <div className="create-section-header">
+            <h5>Products</h5>
+            <span className="text-muted">
+              {orderItems.length} item{orderItems.length === 1 ? "" : "s"} encoded
+            </span>
+          </div>
+
           <OrderForm
             query={query}
             suggestions={suggestions}

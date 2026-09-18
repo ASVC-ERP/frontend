@@ -33,20 +33,18 @@ export default function PurchasesPage() {
   const navigate = useNavigate();
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [clearLoading, setClearLoading] = useState(false);
   const [tableLoading, setTableLoading] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 50);
+  const search = searchParams.get("search") || "";
+  const [searchInput, setSearchInput] = useState(search);
   const [totalRows, setTotalRows] = useState(0);
 
   /* FETCH DATA */
   useEffect(() => {
     fetchData();
-  }, [page, limit, name]);
+  }, [page, limit, search]);
 
   const fetchData = async (searchValue = search) => {
     try {  
@@ -150,30 +148,36 @@ export default function PurchasesPage() {
           <button
             disabled={tableLoading}
             className="btn-primary-custom"
-            onClick={async () => {
-              if (searchInput !== "") {
-                setSearch(searchInput);
-                setSearchLoading(true);
-                await fetchData(searchInput);
-                setSearchLoading(false);
-              }
+            onClick={() => {
+              setSearchParams((prev) => {
+                const params = new URLSearchParams(prev);
+                if (searchInput.trim()) {
+                  params.set("search", searchInput);
+                } else {
+                  params.delete("search");
+                }
+                params.set("page", "1");
+                return params;
+              });
             }}
           >
-            {searchLoading ? "Searching..." : "Search"}
+            Search
           </button>
 
           <button
             disabled={tableLoading}
             className="btn-secondary-custom"
-            onClick={async () => {
+            onClick={() => {
               setSearchInput("");
-              setSearch("");
-              setClearLoading(true);
-              await fetchData("");
-              setClearLoading(false);
+              setSearchParams((prev) => {
+                const params = new URLSearchParams(prev);
+                params.delete("search");
+                params.set("page", "1");
+                return params;
+              });
             }}
           >
-            {clearLoading ? "Clearing..." : "Clear"}
+            Clear
           </button>
         </div>
 
@@ -195,8 +199,21 @@ export default function PurchasesPage() {
           paginationRowsPerPageOptions={[10, 25, 50, 100]}
           paginationPerPage={limit}
           paginationDefaultPage={page}
-          onChangePage={(newPage) => setSearchParams({ page: newPage, limit }) }
-          onChangeRowsPerPage={(newLimit) => setSearchParams({ page, limit: newLimit }) }
+          onChangePage={(newPage) =>
+            setSearchParams((prev) => {
+              const params = new URLSearchParams(prev);
+              params.set("page", newPage);
+              return params;
+            })
+          }
+          onChangeRowsPerPage={(newLimit) =>
+            setSearchParams((prev) => {
+              const params = new URLSearchParams(prev);
+              params.set("page", page);
+              params.set("limit", newLimit);
+              return params;
+            })
+          }
           persistTableHead
           highlightOnHover
           pointerOnHover

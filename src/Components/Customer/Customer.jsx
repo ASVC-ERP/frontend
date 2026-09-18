@@ -10,32 +10,33 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 function Customer() {
   const customerTableRef = useRef(null);
-  // Page/limit live in the URL (not local state) for consistency with the
-  // other list pages, so pagination survives a remount via the browser Back button.
+  // Page/limit/search all live in the URL (not local state) so returning
+  // via the browser Back button restores the page and search you were on.
   const [searchParams, setSearchParams] = useSearchParams();
   const page = Number(searchParams.get("page") || 1);
   const limit = Number(searchParams.get("limit") || 50);
+  const search = searchParams.get("search") || "";
   // Reads window.location.search (not the "prev" argument) because
-  // onChangeRowsPerPage fires setLimit and setPage back-to-back — the
-  // functional-updater's "prev" lags a render behind, so the second call
-  // would silently undo the first. The browser URL itself is already
-  // up to date by then (history updates are synchronous), so this isn't.
-  const setPage = (newPage) => {
+  // callers sometimes fire two updates back-to-back — the functional
+  // updater's "prev" lags a render behind, so the second call would
+  // silently undo the first. The browser URL itself is already up to
+  // date by then (history updates are synchronous), so this isn't.
+  const updateParams = (updates) => {
     const next = new URLSearchParams(window.location.search);
-    next.set("page", String(newPage));
+    Object.entries(updates).forEach(([key, value]) => {
+      if (value === "" || value === null || value === undefined) {
+        next.delete(key);
+      } else {
+        next.set(key, String(value));
+      }
+    });
     setSearchParams(next);
   };
-  const setLimit = (newLimit) => {
-    const next = new URLSearchParams(window.location.search);
-    next.set("limit", String(newLimit));
-    setSearchParams(next);
-  };
+  const setPage = (newPage) => updateParams({ page: newPage });
+  const setLimit = (newLimit) => updateParams({ limit: newLimit });
   const [totalRows, setTotalRows] = useState(0);
   const [customers, setCustomers] = useState([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [search, setSearch] = useState("");
-  const [searchLoading, setSearchLoading] = useState(false);
-  const [clearLoading, setClearLoading] = useState(false);
+  const [searchInput, setSearchInput] = useState(search);
   const [tableLoading, setTableLoading] = useState(false);
 
   useEffect(() => {
@@ -84,31 +85,21 @@ function Customer() {
             disabled={tableLoading}
             type="button"
             className="btn-primary-custom"
-            onClick={ async () => {
-              setPage(1);
-              setSearch(searchInput);
-              setSearchLoading(true);
-              await fetchCustomers(searchInput);
-              setSearchLoading(false);
-            }}
+            onClick={() => updateParams({ page: 1, search: searchInput })}
           >
-            {searchLoading ? " Searching..." : "Search"}
+            Search
           </button>
 
           <button
             disabled={tableLoading}
             type="button"
             className="btn-secondary-custom"
-            onClick={ async () => {
-              setPage(1);
+            onClick={() => {
               setSearchInput("");
-              setSearch("");
-              setClearLoading(true);
-              await fetchCustomers();
-              setClearLoading(false);
+              updateParams({ page: 1, search: "" });
             }}
           >
-            {clearLoading ? " Clearing..." : "Clear"}
+            Clear
           </button>
         </div>
 
