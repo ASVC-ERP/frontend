@@ -3,13 +3,11 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LuPackage, LuUsers, LuTruck, LuClipboardList, LuArrowRight, } from "react-icons/lu";
 import "../styles/dashboard.css";
-import { debug } from "../utils/log";
 import { getUser } from "../api/http";
 
 export default function HomePage() {
   const navigate = useNavigate();
   const user = getUser(); // from the signed access token
-  const name = "Jiko";
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [loading, setLoading] = useState(true);
@@ -17,8 +15,6 @@ export default function HomePage() {
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
-  const [latestOrders, setLatestOrders] = useState([]);
-  const [latestInvoices, setLatestInvoices] = useState([]);
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -44,30 +40,6 @@ export default function HomePage() {
 
     fetchCounts();
   }, [API_URL]);
-
-  useEffect(() => {
-    const fetchLatest = async () => {
-      try {
-        const [oRes, iRes] = await Promise.all([
-          axios.get(`${API_URL}/order/latest`),
-          axios.get(`${API_URL}/invoice/latest`),
-        ]);
-
-        setLatestOrders(oRes.data ?? []);
-        setLatestInvoices(iRes.data ?? []);
-      } catch (err) {
-        console.error("Failed to fetch latest:", err);
-      }
-    };
-
-    fetchLatest();
-  }, [API_URL]);
-
-  const formatCurrency = (value) =>
-    new Intl.NumberFormat("en-PH", {
-      style: "currency",
-      currency: "PHP",
-    }).format(value ?? 0);
 
   const StatCard = ({ title, value, icon: Icon, tone }) => (
     <div className="col-12 col-sm-6 col-xl-3">
@@ -154,82 +126,6 @@ export default function HomePage() {
               </button>
             );
           })}
-        </div>
-      </div>
-
-      <div className="row g-4">
-        <div className="col-12 col-xl-7">
-          <div className="dashboard-card h-100">
-            <div className="dashboard-section-header">
-              <div>
-                <h2>Latest Open Orders</h2>
-                <p>Recently created or active sales orders.</p>
-              </div>
-            </div>
-
-            {latestOrders.length === 0 ? (
-              <div className="dashboard-empty">No open orders found.</div>
-            ) : (
-              <div className="dashboard-list">
-                {latestOrders.map((order) => (
-                  <div
-                    key={order.id}
-                    className="dashboard-list-item"
-                    onClick={() => {
-                      debug(order.id);
-                      navigate(`/order/${order.id}`);
-                    }}
-                  >
-                    <div>
-                      <h4>Order #{order.id}</h4>
-                      <p>{order.customers?.name ?? "No customer name"}</p>
-                    </div>
-
-                    <div className="dashboard-list-right">
-                      <span className="dashboard-badge success">
-                        {order.status}
-                      </span>
-                      <strong>{formatCurrency(order.total_price)}</strong>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="col-12 col-xl-5">
-          <div className="dashboard-card h-100">
-            <div className="dashboard-section-header">
-              <div>
-                <h2>Latest Invoices</h2>
-                <p>Most recent generated invoices.</p>
-              </div>
-            </div>
-
-            {latestInvoices.length === 0 ? (
-              <div className="dashboard-empty">No invoices found.</div>
-            ) : (
-              <div className="dashboard-list compact">
-                {latestInvoices.map((invoice) => (
-                  <div
-                    key={invoice.id}
-                    className="dashboard-list-item"
-                    onClick={() => navigate(`/invoices/${invoice.id}`)}
-                  >
-                    <div>
-                      <h4>
-                        Invoice #{invoice.invoice_number ?? invoice.id}
-                      </h4>
-                      <p>{invoice.customers?.name ?? "No customer name"}</p>
-                    </div>
-
-                    <LuArrowRight className="dashboard-row-arrow" size={18} />
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       </div>
     </div>
