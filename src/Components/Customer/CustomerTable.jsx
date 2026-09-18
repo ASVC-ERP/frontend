@@ -17,6 +17,7 @@ const CustomerTable = forwardRef(function CustomerTable(
     totalRows,
     progressPending,
     progressComponent,
+    isAdmin = false,
   },
   ref
 ) {
@@ -56,7 +57,8 @@ const CustomerTable = forwardRef(function CustomerTable(
 
   const columns = createCustomerColumns(
     handleEditCustomerClick,
-    handleDeleteCustomer
+    handleDeleteCustomer,
+    isAdmin
   );
 
   return (

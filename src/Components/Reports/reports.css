@@ -19,7 +19,17 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 16px;
+  margin-bottom: 16px;
   align-items: stretch;
+}
+
+/* Full-width panels stacked vertically (Customer Report: city card above the
+   rankings table). */
+.report-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 16px;
 }
 
 @media (max-width: 1150px) {
@@ -104,6 +114,7 @@
   color: #64748b;
   padding: 8px 8px;
   border-bottom: 1px solid #e2e8f0;
+  white-space: nowrap;
 }
 .report-table td {
   padding: 9px 8px;
@@ -131,6 +142,18 @@
   align-items: center;
   gap: 14px;
 }
+.report-pie-wrap--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 32px;
+}
+.report-pie-wrap--row svg { flex-shrink: 0; }
+.report-pie-wrap--row .report-pie-legend { width: auto; flex: 1; max-width: 900px; }
+@media (max-width: 640px) {
+  .report-pie-wrap--row { flex-direction: column; }
+  .report-pie-wrap--row .report-pie-legend { max-width: 100%; }
+}
 .report-pie-legend {
   width: 100%;
   font-size: 1.05rem;
@@ -152,6 +175,36 @@
 .report-pie-legend .label { color: #475569; }
 .report-pie-legend .val { color: #94a3b8; font-variant-numeric: tabular-nums; }
 
+/* Row layout (Revenue by City on Customer Report): stretch the legend into
+   a proportional bar list instead of leaving the card's width empty. */
+.report-pie-legend--bars li {
+  display: grid;
+  grid-template-columns: 170px 1fr auto;
+  align-items: center;
+  gap: 16px;
+  padding: 7px 0;
+}
+.report-pie-legend--bars .label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.report-pie-legend--bars .bar-track {
+  height: 8px;
+  border-radius: 4px;
+  background: #eef2f6;
+  overflow: hidden;
+}
+.report-pie-legend--bars .bar-fill {
+  display: block;
+  height: 100%;
+  border-radius: 4px;
+}
+.report-pie-legend--bars .val { white-space: nowrap; }
+@media (max-width: 640px) {
+  .report-pie-legend--bars li { grid-template-columns: 120px 1fr auto; gap: 10px; }
+}
+
 /* Slow-moving cards */
 .slow-card {
   display: flex;
@@ -167,6 +220,140 @@
 .slow-card .warn { color: #d97706; flex-shrink: 0; margin-top: 1px; }
 .slow-card .name { font-weight: 700; color: #1e293b; font-size: 1.1rem; }
 .slow-card .meta { color: #92400e; font-size: 1rem; margin-top: 2px; }
+
+/* Segment badges (customer report) */
+.seg-badge {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  padding: 2px 9px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.seg-vip     { background: #fffbeb; color: #b45309; }
+.seg-steady  { background: #f0fdf4; color: #16a34a; }
+.seg-at_risk { background: #fef2f2; color: #dc2626; }
+.seg-new     { background: #eff6ff; color: #1E5A84; }
+
+/* Monthly revenue bar chart (customer detail) */
+.revenue-chart { width: 100%; }
+.revenue-chart .axis { stroke: #e2e8f0; stroke-width: 1; }
+.revenue-chart .bar { fill: #93c7e6; }
+.revenue-chart .bar--last { fill: #1E5A84; }
+.revenue-chart .axis-label { font-size: 8px; fill: #94a3b8; font-family: inherit; }
+.revenue-chart .bar-value {
+  font-size: 8px;
+  font-weight: 700;
+  fill: #475569;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Customer detail — profile header */
+.customer-profile-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+}
+.customer-profile-name {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+.customer-meta {
+  display: flex;
+  gap: 22px;
+  flex-wrap: wrap;
+  margin-top: 12px;
+}
+.customer-meta .k {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #94a3b8;
+  font-weight: 700;
+}
+.customer-meta .v { font-size: 1rem; color: #334155; margin-top: 2px; }
+
+.customer-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 16px;
+}
+@media (max-width: 1000px) {
+  .customer-detail-grid { grid-template-columns: 1fr; }
+}
+
+/* Segment legend (info button + popover next to the Segment column header) */
+.segment-legend {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+  margin-left: 4px;
+}
+.segment-legend-btn {
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  color: #94a3b8;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
+}
+.segment-legend-btn:hover { color: #1E5A84; }
+.segment-legend-pop {
+  position: absolute;
+  top: 22px;
+  left: 0;
+  z-index: 20;
+  width: 260px;
+  box-sizing: border-box;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 12px 14px;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  white-space: normal; /* .report-table th sets nowrap; this popover nests inside a th */
+}
+.segment-legend-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+.segment-legend-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+}
+.segment-legend-row .seg-badge {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.segment-legend-desc {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.82rem;
+  color: #64748b;
+  line-height: 1.4;
+}
+
+/* Clickable ranked table rows (customer dashboard -> detail) */
+.report-table tr.row-link { cursor: pointer; }
+.report-table tr.row-link:hover td { background: #f8fafc; }
 
 /* "View full" link in a panel header + back link on the detail page */
 .report-viewfull {

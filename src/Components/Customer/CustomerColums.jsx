@@ -1,7 +1,8 @@
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { FaEdit, FaTrash, FaChartLine } from "react-icons/fa";
 import "../../styles/buttons.css";
 
-export const createCustomerColumns = (handleEdit, handleDelete) => [
+export const createCustomerColumns = (handleEdit, handleDelete, isAdmin) => [
   {
     name: "Name",
     center: true,
@@ -79,11 +80,20 @@ export const createCustomerColumns = (handleEdit, handleDelete) => [
         >
           <FaEdit />
         </button>
+        {isAdmin && (
+          <Link
+            to={`/reports/customers/detail/${row.id}`}
+            className="btn-edit-gray"
+            title="View customer report"
+          >
+            <FaChartLine />
+          </Link>
+        )}
       </div>
     ),
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
-    width: "120px",
+    width: isAdmin ? "160px" : "120px",
   },
 ];

@@ -98,28 +98,6 @@ const PANELS = {
       },
     ],
   },
-  sales_by_city: {
-    report: "Sales",
-    back: "/reports/sales",
-    title: "Sales by City",
-    isCityPanel: true,
-    columns: [
-      {
-        name: "Rank",
-        selector: (r) => r.__rank,
-        width: "80px",
-      },
-      { name: "City", selector: (r) => r.city || "—", sortable: true, grow: 2, wrap: true },
-      {
-        name: "Market Share %",
-        selector: (r) => r.__sharePct || 0,
-        format: (r) => `${r.__sharePct}%`,
-        sortable: true,
-        right: true,
-      },
-      { ...money(null, "total"), name: "Sales" },
-    ],
-  },
   pnl_by_brand: {
     report: "Sales",
     back: "/reports/sales",
@@ -156,6 +134,28 @@ const PANELS = {
         sortable: true,
         right: true,
       },
+    ],
+  },
+  customers_by_city: {
+    report: "Customer",
+    back: "/reports/customers",
+    title: "Revenue by City",
+    isCityPanel: true,
+    columns: [
+      {
+        name: "Rank",
+        selector: (r) => r.__rank,
+        width: "80px",
+      },
+      { name: "City", selector: (r) => r.city || "—", sortable: true, grow: 2, wrap: true },
+      {
+        name: "Market Share %",
+        selector: (r) => r.__sharePct || 0,
+        format: (r) => `${r.__sharePct}%`,
+        sortable: true,
+        right: true,
+      },
+      { ...money(null, "total"), name: "Revenue" },
     ],
   },
   top_products: {
@@ -326,7 +326,7 @@ export default function ReportListPage() {
               {topCity.city}
             </div>
             <div className="kpi-sub">
-              Largest market share at {topCity.__sharePct}% of total sales in this range.
+              Largest market share at {topCity.__sharePct}% of total revenue in this range.
             </div>
           </div>
 

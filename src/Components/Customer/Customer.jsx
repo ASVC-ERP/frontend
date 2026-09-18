@@ -3,12 +3,15 @@ import { useSearchParams } from "react-router-dom";
 import axios from "axios";
 import CustomerTable from "./CustomerTable.jsx";
 import { IoIosSearch } from "react-icons/io";
+import { useAuth } from "../../hooks/useAuth";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
 function Customer() {
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
   const customerTableRef = useRef(null);
   // Page/limit live in the URL (not local state) for consistency with the
   // other list pages, so pagination survives a remount via the browser Back button.
@@ -132,6 +135,7 @@ function Customer() {
               limit={limit}
               setLimit={setLimit}
               totalRows={totalRows}
+              isAdmin={isAdmin}
               progressPending={tableLoading}
               progressComponent={
                 <div
