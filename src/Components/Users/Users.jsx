@@ -31,7 +31,8 @@ export default function Users() {
     setTableLoading(true);
     try {
       const res = await axios.get(`${API_URL}/user`);
-      setUsers(Array.isArray(res.data) ? res.data : []);
+      const data = Array.isArray(res.data) ? res.data : [];
+      setUsers([...data].sort((a, b) => a.id - b.id));
     } catch (err) {
       console.error("Error fetching users:", err);
       showErrorSwal("Could not load users", "Please try again.");
@@ -168,9 +169,8 @@ export default function Users() {
 
   const columns = useMemo(
     () => [
-      { name: "ID", selector: (r) => r.id, width: "80px", center: true },
-      { name: "Username", selector: (r) => r.username, sortable: true, grow: 1 },
-      { name: "Name", selector: (r) => r.name || "-", sortable: true, grow: 1 },
+      { name: "Username", selector: (r) => r.username, sortable: true, grow: 2 },
+      { name: "Name", selector: (r) => r.name || "-", sortable: true, grow: 2 },
       {
         name: "Role",
         cell: (r) => (
@@ -178,7 +178,7 @@ export default function Users() {
             {r.role || "-"}
           </span>
         ),
-        width: "140px",
+        grow: 1,
         center: true,
       },
       {
@@ -190,22 +190,22 @@ export default function Users() {
             return <span className="badge bg-warning text-dark">Locked</span>;
           return <span className="badge bg-success">Active</span>;
         },
-        width: "120px",
+        grow: 1,
         center: true,
       },
       {
         name: "Created",
         selector: (r) => (r.created_at ? new Date(r.created_at).toLocaleDateString() : "-"),
-        width: "150px",
+        grow: 1,
         center: true,
       },
       {
         name: "",
         cell: (r) => (
-          <div style={{ display: "flex", gap: 6 }}>
+          <div style={{ display: "flex", gap: 4, justifyContent: "flex-end", width: "100%" }}>
             <button
               className="btn-secondary-custom"
-              style={{ padding: "4px 12px", fontSize: 13 }}
+              style={{ padding: "4px 10px", fontSize: 12 }}
               onClick={() => toggleActive(r)}
             >
               {r.active === false ? "Enable" : "Disable"}
@@ -213,7 +213,7 @@ export default function Users() {
             {isLocked(r) && (
               <button
                 className="btn-secondary-custom"
-                style={{ padding: "4px 12px", fontSize: 13 }}
+                style={{ padding: "4px 10px", fontSize: 12 }}
                 onClick={() => unlockUser(r)}
               >
                 Unlock
@@ -221,15 +221,15 @@ export default function Users() {
             )}
             <button
               className="btn-secondary-custom"
-              style={{ padding: "4px 12px", fontSize: 13 }}
+              style={{ padding: "4px 10px", fontSize: 12 }}
               onClick={() => resetPassword(r)}
             >
               Reset PW
             </button>
           </div>
         ),
-        width: "280px",
-        center: true,
+        grow: 2,
+        right: true,
         ignoreRowClick: true,
       },
     ],
@@ -238,72 +238,72 @@ export default function Users() {
   );
 
   return (
-    <div className="create-page">
-      <div className="create-card">
-        <div className="create-header">
-          <div>
-            <h1>Users</h1>
-            <p>Create and manage admin and agent accounts.</p>
-          </div>
+    <div className="page-container page-container--fixed-table">
+      <div className="page-header">
+        <div>
+          <div className="page-title">Users</div>
+          <p className="page-subtitle">Create and manage admin and agent accounts.</p>
         </div>
+      </div>
 
+      <div className="page-card" style={{ marginBottom: 20, flexShrink: 0 }}>
         <form onSubmit={handleSubmit}>
-          <div className="create-section">
-            <h5>Add User</h5>
+          <h5 style={{ fontWeight: 800, color: "var(--text-primary)", marginBottom: 16 }}>
+            Add User
+          </h5>
 
-            <div className="row g-3">
-              <div className="col-md-3">
-                <label className="form-label">Username</label>
-                <input
-                  name="username"
-                  value={form.username}
-                  onChange={handleChange}
-                  className="form-control"
-                  placeholder="e.g. jdoe"
-                  maxLength={50}
-                  autoComplete="off"
-                />
-              </div>
+          <div className="row g-3">
+            <div className="col-md-3">
+              <label className="form-label">Username</label>
+              <input
+                name="username"
+                value={form.username}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="e.g. jdoe"
+                maxLength={50}
+                autoComplete="off"
+              />
+            </div>
 
-              <div className="col-md-3">
-                <label className="form-label">Full name</label>
-                <input
-                  name="name"
-                  value={form.name}
-                  onChange={handleChange}
-                  className="form-control"
-                  placeholder="e.g. Jane Doe"
-                  maxLength={100}
-                  autoComplete="off"
-                />
-              </div>
+            <div className="col-md-3">
+              <label className="form-label">Full name</label>
+              <input
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="e.g. Jane Doe"
+                maxLength={100}
+                autoComplete="off"
+              />
+            </div>
 
-              <div className="col-md-3">
-                <label className="form-label">Password</label>
-                <input
-                  name="password"
-                  type="password"
-                  value={form.password}
-                  onChange={handleChange}
-                  className="form-control"
-                  placeholder="At least 8 characters"
-                  autoComplete="new-password"
-                />
-                <div className="form-text">{PW_HINT}</div>
-              </div>
+            <div className="col-md-3">
+              <label className="form-label">Password</label>
+              <input
+                name="password"
+                type="password"
+                value={form.password}
+                onChange={handleChange}
+                className="form-control"
+                placeholder="At least 8 characters"
+                autoComplete="new-password"
+              />
+              <div className="form-text">{PW_HINT}</div>
+            </div>
 
-              <div className="col-md-3">
-                <label className="form-label">Role</label>
-                <select
-                  name="role"
-                  value={form.role}
-                  onChange={handleChange}
-                  className="form-select"
-                >
-                  <option value="agent">Agent</option>
-                  <option value="admin">Admin</option>
-                </select>
-              </div>
+            <div className="col-md-3">
+              <label className="form-label">Role</label>
+              <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
+                className="form-select"
+              >
+                <option value="agent">Agent</option>
+                <option value="admin">Admin</option>
+              </select>
             </div>
           </div>
 
@@ -321,33 +321,30 @@ export default function Users() {
             </button>
           </div>
         </form>
+      </div>
 
-        <div className="create-section" style={{ marginTop: 8 }}>
-          <h5>Existing Users</h5>
-          <div className="custom-data-table-wrapper">
-            <DataTable
-              columns={columns}
-              data={users}
-              highlightOnHover
-              striped
-              responsive
-              className="custom-data-table"
-              noDataComponent="No users found"
-              progressPending={tableLoading}
-              progressComponent={
-                <div style={{ padding: "40px 0", textAlign: "center" }}>
-                  <div
-                    className="spinner-border"
-                    style={{ color: "#1E5A84", width: "2.5rem", height: "2.5rem" }}
-                  />
-                  <div style={{ marginTop: 10, color: "#6c757d", fontWeight: 600 }}>
-                    Loading users...
-                  </div>
-                </div>
-              }
-            />
-          </div>
-        </div>
+      <div className="custom-data-table-wrapper">
+        <DataTable
+          columns={columns}
+          data={users}
+          highlightOnHover
+          striped
+          responsive
+          className="custom-data-table"
+          noDataComponent="No users found"
+          progressPending={tableLoading}
+          progressComponent={
+            <div style={{ padding: "40px 0", textAlign: "center" }}>
+              <div
+                className="spinner-border"
+                style={{ color: "#1E5A84", width: "2.5rem", height: "2.5rem" }}
+              />
+              <div style={{ marginTop: 10, color: "#6c757d", fontWeight: 600 }}>
+                Loading users...
+              </div>
+            </div>
+          }
+        />
       </div>
     </div>
   );
