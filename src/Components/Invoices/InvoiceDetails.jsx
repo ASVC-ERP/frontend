@@ -92,6 +92,10 @@ export default function SalesInvoiceDetails() {
     await openPdf(`${API_URL}/print/delivery-receipt/${type}/${invoice.id}`);
   };
 
+  const handlePrintInvoiceVariant = async (variant) => {
+    await openPdf(`${API_URL}/print/sales-invoice/${invoice.id}/${variant}`);
+  };
+
   // Dot-matrix preview: a dry run, no printer touched. Mode A (pre-printed
   // form) comes back as decoded text; Mode B (full layout) comes back as
   // the dithered page image — same dithering the printer would receive,
@@ -186,15 +190,17 @@ export default function SalesInvoiceDetails() {
             className="btn-tertiary-custom"
             onClick={() => setShowPrintModal(true)}
           >
-            Save as PDF
+            Print
           </button>
 
+{/*
           <button
             className="btn-tertiary-custom"
             onClick={() => setShowDotMatrixModal(true)}
           >
             Print (Dot Matrix)
           </button>
+*/}
 
           <button
             className="btn-primary-custom"
@@ -404,7 +410,7 @@ export default function SalesInvoiceDetails() {
                   handlePrintDR("a");
                 }}
               >
-                DR with SI
+                Sales Invoice
               </button>
 
               <button
@@ -414,7 +420,27 @@ export default function SalesInvoiceDetails() {
                   handlePrintDR("b");
                 }}
               >
-                DR without SI
+                Delivery Receipt
+              </button>
+
+              <button
+                className="btn-primary-custom"
+                onClick={() => {
+                  setShowPrintModal(false);
+                  handlePrintInvoiceVariant("no-details");
+                }}
+              >
+                Print Without Details
+              </button>
+
+              <button
+                className="btn-primary-custom"
+                onClick={() => {
+                  setShowPrintModal(false);
+                  handlePrintInvoiceVariant("details-only");
+                }}
+              >
+                Print Details Only
               </button>
             </div>
           </div>
