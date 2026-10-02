@@ -11,6 +11,7 @@ import RankedTable from "./parts/RankedTable";
 import BrandPnlTable from "./parts/BrandPnlTable";
 import SlowMovingCards from "./parts/SlowMovingCards";
 import ViewFullLink from "./parts/ViewFullLink";
+import AiInsightsPanel from "./parts/AiInsightsPanel";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
 import "./reports.css";
@@ -141,6 +142,8 @@ export default function SalesReport() {
               <SlowMovingCards items={data.slow_moving} />
             </Panel>
           </div>
+
+          <AiInsightsPanel reportPath="sales" range={range} />
         </>
       )}
     </div>
