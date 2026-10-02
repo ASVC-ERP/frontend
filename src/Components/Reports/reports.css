@@ -383,6 +383,37 @@
   color: #7c3aed;
   flex-shrink: 0;
 }
+.ai-beta-badge {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: #7c3aed;
+  background: rgba(124, 58, 237, 0.12);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.ai-insights-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ai-insights-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: none;
+  background: none;
+  padding: 4px 2px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+.ai-insights-toggle:hover { color: var(--text-primary); }
+.ai-insights-toggle svg { transition: transform 0.15s ease; }
 .ai-insights-body { margin-top: 12px; }
 .ai-insights-empty {
   color: var(--text-muted);

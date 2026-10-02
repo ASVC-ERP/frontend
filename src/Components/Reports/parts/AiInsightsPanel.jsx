@@ -37,11 +37,36 @@ function renderInsights(text) {
   );
 }
 
+// Per-report, per-browser -- just a convenience so a hidden panel stays
+// hidden across visits. Not meant to sync across devices/users.
+function collapsedKey(reportPath) {
+  return `ai-insights-collapsed:${reportPath}`;
+}
+
 export default function AiInsightsPanel({ reportPath, range }) {
   const [insights, setInsights] = useState("");
   const [generatedAt, setGeneratedAt] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [collapsed, setCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem(collapsedKey(reportPath)) === "1";
+    } catch {
+      return false;
+    }
+  });
+
+  const toggleCollapsed = () => {
+    setCollapsed((prev) => {
+      const next = !prev;
+      try {
+        localStorage.setItem(collapsedKey(reportPath), next ? "1" : "0");
+      } catch {
+        // localStorage unavailable (private mode, etc.) -- just keep it in memory.
+      }
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (!range.from || !range.to) return;
@@ -98,52 +123,86 @@ export default function AiInsightsPanel({ reportPath, range }) {
             />
           </svg>
           <span>AI Insights</span>
+          <span className="ai-beta-badge">Beta</span>
         </div>
-        <button
-          className="btn-secondary-custom"
-          disabled={loading || !range.from || !range.to}
-          onClick={generate}
-        >
-          {loading ? "Analyzing…" : insights ? "Regenerate" : "Generate"}
-        </button>
+
+        <div className="ai-insights-actions">
+          {!collapsed && (
+            <button
+              className="btn-secondary-custom"
+              disabled={loading || !range.from || !range.to}
+              onClick={generate}
+            >
+              {loading ? "Analyzing…" : insights ? "Regenerate" : "Generate"}
+            </button>
+          )}
+          <button
+            type="button"
+            className="ai-insights-toggle"
+            onClick={toggleCollapsed}
+            aria-expanded={!collapsed}
+          >
+            {collapsed ? "Show" : "Hide"}
+            <svg
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+              style={{ transform: collapsed ? "rotate(-90deg)" : "rotate(0deg)" }}
+            >
+              <path
+                d="M6 9l6 6 6-6"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
 
-      <div className="ai-insights-body">
-        {error && <div className="ai-insights-error">{error}</div>}
+      {!collapsed && (
+        <>
+          <div className="ai-insights-body">
+            {error && <div className="ai-insights-error">{error}</div>}
 
-        {loading && (
-          <div className="ai-insights-loading">
-            <span className="ai-spinner" aria-hidden="true" />
-            Reading your {reportPath} numbers and writing up the analysis…
+            {loading && (
+              <div className="ai-insights-loading">
+                <span className="ai-spinner" aria-hidden="true" />
+                Reading your {reportPath} numbers and writing up the analysis…
+              </div>
+            )}
+
+            {!loading && !error && !insights && (
+              <div className="ai-insights-empty">
+                Only aggregated totals go out for this — names of customers and
+                suppliers are replaced with generic ranks before anything is sent
+                to Gemini.
+              </div>
+            )}
+
+            {!loading && insights && (
+              <div className="ai-insights-text">{renderInsights(insights)}</div>
+            )}
           </div>
-        )}
 
-        {!loading && !error && !insights && (
-          <div className="ai-insights-empty">
-            Only aggregated totals go out for this — names of customers and
-            suppliers are replaced with generic ranks before anything is sent
-            to Gemini.
-          </div>
-        )}
-
-        {!loading && insights && (
-          <div className="ai-insights-text">{renderInsights(insights)}</div>
-        )}
-      </div>
-
-      {!loading && insights && generatedAt && (
-        <div className="ai-insights-meta">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
-            <path
-              d="M12 7v5l3.5 2"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-          </svg>
-          Last generated {new Date(generatedAt).toLocaleString()}
-        </div>
+          {!loading && insights && generatedAt && (
+            <div className="ai-insights-meta">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+                <path
+                  d="M12 7v5l3.5 2"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
+              Last generated {new Date(generatedAt).toLocaleString()}
+            </div>
+          )}
+        </>
       )}
     </div>
   );
