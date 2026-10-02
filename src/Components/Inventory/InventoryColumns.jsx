@@ -108,6 +108,30 @@ export const productColumns = (handleDeleteItem) => [
     selector: (row) => row.origin,
   },
   {
+    name: "Status",
+    width: "110px",
+    center: true,
+    cell: (row) => {
+      const inactive = row.status === "inactive";
+      return (
+        <span
+          style={{
+            display: "inline-block",
+            fontSize: "0.78rem",
+            fontWeight: 700,
+            letterSpacing: "0.02em",
+            padding: "2px 10px",
+            borderRadius: 999,
+            background: inactive ? "#fef2f2" : "#f0fdf4",
+            color: inactive ? "#dc2626" : "#16a34a",
+          }}
+        >
+          {inactive ? "Inactive" : "Active"}
+        </span>
+      );
+    },
+  },
+  {
     name: "Actions",
     cell: (row) => (
       <div className="d-flex gap-2">

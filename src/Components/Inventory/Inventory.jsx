@@ -25,6 +25,7 @@ const transformItem = (item) => ({
   interNum: item.internal_num,
   unit: item.unit,
   model: item.model,
+  status: item.status,
 });
 
 function Inventory() {
@@ -37,6 +38,7 @@ function Inventory() {
   const limit = Number(searchParams.get("limit") || 50);
   const search = searchParams.get("search") || "";
   const stock = searchParams.get("stock") || "";
+  const status = searchParams.get("status") || "";
   // Reads window.location.search (not the "prev" argument) because
   // callers sometimes fire two updates back-to-back — the functional
   // updater's "prev" lags a render behind, so the second call would
@@ -62,12 +64,12 @@ function Inventory() {
 
   useEffect(() => {
     fetchItems();
-  }, [page, limit, search, stock]);
+  }, [page, limit, search, stock, status]);
 
-  const fetchItems = async (searchValue = search, stockValue = stock) => {
+  const fetchItems = async (searchValue = search, stockValue = stock, statusValue = status) => {
     try {
       setTableLoading(true);
-      const response = await axios.get(`${API_URL}/product`, { params: { page, limit, search: searchValue, stock: stockValue, }, });
+      const response = await axios.get(`${API_URL}/product`, { params: { page, limit, search: searchValue, stock: stockValue, status: statusValue, }, });
       const transformedItems = response.data.data.map(transformItem);
       setItems(transformedItems);
       setTotalRows(response.data.meta.total);
@@ -107,9 +109,21 @@ function Inventory() {
               value={stock}
               onChange={(e) => updateParams({ stock: e.target.value })}
             >
-              <option value="">All</option>
+              <option value="">All Stock</option>
               <option value="in">In Stock</option>
               <option value="out">Out of Stock</option>
+            </select>
+          </div>
+
+          <div className="select-wrapper">
+            <select
+              className="search-select"
+              value={status}
+              onChange={(e) => updateParams({ status: e.target.value })}
+            >
+              <option value="">All Status</option>
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
             </select>
           </div>
 
@@ -128,7 +142,7 @@ function Inventory() {
             className="btn-secondary-custom"
             onClick={() => {
               setSearchInput("");
-              updateParams({ page: 1, search: "", stock: "" });
+              updateParams({ page: 1, search: "", stock: "", status: "" });
             }}
           >
             Clear
