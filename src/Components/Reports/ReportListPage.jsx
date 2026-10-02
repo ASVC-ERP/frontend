@@ -76,9 +76,7 @@ const PANELS = {
     report: "Sales",
     back: "/reports/sales",
     title: "Slow-Moving Products",
-    // A function (not a static array) because the Action column's button
-    // needs the toggle handler + in-flight row id from component state.
-    columns: (onToggleStatus, togglingId) => [
+    columns: [
       {
         name: "Rank",
         selector: (r) => r.__rank,
@@ -92,59 +90,11 @@ const PANELS = {
         grow: 2,
         wrap: true,
       },
-      {
-        name: "Status",
-        width: "110px",
-        center: true,
-        cell: (r) => {
-          const inactive = r.status === "inactive";
-          return (
-            <span
-              style={{
-                display: "inline-block",
-                fontSize: "0.78rem",
-                fontWeight: 700,
-                letterSpacing: "0.02em",
-                padding: "2px 10px",
-                borderRadius: 999,
-                background: inactive ? "#fef2f2" : "#f0fdf4",
-                color: inactive ? "#dc2626" : "#16a34a",
-              }}
-            >
-              {inactive ? "Inactive" : "Active"}
-            </span>
-          );
-        },
-      },
       { name: "Last Sale", selector: (r) => r.last_sold || "Never", sortable: true },
-      { name: "Last Purchase", selector: (r) => r.last_purchased || "Never", sortable: true },
       {
         name: "Last Order",
         selector: (r) => (r.last_order_id ? `ORD${String(r.last_order_id).padStart(4, "0")}` : "—"),
         sortable: true,
-      },
-      {
-        name: "Action",
-        width: "160px",
-        center: true,
-        ignoreRowClick: true,
-        cell: (r) => (
-          <button
-            type="button"
-            className="btn-secondary-custom"
-            style={{ minWidth: 0, height: 30, padding: "0 12px", fontSize: 13 }}
-            disabled={togglingId === r.product_id}
-            onClick={() =>
-              onToggleStatus(r.product_id, r.status === "inactive" ? "active" : "inactive")
-            }
-          >
-            {togglingId === r.product_id
-              ? "Saving…"
-              : r.status === "inactive"
-                ? "Mark Active"
-                : "Mark Inactive"}
-          </button>
-        ),
       },
     ],
   },
