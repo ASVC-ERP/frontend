@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { LuPackage, LuUsers, LuTruck, LuClipboardList, LuArrowRight, } from "react-icons/lu";
+import { showErrorSwal } from "../utils/swal";
 import "../styles/dashboard.css";
 import { getUser } from "../api/http";
 
@@ -15,6 +16,33 @@ export default function HomePage() {
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
+
+  // Zero-stock products with no sale/purchase in 90 days -- the clearest
+  // candidates for marking inactive, since Slow-Moving/Sales Report only
+  // ever look at items still in stock.
+  const [dormant, setDormant] = useState([]);
+  const [togglingId, setTogglingId] = useState(null);
+
+  useEffect(() => {
+    axios
+      .get(`${API_URL}/product/dormant`, { params: { stock: "out" } })
+      .then((res) => setDormant(res.data || []))
+      .catch(() => setDormant([]));
+  }, [API_URL]);
+
+  const toggleStatus = async (productId, nextStatus) => {
+    setTogglingId(productId);
+    try {
+      await axios.patch(`${API_URL}/product/${productId}/status`, { status: nextStatus });
+      setDormant((prev) =>
+        prev.map((r) => (r.product_id === productId ? { ...r, status: nextStatus } : r)),
+      );
+    } catch (e) {
+      showErrorSwal("Update failed", e.response?.data?.message || "Please try again.");
+    } finally {
+      setTogglingId(null);
+    }
+  };
 
   useEffect(() => {
     const fetchCounts = async () => {
@@ -127,6 +155,66 @@ export default function HomePage() {
             );
           })}
         </div>
+      </div>
+
+      <div className="dashboard-card">
+        <div className="dashboard-section-header">
+          <div>
+            <h2>No Recent Activity (Out of Stock)</h2>
+            <p>Zero-stock products with no sale or purchase in 90 days.</p>
+          </div>
+          {dormant.length > 0 && (
+            <button
+              type="button"
+              className="btn-secondary-custom"
+              onClick={() => navigate("/products/no-activity?stock=out")}
+            >
+              View all
+            </button>
+          )}
+        </div>
+
+        {dormant.length === 0 ? (
+          <div className="dashboard-empty">Nothing dormant out of stock. 🎉</div>
+        ) : (
+          <div className="dashboard-list compact">
+            {dormant.slice(0, 5).map((it) => (
+              <div className="dashboard-list-item" style={{ cursor: "default" }} key={it.product_id}>
+                <div>
+                  <h4>{it.description || `Product ${it.product_id}`}</h4>
+                  <p>
+                    {it.days_ago == null
+                      ? "No sales or purchases yet."
+                      : `No activity in ${it.days_ago} day${it.days_ago === 1 ? "" : "s"}.`}
+                  </p>
+                </div>
+
+                <div className="dashboard-list-right">
+                  <span
+                    className={`dashboard-badge ${it.status === "inactive" ? "danger" : "success"}`}
+                  >
+                    {it.status === "inactive" ? "Inactive" : "Active"}
+                  </span>
+                  <button
+                    type="button"
+                    className="btn-secondary-custom"
+                    style={{ minWidth: 0, height: 28, padding: "0 10px", fontSize: 12 }}
+                    disabled={togglingId === it.product_id}
+                    onClick={() =>
+                      toggleStatus(it.product_id, it.status === "inactive" ? "active" : "inactive")
+                    }
+                  >
+                    {togglingId === it.product_id
+                      ? "…"
+                      : it.status === "inactive"
+                        ? "Mark Active"
+                        : "Mark Inactive"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

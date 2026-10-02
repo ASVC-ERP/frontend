@@ -229,6 +229,11 @@
   background: rgba(19, 121, 91, 0.11);
 }
 
+.dashboard-badge.danger {
+  color: #dc2626;
+  background: rgba(220, 38, 38, 0.11);
+}
+
 .dashboard-row-arrow {
   color: var(--text-muted);
 }

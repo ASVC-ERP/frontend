@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
 import ReportToolbar from "./ReportToolbar";
 import { useReportData } from "./useReportData";
 import { exportReport } from "./exportReport";
@@ -10,11 +11,14 @@ import Panel from "./parts/Panel";
 import RankedTable from "./parts/RankedTable";
 import BrandPnlTable from "./parts/BrandPnlTable";
 import SlowMovingCards from "./parts/SlowMovingCards";
+import NoRecentActivityCards from "./parts/NoRecentActivityCards";
 import ViewFullLink from "./parts/ViewFullLink";
 import AiInsightsPanel from "./parts/AiInsightsPanel";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
 import "./reports.css";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 export default function SalesReport() {
   const [range, setRange] = useState(() => {
@@ -23,6 +27,24 @@ export default function SalesReport() {
   });
   const { data, loading, error } = useReportData("sales", range);
   const [exporting, setExporting] = useState(false);
+
+  // Not date-ranged (relative to today), so fetched once on its own --
+  // not part of useReportData's [from, to]-scoped dashboard call.
+  const [dormant, setDormant] = useState([]);
+  useEffect(() => {
+    let cancelled = false;
+    axios
+      .get(`${API_URL}/product/dormant`, { params: { stock: "in" } })
+      .then((res) => {
+        if (!cancelled) setDormant(res.data || []);
+      })
+      .catch(() => {
+        if (!cancelled) setDormant([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const handleExport = async () => {
     setExporting(true);
@@ -142,6 +164,15 @@ export default function SalesReport() {
               action={<ViewFullLink report="sales" panel="slow_moving" range={range} />}
             >
               <SlowMovingCards items={data.slow_moving} />
+            </Panel>
+          </div>
+
+          <div style={{ marginBottom: 16 }}>
+            <Panel
+              title="No Recent Activity"
+              action={<ViewFullLink to="/products/no-activity?stock=in" />}
+            >
+              <NoRecentActivityCards items={dormant} />
             </Panel>
           </div>
         </>
