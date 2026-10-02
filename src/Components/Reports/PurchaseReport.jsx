@@ -9,6 +9,7 @@ import KpiCard from "./parts/KpiCard";
 import Panel from "./parts/Panel";
 import RankedTable from "./parts/RankedTable";
 import ViewFullLink from "./parts/ViewFullLink";
+import AiInsightsPanel from "./parts/AiInsightsPanel";
 import "../../styles/page.css";
 import "../../styles/buttons.css";
 import "./reports.css";
@@ -61,6 +62,8 @@ export default function PurchaseReport() {
 
       {!error && data && !loading && (
         <>
+          <AiInsightsPanel reportPath="purchases" range={range} />
+
           <div className="report-kpis">
             <KpiCard
               label="Total Purchases"
