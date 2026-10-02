@@ -43,6 +43,12 @@ function collapsedKey(reportPath) {
   return `ai-insights-collapsed:${reportPath}`;
 }
 
+// Mirrors ReportsService.cooldownMinutes -- the server enforces this (and
+// the daily cap) for real; this just disables the button proactively
+// instead of making the user click into a 429. If the daily cap is hit,
+// that 429's message surfaces through the normal error state below.
+const COOLDOWN_MINUTES = 5;
+
 export default function AiInsightsPanel({ reportPath, range }) {
   const [insights, setInsights] = useState("");
   const [generatedAt, setGeneratedAt] = useState(null);
@@ -55,6 +61,24 @@ export default function AiInsightsPanel({ reportPath, range }) {
       return false;
     }
   });
+
+  // Re-renders every ~15s while a cooldown is active so the button's
+  // "Available in Xm" label counts down and re-enables on its own.
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    if (!generatedAt) return;
+    const remaining =
+      COOLDOWN_MINUTES * 60000 - (Date.now() - new Date(generatedAt).getTime());
+    if (remaining <= 0) return;
+    const t = setTimeout(() => setTick((n) => n + 1), Math.min(remaining, 15000));
+    return () => clearTimeout(t);
+  }, [generatedAt, tick]);
+
+  const cooldownRemainingMs = generatedAt
+    ? COOLDOWN_MINUTES * 60000 - (Date.now() - new Date(generatedAt).getTime())
+    : 0;
+  const inCooldown = cooldownRemainingMs > 0;
+  const cooldownMinutesLeft = Math.max(1, Math.ceil(cooldownRemainingMs / 60000));
 
   const toggleCollapsed = () => {
     setCollapsed((prev) => {
@@ -130,10 +154,17 @@ export default function AiInsightsPanel({ reportPath, range }) {
           {!collapsed && (
             <button
               className="btn-secondary-custom"
-              disabled={loading || !range.from || !range.to}
+              disabled={loading || !range.from || !range.to || inCooldown}
               onClick={generate}
+              title={inCooldown ? "This report was just analyzed." : undefined}
             >
-              {loading ? "Analyzing…" : insights ? "Regenerate" : "Generate"}
+              {loading
+                ? "Analyzing…"
+                : inCooldown
+                  ? `Available in ${cooldownMinutesLeft}m`
+                  : insights
+                    ? "Regenerate"
+                    : "Generate"}
             </button>
           )}
           <button
