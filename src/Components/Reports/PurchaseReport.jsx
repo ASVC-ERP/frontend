@@ -62,6 +62,8 @@ export default function PurchaseReport() {
 
       {!error && data && !loading && (
         <>
+          <AiInsightsPanel reportPath="purchases" range={range} />
+
           <div className="report-kpis">
             <KpiCard
               label="Total Purchases"
@@ -109,8 +111,6 @@ export default function PurchaseReport() {
               />
             </Panel>
           </div>
-
-          <AiInsightsPanel reportPath="purchases" range={range} />
         </>
       )}
     </div>

@@ -1,13 +1,42 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import Panel from "./Panel";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
-// Sends this report's (already-anonymized, server-side) numbers to Gemini's
-// free tier and shows back a short written analysis. Nothing is sent until
-// the user clicks the button. The last result for this exact date range is
-// cached server-side, so it reloads here instead of starting empty.
+// Splits the model's plain-text reply into paragraphs and bullet groups so
+// it reads like a written analysis instead of one wall of text.
+function renderInsights(text) {
+  const lines = text.split("\n").map((l) => l.trim()).filter(Boolean);
+  const blocks = [];
+  let bullets = null;
+
+  for (const line of lines) {
+    const bullet = line.match(/^[-*•]\s+(.*)/);
+    if (bullet) {
+      if (!bullets) {
+        bullets = [];
+        blocks.push(bullets);
+      }
+      bullets.push(bullet[1]);
+    } else {
+      bullets = null;
+      blocks.push(line);
+    }
+  }
+
+  return blocks.map((block, i) =>
+    Array.isArray(block) ? (
+      <ul className="ai-insights-list" key={i}>
+        {block.map((item, j) => (
+          <li key={j}>{item}</li>
+        ))}
+      </ul>
+    ) : (
+      <p key={i}>{block}</p>
+    ),
+  );
+}
+
 export default function AiInsightsPanel({ reportPath, range }) {
   const [insights, setInsights] = useState("");
   const [generatedAt, setGeneratedAt] = useState(null);
@@ -55,38 +84,67 @@ export default function AiInsightsPanel({ reportPath, range }) {
   };
 
   return (
-    <Panel
-      title="AI Insights"
-      action={
+    <div className="ai-insights">
+      <div className="ai-insights-head">
+        <div className="ai-insights-title">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path
+              d="M12 2.5l1.8 4.9 4.9 1.8-4.9 1.8L12 15.9l-1.8-4.9-4.9-1.8 4.9-1.8L12 2.5z"
+              fill="currentColor"
+            />
+            <path
+              d="M19 14.5l.9 2.4 2.4.9-2.4.9-.9 2.4-.9-2.4-2.4-.9 2.4-.9.9-2.4z"
+              fill="currentColor"
+            />
+          </svg>
+          <span>AI Insights</span>
+        </div>
         <button
           className="btn-secondary-custom"
           disabled={loading || !range.from || !range.to}
           onClick={generate}
         >
-          {loading ? "Analyzing..." : insights ? "Regenerate" : "Generate"}
+          {loading ? "Analyzing…" : insights ? "Regenerate" : "Generate"}
         </button>
-      }
-    >
-      {error && <div style={{ color: "#c0392b" }}>{error}</div>}
+      </div>
 
-      {!error && !insights && !loading && (
-        <div className="report-panel-empty">
-          Only aggregated totals go out for this — names of customers and
-          suppliers are replaced with generic ranks before anything is sent
-          to Gemini.
+      <div className="ai-insights-body">
+        {error && <div className="ai-insights-error">{error}</div>}
+
+        {loading && (
+          <div className="ai-insights-loading">
+            <span className="ai-spinner" aria-hidden="true" />
+            Reading your {reportPath} numbers and writing up the analysis…
+          </div>
+        )}
+
+        {!loading && !error && !insights && (
+          <div className="ai-insights-empty">
+            Only aggregated totals go out for this — names of customers and
+            suppliers are replaced with generic ranks before anything is sent
+            to Gemini.
+          </div>
+        )}
+
+        {!loading && insights && (
+          <div className="ai-insights-text">{renderInsights(insights)}</div>
+        )}
+      </div>
+
+      {!loading && insights && generatedAt && (
+        <div className="ai-insights-meta">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+            <path
+              d="M12 7v5l3.5 2"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+            />
+          </svg>
+          Last generated {new Date(generatedAt).toLocaleString()}
         </div>
       )}
-
-      {insights && (
-        <>
-          <div style={{ whiteSpace: "pre-wrap", lineHeight: 1.6 }}>{insights}</div>
-          {generatedAt && (
-            <div style={{ color: "#64748b", fontSize: 12, marginTop: 12 }}>
-              Last generated: {new Date(generatedAt).toLocaleString()}
-            </div>
-          )}
-        </>
-      )}
-    </Panel>
+    </div>
   );
 }

@@ -355,6 +355,87 @@
 .report-table tr.row-link { cursor: pointer; }
 .report-table tr.row-link:hover td { background: var(--surface-hover-bg); }
 
+/* AI Insights panel */
+.ai-insights {
+  position: relative;
+  background: linear-gradient(135deg, rgba(30, 90, 132, 0.06), rgba(124, 58, 237, 0.05));
+  border: 1px solid rgba(30, 90, 132, 0.18);
+  border-radius: 12px;
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.ai-insights-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ai-insights-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.ai-insights-title svg {
+  color: #7c3aed;
+  flex-shrink: 0;
+}
+.ai-insights-body { margin-top: 12px; }
+.ai-insights-empty {
+  color: var(--text-muted);
+  font-size: 1.02rem;
+}
+.ai-insights-error {
+  color: #c0392b;
+  font-size: 1.02rem;
+}
+.ai-insights-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 1.02rem;
+}
+.ai-spinner {
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2.5px solid rgba(124, 58, 237, 0.2);
+  border-top-color: #7c3aed;
+  animation: ai-spin 0.8s linear infinite;
+}
+@keyframes ai-spin {
+  to { transform: rotate(360deg); }
+}
+.ai-insights-text {
+  color: var(--text-primary);
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+.ai-insights-text p { margin: 0 0 10px; }
+.ai-insights-text p:last-child { margin-bottom: 0; }
+.ai-insights-list {
+  margin: 0 0 10px;
+  padding-left: 20px;
+}
+.ai-insights-list:last-child { margin-bottom: 0; }
+.ai-insights-list li { margin-bottom: 4px; }
+.ai-insights-meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(30, 90, 132, 0.15);
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
 /* "View full" link in a panel header + back link on the detail page */
 .report-viewfull {
   font-size: 0.95rem;

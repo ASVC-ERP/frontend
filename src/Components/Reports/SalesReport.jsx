@@ -67,6 +67,8 @@ export default function SalesReport() {
 
       {!error && data && !loading && (
         <>
+          <AiInsightsPanel reportPath="sales" range={range} />
+
           <div className="report-kpis">
             <KpiCard
               label="Total Revenue"
@@ -142,8 +144,6 @@ export default function SalesReport() {
               <SlowMovingCards items={data.slow_moving} />
             </Panel>
           </div>
-
-          <AiInsightsPanel reportPath="sales" range={range} />
         </>
       )}
     </div>
