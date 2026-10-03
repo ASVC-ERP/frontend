@@ -20,6 +20,9 @@ export default function DormantProductsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [togglingId, setTogglingId] = useState(null);
+  const [selected, setSelected] = useState([]);
+  const [clearSelection, setClearSelection] = useState(false);
+  const [bulkSaving, setBulkSaving] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -52,6 +55,24 @@ export default function DormantProductsPage() {
       showErrorSwal("Update failed", e.response?.data?.message || "Please try again.");
     } finally {
       setTogglingId(null);
+    }
+  };
+
+  const bulkSetStatus = async (nextStatus) => {
+    const ids = selected.map((r) => r.product_id);
+    if (!ids.length) return;
+    setBulkSaving(true);
+    try {
+      await axios.patch(`${API_URL}/product/bulk-status`, { ids, status: nextStatus });
+      setRows((prev) =>
+        prev.map((r) => (ids.includes(r.product_id) ? { ...r, status: nextStatus } : r)),
+      );
+      setSelected([]);
+      setClearSelection((c) => !c);
+    } catch (e) {
+      showErrorSwal("Update failed", e.response?.data?.message || "Please try again.");
+    } finally {
+      setBulkSaving(false);
     }
   };
 
@@ -144,10 +165,38 @@ export default function DormantProductsPage() {
         </div>
       )}
 
+      {!error && selected.length > 0 && (
+        <div
+          className="page-toolbar"
+          style={{ alignItems: "center", gap: 12, padding: "10px 16px" }}
+        >
+          <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>
+            {selected.length} selected
+          </span>
+          <button
+            type="button"
+            className="btn-secondary-custom"
+            disabled={bulkSaving}
+            onClick={() => bulkSetStatus("inactive")}
+          >
+            {bulkSaving ? "Saving…" : "Mark Inactive"}
+          </button>
+          <button
+            type="button"
+            className="btn-secondary-custom"
+            disabled={bulkSaving}
+            onClick={() => bulkSetStatus("active")}
+          >
+            {bulkSaving ? "Saving…" : "Mark Active"}
+          </button>
+        </div>
+      )}
+
       {!error && (
         <div className="page-card" style={{ padding: 0 }}>
           <DataTable
             className="custom-data-table"
+            keyField="product_id"
             columns={columns}
             data={rows}
             progressPending={loading}
@@ -156,6 +205,10 @@ export default function DormantProductsPage() {
             paginationRowsPerPageOptions={[25, 50, 100]}
             highlightOnHover
             striped
+            selectableRows
+            selectableRowsHighlight
+            onSelectedRowsChange={({ selectedRows }) => setSelected(selectedRows)}
+            clearSelectedRows={clearSelection}
             noDataComponent="Nothing dormant in this range. 🎉"
           />
         </div>
