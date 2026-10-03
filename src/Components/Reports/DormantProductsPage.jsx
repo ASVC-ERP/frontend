@@ -63,6 +63,7 @@ export default function DormantProductsPage() {
     if (!ids.length) return;
     setBulkSaving(true);
     try {
+      console.log("bulk-status request", { count: ids.length, ids, status: nextStatus });
       await axios.patch(`${API_URL}/product/bulk-status`, { ids, status: nextStatus });
       setRows((prev) =>
         prev.map((r) => (ids.includes(r.product_id) ? { ...r, status: nextStatus } : r)),
@@ -70,7 +71,12 @@ export default function DormantProductsPage() {
       setSelected([]);
       setClearSelection((c) => !c);
     } catch (e) {
-      showErrorSwal("Update failed", e.response?.data?.message || "Please try again.");
+      console.error("bulk-status failed", e.response?.status, e.response?.data);
+      const msg = e.response?.data?.message;
+      showErrorSwal(
+        "Update failed",
+        Array.isArray(msg) ? msg.join("\n") : msg || "Please try again.",
+      );
     } finally {
       setBulkSaving(false);
     }

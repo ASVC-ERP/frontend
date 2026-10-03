@@ -160,7 +160,7 @@ export default function HomePage() {
       <div className="dashboard-card">
         <div className="dashboard-section-header">
           <div>
-            <h2>No Recent Activity (Out of Stock)</h2>
+            <h2>Products with No Recent Activity</h2>
             <p>Zero-stock products with no sale or purchase in 90 days.</p>
           </div>
           {dormant.length > 0 && (
@@ -178,7 +178,7 @@ export default function HomePage() {
           <div className="dashboard-empty">Nothing dormant out of stock. 🎉</div>
         ) : (
           <div className="dashboard-list compact">
-            {dormant.slice(0, 5).map((it) => (
+            {dormant.slice(0, 3).map((it) => (
               <div className="dashboard-list-item" style={{ cursor: "default" }} key={it.product_id}>
                 <div>
                   <h4>{it.description || `Product ${it.product_id}`}</h4>
