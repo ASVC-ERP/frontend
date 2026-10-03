@@ -60,6 +60,7 @@ export const useOrders = (page, limit, setTotalRows) => {
           params: {
             q: value,     // 👈 matches @Query('q')
             limit: 20,    // 👈 optional, matches @Query('limit')
+            status: "active", // only active products can be ordered
           },
         }
       );
