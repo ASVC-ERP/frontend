@@ -39,14 +39,14 @@ const InventoryTable = forwardRef(function CustomerTable(
 
     showItemModal,
 
-    handleAddItemClick, handleCloseItemModal, handleSubmitItem, handleDeleteItem, handleRowClick,
+    handleAddItemClick, handleCloseItemModal, handleSubmitItem, handleDeleteItem, handleToggleStatus, handleRowClick,
   } = useProductHandlers( onRefreshItems, );
 
   useImperativeHandle(ref, () => ({
     openAddModal: handleAddItemClick,
   }));
 
-  const columns = productColumns( handleDeleteItem );
+  const columns = productColumns( handleDeleteItem, handleToggleStatus );
 
   return (
     <div>

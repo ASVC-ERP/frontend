@@ -1,7 +1,7 @@
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { debug } from "../../utils/log";
 
-export const productColumns = (handleDeleteItem) => [
+export const productColumns = (handleDeleteItem, handleToggleStatus) => [
   {
     name: "Code",
     center: true,
@@ -133,23 +133,34 @@ export const productColumns = (handleDeleteItem) => [
   },
   {
     name: "Actions",
-    cell: (row) => (
-      <div className="d-flex gap-2">
-        <button
-          className="btn btn-sm btn-outline-danger"
-          onClick={() => {
-            debug("Row data:", row);
-            handleDeleteItem( row.itemID );
-          }}
-        >
-          <FaTrash />
-        </button>
-      </div>
-    ),
+    cell: (row) => {
+      const inactive = row.status === "inactive";
+      return (
+        <div className="d-flex gap-2">
+          <button
+            type="button"
+            className={`btn btn-sm ${inactive ? "btn-outline-success" : "btn-outline-secondary"}`}
+            title={inactive ? "Mark Active" : "Mark Inactive"}
+            onClick={() => handleToggleStatus(row.itemID, inactive ? "active" : "inactive")}
+          >
+            {inactive ? <FaToggleOff /> : <FaToggleOn />}
+          </button>
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => {
+              debug("Row data:", row);
+              handleDeleteItem( row.itemID );
+            }}
+          >
+            <FaTrash />
+          </button>
+        </div>
+      );
+    },
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
-    width: "150px",
+    width: "180px",
     center: true,
   },
 ];
