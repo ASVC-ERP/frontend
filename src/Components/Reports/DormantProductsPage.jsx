@@ -168,7 +168,7 @@ export default function DormantProductsPage() {
       {!error && selected.length > 0 && (
         <div
           className="page-toolbar"
-          style={{ alignItems: "center", gap: 12, padding: "10px 16px" }}
+          style={{ alignItems: "center", justifyContent: "space-between", padding: "10px 16px" }}
         >
           <span style={{ color: "var(--text-secondary)", fontWeight: 600 }}>
             {selected.length} selected
@@ -180,14 +180,6 @@ export default function DormantProductsPage() {
             onClick={() => bulkSetStatus("inactive")}
           >
             {bulkSaving ? "Saving…" : "Mark Inactive"}
-          </button>
-          <button
-            type="button"
-            className="btn-secondary-custom"
-            disabled={bulkSaving}
-            onClick={() => bulkSetStatus("active")}
-          >
-            {bulkSaving ? "Saving…" : "Mark Active"}
           </button>
         </div>
       )}
