@@ -93,6 +93,12 @@
   font-weight: 800;
 }
 
+.dashboard-stat-subtitle {
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .dashboard-stat-card.blue .dashboard-stat-icon {
   color: #1e5a84;
   background: rgba(30, 90, 132, 0.12);

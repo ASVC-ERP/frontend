@@ -13,6 +13,8 @@ export default function HomePage() {
 
   const [loading, setLoading] = useState(true);
   const [totalItems, setTotalItems] = useState(0);
+  const [activeItems, setActiveItems] = useState(0);
+  const [inactiveItems, setInactiveItems] = useState(0);
   const [totalSuppliers, setTotalSuppliers] = useState(0);
   const [totalOrders, setTotalOrders] = useState(0);
   const [totalCustomers, setTotalCustomers] = useState(0);
@@ -47,15 +49,19 @@ export default function HomePage() {
   useEffect(() => {
     const fetchCounts = async () => {
       try {
-        const [pcountRes, scountRes, ocountRes, ccountRes] =
+        const [pcountRes, activeRes, inactiveRes, scountRes, ocountRes, ccountRes] =
           await Promise.all([
             axios.get(`${API_URL}/product/count`),
+            axios.get(`${API_URL}/product/count`, { params: { status: "active" } }),
+            axios.get(`${API_URL}/product/count`, { params: { status: "inactive" } }),
             axios.get(`${API_URL}/supplier/count`),
             axios.get(`${API_URL}/order/count`),
             axios.get(`${API_URL}/customer/count`),
           ]);
 
         setTotalItems(pcountRes.data.count ?? pcountRes.data);
+        setActiveItems(activeRes.data.count ?? activeRes.data);
+        setInactiveItems(inactiveRes.data.count ?? inactiveRes.data);
         setTotalSuppliers(scountRes.data.count ?? scountRes.data);
         setTotalOrders(ocountRes.data.count ?? ocountRes.data);
         setTotalCustomers(ccountRes.data.count ?? ccountRes.data);
@@ -69,7 +75,7 @@ export default function HomePage() {
     fetchCounts();
   }, [API_URL]);
 
-  const StatCard = ({ title, value, icon: Icon, tone }) => (
+  const StatCard = ({ title, value, icon: Icon, tone, subtitle }) => (
     <div className="col-12 col-sm-6 col-xl-3">
       <div className={`dashboard-stat-card ${tone}`}>
         <div className="dashboard-stat-icon">
@@ -79,6 +85,7 @@ export default function HomePage() {
         <div>
           <p>{title}</p>
           <h3>{loading ? "..." : value}</h3>
+          {!loading && subtitle && <div className="dashboard-stat-subtitle">{subtitle}</div>}
         </div>
       </div>
     </div>
@@ -116,6 +123,13 @@ export default function HomePage() {
           value={totalItems}
           icon={LuPackage}
           tone="green"
+          subtitle={
+            <>
+              <span style={{ color: "#16a34a" }}>{activeItems} active</span>
+              {" · "}
+              <span style={{ color: "#dc2626" }}>{inactiveItems} inactive</span>
+            </>
+          }
         />
         <StatCard
           title="Customers"
