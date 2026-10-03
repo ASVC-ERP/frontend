@@ -83,7 +83,7 @@ export default function DormantProductsPage() {
   };
 
   const columns = [
-    { name: "Code", selector: (r) => r.item_code || "—", sortable: true, width: "120px" },
+    { name: "Code", selector: (r) => r.item_code || "—", sortable: true, width: "200px", wrap: true },
     {
       name: "Description",
       selector: (r) => r.description || `Product ${r.product_id}`,
@@ -91,7 +91,7 @@ export default function DormantProductsPage() {
       grow: 2,
       wrap: true,
     },
-    { name: "Stock", selector: (r) => r.stock ?? 0, sortable: true, right: true, width: "90px" },
+    { name: "Stock", selector: (r) => r.stock ?? 0, sortable: true, width: "130px", center: true },
     {
       name: "Status",
       width: "110px",
@@ -122,8 +122,8 @@ export default function DormantProductsPage() {
       name: "Days Idle",
       selector: (r) => (r.days_ago == null ? "—" : r.days_ago),
       sortable: true,
-      right: true,
-      width: "100px",
+      center: true,
+      width: "140px",
     },
     {
       name: "Action",

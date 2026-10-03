@@ -10,7 +10,7 @@ export const productColumns = (handleDeleteItem, handleToggleStatus) => [
         {row.itemCode || row.item_code || "N/A"}
       </div>
     ),
-    width: "140px",
+    width: "180px",
     wrap: true,
   },
   {
