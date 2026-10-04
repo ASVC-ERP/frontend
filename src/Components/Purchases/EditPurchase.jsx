@@ -97,6 +97,7 @@ export default function EditPurchaseModal({
           page: 1,
           limit: 10,
           search: value,
+          status: "active", // only active products can be purchased
         },
       });
 

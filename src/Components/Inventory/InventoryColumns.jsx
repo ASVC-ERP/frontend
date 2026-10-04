@@ -1,7 +1,7 @@
-import { FaTrash } from "react-icons/fa";
+import { FaTrash, FaToggleOn, FaToggleOff } from "react-icons/fa";
 import { debug } from "../../utils/log";
 
-export const productColumns = (handleDeleteItem) => [
+export const productColumns = (handleDeleteItem, handleToggleStatus) => [
   {
     name: "Code",
     center: true,
@@ -10,7 +10,7 @@ export const productColumns = (handleDeleteItem) => [
         {row.itemCode || row.item_code || "N/A"}
       </div>
     ),
-    width: "200px",
+    width: "180px",
     wrap: true,
   },
   {
@@ -21,7 +21,7 @@ export const productColumns = (handleDeleteItem) => [
         {row.itemName || row.item_name || "N/A"}
       </div>
     ),
-    width: "400px",
+    grow: 2,
     wrap: true,
   },
   {
@@ -76,13 +76,13 @@ export const productColumns = (handleDeleteItem) => [
   },
   {
     name: "Unit",
-    width: "100px",
+    width: "90px",
     selector: (row) => row.unit,
     center: true
   },
   {
     name: "Brand",
-    width: "150px",
+    width: "120px",
     center: true,
     cell: (row) => (
       <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
@@ -92,7 +92,7 @@ export const productColumns = (handleDeleteItem) => [
   },
   {
     name: "Model",
-    width: "200px",
+    width: "150px",
     center: true,
     cell: (row) => (
       <div style={{ width: "100%", textAlign: "left", pointerEvents: "none" }}>
@@ -103,29 +103,65 @@ export const productColumns = (handleDeleteItem) => [
   },
   {
     name: "Origin",
-    width: "150px",
+    width: "130px",
     center: true,
     selector: (row) => row.origin,
   },
   {
-    name: "Actions",
-    cell: (row) => (
-      <div className="d-flex gap-2">
-        <button
-          className="btn btn-sm btn-outline-danger"
-          onClick={() => {
-            debug("Row data:", row);
-            handleDeleteItem( row.itemID );
+    name: "Status",
+    width: "120px",
+    center: true,
+    cell: (row) => {
+      const inactive = row.status === "inactive";
+      return (
+        <span
+          style={{
+            display: "inline-block",
+            fontSize: "0.78rem",
+            fontWeight: 700,
+            letterSpacing: "0.02em",
+            padding: "2px 10px",
+            borderRadius: 999,
+            background: inactive ? "#fef2f2" : "#f0fdf4",
+            color: inactive ? "#dc2626" : "#16a34a",
           }}
         >
-          <FaTrash />
-        </button>
-      </div>
-    ),
+          {inactive ? "Inactive" : "Active"}
+        </span>
+      );
+    },
+  },
+  {
+    name: "Actions",
+    cell: (row) => {
+      const inactive = row.status === "inactive";
+      return (
+        <div className="d-flex align-items-center gap-2">
+          <button
+            type="button"
+            className={`btn ${inactive ? "btn-outline-success" : "btn-outline-secondary"}`}
+            style={{ padding: "6px 12px", lineHeight: 0 }}
+            title={inactive ? "Mark Active" : "Mark Inactive"}
+            onClick={() => handleToggleStatus(row.itemID, inactive ? "active" : "inactive")}
+          >
+            {inactive ? <FaToggleOff size={24} /> : <FaToggleOn size={24} />}
+          </button>
+          <button
+            className="btn btn-sm btn-outline-danger"
+            onClick={() => {
+              debug("Row data:", row);
+              handleDeleteItem( row.itemID );
+            }}
+          >
+            <FaTrash />
+          </button>
+        </div>
+      );
+    },
     ignoreRowClick: true,
     allowOverflow: true,
     button: true,
-    width: "150px",
+    width: "160px",
     center: true,
   },
 ];

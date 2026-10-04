@@ -35,6 +35,7 @@ const Customer = lazy(() => import("./Components/Customer/Customer.jsx"));
 const Users = lazy(() => import("./Components/Users/Users.jsx"));
 const ChangePassword = lazy(() => import("./Components/Account/ChangePassword.jsx"));
 const SalesReport = lazy(() => import("./Components/Reports/SalesReport.jsx"));
+const DormantProductsPage = lazy(() => import("./Components/Reports/DormantProductsPage.jsx"));
 const PurchaseReport = lazy(() => import("./Components/Reports/PurchaseReport.jsx"));
 const ReportListPage = lazy(() => import("./Components/Reports/ReportListPage.jsx"));
 const CustomerReport = lazy(() => import("./Components/Reports/CustomerReport.jsx"));
@@ -101,6 +102,8 @@ function App() {
               <Route path="/purchase/:id"       element={ <PurchaseDetailsPage />} />
               <Route path="/create-purchase"    element={ <CreatePurchase />} />
               <Route path="/purchase-return"    element={ <ReturnPurchase /> } />
+
+              <Route path="/products/no-activity"    element={ <DormantProductsPage /> } />
 
               <Route path="/reports"                 element={ <Navigate to="/reports/sales" replace /> } />
               <Route path="/reports/sales"           element={ <ProtectedRoute user={user} requiredRole="admin"><SalesReport /></ProtectedRoute> } />

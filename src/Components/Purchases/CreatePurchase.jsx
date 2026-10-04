@@ -146,6 +146,7 @@ export default function CreatePurchase() {
         params: {
           q: value,
           limit: 20,
+          status: "active", // only active products can be purchased
         },
       });
 

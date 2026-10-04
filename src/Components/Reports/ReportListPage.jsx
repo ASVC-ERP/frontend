@@ -249,6 +249,27 @@ export default function ReportListPage() {
   const [error, setError] = useState("");
   const [exporting, setExporting] = useState(false);
   const [sortField, setSortField] = useState(cfg?.sortOptions?.[0]?.value);
+  const [togglingId, setTogglingId] = useState(null);
+
+  // Slow-Moving Products panel only: flips a product's status in place
+  // (no refetch) so the row stays visible -- it's a worklist, not a
+  // disappearing-on-action list.
+  const toggleStatus = async (productId, nextStatus) => {
+    setTogglingId(productId);
+    try {
+      await axios.patch(`${API_URL}/product/${productId}/status`, { status: nextStatus });
+      setRows((prev) =>
+        prev.map((r) => (r.product_id === productId ? { ...r, status: nextStatus } : r)),
+      );
+    } catch (e) {
+      showErrorSwal("Update failed", e.response?.data?.message || "Please try again.");
+    } finally {
+      setTogglingId(null);
+    }
+  };
+
+  const columns =
+    typeof cfg?.columns === "function" ? cfg.columns(toggleStatus, togglingId) : cfg?.columns;
 
   useEffect(() => {
     setSortField(cfg?.sortOptions?.[0]?.value);
@@ -398,7 +419,7 @@ export default function ReportListPage() {
         <div className="page-card" style={{ padding: 0 }}>
           <DataTable
             className="custom-data-table"
-            columns={cfg.columns}
+            columns={columns}
             data={displayRows}
             progressPending={loading}
             pagination

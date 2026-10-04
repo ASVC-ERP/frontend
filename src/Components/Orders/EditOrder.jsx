@@ -140,6 +140,7 @@ export default function EditOrderModal({ order, onClose, onSuccess }) {
         params: {
           q: value,
           limit: 20,
+          status: "active", // only active products can be ordered
         },
       });
 

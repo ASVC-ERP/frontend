@@ -226,6 +226,21 @@ export const useProductHandlers = (
     }
   };
 
+  const handleToggleStatus = async (id, nextStatus) => {
+    try {
+      await axios.patch(`${API_URL}/product/${id}/status`, { status: nextStatus });
+      onRefreshItems();
+    } catch (error) {
+      console.error("Error updating product status:", error);
+      Swal.fire({
+        title: "Error!",
+        text: error.response?.data?.message || "Failed to update status.",
+        icon: "error",
+        confirmButtonColor: "#1E5A84",
+      });
+    }
+  };
+
   const handleRowClick = (row) => {
     debug("CLICKED", row);
     navigate(`/products/${row.itemID}`, { state: { row } });
@@ -249,6 +264,7 @@ export const useProductHandlers = (
     handleCloseItemModal,
     handleSubmitItem,
     handleDeleteItem,
+    handleToggleStatus,
     handleRowClick,
   };
 }

@@ -15,8 +15,8 @@ export default function SlowMovingCards({ items, limit = 5 }) {
             <div className="name">{it.description || `Product ${it.product_id}`}</div>
             <div className="meta">
               {it.days_ago == null
-                ? "In stock but never sold."
-                : `Last sold ${it.days_ago} day${it.days_ago === 1 ? "" : "s"} ago.`}
+                ? "In stock with no sales or purchases yet."
+                : `No sales or purchases in ${it.days_ago} day${it.days_ago === 1 ? "" : "s"}.`}
             </div>
           </div>
         </div>
