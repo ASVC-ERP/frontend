@@ -37,6 +37,24 @@ Create a production build:
 bun run build
 ```
 
+## Running with Docker
+
+Build the image (serves the production build via nginx):
+
+```bash
+docker build -t ims-frontend .
+```
+
+Run it standalone, pointing at a backend reachable from inside the container:
+
+```bash
+docker run -p 8080:80 -e BACKEND_URL=http://host.docker.internal:3000 ims-frontend
+```
+
+The app will be available at `http://localhost:8080`. `BACKEND_URL` is where nginx proxies `/api/` requests to (see [`nginx.conf.template`](nginx.conf.template)); `VITE_API_URL` (default `/api`) is baked into the build at image-build time, not changeable at container runtime.
+
+To run frontend and backend together, use the `docker-compose.yml` one level up in the repo root — see the [root README](../README.md).
+
 ## Project Structure
 
 ```
